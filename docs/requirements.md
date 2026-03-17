@@ -1,0 +1,93 @@
+Requerimientos del Sistema
+
+Sistema de gestión de ventas para un kiosko
+
+1. Descripción general
+Un cliente solicita el desarrollo de una aplicación web que le permita gestionar los productos y las ventas de su negocio.
+El sistema deberá permitir registrar productos, realizar ventas y generar un ticket con el detalle de cada operación.
+
+2. Objetivo del sistema
+El objetivo del sistema es permitir que un negocio pueda:
+	*Mantener un registro de sus productos
+	*Controlar el stock disponible
+	*Registrar ventas realizadas
+	*Obtener un ticket detallado de cada operación
+
+3. Gestión de productos
+El sistema deberá permitir almacenar y gestionar información sobre los productos disponibles en el negocio.
+De cada producto se deberán registrar los siguientes datos:
+	*Nombre del producto
+	*Código del producto (identificador único dentro del sistema)
+	*Precio del producto
+	*Stock disponible
+	*Estado del producto (activo/inactivo)
+El sistema deberá permitir:
+	*Registrar un nuevo producto
+	*Consultar productos existentes
+	*Modificar los datos de un producto
+	*Dar de baja lógica a un producto (marcarlo como inactivo)
+
+4. Gestión de ventas
+El sistema deberá permitir registrar las ventas realizadas en el negocio.
+De cada venta se deberán almacenar los siguientes datos:
+	*Identificador único de la venta
+	*Fecha de la venta
+	*Hora de la venta
+	*Total de la venta
+El sistema deberá permitir:
+	*Registrar una nueva venta
+	*Consultar ventas existentes
+	*Modificar los datos de una venta
+	*Dar de baja una venta
+
+5. Detalle de venta
+Para cada producto incluido en una venta se deberán almacenar los siguientes datos:
+	*Identificador único del detalle de venta
+	*Venta asociada
+	*Producto vendido
+	*Precio al momento de la venta
+	*Cantidad vendida
+	*Subtotal de la línea de venta
+El sistema deberá permitir:
+	*Asociar un producto a una venta
+	*Desvincular un producto de una venta
+	*Modificar los datos de un detalle de venta
+	*Eliminar un detalle de venta
+
+6. Lectura de código de barras
+El sistema deberá permitir buscar productos utilizando un lector de códigos de barras.
+El lector escaneará el código del producto, permitiendo:
+	*Buscar un producto existente en el sistema
+	*Registrar un nuevo producto si el código escaneado no se encuentra registrado
+
+7. Generación de ticket de venta
+Por cada venta registrada el sistema deberá poder generar un ticket de compra que incluya:
+	*Nombre del negocio
+	*Fecha de emisión del ticket
+	*Hora de la emisión del ticket
+	*Lista de productos vendidos
+	*Cantidad de cada producto
+	*Precio unitario
+	*Subtotal de cada producto
+	*Total de la venta
+El ticket deberá representar el comprobante de la operación realizada.
+
+8- Usuarios
+El sistema deberá contar con dos tipos de acceso predefinidos:
+Administrador
+	*Tendrá acceso completo a todas las funcionalidades del sistema.
+	*Podrá consultar y gestionar productos.
+	*Podrá consultar y gestionar ventas, incluidos los detalles de cada venta.
+Operador(cajero)
+	*Podrá registrar ventas.
+	*Podrá consultar productos.
+	*No podrá crear, modificar o eliminar productos.
+	*No podrá modificar o eliminar ventas ni los detalles de las mismas.
+
+9. Acceso al sistema
+El sistema deberá requerir autenticación para permitir el acceso a sus funcionalidades.
+Para acceder al sistema el usuario deberá ingresar:
+	*Tipo de usuario (Administrador / Operador (cajero))
+	*Contraseña correspondiente al tipo de usuario seleccionado
+El sistema deberá validar que la contraseña ingresada corresponda al tipo de usuario seleccionado antes de permitir el acceso.
+
