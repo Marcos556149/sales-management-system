@@ -54,11 +54,13 @@ El sistema deberá permitir:
 	*Modificar los datos de un detalle de venta
 	*Eliminar un detalle de venta
 
-6. Lectura de código de barras
-El sistema deberá permitir buscar productos utilizando un lector de códigos de barras.
-El lector escaneará el código del producto, permitiendo:
-	*Buscar un producto existente en el sistema
-	*Registrar un nuevo producto si el código escaneado no se encuentra registrado
+6. Lectura de código de barras  
+El sistema deberá permitir la lectura de códigos de barras mediante un lector.
+
+Esta funcionalidad permitirá:
+	*Identificar productos existentes en el sistema mediante el código escaneado.
+	*Facilitar el registro de nuevos productos a partir del código de barras.
+	*Agilizar la selección de productos en procesos de venta mediante la lectura del código.
 
 7. Generación de ticket de venta
 Por cada venta registrada el sistema deberá poder generar un ticket de compra que incluya:
@@ -72,7 +74,7 @@ Por cada venta registrada el sistema deberá poder generar un ticket de compra q
 	*Total de la venta
 El ticket deberá representar el comprobante de la operación realizada.
 
-8- Usuarios
+8. Usuarios
 El sistema deberá contar con dos tipos de acceso predefinidos:
 Administrador
 	*Tendrá acceso completo a todas las funcionalidades del sistema.
