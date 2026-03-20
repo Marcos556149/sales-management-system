@@ -52,7 +52,6 @@ El sistema deberá permitir:
 	*Asociar un producto a una venta
 	*Desvincular un producto de una venta
 	*Modificar los datos de un detalle de venta
-	*Eliminar un detalle de venta
 
 6. Lectura de código de barras  
 El sistema deberá permitir la lectura de códigos de barras mediante un lector.
