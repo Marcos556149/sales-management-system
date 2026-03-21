@@ -26,6 +26,7 @@ El sistema deberá permitir:
 	*Consultar productos existentes
 	*Modificar los datos de un producto
 	*Dar de baja lógica a un producto (marcarlo como inactivo)
+	*Actualizar la lista de productos mostrada en pantalla, para reflejar cambios recientes en el sistema
 
 4. Gestión de ventas
 El sistema deberá permitir registrar las ventas realizadas en el negocio.
@@ -39,6 +40,7 @@ El sistema deberá permitir:
 	*Consultar ventas existentes
 	*Modificar los datos de una venta
 	*Dar de baja una venta
+	*Actualizar la lista de ventas mostrada en pantalla, para reflejar cambios recientes en el sistema
 
 5. Detalle de venta
 Para cada producto incluido en una venta se deberán almacenar los siguientes datos:
