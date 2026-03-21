@@ -237,7 +237,8 @@ El sistema debe permitir al usuario registrar las ventas realizadas en el negoci
    - Identificador único de la venta (generado automáticamente por el sistema)  
    - Fecha de la venta  
    - Hora de la venta  
-   - Total de la venta  
+   - Total de la venta
+   - Usuario que realizó la venta  
 10. El sistema registra los detalles de venta asociados a la venta.  
 11. El sistema muestra un mensaje de confirmación: "Venta registrada exitosamente, ¿Desea imprimir el ticket de la venta?".  
 12. El usuario confirma la impresión del ticket.  
@@ -266,7 +267,8 @@ El sistema debe permitir al usuario registrar las ventas realizadas en el negoci
 - Durante el proceso de registro, el usuario puede modificar la cantidad de los productos agregados a la venta.  
 - Si el usuario aumenta o disminuye la cantidad de un producto en un detalle de venta, el stock disponible se actualizará automáticamente según la modificación realizada.  
 - Durante el proceso de registro, el usuario puede eliminar productos (detalles de venta) de la venta mediante la operación definida en RF-13.  
-- El identificador único de la venta se asigna automáticamente por el sistema.  
+- El identificador único de la venta se asigna automáticamente por el sistema.
+- Cada venta queda asociada al usuario que la registró.
 
 ## RF-8: Consultar Ventas
 
