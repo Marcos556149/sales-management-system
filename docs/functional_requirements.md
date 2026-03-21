@@ -627,3 +627,11 @@ El sistema debe permitir al usuario actualizar la lista de productos o ventas mo
 - Puede consultar productos y ventas.  
 - No puede gestionar productos.  
 - No puede modificar ni eliminar ventas ni sus detalles.
+
+### Datos de usuario almacenados
+- El sistema debe almacenar información de cada usuario para gestionar su acceso y permisos.  
+- Cada usuario tendrá:
+  - ID de usuario: identificador único interno.  
+  - Nombre de usuario: nombre único para identificar al usuario en el sistema.  
+  - Rol: tipo de usuario que determina los permisos dentro del sistema.  
+  - Contraseña: asociada a la cuenta del usuario.
