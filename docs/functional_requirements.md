@@ -571,25 +571,25 @@ El sistema debe permitir generar un ticket de compra para cada venta registrada,
 ## RF-15: Autenticación de Usuario
 
 ### Descripción
-El sistema debe permitir a los usuarios acceder a sus funcionalidades mediante un proceso de autenticación basado en el tipo de usuario y una contraseña.
+El sistema debe permitir a los usuarios acceder a sus funcionalidades mediante un proceso de autenticación basado en **nombre de usuario (username) único** y contraseña.
 
 ### Flujo principal
 1. El usuario accede a la pantalla de inicio de sesión.  
-2. El usuario selecciona su tipo de usuario.  
-3. El usuario ingresa la contraseña correspondiente.  
-4. El sistema valida las credenciales ingresadas.  
-5. El sistema permite el acceso al sistema según el tipo de usuario.
+2. El usuario ingresa su nombre de usuario (username) único.  
+3. El usuario ingresa su contraseña.  
+4. El sistema valida que las credenciales ingresadas sean correctas.  
+5. El sistema determina el rol del usuario (`Administrador` o `Operador`) y permite el acceso a las funcionalidades según los permisos asociados.
 
 ### Flujos alternativos
 
 **4.a Credenciales inválidas**  
-4.a.1 El sistema detecta que la contraseña no corresponde al tipo de usuario seleccionado.  
+4.a.1 El sistema detecta que el nombre de usuario no existe o que la contraseña es incorrecta.  
 4.a.2 El sistema muestra un mensaje: "Datos inválidos".  
 
 ### Reglas de negocio
 - El acceso al sistema requiere autenticación previa.  
-- La contraseña debe corresponder al tipo de usuario seleccionado.  
-- El sistema debe restringir el acceso a las funcionalidades según el tipo de usuario.
+- La contraseña ingresada debe ser correcta para el username proporcionado.  
+- El sistema determina el rol automáticamente desde el registro del usuario y restringe el acceso a las funcionalidades según dicho rol.
 
 ## RF-16: Actualizar Lista de Productos / Ventas
 
