@@ -547,7 +547,7 @@ El sistema debe permitir generar un ticket de compra para cada venta registrada,
    - Nombre del negocio  
    - Fecha de emisión del ticket  
    - Hora de emisión del ticket  
-   - Lista de productos vendidos  
+   - Nombre de cada producto vendido
    - Cantidad de cada producto  
    - Precio unitario  
    - Subtotal de cada producto  
