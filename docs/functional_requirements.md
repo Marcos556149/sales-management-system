@@ -281,7 +281,8 @@ El sistema debe permitir al usuario consultar las ventas registradas en el siste
 3. El sistema recupera la lista de ventas de la base de datos.  
 4. El sistema muestra las ventas registradas con los siguientes datos:
    - Identificador único de la venta  
-   - Fecha y hora de la venta  
+   - Fecha y hora de la venta
+   - Nombre de usuario (user_name) del vendedor
    - Total de la venta  
    - Detalle de cada producto vendido: código, nombre, cantidad, precio al momento de la venta y subtotal  
 
