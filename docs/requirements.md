@@ -87,10 +87,10 @@ Operador(cajero)
 	*No podrá crear, modificar o eliminar productos.
 	*No podrá modificar o eliminar ventas ni los detalles de las mismas.
 
-9. Acceso al sistema
+9. Acceso al sistema (actualizado)
 El sistema deberá requerir autenticación para permitir el acceso a sus funcionalidades.
-Para acceder al sistema el usuario deberá ingresar:
-	*Tipo de usuario (Administrador / Operador (cajero))
-	*Contraseña correspondiente al tipo de usuario seleccionado
-El sistema deberá validar que la contraseña ingresada corresponda al tipo de usuario seleccionado antes de permitir el acceso.
+Para acceder al sistema, el usuario deberá ingresar:
+	*Nombre de usuario (username) único asignado al usuario.
+	*Contraseña correspondiente a su cuenta.
+Nota: Ya no es necesario que el usuario seleccione manualmente su tipo de usuario; el rol se obtiene automáticamente del registro en la base de datos.
 
