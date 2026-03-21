@@ -76,7 +76,7 @@ Por cada venta registrada el sistema deberá poder generar un ticket de compra q
 El ticket deberá representar el comprobante de la operación realizada.
 
 8. Usuarios
-El sistema deberá contar con dos tipos de acceso predefinidos:
+El sistema deberá contar con dos tipos de acceso predefinidos(roles):
 Administrador
 	*Tendrá acceso completo a todas las funcionalidades del sistema.
 	*Podrá consultar y gestionar productos.
@@ -86,6 +86,12 @@ Operador(cajero)
 	*Podrá consultar productos.
 	*No podrá crear, modificar o eliminar productos.
 	*No podrá modificar o eliminar ventas ni los detalles de las mismas.
+El sistema deberá almacenar información sobre cada usuario para poder gestionar su acceso y permisos. Cada usuario tendrá los siguientes datos:
+	*ID de usuario: identificador único interno de cada usuario.
+	*Nombre de usuario: nombre único que se utiliza para iniciar sesión en el sistema.
+	*Rol: tipo de usuario, que determina los permisos dentro del sistema.
+	*Contraseña: contraseña asociada a la cuenta del usuario, utilizada para validar su identidad.
+Nota: Esta información se almacena en la base de datos para poder autenticar a los usuarios y controlar los accesos a las diferentes funcionalidades del sistema.
 
 9. Acceso al sistema (actualizado)
 El sistema deberá requerir autenticación para permitir el acceso a sus funcionalidades.
