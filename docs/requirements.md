@@ -35,6 +35,7 @@ De cada venta se deberán almacenar los siguientes datos:
 	*Fecha de la venta
 	*Hora de la venta
 	*Total de la venta
+	*Usuario que realizó la venta
 El sistema deberá permitir:
 	*Registrar una nueva venta
 	*Consultar ventas existentes
