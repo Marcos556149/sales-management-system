@@ -22,6 +22,7 @@
 
 ### Reglas Generales
 - [Reglas de Acceso al Sistema](#reglas-de-acceso-al-sistema)
+- [Datos de usuario almacenados](#datos-de-usuario-almacenados)
 
 ## RF-1: Registrar Producto
 
@@ -694,10 +695,12 @@ El sistema debe permitir al usuario consultar la información detallada de una v
 - No puede gestionar productos.  
 - No puede modificar ni eliminar ventas ni sus detalles.
 
-### Datos de usuario almacenados
+
+## Datos de usuario almacenados
+
 - El sistema debe almacenar información de cada usuario para gestionar su acceso y permisos.  
 - Cada usuario tendrá:
   - ID de usuario: identificador único interno.  
   - Nombre de usuario: nombre único para identificar al usuario en el sistema.  
   - Rol: tipo de usuario que determina los permisos dentro del sistema.  
-  - Contraseña: asociada a la cuenta del usuario.
+  - Contraseña: asociada a la cuenta del usuario.  
