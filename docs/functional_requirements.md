@@ -51,7 +51,8 @@ El sistema debe permitir al usuario registrar un nuevo producto.
 - El estado del producto es obligatorio y, por defecto, es "Activo".  
 - El precio del producto es obligatorio y debe ser un número real mayor o igual a 0.  
 - El stock disponible es obligatorio y debe ser un número entero mayor o igual a 0.  
-- El sistema debe asignar, por defecto, un valor de 0 al precio y al stock al momento de crear el producto.   
+- El sistema debe asignar, por defecto, un valor de 0 al precio y al stock al momento de crear el producto.
+- El nombre del producto debe ser descriptivo y permitir diferenciarlo claramente de otros productos similares dentro del sistema.
 
 ## RF-2: Consultar Productos
 
@@ -139,7 +140,8 @@ El sistema debe permitir al usuario modificar los datos de un producto existente
 - El precio del producto debe ser un número real mayor o igual a 0.  
 - El stock disponible debe ser un número entero mayor o igual a 0.  
 - El estado del producto no puede ser modificado desde este proceso.  
-- El código del producto puede ser modificado, siempre que no esté en uso por otro producto.  
+- El código del producto puede ser modificado, siempre que no esté en uso por otro producto.
+- El nombre del producto debe ser descriptivo y permitir diferenciarlo claramente de otros productos similares dentro del sistema.  
 
 ## RF-4: Dar de baja producto (baja lógica)
 
