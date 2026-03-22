@@ -292,7 +292,6 @@ El sistema debe permitir al usuario consultar las ventas registradas en el siste
    - Fecha y hora de la venta
    - Nombre de usuario (user_name) del vendedor
    - Total de la venta  
-   - Detalle de cada producto vendido: código, nombre, cantidad, precio al momento de la venta y subtotal  
 
 ### Flujos alternativos
 
