@@ -191,7 +191,7 @@ El sistema debe permitir al usuario identificar un producto existente mediante l
 1. El usuario accede a la sección de productos.  
 2. El usuario escanea el código de barras del producto con el lector.  
 3. El sistema reconoce el código de barras.  
-4. El sistema muestra los datos actuales del producto: código, nombre, precio, estado y stock disponible.  
+4. El sistema muestra los datos del producto identificado mediante la operación de consultar producto (RF-17): código, nombre, precio, estado y stock disponible.
 
 ### Flujos alternativos
 
