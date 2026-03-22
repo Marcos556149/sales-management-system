@@ -243,7 +243,7 @@ El sistema debe permitir al usuario registrar las ventas realizadas en el negoci
    - Usuario que realizó la venta  
 10. El sistema registra los detalles de venta asociados a la venta.  
 11. El sistema muestra un mensaje de confirmación: "Venta registrada exitosamente, ¿Desea imprimir el ticket de la venta?".  
-12. El usuario confirma la impresión del ticket.  
+12. El usuario confirma la impresión del ticket, invocando la operación de generar ticket de venta (RF-14).
 13. El sistema vuelve automáticamente a la sección de ventas.
 
 ### Flujos alternativos
@@ -271,6 +271,7 @@ El sistema debe permitir al usuario registrar las ventas realizadas en el negoci
 - Durante el proceso de registro, el usuario puede eliminar productos (detalles de venta) de la venta mediante la operación definida en RF-13.  
 - El identificador único de la venta se asigna automáticamente por el sistema.
 - Cada venta queda asociada al usuario que la registró.
+- La generación del ticket de venta se realiza mediante la operación definida en RF-14.
 
 ## RF-8: Consultar Ventas
 
