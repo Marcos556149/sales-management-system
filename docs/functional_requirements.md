@@ -17,6 +17,8 @@
 - [RF-14: Generar Ticket de Venta](#rf-14-generar-ticket-de-venta)
 - [RF-15: Autenticación de Usuario](#rf-15-autenticación-de-usuario)
 - [RF-16: Actualizar Lista de Productos / Ventas](#rf-16-actualizar-lista-de-productos--ventas)
+- [RF-17: Consultar Producto](#rf-17-consultar-producto)
+- [RF-18: Consultar Venta](#rf-18-consultar-venta)
 
 ### Reglas Generales
 - [Reglas de Acceso al Sistema](#reglas-de-acceso-al-sistema)
