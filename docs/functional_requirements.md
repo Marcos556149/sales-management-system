@@ -63,7 +63,12 @@ El sistema debe permitir al usuario consultar los productos registrados en el si
 1. El usuario accede a la sección de productos.  
 2. El usuario solicita consultar productos.  
 3. El sistema recupera la lista de productos de la base de datos.  
-4. El sistema muestra los productos registrados.  
+4. El sistema muestra los productos registrados con los siguientes datos:
+   - Código del producto  
+   - Nombre del producto  
+   - Precio  
+   - Estado  
+   - Stock disponible
 
 ### Flujos alternativos
 
