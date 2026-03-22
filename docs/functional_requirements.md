@@ -649,6 +649,34 @@ El sistema debe permitir al usuario consultar la información detallada de un pr
 ### Reglas de negocio
 - El sistema debe permitir consultar un producto específico mediante su identificador.  
 
+## RF-18: Consultar Venta
+
+### Descripción
+El sistema debe permitir al usuario consultar la información detallada de una venta específica registrada en el sistema.
+
+### Flujo principal
+1. El usuario accede a la sección de ventas.  
+2. El usuario selecciona una venta específica.  
+3. El sistema recibe el identificador de la venta.  
+4. El sistema recupera los datos de la venta desde la base de datos.  
+5. El sistema muestra la información de la venta con los siguientes datos:
+   - Identificador único de la venta  
+   - Fecha de la venta  
+   - Hora de la venta  
+   - Nombre de usuario (user_name) del vendedor  
+   - Total de la venta  
+   - Detalle de cada producto vendido: código, nombre, cantidad, precio al momento de la venta y subtotal  
+
+### Flujos alternativos
+
+**3.a Venta no encontrada**  
+3.a.1 El sistema detecta que la venta no existe.  
+3.a.2 El sistema muestra un mensaje: "Venta no encontrada".  
+
+### Reglas de negocio
+- El sistema debe permitir consultar una venta específica mediante su identificador.  
+- La información mostrada debe reflejar fielmente los datos almacenados de la venta y sus detalles.  
+
 ## Reglas de Acceso al Sistema
 
 ### Tipos de usuario
