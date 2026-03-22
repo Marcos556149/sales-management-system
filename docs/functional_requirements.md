@@ -624,6 +624,32 @@ El sistema debe permitir al usuario actualizar la lista de productos o ventas mo
 - El sistema debe mostrar los cambios realizados por otros usuarios o procesos desde la última actualización.  
 - El botón de actualización debe estar disponible para todos los usuarios con permiso de consulta en la sección correspondiente (Productos o Ventas).
 
+## RF-17: Consultar Producto
+
+### Descripción
+El sistema debe permitir al usuario consultar la información detallada de un producto específico registrado en el sistema.
+
+### Flujo principal
+1. El usuario accede a la sección de productos.  
+2. El usuario selecciona un producto específico.  
+3. El sistema recibe el identificador del producto.  
+4. El sistema recupera los datos del producto desde la base de datos.  
+5. El sistema muestra la información del producto con los siguientes datos:
+   - Código del producto  
+   - Nombre del producto  
+   - Precio  
+   - Estado  
+   - Stock disponible  
+
+### Flujos alternativos
+
+**3.a Producto no encontrado**  
+3.a.1 El sistema detecta que el producto no existe.  
+3.a.2 El sistema muestra un mensaje: "Producto no encontrado".  
+
+### Reglas de negocio
+- El sistema debe permitir consultar un producto específico mediante su identificador.  
+
 ## Reglas de Acceso al Sistema
 
 ### Tipos de usuario
