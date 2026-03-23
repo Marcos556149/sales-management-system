@@ -73,7 +73,7 @@ El sistema debe permitir al usuario consultar los productos registrados en el si
    - Nombre del producto  
    - Precio  
    - Estado  
-   - Stock disponible
+   - Stock disponible (mostrado junto a su unidad de medida, por ejemplo: "2.5 kg", "3 unidades")
 
 ### Flujos alternativos
 
@@ -125,7 +125,7 @@ El sistema debe permitir al usuario modificar los datos de un producto existente
 2. El usuario selecciona un producto.  
 3. El sistema muestra los datos actuales del producto.  
 4. El usuario solicita modificar el producto.  
-5. El usuario modifica los siguientes datos del producto: código, nombre, precio y stock disponible.  
+5. El usuario modifica los siguientes datos del producto: código, nombre, precio, unidad de medida y stock disponible.
 6. El sistema valida la información ingresada.  
 7. El sistema actualiza los datos del producto en la base de datos.  
 8. El sistema muestra un mensaje de confirmación: "Producto actualizado exitosamente".  
@@ -146,12 +146,15 @@ El sistema debe permitir al usuario modificar los datos de un producto existente
 
 ### Reglas de negocio
 - El código del producto debe ser único dentro del sistema.  
-- Todos los campos editables (código, nombre, precio y stock) son obligatorios.  
+- Todos los campos editables (código, nombre, precio, unidad de medida y stock) son obligatorios.
 - El precio del producto debe ser un número real mayor o igual a 0.  
-- El stock disponible debe ser un número entero mayor o igual a 0.  
+- El stock disponible debe ser un número real mayor o igual a 0.
 - El estado del producto no puede ser modificado desde este proceso.  
 - El código del producto puede ser modificado, siempre que no esté en uso por otro producto.
-- El nombre del producto debe ser descriptivo y permitir diferenciarlo claramente de otros productos similares dentro del sistema.  
+- El nombre del producto debe ser descriptivo y permitir diferenciarlo claramente de otros productos similares dentro del sistema.
+- La unidad de medida del producto es obligatoria.
+- Si la unidad de medida es "unidad", el stock debe expresarse en valores enteros.
+- Si se modifica la unidad de medida, el sistema debe validar que el stock cumpla con las restricciones de la nueva unidad.
 
 ## RF-4: Dar de baja producto (baja lógica)
 
