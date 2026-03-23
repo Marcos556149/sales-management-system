@@ -19,6 +19,7 @@ De cada producto se deberán registrar los siguientes datos:
 	*Nombre del producto
 	*Código del producto (identificador único dentro del sistema)
 	*Precio del producto
+	*Unidad de medida del producto (por ejemplo: unidad, kilogramo, litro)
 	*Stock disponible
 	*Estado del producto (activo/inactivo)
 El sistema deberá permitir:
