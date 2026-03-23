@@ -50,7 +50,7 @@ Para cada producto incluido en una venta se deberán almacenar los siguientes da
 	*Venta asociada
 	*Producto vendido
 	*Precio al momento de la venta
-	*Cantidad vendida
+	*Cantidad vendida (según la unidad de medida del producto)
 	*Subtotal de la línea de venta
 El sistema deberá permitir:
 	*Asociar un producto a una venta
