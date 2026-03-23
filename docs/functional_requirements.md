@@ -244,7 +244,7 @@ El sistema debe permitir al usuario registrar las ventas realizadas en el negoci
 2. El usuario solicita registrar una nueva venta.  
 3. El sistema crea una venta en proceso.  
 4. El usuario agrega productos a la venta mediante la operación de asociar producto a venta (RF-12).  
-5. El sistema muestra, por cada producto agregado, su nombre, precio y cantidad.  
+5. El sistema muestra, por cada producto agregado, su nombre, precio y cantidad junto con su unidad de medida.
 6. El sistema calcula los subtotales de cada línea y el total de la venta.  
 7. El sistema ingresa automáticamente la fecha y hora actual en la que se realiza la venta.  
 8. El usuario confirma la venta.  
@@ -364,8 +364,8 @@ El sistema debe permitir al usuario modificar una venta existente mediante la ac
 ### Flujo principal
 1. El usuario accede a la sección de ventas.  
 2. El usuario selecciona una venta existente.  
-3. El sistema muestra los datos actuales de la venta y sus detalles.  
-4. El usuario modifica la cantidad de uno o más productos de la venta.  
+3. El sistema muestra los datos actuales de la venta y sus detalles, incluyendo la cantidad de cada producto junto con su unidad de medida.
+4. El usuario modifica la cantidad de uno o más productos de la venta, respetando las reglas de cantidad según la unidad de medida del producto.
 5. El sistema recalcula automáticamente los subtotales de cada línea y el total de la venta.  
 6. El usuario confirma los cambios.  
 7. El sistema actualiza los datos de la venta en la base de datos.  
@@ -397,11 +397,13 @@ El sistema debe permitir al usuario modificar una venta existente mediante la ac
 - El subtotal de cada línea se calcula automáticamente.  
 - El total de la venta se recalcula automáticamente en base a los cambios realizados.  
 - No se puede asignar una cantidad mayor al stock disponible cuando la modificación implique un aumento.  
-- La cantidad debe ser un número entero mayor a 0.  
+- La cantidad debe ser un número real mayor a 0. 
 - El stock de los productos debe actualizarse en función de los cambios realizados.  
 - Si la cantidad de un producto en la venta aumenta, el sistema debe descontar del stock la diferencia correspondiente.  
 - Si la cantidad de un producto en la venta disminuye, el sistema no debe modificar el stock del producto.  
-- Si la cantidad de un producto en la venta se mantiene sin cambios, el sistema no debe modificar el stock del producto.  
+- Si la cantidad de un producto en la venta se mantiene sin cambios, el sistema no debe modificar el stock del producto.
+- La cantidad de cada producto modificada debe ser válida según la unidad de medida del producto asociado.
+- Si la unidad de medida del producto es "unidad", la cantidad no debe contener decimales.  
 
 ## RF-10: Eliminar Venta
 
