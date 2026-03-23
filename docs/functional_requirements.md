@@ -199,7 +199,7 @@ El sistema debe permitir al usuario identificar un producto existente mediante l
 1. El usuario accede a la sección de productos.  
 2. El usuario escanea el código de barras del producto con el lector.  
 3. El sistema reconoce el código de barras.  
-4. El sistema muestra los datos del producto identificado mediante la operación de consultar producto (RF-17): código, nombre, precio, estado y stock disponible.
+4. El sistema muestra los datos del producto identificado mediante la operación de consultar producto (RF-17): código, nombre, precio, unidad de medida, estado y stock disponible.
 
 ### Flujos alternativos
 
@@ -563,7 +563,7 @@ El sistema debe permitir generar un ticket de compra para cada venta registrada,
    - Fecha de emisión del ticket  
    - Hora de emisión del ticket  
    - Nombre de cada producto vendido
-   - Cantidad de cada producto  
+   - Cantidad de cada producto junto con su unidad de medida (por ejemplo: "2.5 kg", "1 unidad") 
    - Precio unitario  
    - Subtotal de cada producto  
    - Total de la venta  
@@ -644,7 +644,8 @@ El sistema debe permitir al usuario consultar la información detallada de un pr
 5. El sistema muestra la información del producto con los siguientes datos:
    - Código del producto  
    - Nombre del producto  
-   - Precio  
+   - Precio
+   - Unidad de medida
    - Estado  
    - Stock disponible  
 
