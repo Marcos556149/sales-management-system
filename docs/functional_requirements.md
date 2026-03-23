@@ -472,9 +472,9 @@ El sistema debe permitir asociar un producto a una venta, especificando la canti
 1. El usuario proporciona una venta.  
 2. El usuario selecciona un producto.  
 3. El sistema muestra la información del producto.  
-4. El sistema solicita al usuario la cantidad de unidades a agregar.  
+4. El sistema solicita al usuario la cantidad de unidades a agregar, mostrando la unidad de medida del producto para mayor claridad.
 5. El usuario ingresa la cantidad deseada.  
-6. El sistema valida la cantidad ingresada.  
+6. El sistema valida la cantidad ingresada, asegurándose de que cumpla las reglas de la unidad de medida del producto.
 7. El sistema asocia el producto a la venta.  
 8. El sistema actualiza el stock del producto en función de la cantidad agregada.  
 9. El sistema registra el detalle de venta con los siguientes datos:  
@@ -496,8 +496,8 @@ El sistema debe permitir asociar un producto a una venta, especificando la canti
 2.a.1 El sistema no encuentra el producto seleccionado.  
 2.a.2 El sistema muestra un mensaje: "Producto no encontrado".
 
-**5.a Cantidad inválida**  
-5.a.1 El sistema detecta que la cantidad ingresada es menor o igual a 0 o mayor al stock disponible.  
+**5.a Cantidad inválida**
+5.a.1 El sistema detecta que la cantidad ingresada es menor o igual a 0, mayor al stock disponible, o no es compatible con la unidad de medida del producto (por ejemplo, un número decimal para productos vendidos por unidad).  
 5.a.2 El sistema muestra un mensaje de error indicando la corrección necesaria.
 
 **7.a Producto ya asociado a la venta**  
@@ -507,13 +507,14 @@ El sistema debe permitir asociar un producto a una venta, especificando la canti
 
 ### Reglas de negocio
 - La venta debe existir como entidad válida en el sistema (en proceso o registrada).  
-- El producto debe existir en el sistema.  
-- La cantidad debe ser un número entero mayor a 0.  
+- El producto debe existir en el sistema.   
 - No se puede agregar una cantidad mayor al stock disponible.  
 - Si el producto ya está asociado a la venta, se debe incrementar su cantidad en lugar de duplicar el registro.  
 - Los productos con estado "Inactivo" no podrán ser añadidos a la venta.  
 - Por defecto, al asociar un producto a la venta, el sistema asigna una cantidad inicial de 1 unidad, la cual el usuario puede modificar antes de confirmar.  
 - El identificador único del detalle de venta es asignado automáticamente por el sistema.
+- La cantidad debe ser un número mayor a 0 y compatible con la unidad de medida del producto.
+- Si la unidad de medida del producto es "unidad", la cantidad no debe contener decimales.
 
 ## RF-13: Desvincular Producto de Venta
 
@@ -676,7 +677,7 @@ El sistema debe permitir al usuario consultar la información detallada de una v
    - Hora de la venta  
    - Nombre de usuario (user_name) del vendedor  
    - Total de la venta  
-   - Detalle de cada producto vendido: código, nombre, cantidad, precio al momento de la venta y subtotal  
+   - Detalle de cada producto vendido: código, nombre, cantidad junto con su unidad de medida, precio al momento de la venta y subtotal
 
 ### Flujos alternativos
 
@@ -686,7 +687,8 @@ El sistema debe permitir al usuario consultar la información detallada de una v
 
 ### Reglas de negocio
 - El sistema debe permitir consultar una venta específica mediante su identificador.  
-- La información mostrada debe reflejar fielmente los datos almacenados de la venta y sus detalles.  
+- La información mostrada debe reflejar fielmente los datos almacenados de la venta y sus detalles.
+- La cantidad de cada producto se muestra junto con su unidad de medida para reflejar correctamente la venta.  
 
 ## Reglas de Acceso al Sistema
 
