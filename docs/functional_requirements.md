@@ -32,7 +32,7 @@ El sistema debe permitir al usuario registrar un nuevo producto.
 ### Flujo principal
 1. El usuario accede a la sección de productos.  
 2. El usuario solicita registrar un nuevo producto.  
-3. El sistema solicita los siguientes datos del producto: código, nombre, precio, estado y stock disponible.  
+3. El sistema solicita los siguientes datos del producto: código, nombre, precio, unidad de medida, estado y stock disponible.
 4. El usuario ingresa los datos requeridos.  
 5. El sistema valida la información ingresada.  
 6. El sistema guarda el producto en la base de datos.  
@@ -53,9 +53,11 @@ El sistema debe permitir al usuario registrar un nuevo producto.
 - El nombre del producto es obligatorio.  
 - El estado del producto es obligatorio y, por defecto, es "Activo".  
 - El precio del producto es obligatorio y debe ser un número real mayor o igual a 0.  
-- El stock disponible es obligatorio y debe ser un número entero mayor o igual a 0.  
+- El stock disponible es obligatorio y debe ser un número real mayor o igual a 0.
 - El sistema debe asignar, por defecto, un valor de 0 al precio y al stock al momento de crear el producto.
 - El nombre del producto debe ser descriptivo y permitir diferenciarlo claramente de otros productos similares dentro del sistema.
+- La unidad de medida del producto es obligatoria (por ejemplo: unidad, kilogramo, litro).
+- Si la unidad de medida es "unidad", el stock debe expresarse en valores enteros.
 
 ## RF-2: Consultar Productos
 
