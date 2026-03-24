@@ -23,7 +23,10 @@
 
 ### Reglas Generales
 - [Reglas de Acceso al Sistema](#reglas-de-acceso-al-sistema)
+  - [Tipos de usuario](#tipos-de-usuario)
 - [Datos de usuario almacenados](#datos-de-usuario-almacenados)
+- [Datos numéricos y decimales](#datos-numéricos-y-decimales)
+- [Formatos de fecha y hora](#formatos-de-fecha-y-hora)
 
 ## RF-1: Registrar Producto
 
