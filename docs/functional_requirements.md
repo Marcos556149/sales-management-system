@@ -691,9 +691,11 @@ El sistema debe permitir al usuario consultar la información detallada de una v
 - La información mostrada debe reflejar fielmente los datos almacenados de la venta y sus detalles.
 - La cantidad de cada producto se muestra junto con su unidad de medida para reflejar correctamente la venta.  
 
-## Reglas de Acceso al Sistema
+## Reglas Generales
 
-### Tipos de usuario
+### Reglas de Acceso al Sistema
+
+#### Tipos de usuario
 
 **Administrador**
 - Acceso completo a todas las funcionalidades del sistema.  
@@ -707,7 +709,7 @@ El sistema debe permitir al usuario consultar la información detallada de una v
 - No puede modificar ni eliminar ventas ni sus detalles.
 
 
-## Datos de usuario almacenados
+### Datos de usuario almacenados
 
 - El sistema debe almacenar información de cada usuario para gestionar su acceso y permisos.  
 - Cada usuario tendrá:
@@ -715,3 +717,20 @@ El sistema debe permitir al usuario consultar la información detallada de una v
   - Nombre de usuario: nombre único para identificar al usuario en el sistema.  
   - Rol: tipo de usuario que determina los permisos dentro del sistema.  
   - Contraseña: asociada a la cuenta del usuario.  
+
+### Datos numéricos y decimales
+
+- Todos los valores numéricos que representen montos monetarios o cantidades de productos deben almacenarse y mostrarse con un máximo de 2 decimales.  
+  Esto incluye:  
+  - Precio del producto.  
+  - Precio del producto en detalle de venta (precio de venta).  
+  - Subtotal de cada detalle de venta.  
+  - Total de la venta.  
+  - Stock del producto.  
+  - Cantidad del producto en cada detalle de venta.
+
+### Formatos de fecha y hora
+
+- Todas las fechas en el sistema deben mostrarse en formato `DD/MM/YYYY`.  
+- Todas las horas en el sistema deben mostrarse en formato de 24 horas con segundos `HH:MM:SS`.  
+- Los formatos se aplican en la interfaz de usuario y en reportes.  
