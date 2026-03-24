@@ -79,15 +79,30 @@ El ticket deberá representar el comprobante de la operación realizada.
 
 8. Usuarios
 El sistema deberá contar con dos tipos de acceso predefinidos(roles):
+
 Administrador
 	*Tendrá acceso completo a todas las funcionalidades del sistema.
 	*Podrá consultar y gestionar productos.
+	*Podrá registrar, modificar y dar de baja productos.
+	*Podrá buscar productos por código de barras.
 	*Podrá consultar y gestionar ventas, incluidos los detalles de cada venta.
+	*Podrá registrar, modificar y eliminar ventas.
+	*Podrá asociar y desvincular productos de las ventas.
+	*Podrá generar tickets de venta.
+	*Podrá consultar información detallada de productos y ventas.
+
 Operador(cajero)
+	*Podrá acceder al sistema mediante autenticación.
 	*Podrá registrar ventas.
+	*Podrá asociar productos a ventas.
+	*Podrá desvincular productos de ventas únicamente durante el registro de una venta.
+	*Podrá generar tickets de venta.
 	*Podrá consultar productos.
-	*No podrá crear, modificar o eliminar productos.
-	*No podrá modificar o eliminar ventas ni los detalles de las mismas.
+	*Podrá buscar productos por código de barras.
+	*Podrá consultar ventas.
+	*No podrá crear, modificar o dar de baja productos.
+	*No podrá registrar productos por código de barras.
+	*No podrá modificar o eliminar ventas ni los detalles de las mismas una vez registradas.
 El sistema deberá almacenar información sobre cada usuario para poder gestionar su acceso y permisos. Cada usuario tendrá los siguientes datos:
 	*ID de usuario: identificador único interno de cada usuario.
 	*Nombre de usuario: nombre único que se utiliza para iniciar sesión en el sistema.
