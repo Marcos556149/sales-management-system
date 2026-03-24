@@ -102,3 +102,7 @@ Para acceder al sistema, el usuario deberá ingresar:
 	*Contraseña correspondiente a su cuenta.
 Nota: Ya no es necesario que el usuario seleccione manualmente su tipo de usuario; el rol se obtiene automáticamente del registro en la base de datos.
 
+10. Interfaz de usuario
+El sistema deberá permitir al usuario cambiar el idioma de la interfaz entre español e inglés en cualquier momento durante la sesión.
+Esta funcionalidad deberá afectar todos los textos de la interfaz, incluyendo menús, etiquetas, mensajes y notificaciones.
+El idioma seleccionado se mantendrá durante toda la sesión del usuario.
