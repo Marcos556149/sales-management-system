@@ -280,7 +280,8 @@ El sistema debe permitir al usuario registrar las ventas realizadas en el negoci
 - Mientras una venta se encuentra en proceso de registro, puede existir sin productos asociados.  
 - Si durante el proceso de registro se eliminan todos los productos de la venta, la venta no debe eliminarse automáticamente.  
 - Durante el proceso de registro, el usuario puede modificar la cantidad de los productos agregados a la venta.  
-- Si el usuario aumenta o disminuye la cantidad de un producto en un detalle de venta, el stock disponible se actualizará automáticamente según la modificación realizada.  
+- Si durante el registro de la venta la cantidad de un producto aumenta, el sistema descontará del stock la diferencia correspondiente.  
+- Si durante el registro de la venta la cantidad de un producto disminuye o se elimina un detalle, el sistema aumentará del stock la diferencia correspondiente.
 - Durante el proceso de registro, el usuario puede eliminar productos (detalles de venta) de la venta mediante la operación definida en RF-13.  
 - El identificador único de la venta se asigna automáticamente por el sistema.
 - Cada venta queda asociada al usuario que la registró.
@@ -400,7 +401,7 @@ El sistema debe permitir al usuario modificar una venta existente mediante la ac
 - La cantidad debe ser un número real mayor a 0. 
 - El stock de los productos debe actualizarse en función de los cambios realizados.  
 - Si la cantidad de un producto en la venta aumenta, el sistema debe descontar del stock la diferencia correspondiente.  
-- Si la cantidad de un producto en la venta disminuye, el sistema no debe modificar el stock del producto.  
+- Si la cantidad de un producto en la venta disminuye, el sistema debe aumentar en el stock la diferencia correspondiente.  
 - Si la cantidad de un producto en la venta se mantiene sin cambios, el sistema no debe modificar el stock del producto.
 - La cantidad de cada producto modificada debe ser válida según la unidad de medida del producto asociado.
 - Si la unidad de medida del producto es "unidad", la cantidad no debe contener decimales.  
@@ -433,7 +434,7 @@ El sistema debe permitir al usuario eliminar una venta existente, eliminando tam
 ### Reglas de negocio
 - La eliminación de una venta implica la eliminación de todos sus detalles asociados.  
 - La eliminación de la venta es física (se elimina de la base de datos).  
-- La eliminación de una venta no modifica el stock de los productos involucrados.  
+- La eliminación de una venta ajustará automáticamente el stock de los productos involucrados, aumentando la cantidad correspondiente según los detalles de venta eliminados.
 
 ## RF-11: Asociar Producto a Venta mediante Código de Barras
 
@@ -547,8 +548,8 @@ El sistema debe permitir desvincular un producto de una venta, eliminando el det
 ### Reglas de negocio
 - La venta debe existir como entidad válida en el sistema (en proceso o registrada).  
 - El producto debe estar previamente asociado a la venta.  
-- Si la venta está en proceso de registro, la eliminación de un detalle de venta aumenta el stock disponible de los productos eliminados.  
-- Si la venta ya ha sido registrada, la eliminación de un detalle de venta no modifica el stock de los productos.  
+- Si la venta está en proceso de registro, la eliminación de un detalle de venta ajustará automáticamente el stock aumentando la cantidad correspondiente.  
+- Si la venta ya ha sido registrada, la eliminación de un detalle de venta también ajustará automáticamente el stock aumentando la cantidad correspondiente.
 - Si la venta se encuentra en proceso de registro y se eliminan todos sus productos, la venta no debe eliminarse automáticamente.  
 - Si la venta ya ha sido registrada y se eliminan todos sus productos, la venta debe eliminarse automáticamente.
 
