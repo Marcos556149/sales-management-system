@@ -714,16 +714,49 @@ El sistema debe permitir al usuario cambiar el idioma de la interfaz entre espa�
 
 #### Tipos de usuario
 
+#### Tipos de usuario
+
 **Administrador**
 - Acceso completo a todas las funcionalidades del sistema.  
-- Puede gestionar productos.  
-- Puede gestionar ventas y sus detalles.  
+- Puede registrar productos (RF-1).  
+- Puede consultar productos (RF-2).  
+- Puede modificar productos (RF-3).  
+- Puede dar de baja productos (RF-4).  
+- Puede buscar productos por código de barras (RF-5).  
+- Puede registrar productos por código de barras (RF-6).  
+- Puede consultar producto específico (RF-17).  
+- Puede registrar ventas (RF-7).  
+- Puede consultar ventas (RF-8).  
+- Puede modificar ventas (RF-9).  
+- Puede eliminar ventas (RF-10).  
+- Puede asociar productos a ventas (RF-11, RF-12).  
+- Puede desvincular productos de ventas (RF-13).  
+- Puede generar ticket de venta (RF-14).  
+- Puede consultar venta específica (RF-18).  
+- Puede actualizar lista de productos y ventas (RF-16).  
+- Puede autenticarse en el sistema (RF-15).  
+- Puede cambiar el idioma de la interfaz (RF-19).  
 
 **Operador (cajero)**
-- Puede registrar ventas.  
-- Puede consultar productos y ventas.  
-- No puede gestionar productos.  
-- No puede modificar ni eliminar ventas ni sus detalles.
+- Puede autenticarse en el sistema (RF-15).  
+- Puede consultar productos (RF-2).  
+- Puede consultar producto específico (RF-17).  
+- Puede buscar productos por código de barras (RF-5).  
+- Puede consultar ventas (RF-8).  
+- Puede consultar venta específica (RF-18).  
+- Puede registrar ventas (RF-7).  
+- Puede asociar productos a ventas (RF-11, RF-12).  
+- Puede desvincular productos de ventas durante el registro de una venta (RF-13).  
+- Puede generar ticket de venta (RF-14).  
+- Puede actualizar lista de productos y ventas (RF-16).  
+- Puede cambiar el idioma de la interfaz (RF-19).  
+- No puede registrar productos (RF-1).  
+- No puede modificar productos (RF-3).  
+- No puede dar de baja productos (RF-4).
+- No puede registrar productos por código de barras (RF-6).    
+- No puede modificar ventas (RF-9).  
+- No puede eliminar ventas (RF-10).
+- No puede desvincular productos de ventas una vez registrada la venta en el sistema (RF-13).
 
 
 ### Datos de usuario almacenados
