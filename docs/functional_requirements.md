@@ -19,6 +19,7 @@
 - [RF-16: Actualizar Lista de Productos / Ventas](#rf-16-actualizar-lista-de-productos--ventas)
 - [RF-17: Consultar Producto](#rf-17-consultar-producto)
 - [RF-18: Consultar Venta](#rf-18-consultar-venta)
+- [RF-19: Cambiar Idioma de la Interfaz](#rf-19-cambiar-idioma-de-la-interfaz)
 
 ### Reglas Generales
 - [Reglas de Acceso al Sistema](#reglas-de-acceso-al-sistema)
@@ -689,7 +690,23 @@ El sistema debe permitir al usuario consultar la información detallada de una v
 ### Reglas de negocio
 - El sistema debe permitir consultar una venta específica mediante su identificador.  
 - La información mostrada debe reflejar fielmente los datos almacenados de la venta y sus detalles.
-- La cantidad de cada producto se muestra junto con su unidad de medida para reflejar correctamente la venta.  
+- La cantidad de cada producto se muestra junto con su unidad de medida para reflejar correctamente la venta.
+
+## RF-19: Cambiar Idioma de la Interfaz
+
+### Descripción
+El sistema debe permitir al usuario cambiar el idioma de la interfaz entre español e inglés.
+
+### Flujo principal
+1. El usuario accede a la configuración de la interfaz.  
+2. El usuario selecciona el idioma deseado (español o inglés).  
+3. El sistema aplica el cambio de idioma de manera inmediata en todos los textos visibles.  
+4. El sistema confirma el cambio mostrando la interfaz en el idioma seleccionado.
+
+### Reglas de negocio
+- El cambio de idioma no debe afectar los datos registrados en el sistema.  
+- El idioma seleccionado se mantiene durante toda la sesión del usuario.  
+- Todos los elementos de la interfaz (menús, botones, mensajes, notificaciones) deben mostrarse en el idioma seleccionado.
 
 ## Reglas Generales
 
