@@ -618,16 +618,19 @@ El sistema debe permitir a los usuarios acceder a sus funcionalidades mediante u
 - La contraseña ingresada debe ser correcta para el username proporcionado.  
 - El sistema determina el rol automáticamente desde el registro del usuario y restringe el acceso a las funcionalidades según dicho rol.
 
-## RF-16: Actualizar Lista de Productos / Ventas
+## RF-16: Actualizar Lista de Productos / Ventas / Estadísticas
 
 ### Descripción
-El sistema debe permitir al usuario actualizar la lista de productos o ventas mostrada en pantalla, reflejando cualquier cambio que haya ocurrido en el sistema desde la última visualización.
+El sistema debe permitir al usuario actualizar la lista de productos, ventas o estadísticas de ventas mostrada en pantalla, reflejando cualquier cambio que haya ocurrido en el sistema desde la última visualización.
 
 ### Flujo principal
-1. El usuario accede a la sección de Productos o Ventas.  
+1. El usuario accede a la sección de Productos, Ventas o Estadísticas de Ventas.  
 2. El usuario presiona el botón "Actualizar" o "Refrescar".  
 3. El sistema recupera la información más reciente de la base de datos.  
-4. El sistema muestra la lista actualizada de productos o ventas en pantalla.  
+4. El sistema muestra la lista actualizada en pantalla:  
+   - Productos  
+   - Ventas  
+   - Estadísticas de Ventas (total recaudado y lista de productos vendidos con cantidad)
 
 ### Flujos alternativos
 
@@ -638,7 +641,7 @@ El sistema debe permitir al usuario actualizar la lista de productos o ventas mo
 ### Reglas de negocio
 - La actualización solo debe refrescar la información mostrada, sin modificar datos existentes.  
 - El sistema debe mostrar los cambios realizados por otros usuarios o procesos desde la última actualización.  
-- El botón de actualización debe estar disponible para todos los usuarios con permiso de consulta en la sección correspondiente (Productos o Ventas).
+- El botón de actualización debe estar disponible para todos los usuarios con permiso de consulta en la sección correspondiente (Productos, Ventas o Estadísticas de Ventas).
 
 ## RF-17: Consultar Producto
 
