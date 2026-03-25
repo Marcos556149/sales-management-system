@@ -758,7 +758,7 @@ El sistema debe permitir al usuario consultar estadísticas de ventas en un rang
 ### Reglas de negocio
 - El sistema debe permitir consultar estadísticas de ventas por día, mes o año.  
 - La información mostrada debe incluir el total recaudado y la lista de productos vendidos con sus cantidades.  
-- El sistema debe permitir ordenar los productos vendidos por cantidad segun la popularidad: "Más vendidos → menos vendidos" o "Menos vendidos → más vendidos".  
+- El sistema debe permitir ordenar los productos vendidos por cantidad: "Más vendidos → menos vendidos" o "Menos vendidos → más vendidos".  
 - El sistema debe permitir filtrar los productos vendidos por "Productos vendidos", "Productos no vendidos" o "Todos".
    - "Productos vendidos" muestra únicamente los productos cuya cantidad vendida es mayor que 0.  
    - "Productos no vendidos" muestra únicamente los productos cuya cantidad vendida es igual a 0.  
