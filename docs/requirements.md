@@ -120,3 +120,14 @@ Para acceder al sistema, el usuario deberá ingresar:
 El sistema deberá permitir al usuario cambiar el idioma de la interfaz entre español e inglés en cualquier momento durante la sesión.
 Esta funcionalidad deberá afectar todos los textos de la interfaz, incluyendo menús, etiquetas, mensajes y notificaciones.
 El idioma seleccionado se mantendrá durante toda la sesión del usuario.
+
+11. Estadísticas de ventas
+El sistema deberá permitir al usuario obtener información estadística sobre las ventas realizadas, en un rango de tiempo seleccionado (día, mes, año).
+De cada período seleccionado se deberán mostrar los siguientes datos:
+	*Total recaudado en ventas
+	*Lista de productos vendidos con cantidad
+El sistema deberá permitir:
+	*Seleccionar un día específico del año (por ejemplo, 15 de agosto de 2026) y mostrar la información correspondiente
+	*Seleccionar un mes específico de un año (por ejemplo, julio de 2025) y mostrar la información correspondiente
+	*Seleccionar un año específico (por ejemplo, 2024) y mostrar la información correspondiente
+	*Actualizar la información mostrada en pantalla, para reflejar cambios recientes en el sistema
