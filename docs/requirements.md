@@ -110,12 +110,11 @@ El sistema deberá almacenar información sobre cada usuario para poder gestiona
 	*Contraseña: contraseña asociada a la cuenta del usuario, utilizada para validar su identidad.
 Nota: Esta información se almacena en la base de datos para poder autenticar a los usuarios y controlar los accesos a las diferentes funcionalidades del sistema.
 
-9. Acceso al sistema (actualizado)
+9. Acceso al sistema
 El sistema deberá requerir autenticación para permitir el acceso a sus funcionalidades.
 Para acceder al sistema, el usuario deberá ingresar:
 	*Nombre de usuario (username) único asignado al usuario.
 	*Contraseña correspondiente a su cuenta.
-Nota: Ya no es necesario que el usuario seleccione manualmente su tipo de usuario; el rol se obtiene automáticamente del registro en la base de datos.
 
 10. Interfaz de usuario
 El sistema deberá permitir al usuario cambiar el idioma de la interfaz entre español e inglés en cualquier momento durante la sesión.
