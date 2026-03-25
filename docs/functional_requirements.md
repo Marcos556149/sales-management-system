@@ -790,7 +790,8 @@ El sistema debe permitir al usuario consultar estadísticas de ventas en un rang
 - Puede consultar venta específica (RF-18).  
 - Puede actualizar lista de productos y ventas (RF-16).  
 - Puede autenticarse en el sistema (RF-15).  
-- Puede cambiar el idioma de la interfaz (RF-19).  
+- Puede cambiar el idioma de la interfaz (RF-19).
+- Puede consultar estadísticas de ventas (RF-20).
 
 **Operador (cajero)**
 - Puede autenticarse en el sistema (RF-15).  
@@ -804,7 +805,8 @@ El sistema debe permitir al usuario consultar estadísticas de ventas en un rang
 - Puede desvincular productos de ventas durante el registro de una venta (RF-13).  
 - Puede generar ticket de venta (RF-14).  
 - Puede actualizar lista de productos y ventas (RF-16).  
-- Puede cambiar el idioma de la interfaz (RF-19).  
+- Puede cambiar el idioma de la interfaz (RF-19).
+- Puede consultar estadísticas de ventas (RF-20).
 - No puede registrar productos (RF-1).  
 - No puede modificar productos (RF-3).  
 - No puede dar de baja productos (RF-4).
