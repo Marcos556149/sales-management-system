@@ -90,6 +90,7 @@ Administrador
 	*Podrá asociar y desvincular productos de las ventas.
 	*Podrá generar tickets de venta.
 	*Podrá consultar información detallada de productos y ventas.
+	*Podrá consultar estadísticas de ventas
 
 Operador(cajero)
 	*Podrá acceder al sistema mediante autenticación.
@@ -100,6 +101,7 @@ Operador(cajero)
 	*Podrá consultar productos.
 	*Podrá buscar productos por código de barras.
 	*Podrá consultar ventas.
+	*Podrá consultar estadísticas de ventas
 	*No podrá crear, modificar o dar de baja productos.
 	*No podrá registrar productos por código de barras.
 	*No podrá modificar o eliminar ventas ni los detalles de las mismas una vez registradas.
