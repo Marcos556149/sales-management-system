@@ -20,6 +20,7 @@
 - [RF-17: Consultar Producto](#rf-17-consultar-producto)
 - [RF-18: Consultar Venta](#rf-18-consultar-venta)
 - [RF-19: Cambiar Idioma de la Interfaz](#rf-19-cambiar-idioma-de-la-interfaz)
+- [RF-20: Consultar Estadísticas de Ventas](#rf-20-consultar-estadísticas-de-ventas)
 
 ### Reglas Generales
 - [Reglas de Acceso al Sistema](#reglas-de-acceso-al-sistema)
