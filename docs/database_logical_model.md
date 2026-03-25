@@ -1,14 +1,14 @@
-# Modelo Lógico de Base de Datos
+# Logical Database Model
 
-## Descripción
-Este documento describe la estructura lógica de la base de datos del sistema de gestión de ventas, incluyendo tablas, claves primarias (PK) y claves foráneas (FK).
+## Description
+This document describes the logical structure of the database for the sales management system, including tables, primary keys (PK), and foreign keys (FK).
 
 ---
 
-## Entidades
+## Entities
 
 ### product
-Representa los productos disponibles en el sistema.
+Represents the products available in the system.
 
 - product_code (PK)
 - product_name
@@ -20,7 +20,7 @@ Representa los productos disponibles en el sistema.
 ---
 
 ### user
-Representa los usuarios del sistema.
+Represents the system users.
 
 - user_id (PK)
 - user_name
@@ -30,7 +30,7 @@ Representa los usuarios del sistema.
 ---
 
 ### sale
-Representa las ventas realizadas.
+Represents the sales transactions.
 
 - sale_id (PK)
 - sale_date
@@ -41,7 +41,7 @@ Representa las ventas realizadas.
 ---
 
 ### sale_detail
-Representa el detalle de cada venta, asociando productos con ventas.
+Represents the details of each sale, linking products to sales.
 
 - sale_detail_id (PK)
 - sale_price
@@ -49,7 +49,7 @@ Representa el detalle de cada venta, asociando productos con ventas.
 - sale_id (FK → sale.sale_id)
 - product_code (FK → product.product_code)
 
-## Normalización
+## Normalization
 
-El modelo de base de datos ha sido normalizado hasta la Cuarta Forma Normal (4FN).
-Este diseño garantiza la integridad de los datos y evita anomalías de inserción, actualización y eliminación.
+The database model has been normalized up to the Fourth Normal Form (4NF).
+This design ensures data integrity and prevents insertion, update, and deletion anomalies.

@@ -1,843 +1,888 @@
-## Índice
-
-### Requerimientos Funcionales
-- [RF-1: Registrar Producto](#rf-1-registrar-producto)
-- [RF-2: Consultar Productos](#rf-2-consultar-productos)
-- [RF-3: Modificar Producto](#rf-3-modificar-producto)
-- [RF-4: Dar de baja producto (baja lógica)](#rf-4-dar-de-baja-producto-baja-lógica)
-- [RF-5: Buscar Producto por Código de Barras](#rf-5-buscar-producto-por-código-de-barras)
-- [RF-6: Registrar Producto por Código de Barras](#rf-6-registrar-producto-por-código-de-barras)
-- [RF-7: Registrar Venta](#rf-7-registrar-venta)
-- [RF-8: Consultar Ventas](#rf-8-consultar-ventas)
-- [RF-9: Modificar Venta](#rf-9-modificar-venta)
-- [RF-10: Eliminar Venta](#rf-10-eliminar-venta)
-- [RF-11: Asociar Producto a Venta mediante Código de Barras](#rf-11-asociar-producto-a-venta-mediante-código-de-barras)
-- [RF-12: Asociar Producto a Venta](#rf-12-asociar-producto-a-venta)
-- [RF-13: Desvincular Producto de Venta](#rf-13-desvincular-producto-de-venta)
-- [RF-14: Generar Ticket de Venta](#rf-14-generar-ticket-de-venta)
-- [RF-15: Autenticación de Usuario](#rf-15-autenticación-de-usuario)
-- [RF-16: Actualizar Lista de Productos / Ventas](#rf-16-actualizar-lista-de-productos--ventas)
-- [RF-17: Consultar Producto](#rf-17-consultar-producto)
-- [RF-18: Consultar Venta](#rf-18-consultar-venta)
-- [RF-19: Cambiar Idioma de la Interfaz](#rf-19-cambiar-idioma-de-la-interfaz)
-- [RF-20: Consultar Estadísticas de Ventas](#rf-20-consultar-estadísticas-de-ventas)
-
-### Reglas Generales
-- [Reglas de Acceso al Sistema](#reglas-de-acceso-al-sistema)
-  - [Tipos de usuario](#tipos-de-usuario)
-- [Datos de usuario almacenados](#datos-de-usuario-almacenados)
-- [Datos numéricos y decimales](#datos-numéricos-y-decimales)
-- [Formatos de fecha y hora](#formatos-de-fecha-y-hora)
-
-## RF-1: Registrar Producto
-
-### Descripción
-El sistema debe permitir al usuario registrar un nuevo producto.
-
-### Flujo principal
-1. El usuario accede a la sección de productos.  
-2. El usuario solicita registrar un nuevo producto.  
-3. El sistema solicita los siguientes datos del producto: código, nombre, precio, unidad de medida, estado y stock disponible.
-4. El usuario ingresa los datos requeridos.  
-5. El sistema valida la información ingresada.  
-6. El sistema guarda el producto en la base de datos.  
-7. El sistema confirma el registro exitoso mediante un mensaje de confirmación: "Producto registrado exitosamente".  
-
-### Flujos alternativos
-
-**5.a Datos inválidos**  
-5.a.1 El sistema muestra un mensaje de error indicando los campos incorrectos.  
-5.a.2 El usuario corrige los datos.  
-
-**5.b Producto existente en la base de datos**  
-5.b.1 El sistema detecta que ya existe un producto con el mismo código.  
-5.b.2 El sistema muestra un mensaje de error: "El producto ya está registrado".  
-
-### Reglas de negocio
-- El código del producto es obligatorio y debe ser único dentro del sistema.  
-- El nombre del producto es obligatorio.  
-- El estado del producto es obligatorio y, por defecto, es "Activo".  
-- El precio del producto es obligatorio y debe ser un número real mayor o igual a 0.  
-- El stock disponible es obligatorio y debe ser un número real mayor o igual a 0.
-- El sistema debe asignar, por defecto, un valor de 0 al precio y al stock al momento de crear el producto.
-- El nombre del producto debe ser descriptivo y permitir diferenciarlo claramente de otros productos similares dentro del sistema.
-- La unidad de medida del producto es obligatoria (por ejemplo: unidad, kilogramo, litro).
-- Si la unidad de medida es "unidad", el stock debe expresarse en valores enteros.
-
-## RF-2: Consultar Productos
-
-### Descripción
-El sistema debe permitir al usuario consultar los productos registrados en el sistema.
-
-### Flujo principal
-1. El usuario accede a la sección de productos.  
-2. El usuario solicita consultar productos.  
-3. El sistema recupera la lista de productos de la base de datos.  
-4. El sistema muestra los productos registrados con los siguientes datos:
-   - Código del producto  
-   - Nombre del producto  
-   - Precio  
-   - Estado  
-   - Stock disponible (mostrado junto a su unidad de medida, por ejemplo: "2.5 kg", "3 unidades")
-
-### Flujos alternativos
-
-**3.a No existen productos registrados**  
-3.a.1 El sistema detecta que no hay productos en la base de datos.  
-3.a.2 El sistema muestra un mensaje: "No hay productos registrados".  
-
-**3.b Buscadores de productos**  
-
-**3.b.1 Por nombre**  
-3.b.1.1 El usuario ingresa un nombre o parte del nombre del producto.  
-3.b.1.2 El sistema filtra los productos que coinciden con el nombre ingresado.  
-
-**3.b.2 Por código**  
-3.b.2.1 El usuario ingresa un código o parte del código del producto.  
-3.b.2.2 El sistema filtra los productos que coinciden con el código ingresado.  
-
-**3.c Ordenamientos de productos**  
-
-**3.c.1 Por nombre**  
-3.c.1.1 El usuario selecciona un criterio de ordenamiento por nombre (ascendente o descendente).  
-3.c.1.2 El sistema ordena los productos según el criterio seleccionado.  
-
-**3.d Filtros de productos**  
-
-**3.d.1 Por estado**  
-3.d.1.1 El usuario selecciona un estado del producto (Activo, Inactivo o Todos).  
-3.d.1.2 El sistema filtra los productos según el estado seleccionado.  
-
-**3.f Producto no encontrado**  
-3.f.1 El sistema detecta que no existen productos que coincidan con el criterio de búsqueda.  
-3.f.2 El sistema muestra un mensaje: "No se encontraron productos".  
-
-### Reglas de negocio
-- El sistema debe permitir consultar todos los productos registrados.  
-- El sistema debe permitir buscar productos por nombre o código.  
-- El sistema debe permitir ordenar los productos por nombre (ascendente o descendente).  
-- El sistema debe permitir filtrar los productos por estado (Activo, Inactivo o Todos).  
-- Si el usuario no selecciona ningún filtro por estado, el sistema muestra por defecto "Todos".  
-- Si el usuario no selecciona ningún ordenamiento por nombre, el sistema aplica por defecto "Ascendente".  
-
-## RF-3: Modificar Producto
-
-### Descripción
-El sistema debe permitir al usuario modificar los datos de un producto existente.
-
-### Flujo principal
-1. El usuario accede a la sección de productos.  
-2. El usuario selecciona un producto.  
-3. El sistema muestra los datos actuales del producto.  
-4. El usuario solicita modificar el producto.  
-5. El usuario modifica los siguientes datos del producto: código, nombre, precio, unidad de medida y stock disponible.
-6. El sistema valida la información ingresada.  
-7. El sistema actualiza los datos del producto en la base de datos.  
-8. El sistema muestra un mensaje de confirmación: "Producto actualizado exitosamente".  
-
-### Flujos alternativos
-
-**2.a Producto no encontrado**  
-2.a.1 El sistema detecta que el producto seleccionado no existe.  
-2.a.2 El sistema muestra un mensaje: "El producto no existe".  
-
-**6.a Datos inválidos**  
-6.a.1 El sistema muestra un mensaje de error indicando los campos incorrectos.  
-6.a.2 El usuario corrige los datos.  
-
-**6.b Código de producto duplicado**  
-6.b.1 El sistema detecta que el código ingresado ya pertenece a otro producto.  
-6.b.2 El sistema muestra un mensaje de error: "El código de producto ya está en uso".  
-
-### Reglas de negocio
-- El código del producto debe ser único dentro del sistema.  
-- Todos los campos editables (código, nombre, precio, unidad de medida y stock) son obligatorios.
-- El precio del producto debe ser un número real mayor o igual a 0.  
-- El stock disponible debe ser un número real mayor o igual a 0.
-- El estado del producto no puede ser modificado desde este proceso.  
-- El código del producto puede ser modificado, siempre que no esté en uso por otro producto.
-- El nombre del producto debe ser descriptivo y permitir diferenciarlo claramente de otros productos similares dentro del sistema.
-- La unidad de medida del producto es obligatoria.
-- Si la unidad de medida es "unidad", el stock debe expresarse en valores enteros.
-- Si se modifica la unidad de medida, el sistema debe validar que el stock cumpla con las restricciones de la nueva unidad.
-
-## RF-4: Dar de baja producto (baja lógica)
-
-### Descripción
-El sistema debe permitir al usuario dar de baja lógica a un producto, marcándolo como inactivo.
-
-### Flujo principal
-1. El usuario accede a la sección de productos.  
-2. El usuario selecciona un producto.  
-3. El sistema muestra los datos del producto.  
-4. El usuario solicita dar de baja el producto.  
-5. El sistema solicita confirmación de la acción.  
-6. El usuario confirma la operación.  
-7. El sistema actualiza el estado del producto a "Inactivo".  
-8. El sistema muestra un mensaje de confirmación: "Producto dado de baja exitosamente".  
-
-### Flujos alternativos
-
-**2.a Producto no encontrado**  
-2.a.1 El sistema detecta que el producto seleccionado no existe.  
-2.a.2 El sistema muestra un mensaje: "El producto no existe".  
-
-**5.a Cancelación de la operación**  
-5.a.1 El usuario cancela la operación.  
-5.a.2 El sistema no realiza cambios en el producto.  
-
-**7.a Producto ya inactivo**  
-7.a.1 El sistema detecta que el producto ya se encuentra inactivo.  
-7.a.2 El sistema muestra un mensaje: "El producto ya está inactivo".  
-
-### Reglas de negocio
-- La baja de un producto es lógica, no física.  
-- El estado del producto puede ser "Activo" o "Inactivo".  
-- Un producto inactivo no debe estar disponible para operaciones de venta.  
-
-## RF-5: Buscar Producto por Código de Barras
-
-### Descripción
-El sistema debe permitir al usuario identificar un producto existente mediante la lectura de su código de barras.
-
-### Flujo principal
-1. El usuario accede a la sección de productos.  
-2. El usuario escanea el código de barras del producto con el lector.  
-3. El sistema reconoce el código de barras.  
-4. El sistema muestra los datos del producto identificado mediante la operación de consultar producto (RF-17): código, nombre, precio, unidad de medida, estado y stock disponible.
-
-### Flujos alternativos
-
-**3.a Código de barras ilegible o no reconocido**  
-3.a.1 El sistema detecta que el código de barras no puede ser leído.  
-3.a.2 El sistema muestra un mensaje: "Código de barras no reconocido, por favor intente nuevamente".  
-
-**4.a Producto no encontrado**  
-4.a.1 El sistema detecta que el producto con ese código no existe.  
-4.a.2 El sistema ofrece al usuario la opción de registrar un nuevo producto utilizando el código de barras escaneado (ver RF-6: Registrar Producto por Código de Barras).  
-
-### Reglas de negocio
-- El código de barras debe ser único dentro del sistema.  
-- El producto debe existir previamente en la base de datos para ser identificado.  
-
-## RF-6: Registrar Producto por Código de Barras
-
-### Descripción
-El sistema permite al usuario iniciar el registro de un producto utilizando un código de barras escaneado como identificador. Esta funcionalidad complementa el RF-1: Registrar Producto.
-
-### Flujo principal
-1. El usuario accede a la sección de registro de productos.  
-2. El usuario escanea el código de barras del producto con el lector.  
-3. El sistema redirige al RF-1: Registrar Producto para completar el registro.  
-
-### Flujos alternativos
-
-**3.a Código de barras ya registrado**  
-3.a.1 El sistema detecta que el código de barras escaneado ya pertenece a otro producto.  
-3.a.2 El sistema ofrece al usuario la opción de visualizar los datos del producto utilizando el código de barras escaneado (ver RF-5: Buscar Producto por Código de Barras).  
-
-### Reglas de negocio
-- El registro completo del producto sigue las reglas definidas en RF-1: Registrar Producto.  
-
-## RF-7: Registrar Venta
-
-### Descripción
-El sistema debe permitir al usuario registrar las ventas realizadas en el negocio, almacenando los datos generales de la venta y gestionando los productos asociados mediante operaciones sobre los detalles de venta.
-
-### Flujo principal
-1. El usuario accede a la sección de ventas.  
-2. El usuario solicita registrar una nueva venta.  
-3. El sistema crea una venta en proceso.  
-4. El usuario agrega productos a la venta mediante la operación de asociar producto a venta (RF-12).  
-5. El sistema muestra, por cada producto agregado, su nombre, precio y cantidad junto con su unidad de medida.
-6. El sistema calcula los subtotales de cada línea y el total de la venta.  
-7. El sistema ingresa automáticamente la fecha y hora actual en la que se realiza la venta.  
-8. El usuario confirma la venta.  
-9. El sistema registra la venta con los siguientes datos:
-   - Identificador único de la venta (generado automáticamente por el sistema)  
-   - Fecha de la venta  
-   - Hora de la venta  
-   - Total de la venta
-   - Usuario que realizó la venta  
-10. El sistema registra los detalles de venta asociados a la venta.  
-11. El sistema muestra un mensaje de confirmación: "Venta registrada exitosamente, ¿Desea imprimir el ticket de la venta?".  
-12. El usuario confirma la impresión del ticket, invocando la operación de generar ticket de venta (RF-14).
-13. El sistema vuelve automáticamente a la sección de ventas.
-
-### Flujos alternativos
-
-**4.a Error al asociar producto**  
-4.a.1 El sistema detecta un error durante la asociación del producto (según RF-12).  
-4.a.2 El sistema muestra el mensaje correspondiente y permite continuar la operación.
-
-**8.a Venta cancelada**  
-8.a.1 El usuario decide cancelar la venta antes de confirmarla.  
-8.a.2 El sistema descarta la venta en proceso y vuelve a la sección de ventas.
-
-**12.a Impresión de ticket cancelada**  
-12.a.1 El usuario cancela la impresión del ticket de la venta.  
-12.a.2 El sistema finaliza la operación de venta y vuelve a la sección de ventas sin generar el ticket.
-
-### Reglas de negocio
-- La venta debe tener como mínimo un producto asociado para poder ser registrada.  
-- Los productos se agregan a la venta mediante la operación definida en RF-12.  
-- El cálculo de subtotales y total de la venta se realiza automáticamente.  
-- Mientras una venta se encuentra en proceso de registro, puede existir sin productos asociados.  
-- Si durante el proceso de registro se eliminan todos los productos de la venta, la venta no debe eliminarse automáticamente.  
-- Durante el proceso de registro, el usuario puede modificar la cantidad de los productos agregados a la venta.  
-- Si durante el registro de la venta la cantidad de un producto aumenta, el sistema descontará del stock la diferencia correspondiente.  
-- Si durante el registro de la venta la cantidad de un producto disminuye o se elimina un detalle, el sistema aumentará del stock la diferencia correspondiente.
-- Durante el proceso de registro, el usuario puede eliminar productos (detalles de venta) de la venta mediante la operación definida en RF-13.  
-- El identificador único de la venta se asigna automáticamente por el sistema.
-- Cada venta queda asociada al usuario que la registró.
-- La generación del ticket de venta se realiza mediante la operación definida en RF-14.
-
-## RF-8: Consultar Ventas
-
-### Descripción
-El sistema debe permitir al usuario consultar las ventas registradas en el sistema, visualizando los datos generales de cada venta y sus detalles.
-
-### Flujo principal
-1. El usuario accede a la sección de ventas.  
-2. El usuario solicita consultar las ventas.  
-3. El sistema recupera la lista de ventas de la base de datos.  
-4. El sistema muestra las ventas registradas con los siguientes datos:
-   - Identificador único de la venta  
-   - Fecha y hora de la venta
-   - Nombre de usuario (user_name) del vendedor
-   - Total de la venta  
-
-### Flujos alternativos
-
-**3.a No existen ventas registradas**  
-3.a.1 El sistema detecta que no hay ventas en la base de datos.  
-3.a.2 El sistema muestra un mensaje: "No hay ventas registradas".
-
-**3.b Ordenamientos de ventas**
-
-**3.b.1 Por día**  
-3.b.1.1 El usuario selecciona ordenar las ventas por día (Ascendente o Descendente).  
-3.b.1.2 El sistema ordena las ventas según el criterio seleccionado.  
-
-**3.b.2 Por mes**  
-3.b.2.1 El usuario selecciona ordenar las ventas por mes (Ascendente o Descendente).  
-3.b.2.2 El sistema ordena las ventas según el criterio seleccionado.  
-
-**3.b.3 Por año**  
-3.b.3.1 El usuario selecciona ordenar las ventas por año (Ascendente o Descendente).  
-3.b.3.2 El sistema ordena las ventas según el criterio seleccionado.  
-
-**3.b.4 Por hora**  
-3.b.4.1 El usuario selecciona ordenar las ventas por hora (Ascendente o Descendente).  
-3.b.4.2 El sistema ordena las ventas según el criterio seleccionado.  
-
-**3.c Filtros de ventas**
-
-**3.c.1 Por día**  
-3.c.1.1 El usuario selecciona un día específico o la opción "Todos".  
-3.c.1.2 El sistema filtra las ventas según el día seleccionado.  
-
-**3.c.2 Por mes**  
-3.c.2.1 El usuario selecciona un mes específico o la opción "Todos".  
-3.c.2.2 El sistema filtra las ventas según el mes seleccionado.  
-
-**3.c.3 Por año**  
-3.c.3.1 El usuario selecciona un año específico o la opción "Todos".  
-3.c.3.2 El sistema filtra las ventas según el año seleccionado.  
-
-**3.d Venta no encontrada**  
-3.d.1 El sistema detecta que no existen ventas que coincidan con los criterios aplicados.  
-3.d.2 El sistema muestra un mensaje: "No se encontraron ventas".
-
-### Reglas de negocio
-- El sistema debe permitir consultar todas las ventas registradas.  
-- El sistema debe permitir ordenar las ventas por día, mes, año y hora, en forma ascendente o descendente.  
-- El sistema debe permitir filtrar las ventas por día, mes y año.  
-- En los filtros por día, mes y año debe existir la opción "Todos" para indicar que no se desea aplicar dicho filtro.  
-- Si el usuario no selecciona ningún filtro por día, el sistema utiliza por defecto el día actual.  
-- Si el usuario no selecciona ningún filtro por mes, el sistema utiliza por defecto el mes actual.  
-- Si el usuario no selecciona ningún filtro por año, el sistema utiliza por defecto el año actual.  
-- Si el usuario no selecciona ningún criterio de ordenamiento por día, el sistema ordena por defecto las ventas por día en orden descendente.  
-- Si el usuario no selecciona ningún criterio de ordenamiento por mes, el sistema ordena por defecto las ventas por mes en orden descendente.  
-- Si el usuario no selecciona ningún criterio de ordenamiento por año, el sistema ordena por defecto las ventas por año en orden descendente.  
-- Si el usuario no selecciona ningún criterio de ordenamiento por hora, el sistema ordena por defecto las ventas por hora en orden descendente.  
-
-## RF-9: Modificar Venta
-
-### Descripción
-El sistema debe permitir al usuario modificar una venta existente mediante la actualización de los productos incluidos en la venta y sus cantidades.
-
-### Flujo principal
-1. El usuario accede a la sección de ventas.  
-2. El usuario selecciona una venta existente.  
-3. El sistema muestra los datos actuales de la venta y sus detalles, incluyendo la cantidad de cada producto junto con su unidad de medida.
-4. El usuario modifica la cantidad de uno o más productos de la venta, respetando las reglas de cantidad según la unidad de medida del producto.
-5. El sistema recalcula automáticamente los subtotales de cada línea y el total de la venta.  
-6. El usuario confirma los cambios.  
-7. El sistema actualiza los datos de la venta en la base de datos.  
-8. El sistema actualiza el stock de los productos afectados.  
-9. El sistema muestra un mensaje de confirmación: "Venta actualizada exitosamente".
-
-### Flujos alternativos
-
-**2.a Venta no encontrada**  
-2.a.1 El sistema detecta que la venta seleccionada no existe.  
-2.a.2 El sistema muestra un mensaje: "La venta no existe".
-
-**4.a Cantidad inválida**  
-4.a.1 El sistema detecta que la cantidad ingresada es menor o igual a 0 o mayor al stock disponible (en caso de aumento).  
-4.a.2 El sistema muestra un mensaje de error indicando la corrección necesaria.
-
-**4.b Detalle de venta no encontrado**  
-4.b.1 El sistema detecta que el producto seleccionado para modificar ya no existe en la venta.  
-4.b.2 El sistema muestra un mensaje: "El producto no está asociado a esta venta" y no realiza cambios para ese producto.
-
-**6.a Modificación cancelada**  
-6.a.1 El usuario cancela la modificación de la venta.  
-6.a.2 El sistema no realiza cambios y vuelve a la sección de ventas.
-
-### Reglas de negocio
-- Solo se permite modificar la cantidad de los productos en la venta.  
-- No se pueden modificar manualmente el identificador, la fecha, la hora ni el total de la venta.  
-- El precio del producto en la venta no debe modificarse.  
-- El subtotal de cada línea se calcula automáticamente.  
-- El total de la venta se recalcula automáticamente en base a los cambios realizados.  
-- No se puede asignar una cantidad mayor al stock disponible cuando la modificación implique un aumento.  
-- La cantidad debe ser un número real mayor a 0. 
-- El stock de los productos debe actualizarse en función de los cambios realizados.  
-- Si la cantidad de un producto en la venta aumenta, el sistema debe descontar del stock la diferencia correspondiente.  
-- Si la cantidad de un producto en la venta disminuye, el sistema debe aumentar en el stock la diferencia correspondiente.  
-- Si la cantidad de un producto en la venta se mantiene sin cambios, el sistema no debe modificar el stock del producto.
-- La cantidad de cada producto modificada debe ser válida según la unidad de medida del producto asociado.
-- Si la unidad de medida del producto es "unidad", la cantidad no debe contener decimales.  
-
-## RF-10: Eliminar Venta
-
-### Descripción
-El sistema debe permitir al usuario eliminar una venta existente, eliminando también todos los detalles de venta asociados.
-
-### Flujo principal
-1. El usuario accede a la sección de ventas.  
-2. El usuario selecciona una venta existente.  
-3. El sistema muestra los datos de la venta y sus detalles.  
-4. El usuario solicita eliminar la venta.  
-5. El sistema solicita confirmación de la acción.  
-6. El usuario confirma la eliminación.  
-7. El sistema elimina la venta y todos sus detalles asociados de la base de datos.  
-8. El sistema muestra un mensaje de confirmación: "Venta eliminada exitosamente".
-
-### Flujos alternativos
-
-**2.a Venta no encontrada**  
-2.a.1 El sistema detecta que la venta seleccionada no existe.  
-2.a.2 El sistema muestra un mensaje: "La venta no existe".
-
-**5.a Cancelación de la eliminación**  
-5.a.1 El usuario cancela la operación.  
-5.a.2 El sistema no realiza cambios y vuelve a la sección de ventas.
-
-### Reglas de negocio
-- La eliminación de una venta implica la eliminación de todos sus detalles asociados.  
-- La eliminación de la venta es física (se elimina de la base de datos).  
-- La eliminación de una venta ajustará automáticamente el stock de los productos involucrados, aumentando la cantidad correspondiente según los detalles de venta eliminados.
-
-## RF-11: Asociar Producto a Venta mediante Código de Barras
-
-### Descripción
-El sistema debe permitir agilizar la selección de productos en el proceso de venta mediante la lectura del código de barras, agregando productos a la venta actual o iniciando una nueva venta automáticamente.  
-Esta operación utiliza RF-12 para asociar el producto a la venta una vez identificado.
-
-### Flujo principal
-1. El usuario accede a la sección de ventas.  
-2. El usuario utiliza un lector de código de barras para escanear un producto.  
-3. El sistema identifica el producto correspondiente al código leído.  
-4. Se utiliza la operación definida en RF-12 para agregar el producto a la venta, incluyendo la cantidad y la actualización de stock.  
-
-### Flujos alternativos
-
-**2.a Producto no encontrado**  
-2.a.1 El sistema no encuentra un producto asociado al código de barras leído.  
-2.a.2 El sistema muestra un mensaje: "Producto no encontrado".
-
-**3.a Venta no iniciada**  
-3.a.1 El sistema detecta que no existe una venta en curso.  
-3.a.2 El sistema inicia automáticamente una nueva venta.  
-3.a.3 El sistema continúa con el paso 4 del flujo principal.  
-
-### Reglas de negocio
-- La lectura del código de barras debe permitir identificar un único producto.  
-- La adición del producto a la venta se realiza mediante la operación RF-12, respetando todas sus reglas de negocio (cantidad mínima, stock disponible, incremento de cantidad si ya existe, asignación de cantidad por defecto, identificador de detalle generado automáticamente).  
-- Si no existe una venta en curso, el sistema debe iniciar una nueva automáticamente.  
-
-## RF-12: Asociar Producto a Venta
-
-### Descripción
-El sistema debe permitir asociar un producto a una venta, especificando la cantidad deseada, independientemente de si la venta se encuentra en proceso de registro o ya ha sido registrada.
-
-### Flujo principal
-1. El usuario proporciona una venta.  
-2. El usuario selecciona un producto.  
-3. El sistema muestra la información del producto.  
-4. El sistema solicita al usuario la cantidad de unidades a agregar, mostrando la unidad de medida del producto para mayor claridad.
-5. El usuario ingresa la cantidad deseada.  
-6. El sistema valida la cantidad ingresada, asegurándose de que cumpla las reglas de la unidad de medida del producto.
-7. El sistema asocia el producto a la venta.  
-8. El sistema actualiza el stock del producto en función de la cantidad agregada.  
-9. El sistema registra el detalle de venta con los siguientes datos:  
-   - Identificador único del detalle de venta (generado automáticamente por el sistema)  
-   - Producto asociado  
-   - Venta asociada  
-   - Cantidad agregada  
-   - Precio unitario  
-   *Nota:* El subtotal del detalle se calcula automáticamente como `cantidad × precio unitario` y *no se almacena*.  
-10. El sistema refleja el producto en el detalle de la venta.
-
-### Flujos alternativos
-
-**1.a Venta no válida**  
-1.a.1 El sistema detecta que la venta no existe o no es válida.  
-1.a.2 El sistema muestra un mensaje: "Venta no válida".
-
-**2.a Producto no encontrado**  
-2.a.1 El sistema no encuentra el producto seleccionado.  
-2.a.2 El sistema muestra un mensaje: "Producto no encontrado".
-
-**5.a Cantidad inválida**
-5.a.1 El sistema detecta que la cantidad ingresada es menor o igual a 0, mayor al stock disponible, o no es compatible con la unidad de medida del producto (por ejemplo, un número decimal para productos vendidos por unidad).  
-5.a.2 El sistema muestra un mensaje de error indicando la corrección necesaria.
-
-**7.a Producto ya asociado a la venta**  
-7.a.1 El sistema detecta que el producto ya se encuentra asociado a la venta.  
-7.a.2 El sistema incrementa la cantidad del producto en la venta.  
-7.a.3 El sistema continúa con el flujo principal.
-
-### Reglas de negocio
-- La venta debe existir como entidad válida en el sistema (en proceso o registrada).  
-- El producto debe existir en el sistema.   
-- No se puede agregar una cantidad mayor al stock disponible.  
-- Si el producto ya está asociado a la venta, se debe incrementar su cantidad en lugar de duplicar el registro.  
-- Los productos con estado "Inactivo" no podrán ser añadidos a la venta.  
-- Por defecto, al asociar un producto a la venta, el sistema asigna una cantidad inicial de 1 unidad, la cual el usuario puede modificar antes de confirmar.  
-- El identificador único del detalle de venta es asignado automáticamente por el sistema.
-- La cantidad debe ser un número mayor a 0 y compatible con la unidad de medida del producto.
-- Si la unidad de medida del producto es "unidad", la cantidad no debe contener decimales.
-
-## RF-13: Desvincular Producto de Venta
-
-### Descripción
-El sistema debe permitir desvincular un producto de una venta, eliminando el detalle de venta correspondiente.
-
-### Flujo principal
-1. El usuario proporciona una venta.  
-2. El usuario selecciona un producto asociado a la venta.  
-3. El sistema identifica el detalle de venta correspondiente.  
-4. El usuario solicita eliminar el producto de la venta.  
-5. El sistema elimina el detalle de venta.  
-6. El sistema actualiza la información de la venta.  
-7. El sistema muestra la venta actualizada.
-
-### Flujos alternativos
-
-**1.a Venta no válida**  
-1.a.1 El sistema detecta que la venta no existe o no es válida.  
-1.a.2 El sistema muestra un mensaje: "Venta no válida".
-
-**2.a Producto no asociado**  
-2.a.1 El sistema detecta que el producto no está asociado a la venta.  
-2.a.2 El sistema muestra un mensaje: "El producto no está asociado a la venta".
-
-**4.a Operación cancelada**  
-4.a.1 El usuario cancela la operación.  
-4.a.2 El sistema no realiza cambios.
-
-### Reglas de negocio
-- La venta debe existir como entidad válida en el sistema (en proceso o registrada).  
-- El producto debe estar previamente asociado a la venta.  
-- Si la venta está en proceso de registro, la eliminación de un detalle de venta ajustará automáticamente el stock aumentando la cantidad correspondiente.  
-- Si la venta ya ha sido registrada, la eliminación de un detalle de venta también ajustará automáticamente el stock aumentando la cantidad correspondiente.
-- Si la venta se encuentra en proceso de registro y se eliminan todos sus productos, la venta no debe eliminarse automáticamente.  
-- Si la venta ya ha sido registrada y se eliminan todos sus productos, la venta debe eliminarse automáticamente.
-
-## RF-14: Generar Ticket de Venta
-
-### Descripción
-El sistema debe permitir generar un ticket de compra para cada venta registrada, el cual represente el comprobante de la operación realizada e incluya la información correspondiente a la venta y sus productos asociados.
-
-### Flujo principal
-1. El sistema recibe una venta registrada.  
-2. El sistema obtiene los datos generales de la venta.  
-3. El sistema obtiene los detalles de venta asociados.  
-4. El sistema genera el ticket de venta con la siguiente información:
-   - Nombre del negocio  
-   - Fecha de emisión del ticket  
-   - Hora de emisión del ticket  
-   - Nombre de cada producto vendido
-   - Cantidad de cada producto junto con su unidad de medida (por ejemplo: "2.5 kg", "1 unidad") 
-   - Precio unitario  
-   - Subtotal de cada producto  
-   - Total de la venta  
-5. El sistema muestra el ticket generado o lo envía al medio de salida correspondiente (pantalla o impresora).
-
-### Flujos alternativos
-
-**1.a Venta no válida**  
-1.a.1 El sistema detecta que la venta no existe o no ha sido registrada.  
-1.a.2 El sistema muestra un mensaje: "Venta no válida".
-
-**5.a Error en la generación del ticket**  
-5.a.1 El sistema detecta un error al generar o imprimir el ticket.  
-5.a.2 El sistema muestra un mensaje: "No se pudo generar el ticket".
-
-### Reglas de negocio
-- El ticket solo puede generarse para ventas previamente registradas.  
-- La información del ticket debe reflejar fielmente los datos de la venta y sus detalles.  
-- El subtotal de cada detalle de venta se calcula automáticamente por el sistema.  
-- El ticket debe incluir todos los productos asociados a la venta.  
-- El ticket constituye un comprobante de la operación realizada.
-
-## RF-15: Autenticación de Usuario
-
-### Descripción
-El sistema debe permitir a los usuarios acceder a sus funcionalidades mediante un proceso de autenticación basado en **nombre de usuario (username) único** y contraseña.
-
-### Flujo principal
-1. El usuario accede a la pantalla de inicio de sesión.  
-2. El usuario ingresa su nombre de usuario (username) único.  
-3. El usuario ingresa su contraseña.  
-4. El sistema valida que las credenciales ingresadas sean correctas.  
-5. El sistema determina el rol del usuario (`Administrador` o `Operador`) y permite el acceso a las funcionalidades según los permisos asociados.
-
-### Flujos alternativos
-
-**4.a Credenciales inválidas**  
-4.a.1 El sistema detecta que el nombre de usuario no existe o que la contraseña es incorrecta.  
-4.a.2 El sistema muestra un mensaje: "Datos inválidos".  
-
-### Reglas de negocio
-- El acceso al sistema requiere autenticación previa.  
-- La contraseña ingresada debe ser correcta para el username proporcionado.  
-- El sistema determina el rol automáticamente desde el registro del usuario y restringe el acceso a las funcionalidades según dicho rol.
-
-## RF-16: Actualizar Lista de Productos / Ventas / Estadísticas
-
-### Descripción
-El sistema debe permitir al usuario actualizar la lista de productos, ventas o estadísticas de ventas mostrada en pantalla, reflejando cualquier cambio que haya ocurrido en el sistema desde la última visualización.
-
-### Flujo principal
-1. El usuario accede a la sección de Productos, Ventas o Estadísticas de Ventas.  
-2. El usuario presiona el botón "Actualizar" o "Refrescar".  
-3. El sistema recupera la información más reciente de la base de datos.  
-4. El sistema muestra la lista actualizada en pantalla:  
-   - Productos  
-   - Ventas  
-   - Estadísticas de Ventas (total recaudado y lista de productos vendidos con cantidad)
-
-### Flujos alternativos
-
-**3.a Error al recuperar datos**  
-3.a.1 El sistema detecta un error al consultar la información.  
-3.a.2 El sistema muestra un mensaje: "No se pudo actualizar la lista. Intente nuevamente."  
-
-### Reglas de negocio
-- La actualización solo debe refrescar la información mostrada, sin modificar datos existentes.  
-- El sistema debe mostrar los cambios realizados por otros usuarios o procesos desde la última actualización.  
-- El botón de actualización debe estar disponible para todos los usuarios con permiso de consulta en la sección correspondiente (Productos, Ventas o Estadísticas de Ventas).
-
-## RF-17: Consultar Producto
-
-### Descripción
-El sistema debe permitir al usuario consultar la información detallada de un producto específico registrado en el sistema.
-
-### Flujo principal
-1. El usuario accede a la sección de productos.  
-2. El usuario selecciona un producto específico.  
-3. El sistema recibe el identificador del producto.  
-4. El sistema recupera los datos del producto desde la base de datos.  
-5. El sistema muestra la información del producto con los siguientes datos:
-   - Código del producto  
-   - Nombre del producto  
-   - Precio
-   - Unidad de medida
-   - Estado  
-   - Stock disponible  
-
-### Flujos alternativos
-
-**3.a Producto no encontrado**  
-3.a.1 El sistema detecta que el producto no existe.  
-3.a.2 El sistema muestra un mensaje: "Producto no encontrado".  
-
-### Reglas de negocio
-- El sistema debe permitir consultar un producto específico mediante su identificador.  
-
-## RF-18: Consultar Venta
-
-### Descripción
-El sistema debe permitir al usuario consultar la información detallada de una venta específica registrada en el sistema.
-
-### Flujo principal
-1. El usuario accede a la sección de ventas.  
-2. El usuario selecciona una venta específica.  
-3. El sistema recibe el identificador de la venta.  
-4. El sistema recupera los datos de la venta desde la base de datos.  
-5. El sistema muestra la información de la venta con los siguientes datos:
-   - Identificador único de la venta  
-   - Fecha de la venta  
-   - Hora de la venta  
-   - Nombre de usuario (user_name) del vendedor  
-   - Total de la venta  
-   - Detalle de cada producto vendido: código, nombre, cantidad junto con su unidad de medida, precio al momento de la venta y subtotal
-
-### Flujos alternativos
-
-**3.a Venta no encontrada**  
-3.a.1 El sistema detecta que la venta no existe.  
-3.a.2 El sistema muestra un mensaje: "Venta no encontrada".  
-
-### Reglas de negocio
-- El sistema debe permitir consultar una venta específica mediante su identificador.  
-- La información mostrada debe reflejar fielmente los datos almacenados de la venta y sus detalles.
-- La cantidad de cada producto se muestra junto con su unidad de medida para reflejar correctamente la venta.
-
-## RF-19: Cambiar Idioma de la Interfaz
-
-### Descripción
-El sistema debe permitir al usuario cambiar el idioma de la interfaz entre español e inglés.
-
-### Flujo principal
-1. El usuario accede a la configuración de la interfaz.  
-2. El usuario selecciona el idioma deseado (español o inglés).  
-3. El sistema aplica el cambio de idioma de manera inmediata en todos los textos visibles.  
-4. El sistema confirma el cambio mostrando la interfaz en el idioma seleccionado.
-
-### Reglas de negocio
-- El cambio de idioma no debe afectar los datos registrados en el sistema.  
-- El idioma seleccionado se mantiene durante toda la sesión del usuario.  
-- Todos los elementos de la interfaz (menús, botones, mensajes, notificaciones) deben mostrarse en el idioma seleccionado.
-
-## RF-20: Consultar Estadísticas de Ventas
-
-### Descripción
-El sistema debe permitir al usuario consultar estadísticas de ventas en un rango de tiempo seleccionado, mostrando el total recaudado y la lista de productos vendidos en ese período.
-
-### Flujo principal
-1. El usuario accede a la sección de estadísticas de ventas.  
-2. El usuario selecciona el período a consultar:  
-   - Día específico del año (por ejemplo, 15 de agosto de 2026)  
-   - Mes específico de un año (por ejemplo, julio de 2025)  
-   - Año específico (por ejemplo, 2024)  
-3. El sistema recupera los datos estadísticos de la base de datos.  
-4. El sistema muestra:  
-   - Total recaudado en el período seleccionado  
-   - Lista de productos (código y nombre) vendidos con su cantidad correspondiente
-
-### Flujos alternativos
-
-**2.a No existen ventas en el período seleccionado**
-2.a.1 El sistema detecta que no hay ventas en la base de datos para el período seleccionado.  
-2.a.2 El sistema muestra un mensaje: "No hay ventas registradas en el período seleccionado".  
-
-**2.b Ordenamientos de productos**
-
-**2.b.1 Por cantidad**  
-2.b.1.1 El usuario selecciona ordenar los productos vendidos según la cantidad vendida:  
-- Más vendidos → menos vendidos  
-- Menos vendidos → más vendidos  
-2.b.1.2 El sistema ordena la lista de productos según el criterio seleccionado.
-
-**2.c Filtros de productos**
-
-**2.c.1 Ventas de productos**:  
-2.c.1.1 El usuario selecciona "Productos vendidos", "Productos no vendidos" o "Todos".
-2.c.1.2 El sistema filtra los productos según el criterio seleccionado
-
-**2.d No se encontraron productos**
-2.d.1 El sistema detecta que no existen productos que coincidan con los criterios aplicados.  
-2.d.2 El sistema muestra un mensaje: "No se encontraron productos".
-
-### Reglas de negocio
-- El sistema debe permitir consultar estadísticas de ventas por día, mes o año.  
-- La información mostrada debe incluir el total recaudado y la lista de productos vendidos con sus cantidades.  
-- El sistema debe permitir ordenar los productos vendidos por cantidad: "Más vendidos → menos vendidos" o "Menos vendidos → más vendidos".  
-- El sistema debe permitir filtrar los productos vendidos por "Productos vendidos", "Productos no vendidos" o "Todos".
-   - "Productos vendidos" muestra únicamente los productos cuya cantidad vendida es mayor que 0.  
-   - "Productos no vendidos" muestra únicamente los productos cuya cantidad vendida es igual a 0.  
-- Si el usuario no selecciona ningún filtro por ventas de productos, el sistema utiliza por defecto "Productos vendidos".  
-- Si el usuario no selecciona ningún criterio de ordenamiento por cantidad, el sistema ordena por defecto los productos segun el criterio "Más vendidos → menos vendidos"
-
-## Reglas Generales
-
-### Reglas de Acceso al Sistema
-
-#### Tipos de usuario
-
-**Administrador**
-- Acceso completo a todas las funcionalidades del sistema.  
-- Puede registrar productos (RF-1).  
-- Puede consultar productos (RF-2).  
-- Puede modificar productos (RF-3).  
-- Puede dar de baja productos (RF-4).  
-- Puede buscar productos por código de barras (RF-5).  
-- Puede registrar productos por código de barras (RF-6).  
-- Puede consultar producto específico (RF-17).  
-- Puede registrar ventas (RF-7).  
-- Puede consultar ventas (RF-8).  
-- Puede modificar ventas (RF-9).  
-- Puede eliminar ventas (RF-10).  
-- Puede asociar productos a ventas (RF-11, RF-12).  
-- Puede desvincular productos de ventas (RF-13).  
-- Puede generar ticket de venta (RF-14).  
-- Puede consultar venta específica (RF-18).  
-- Puede actualizar lista de productos y ventas (RF-16).  
-- Puede autenticarse en el sistema (RF-15).  
-- Puede cambiar el idioma de la interfaz (RF-19).
-- Puede consultar estadísticas de ventas (RF-20).
-
-**Operador (cajero)**
-- Puede autenticarse en el sistema (RF-15).  
-- Puede consultar productos (RF-2).  
-- Puede consultar producto específico (RF-17).  
-- Puede buscar productos por código de barras (RF-5).  
-- Puede consultar ventas (RF-8).  
-- Puede consultar venta específica (RF-18).  
-- Puede registrar ventas (RF-7).  
-- Puede asociar productos a ventas (RF-11, RF-12).  
-- Puede desvincular productos de ventas durante el registro de una venta (RF-13).  
-- Puede generar ticket de venta (RF-14).  
-- Puede actualizar lista de productos y ventas (RF-16).  
-- Puede cambiar el idioma de la interfaz (RF-19).
-- Puede consultar estadísticas de ventas (RF-20).
-- No puede registrar productos (RF-1).  
-- No puede modificar productos (RF-3).  
-- No puede dar de baja productos (RF-4).
-- No puede registrar productos por código de barras (RF-6).    
-- No puede modificar ventas (RF-9).  
-- No puede eliminar ventas (RF-10).
-- No puede desvincular productos de ventas una vez registrada la venta en el sistema (RF-13).
-
-
-### Datos de usuario almacenados
-
-- El sistema debe almacenar información de cada usuario para gestionar su acceso y permisos.  
-- Cada usuario tendrá:
-  - ID de usuario: identificador único interno.  
-  - Nombre de usuario: nombre único para identificar al usuario en el sistema.  
-  - Rol: tipo de usuario que determina los permisos dentro del sistema.  
-  - Contraseña: asociada a la cuenta del usuario.  
-
-### Datos numéricos y decimales
-
-- Todos los valores numéricos que representen montos monetarios o cantidades de productos deben almacenarse y mostrarse con un máximo de 2 decimales.  
-  Esto incluye:  
-  - Precio del producto.  
-  - Precio del producto en detalle de venta (precio de venta).  
-  - Subtotal de cada detalle de venta.  
-  - Total de la venta.  
-  - Stock del producto.  
-  - Cantidad del producto en cada detalle de venta.
-
-### Formatos de fecha y hora
-
-- Todas las fechas en el sistema deben mostrarse en formato `DD/MM/YYYY`.  
-- Todas las horas en el sistema deben mostrarse en formato de 24 horas con segundos `HH:MM:SS`.  
-- Los formatos se aplican en la interfaz de usuario y en reportes.  
+## Index
+
+### Functional Requirements
+- [RF-1: Register Product](#rf-1-register-product)
+- [RF-2: View Products](#rf-2-view-products)
+- [RF-3: Update Product](#rf-3-update-product)
+- [RF-4: Deactivate Product (Soft Delete)](#rf-4-deactivate-product-soft-delete)
+- [RF-5: Search Product by Barcode](#rf-5-search-product-by-barcode)
+- [RF-6: Register Product by Barcode](#rf-6-register-product-by-barcode)
+- [RF-7: Register Sale](#rf-7-register-sale)
+- [RF-8: View Sales](#rf-8-view-sales)
+- [RF-9: Update Sale](#rf-9-update-sale)
+- [RF-10: Delete Sale](#rf-10-delete-sale)
+- [RF-11: Add Product to Sale via Barcode](#rf-11-add-product-to-sale-via-barcode)
+- [RF-12: Associate Product to Sale](#rf-12-associate-product-to-sale)
+- [RF-13: Remove Product from Sale](#rf-13-remove-product-from-sale)
+- [RF-14: Generate Sale Ticket](#rf-14-generate-sale-ticket)
+- [RF-15: User Authentication](#rf-15-user-authentication)
+- [RF-16: Refresh Product / Sale / Sales Statistics List](#rf-16-refresh-product--sale--sales-statistics-list)
+- [RF-17: View Product](#rf-17-view-product)
+- [RF-18: View Sale](#rf-18-view-sale)
+- [RF-19: Change Interface Language](#rf-19-change-interface-language)
+- [RF-20: View Sales Statistics](#rf-20-view-sales-statistics)
+
+### General Rules
+- [System Access Rules](#system-access-rules)
+  - [User Types](#user-types)
+- [Stored User Data](#stored-user-data)
+- [Numeric and Decimal Data](#numeric-and-decimal-data)
+- [Date and Time Formats](#date-and-time-formats)
+
+## RF-1: Register Product
+
+### Description
+The system must allow the user to register a new product.
+
+### Main Flow
+1. The user accesses the product section.  
+2. The user requests to register a new product.  
+3. The system requests the following product data: code, name, price, unit of measure, status, and available stock.  
+4. The user enters the required data.  
+5. The system validates the entered information.  
+6. The system saves the product in the database.  
+7. The system confirms the successful registration with a confirmation message: "Product successfully registered".  
+
+### Alternative Flows
+
+**5.a Invalid data**  
+5.a.1 The system displays an error message indicating the incorrect fields.  
+5.a.2 The user corrects the data.  
+
+**5.b Product already exists in the database**  
+5.b.1 The system detects that a product with the same code already exists.  
+5.b.2 The system displays an error message: "Product is already registered".  
+
+### Business Rules
+- The product code is mandatory and must be unique within the system.  
+- The product name is mandatory.  
+- The product status is mandatory and defaults to "Active".  
+- The product price is mandatory and must be a real number greater than or equal to 0.  
+- The available stock is mandatory and must be a real number greater than or equal to 0.  
+- The system must assign a default value of 0 to both price and stock when creating the product.  
+- The product name must be descriptive and clearly distinguishable from other similar products in the system.  
+- The unit of measure is mandatory (e.g., unit, kilogram, liter).  
+- If the unit of measure is "unit", the stock must be expressed in integer values.  
+
+---
+
+## RF-2: View Products
+
+### Description
+The system must allow the user to view the products registered in the system.
+
+### Main Flow
+1. The user accesses the product section.  
+2. The user requests to view products.  
+3. The system retrieves the list of products from the database.  
+4. The system displays the registered products with the following data:
+   - Product code  
+   - Product name  
+   - Price  
+   - Status  
+   - Available stock (displayed with its unit of measure, e.g., "2.5 kg", "3 units")  
+
+### Alternative Flows
+
+**3.a No registered products**  
+3.a.1 The system detects that there are no products in the database.  
+3.a.2 The system displays a message: "No products found".  
+
+**3.b Product search**  
+
+**3.b.1 By name**  
+3.b.1.1 The user enters a name or part of the product name.  
+3.b.1.2 The system filters products that match the entered name.  
+
+**3.b.2 By code**  
+3.b.2.1 The user enters a code or part of the product code.  
+3.b.2.2 The system filters products that match the entered code.  
+
+**3.c Product sorting**  
+
+**3.c.1 By name**  
+3.c.1.1 The user selects a sorting criterion by name (ascending or descending).  
+3.c.1.2 The system sorts the products according to the selected criterion.  
+
+**3.d Product filtering**  
+
+**3.d.1 By status**  
+3.d.1.1 The user selects a product status (Active, Inactive, or All).  
+3.d.1.2 The system filters products according to the selected status.  
+
+**3.f Product not found**  
+3.f.1 The system detects that no products match the search criteria.  
+3.f.2 The system displays a message: "No products found".  
+
+### Business Rules
+- The system must allow viewing all registered products.  
+- The system must allow searching products by name or code.  
+- The system must allow sorting products by name (ascending or descending).  
+- The system must allow filtering products by status (Active, Inactive, or All).  
+- If no status filter is selected, the system displays "All" by default.  
+- If no sorting criterion is selected, the system applies "Ascending" by default.  
+
+---
+
+## RF-3: Update Product
+
+### Description
+The system must allow the user to update the data of an existing product.
+
+### Main Flow
+1. The user accesses the product section.  
+2. The user selects a product.  
+3. The system displays the current product data.  
+4. The user requests to update the product.  
+5. The user modifies the following product data: code, name, price, unit of measure, and available stock.  
+6. The system validates the entered information.  
+7. The system updates the product data in the database.  
+8. The system displays a confirmation message: "Product successfully updated".  
+
+### Alternative Flows
+
+**2.a Product not found**  
+2.a.1 The system detects that the selected product does not exist.  
+2.a.2 The system displays a message: "Product does not exist".  
+
+**6.a Invalid data**  
+6.a.1 The system displays an error message indicating the incorrect fields.  
+6.a.2 The user corrects the data.  
+
+**6.b Duplicate product code**  
+6.b.1 The system detects that the entered code already belongs to another product.  
+6.b.2 The system displays an error message: "Product code is already in use".  
+
+### Business Rules
+- The product code must be unique within the system.  
+- All editable fields (code, name, price, unit of measure, and stock) are mandatory.  
+- The product price must be a real number greater than or equal to 0.  
+- The available stock must be a real number greater than or equal to 0.  
+- The product status cannot be modified in this process.  
+- The product code can be modified as long as it is not used by another product.  
+- The product name must be descriptive and clearly distinguishable from other similar products in the system.  
+- The unit of measure is mandatory.  
+- If the unit of measure is "unit", the stock must be expressed in integer values.  
+- If the unit of measure is modified, the system must validate that the stock complies with the new unit constraints.
+
+---
+
+## RF-4: Deactivate Product (Soft Delete)
+
+### Description
+The system must allow the user to logically deactivate a product by marking it as inactive.
+
+### Main Flow
+1. The user accesses the product section.  
+2. The user selects a product.  
+3. The system displays the product data.  
+4. The user requests to deactivate the product.  
+5. The system requests confirmation of the action.  
+6. The user confirms the operation.  
+7. The system updates the product status to "Inactive".  
+8. The system displays a confirmation message: "Product successfully deactivated".  
+
+### Alternative Flows
+
+**2.a Product not found**  
+2.a.1 The system detects that the selected product does not exist.  
+2.a.2 The system displays a message: "Product does not exist".  
+
+**5.a Operation canceled**  
+5.a.1 The user cancels the operation.  
+5.a.2 The system does not apply any changes to the product.  
+
+**7.a Product already inactive**  
+7.a.1 The system detects that the product is already inactive.  
+7.a.2 The system displays a message: "Product is already inactive".  
+
+### Business Rules
+- Product deactivation is logical, not physical.  
+- The product status can be "Active" or "Inactive".  
+- An inactive product must not be available for sales operations.  
+
+---
+
+## RF-5: Search Product by Barcode
+
+### Description
+The system must allow the user to identify an existing product by scanning its barcode.
+
+### Main Flow
+1. The user accesses the product section.  
+2. The user scans the product barcode using a reader.  
+3. The system recognizes the barcode.  
+4. The system displays the product data using the View Product operation (RF-17): code, name, price, unit of measure, status, and available stock.  
+
+### Alternative Flows
+
+**3.a Unreadable or unrecognized barcode**  
+3.a.1 The system detects that the barcode cannot be read.  
+3.a.2 The system displays a message: "Barcode not recognized, please try again".  
+
+**4.a Product not found**  
+4.a.1 The system detects that no product exists with the scanned code.  
+4.a.2 The system offers the user the option to register a new product using the scanned barcode (see RF-6: Register Product by Barcode).  
+
+### Business Rules
+- The barcode must be unique within the system.  
+- The product must exist in the database to be identified.  
+
+---
+
+## RF-6: Register Product by Barcode
+
+### Description
+The system allows the user to initiate product registration using a scanned barcode as an identifier. This functionality complements RF-1: Register Product.
+
+### Main Flow
+1. The user accesses the product registration section.  
+2. The user scans the product barcode using a reader.  
+3. The system redirects to RF-1: Register Product to complete the registration.  
+
+### Alternative Flows
+
+**3.a Barcode already registered**  
+3.a.1 The system detects that the scanned barcode already belongs to another product.  
+3.a.2 The system offers the user the option to view the product data using the scanned barcode (see RF-5: Search Product by Barcode).  
+
+### Business Rules
+- Full product registration follows the rules defined in RF-1: Register Product.    
+
+---
+
+## RF-7: Register Sale
+
+### Description
+The system must allow the user to register sales made in the business, storing the general sale data and managing associated products through operations on sale details.
+
+### Main Flow
+1. The user accesses the sales section.  
+2. The user requests to register a new sale.  
+3. The system creates a sale in progress.  
+4. The user adds products to the sale using the Add Product to Sale operation (RF-12).  
+5. The system displays, for each added product, its name, price, and quantity along with its unit of measure.  
+6. The system calculates line subtotals and the total sale amount.  
+7. The system automatically records the current date and time of the sale.  
+8. The user confirms the sale.  
+9. The system registers the sale with the following data:
+   - Unique sale identifier (automatically generated by the system)  
+   - Sale date  
+   - Sale time  
+   - Total amount  
+   - User who performed the sale  
+10. The system registers the sale details associated with the sale.  
+11. The system displays a confirmation message: "Sale successfully registered. Do you want to print the receipt?".  
+12. The user confirms receipt printing, invoking the Generate Receipt operation (RF-14).  
+13. The system automatically returns to the sales section.  
+
+### Alternative Flows
+
+**4.a Error adding product**  
+4.a.1 The system detects an error during the product addition (according to RF-12).  
+4.a.2 The system displays the corresponding message and allows the operation to continue.  
+
+**8.a Sale canceled**  
+8.a.1 The user decides to cancel the sale before confirming it.  
+8.a.2 The system discards the sale in progress and returns to the sales section.  
+
+**12.a Receipt printing canceled**  
+12.a.1 The user cancels the receipt printing.  
+12.a.2 The system completes the sale process and returns to the sales section without generating the receipt.  
+
+### Business Rules
+- A sale must have at least one associated product to be registered.  
+- Products are added to the sale using the operation defined in RF-12.  
+- Subtotals and total sale amount are calculated automatically.  
+- While a sale is in progress, it may exist without associated products.  
+- If all products are removed during the registration process, the sale must not be automatically deleted.  
+- During the registration process, the user can modify product quantities.  
+- If a product quantity increases during registration, the system decreases the stock by the corresponding difference.  
+- If a product quantity decreases or a detail is removed, the system increases the stock by the corresponding difference.  
+- During the registration process, the user can remove products (sale details) using the operation defined in RF-13.  
+- The unique sale identifier is automatically assigned by the system.  
+- Each sale is associated with the user who registered it.  
+- Receipt generation is performed using the operation defined in RF-14.  
+
+---
+
+## RF-8: View Sales
+
+### Description
+The system must allow the user to view sales registered in the system, displaying general sale data and their details.
+
+### Main Flow
+1. The user accesses the sales section.  
+2. The user requests to view sales.  
+3. The system retrieves the list of sales from the database.  
+4. The system displays the registered sales with the following data:
+   - Unique sale identifier  
+   - Sale date and time  
+   - Seller username (user_name)  
+   - Total amount  
+
+### Alternative Flows
+
+**3.a No registered sales**  
+3.a.1 The system detects that there are no sales in the database.  
+3.a.2 The system displays a message: "No sales found".  
+
+**3.b Sale sorting**
+
+**3.b.1 By day**  
+3.b.1.1 The user selects to sort sales by day (Ascending or Descending).  
+3.b.1.2 The system sorts the sales according to the selected criterion.  
+
+**3.b.2 By month**  
+3.b.2.1 The user selects to sort sales by month (Ascending or Descending).  
+3.b.2.2 The system sorts the sales according to the selected criterion.  
+
+**3.b.3 By year**  
+3.b.3.1 The user selects to sort sales by year (Ascending or Descending).  
+3.b.3.2 The system sorts the sales according to the selected criterion.  
+
+**3.b.4 By time**  
+3.b.4.1 The user selects to sort sales by time (Ascending or Descending).  
+3.b.4.2 The system sorts the sales according to the selected criterion.  
+
+**3.c Sale filtering**
+
+**3.c.1 By day**  
+3.c.1.1 The user selects a specific day or the "All" option.  
+3.c.1.2 The system filters sales according to the selected day.  
+
+**3.c.2 By month**  
+3.c.2.1 The user selects a specific month or the "All" option.  
+3.c.2.2 The system filters sales according to the selected month.  
+
+**3.c.3 By year**  
+3.c.3.1 The user selects a specific year or the "All" option.  
+3.c.3.2 The system filters sales according to the selected year.  
+
+**3.d Sale not found**  
+3.d.1 The system detects that no sales match the applied criteria.  
+3.d.2 The system displays a message: "No sales found".  
+
+### Business Rules
+- The system must allow viewing all registered sales.  
+- The system must allow sorting sales by day, month, year, and time, in ascending or descending order.  
+- The system must allow filtering sales by day, month, and year.  
+- Filters by day, month, and year must include the "All" option to indicate no filtering.  
+- If no day filter is selected, the system uses the current day by default.  
+- If no month filter is selected, the system uses the current month by default.  
+- If no year filter is selected, the system uses the current year by default.  
+- If no sorting criterion by day is selected, the system sorts sales by day in descending order by default.  
+- If no sorting criterion by month is selected, the system sorts sales by month in descending order by default.  
+- If no sorting criterion by year is selected, the system sorts sales by year in descending order by default.  
+- If no sorting criterion by time is selected, the system sorts sales by time in descending order by default.    
+
+---
+
+## RF-9: Update Sale
+
+### Description
+The system must allow the user to update an existing sale by modifying the products included in the sale and their quantities.
+
+### Main Flow
+1. The user accesses the sales section.  
+2. The user selects an existing sale.  
+3. The system displays the current sale data and its details, including the quantity of each product along with its unit of measure.  
+4. The user modifies the quantity of one or more products, respecting the quantity rules according to the product's unit of measure.  
+5. The system automatically recalculates line subtotals and the total sale amount.  
+6. The user confirms the changes.  
+7. The system updates the sale data in the database.  
+8. The system updates the stock of affected products.  
+9. The system displays a confirmation message: "Sale successfully updated".  
+
+### Alternative Flows
+
+**2.a Sale not found**  
+2.a.1 The system detects that the selected sale does not exist.  
+2.a.2 The system displays a message: "The sale does not exist".  
+
+**4.a Invalid quantity**  
+4.a.1 The system detects that the entered quantity is less than or equal to 0 or greater than the available stock (in case of increase).  
+4.a.2 The system displays an error message indicating the required correction.  
+
+**4.b Sale detail not found**  
+4.b.1 The system detects that the selected product to modify no longer exists in the sale.  
+4.b.2 The system displays a message: "The product is not associated with this sale" and does not apply changes for that product.  
+
+**6.a Update canceled**  
+6.a.1 The user cancels the update.  
+6.a.2 The system does not apply changes and returns to the sales section.  
+
+### Business Rules
+- Only product quantities can be modified.  
+- The sale identifier, date, time, and total amount cannot be manually modified.  
+- The product price in the sale must not be modified.  
+- Line subtotals are calculated automatically.  
+- The total sale amount is automatically recalculated based on the changes made.  
+- A quantity greater than the available stock cannot be assigned when the modification implies an increase.  
+- Quantity must be a real number greater than 0.  
+- Product stock must be updated based on the changes made.  
+- If a product quantity increases, the system decreases the stock by the corresponding difference.  
+- If a product quantity decreases, the system increases the stock by the corresponding difference.  
+- If a product quantity remains unchanged, the system must not modify the stock.  
+- Modified quantities must be valid according to the product's unit of measure.  
+- If the unit of measure is "unit", the quantity must not contain decimals.  
+
+---
+
+## RF-10: Delete Sale
+
+### Description
+The system must allow the user to delete an existing sale, including all associated sale details.
+
+### Main Flow
+1. The user accesses the sales section.  
+2. The user selects an existing sale.  
+3. The system displays the sale data and its details.  
+4. The user requests to delete the sale.  
+5. The system requests confirmation.  
+6. The user confirms the deletion.  
+7. The system deletes the sale and all its associated details from the database.  
+8. The system displays a confirmation message: "Sale successfully deleted".  
+
+### Alternative Flows
+
+**2.a Sale not found**  
+2.a.1 The system detects that the selected sale does not exist.  
+2.a.2 The system displays a message: "The sale does not exist".  
+
+**5.a Deletion canceled**  
+5.a.1 The user cancels the operation.  
+5.a.2 The system does not apply changes and returns to the sales section.  
+
+### Business Rules
+- Deleting a sale implies deleting all its associated details.  
+- Sale deletion is physical (removed from the database).  
+- Deleting a sale automatically updates product stock, increasing quantities according to the removed sale details.  
+
+---
+
+## RF-11: Add Product to Sale via Barcode
+
+### Description
+The system must allow faster product selection during the sale process using barcode scanning, adding products to the current sale or automatically starting a new one.  
+This operation uses RF-12 to associate the product once identified.  
+
+### Main Flow
+1. The user accesses the sales section.  
+2. The user scans a product using a barcode reader.  
+3. The system identifies the product associated with the scanned code.  
+4. The system uses the operation defined in RF-12 to add the product to the sale, including quantity and stock update.  
+
+### Alternative Flows
+
+**2.a Product not found**  
+2.a.1 The system cannot find a product associated with the scanned barcode.  
+2.a.2 The system displays a message: "Product not found".  
+
+**3.a No active sale**  
+3.a.1 The system detects that no sale is in progress.  
+3.a.2 The system automatically starts a new sale.  
+3.a.3 The system continues with step 4.  
+
+### Business Rules
+- A barcode must uniquely identify a product.  
+- Product addition follows RF-12 rules.  
+- If no sale is in progress, the system must start one automatically.  
+
+---
+
+## RF-12: Associate Product to Sale
+
+### Description
+The system must allow associating a product to a sale by specifying the desired quantity, regardless of whether the sale is in the process of being registered or has already been registered.
+
+### Main Flow
+1. The user provides a sale.  
+2. The user selects a product.  
+3. The system displays the product information.  
+4. The system prompts the user to enter the quantity of units to add, displaying the product’s unit of measure for clarity.  
+5. The user enters the desired quantity.  
+6. The system validates the entered quantity, ensuring it complies with the product’s unit of measure rules.  
+7. The system associates the product to the sale.  
+8. The system updates the product stock based on the added quantity.  
+9. The system records the sale detail with the following data:  
+   - Unique identifier of the sale detail (automatically generated by the system)  
+   - Associated product  
+   - Associated sale  
+   - Added quantity  
+   - Unit price  
+   *Note:* The subtotal is automatically calculated as `quantity × unit price` and is *not stored*.  
+10. The system reflects the product in the sale detail.
+
+### Alternative Flows
+
+**1.a Invalid Sale**  
+1.a.1 The system detects that the sale does not exist or is not valid.  
+1.a.2 The system displays a message: "Invalid sale".
+
+**2.a Product Not Found**  
+2.a.1 The system cannot find the selected product.  
+2.a.2 The system displays a message: "Product not found".
+
+**5.a Invalid Quantity**  
+5.a.1 The system detects that the entered quantity is less than or equal to 0, greater than the available stock, or not compatible with the product’s unit of measure (e.g., a decimal number for products sold per unit).  
+5.a.2 The system displays an error message indicating the required correction.
+
+**7.a Product Already Associated to the Sale**  
+7.a.1 The system detects that the product is already associated with the sale.  
+7.a.2 The system increments the product quantity in the sale.  
+7.a.3 The system continues with the main flow.
+
+### Business Rules
+- The sale must exist as a valid entity in the system (in progress or registered).  
+- The product must exist in the system.  
+- A quantity greater than the available stock cannot be added.  
+- If the product is already associated with the sale, its quantity must be increased instead of duplicating the record.  
+- Products with status "Inactive" cannot be added to the sale.  
+- By default, when associating a product to a sale, the system assigns an initial quantity of 1 unit, which the user can modify before confirmation.  
+- The unique identifier of the sale detail is automatically assigned by the system.  
+- The quantity must be a number greater than 0 and compatible with the product’s unit of measure.  
+- If the product’s unit of measure is "unit", the quantity must not contain decimals.
+
+---
+
+## RF-13: Remove Product from Sale
+
+### Description
+The system must allow removing a product from a sale by deleting the corresponding sale detail.
+
+### Main Flow
+1. The user provides a sale.  
+2. The user selects a product associated with the sale.  
+3. The system identifies the corresponding sale detail.  
+4. The user requests to remove the product from the sale.  
+5. The system deletes the sale detail.  
+6. The system updates the sale information.  
+7. The system displays the updated sale.
+
+### Alternative Flows
+
+**1.a Invalid Sale**  
+1.a.1 The system detects that the sale does not exist or is not valid.  
+1.a.2 The system displays a message: "Invalid sale".
+
+**2.a Product Not Associated**  
+2.a.1 The system detects that the product is not associated with the sale.  
+2.a.2 The system displays a message: "The product is not associated with the sale".
+
+**4.a Operation Cancelled**  
+4.a.1 The user cancels the operation.  
+4.a.2 The system makes no changes.
+
+### Business Rules
+- The sale must exist as a valid entity in the system (in progress or registered).  
+- The product must be previously associated with the sale.  
+- If the sale is in progress, removing a sale detail will automatically adjust the stock by increasing the corresponding quantity.  
+- If the sale has already been registered, removing a sale detail will also automatically adjust the stock by increasing the corresponding quantity.  
+- If the sale is in progress and all its products are removed, the sale must not be automatically deleted.  
+- If the sale has already been registered and all its products are removed, the sale must be automatically deleted.
+
+---
+
+## RF-14: Generate Sale Ticket
+
+### Description
+The system must allow generating a purchase ticket for each registered sale, representing the proof of the transaction and including the relevant information of the sale and its associated products.
+
+### Main Flow
+1. The system receives a registered sale.  
+2. The system retrieves the general sale data.  
+3. The system retrieves the associated sale details.  
+4. The system generates the sale ticket with the following information:  
+   - Business name  
+   - Ticket issue date  
+   - Ticket issue time  
+   - Name of each sold product  
+   - Quantity of each product along with its unit of measure (e.g., "2.5 kg", "1 unit")  
+   - Unit price  
+   - Subtotal of each product  
+   - Total sale amount  
+5. The system displays the generated ticket or sends it to the corresponding output medium (screen or printer).
+
+### Alternative Flows
+
+**1.a Invalid Sale**  
+1.a.1 The system detects that the sale does not exist or has not been registered.  
+1.a.2 The system displays a message: "Invalid sale".
+
+**5.a Ticket Generation Error**  
+5.a.1 The system detects an error while generating or printing the ticket.  
+5.a.2 The system displays a message: "The ticket could not be generated".
+
+### Business Rules
+- The ticket can only be generated for previously registered sales.  
+- The ticket information must accurately reflect the sale and its details.  
+- The subtotal of each sale detail is automatically calculated by the system.  
+- The ticket must include all products associated with the sale.  
+- The ticket constitutes proof of the completed transaction.
+
+---
+
+## RF-15: User Authentication
+
+### Description
+The system must allow users to access its functionalities through an authentication process based on a **unique username** and password.
+
+### Main Flow
+1. The user accesses the login screen.  
+2. The user enters their unique username.  
+3. The user enters their password.  
+4. The system validates that the entered credentials are correct.  
+5. The system determines the user role (`Administrator` or `Operator`) and grants access to functionalities according to the associated permissions.
+
+### Alternative Flows
+
+**4.a Invalid Credentials**  
+4.a.1 The system detects that the username does not exist or that the password is incorrect.  
+4.a.2 The system displays a message: "Invalid credentials".
+
+### Business Rules
+- Access to the system requires prior authentication.  
+- The entered password must match the provided username.  
+- The system automatically determines the user role from the user record and restricts access to functionalities accordingly.
+
+---
+
+## RF-16: Refresh Product / Sale / Sales Statistics List
+
+### Description
+The system must allow the user to refresh the list of products, sales, or sales statistics displayed on screen, reflecting any changes that have occurred in the system since the last view.
+
+### Main Flow
+1. The user accesses the Products, Sales, or Sales Statistics section.  
+2. The user clicks the "Refresh" button.  
+3. The system retrieves the most recent information from the database.  
+4. The system displays the updated list on screen:  
+   - Products  
+   - Sales  
+   - Sales Statistics (total revenue and list of sold products with quantities)
+
+### Alternative Flows
+
+**3.a Data Retrieval Error**  
+3.a.1 The system detects an error while fetching the information.  
+3.a.2 The system displays a message: "The list could not be refreshed. Please try again."
+
+### Business Rules
+- The refresh operation must only update the displayed information without modifying existing data.  
+- The system must reflect changes made by other users or processes since the last update.  
+- The refresh button must be available to all users with viewing permissions in the corresponding section (Products, Sales, or Sales Statistics).
+
+---
+
+## RF-17: View Product
+
+### Description
+The system must allow the user to view detailed information of a specific product registered in the system.
+
+### Main Flow
+1. The user accesses the products section.  
+2. The user selects a specific product.  
+3. The system receives the product identifier.  
+4. The system retrieves the product data from the database.  
+5. The system displays the product information with the following data:
+   - Product code  
+   - Product name  
+   - Price  
+   - Unit of measure  
+   - Status  
+   - Available stock  
+
+### Alternative Flows
+
+**3.a Product Not Found**  
+3.a.1 The system detects that the product does not exist.  
+3.a.2 The system displays a message: "Product not found".
+
+### Business Rules
+- The system must allow querying a specific product using its identifier.  
+
+---
+
+## RF-18: View Sale
+
+### Description
+The system must allow the user to view detailed information of a specific sale registered in the system.
+
+### Main Flow
+1. The user accesses the sales section.  
+2. The user selects a specific sale.  
+3. The system receives the sale identifier.  
+4. The system retrieves the sale data from the database.  
+5. The system displays the sale information with the following data:
+   - Unique sale identifier  
+   - Sale date  
+   - Sale time  
+   - Seller username (user_name)  
+   - Total sale amount  
+   - Details of each sold product: code, name, quantity along with its unit of measure, price at the time of sale, and subtotal  
+
+### Alternative Flows
+
+**3.a Sale Not Found**  
+3.a.1 The system detects that the sale does not exist.  
+3.a.2 The system displays a message: "Sale not found".
+
+### Business Rules
+- The system must allow querying a specific sale using its identifier.  
+- The displayed information must accurately reflect the stored data of the sale and its details.  
+- The quantity of each product must be displayed together with its unit of measure to correctly represent the sale.
+
+---
+
+## RF-19: Change Interface Language
+
+### Description
+The system must allow the user to change the interface language between Spanish and English.
+
+### Main Flow
+1. The user accesses the interface settings.  
+2. The user selects the desired language (Spanish or English).  
+3. The system applies the language change immediately to all visible text.  
+4. The system confirms the change by displaying the interface in the selected language.
+
+### Business Rules
+- The language change must not affect the data stored in the system.  
+- The selected language must persist throughout the user session.  
+- All interface elements (menus, buttons, messages, notifications) must be displayed in the selected language.
+
+---
+
+## RF-20: View Sales Statistics
+
+### Description
+The system must allow the user to view sales statistics within a selected time range, showing the total revenue and the list of products sold during that period.
+
+### Main Flow
+1. The user accesses the sales statistics section.  
+2. The user selects the period to query:  
+   - Specific day of the year (e.g., August 15, 2026)  
+   - Specific month of a year (e.g., July 2025)  
+   - Specific year (e.g., 2024)  
+3. The system retrieves the statistical data from the database.  
+4. The system displays:  
+   - Total revenue for the selected period  
+   - List of products (code and name) sold with their corresponding quantities  
+
+### Alternative Flows
+
+**2.a No Sales in Selected Period**  
+2.a.1 The system detects that there are no sales in the database for the selected period.  
+2.a.2 The system displays a message: "No sales found for the selected period".
+
+**2.b Product Sorting**
+
+**2.b.1 By Quantity**  
+2.b.1.1 The user selects to sort sold products by quantity:  
+- Most sold → least sold  
+- Least sold → most sold 
+2.b.1.2 The system sorts the product list according to the selected criteria.
+
+**2.c Product Filters**
+
+**2.c.1 Product Sales**  
+2.c.1.1 The user selects "Sold products", "Unsold products", or "All".  
+2.c.1.2 The system filters the products according to the selected criteria.
+
+**2.d No Products Found**  
+2.d.1 The system detects that no products match the applied criteria.  
+2.d.2 The system displays a message: "No products found".
+
+### Business Rules
+- The system must allow viewing sales statistics by day, month, or year.  
+- The displayed information must include total revenue and the list of sold products with their quantities.  
+- The system must allow sorting products by quantity: "Most sold → least sold" or "Least sold → most sold".  
+- The system must allow filtering products by "Sold products", "Unsold products", or "All".  
+   - "Sold products" displays only products with a quantity sold greater than 0.  
+   - "Unsold products" displays only products with a quantity sold equal to 0.  
+- If the user does not select a product sales filter, the system uses "Sold products" by default.  
+- If the user does not select a sorting criterion, the system sorts products by default using "Most sold → least sold".
+
+---
+
+## General Rules
+
+### System Access Rules
+
+#### User Types
+
+**Administrator**
+- Full access to all system functionalities.  
+- Can register products (RF-1).  
+- Can view products (RF-2).  
+- Can update products (RF-3).  
+- Can deactivate products (RF-4).  
+- Can search products by barcode (RF-5).  
+- Can register products by barcode (RF-6).  
+- Can view a specific product (RF-17).  
+- Can register sales (RF-7).  
+- Can view sales (RF-8).  
+- Can update sales (RF-9).  
+- Can delete sales (RF-10).  
+- Can associate products to sales (RF-11, RF-12).  
+- Can remove products from sales (RF-13).  
+- Can generate sale tickets (RF-14).  
+- Can view a specific sale (RF-18).  
+- Can refresh product and sales lists (RF-16).  
+- Can authenticate in the system (RF-15).  
+- Can change the interface language (RF-19).  
+- Can view sales statistics (RF-20).
+
+**Operator (Cashier)**
+- Can authenticate in the system (RF-15).  
+- Can view products (RF-2).  
+- Can view a specific product (RF-17).  
+- Can search products by barcode (RF-5).  
+- Can view sales (RF-8).  
+- Can view a specific sale (RF-18).  
+- Can register sales (RF-7).  
+- Can associate products to sales (RF-11, RF-12).  
+- Can remove products from sales during the sale registration process (RF-13).  
+- Can generate sale tickets (RF-14).  
+- Can refresh product and sales lists (RF-16).  
+- Can change the interface language (RF-19).  
+- Can view sales statistics (RF-20).  
+- Cannot register products (RF-1).  
+- Cannot update products (RF-3).  
+- Cannot deactivate products (RF-4).  
+- Cannot register products by barcode (RF-6).  
+- Cannot update sales (RF-9).  
+- Cannot delete sales (RF-10).  
+- Cannot remove products from sales once the sale has been registered in the system (RF-13).
+
+---
+
+### Stored User Data
+
+- The system must store information for each user to manage access and permissions.  
+- Each user will have:
+  - User ID: internal unique identifier.  
+  - Username: unique name to identify the user in the system.  
+  - Role: user type that determines system permissions.  
+  - Password: associated with the user account.  
+
+---
+
+### Numeric and Decimal Data
+
+- All numeric values representing monetary amounts or product quantities must be stored and displayed with a maximum of 2 decimal places.  
+  This includes:  
+  - Product price.  
+  - Product price in sale detail (sale price).  
+  - Subtotal of each sale detail.  
+  - Total sale amount.  
+  - Product stock.  
+  - Product quantity in each sale detail.
+
+---
+
+### Date and Time Formats
+
+- All dates in the system must be displayed in `DD/MM/YYYY` format.  
+- All times in the system must be displayed in 24-hour format with seconds `HH:MM:SS`.  
+- These formats apply to the user interface and reports.  
