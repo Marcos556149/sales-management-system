@@ -711,11 +711,59 @@ El sistema debe permitir al usuario cambiar el idioma de la interfaz entre espa�
 - El idioma seleccionado se mantiene durante toda la sesión del usuario.  
 - Todos los elementos de la interfaz (menús, botones, mensajes, notificaciones) deben mostrarse en el idioma seleccionado.
 
+## RF-20: Consultar Estadísticas de Ventas
+
+### Descripción
+El sistema debe permitir al usuario consultar estadísticas de ventas en un rango de tiempo seleccionado, mostrando el total recaudado y la lista de productos vendidos en ese período.
+
+### Flujo principal
+1. El usuario accede a la sección de estadísticas de ventas.  
+2. El usuario selecciona el período a consultar:  
+   - Día específico del año (por ejemplo, 15 de agosto de 2026)  
+   - Mes específico de un año (por ejemplo, julio de 2025)  
+   - Año específico (por ejemplo, 2024)  
+3. El sistema recupera los datos estadísticos de la base de datos.  
+4. El sistema muestra:  
+   - Total recaudado en el período seleccionado  
+   - Lista de productos (código y nombre) vendidos con su cantidad correspondiente
+
+### Flujos alternativos
+
+**2.a No existen ventas en el período seleccionado**
+2.a.1 El sistema detecta que no hay ventas en la base de datos para el período seleccionado.  
+2.a.2 El sistema muestra un mensaje: "No hay ventas registradas en el período seleccionado".  
+
+**2.b Ordenamientos de productos**
+
+**2.b.1 Por cantidad**  
+2.b.1.1 El usuario selecciona ordenar los productos vendidos según la cantidad vendida:  
+- Más vendidos → menos vendidos  
+- Menos vendidos → más vendidos  
+2.b.1.2 El sistema ordena la lista de productos según el criterio seleccionado.
+
+**2.c Filtros de productos**
+
+**2.c.1 Ventas de productos**:  
+2.c.1.1 El usuario selecciona "Productos vendidos", "Productos no vendidos" o "Todos".
+2.c.1.2 El sistema filtra los productos según el criterio seleccionado
+
+**2.d No se encontraron productos**
+2.d.1 El sistema detecta que no existen productos que coincidan con los criterios aplicados.  
+2.d.2 El sistema muestra un mensaje: "No se encontraron productos".
+
+### Reglas de negocio
+- El sistema debe permitir consultar estadísticas de ventas por día, mes o año.  
+- La información mostrada debe incluir el total recaudado y la lista de productos vendidos con sus cantidades.  
+- El sistema debe permitir ordenar los productos vendidos por cantidad segun la popularidad: "Más vendidos → menos vendidos" o "Menos vendidos → más vendidos".  
+- El sistema debe permitir filtrar los productos vendidos por "Productos vendidos", "Productos no vendidos" o "Todos".
+   - "Productos vendidos" muestra únicamente los productos cuya cantidad vendida es mayor que 0.  
+   - "Productos no vendidos" muestra únicamente los productos cuya cantidad vendida es igual a 0.  
+- Si el usuario no selecciona ningún filtro por ventas de productos, el sistema utiliza por defecto "Productos vendidos".  
+- Si el usuario no selecciona ningún criterio de ordenamiento por cantidad, el sistema ordena por defecto los productos segun el criterio "Más vendidos → menos vendidos"
+
 ## Reglas Generales
 
 ### Reglas de Acceso al Sistema
-
-#### Tipos de usuario
 
 #### Tipos de usuario
 
