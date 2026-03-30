@@ -329,34 +329,22 @@ The system must allow the user to view sales registered in the system, displayin
 
 **3.b Sale sorting**
 
-**3.b.1 By day**  
-3.b.1.1 The user selects to sort sales by day (Ascending or Descending).  
+**3.b.1 By time**  
+3.b.1.1 The user selects to sort sales by time (Ascending or Descending).  
 3.b.1.2 The system sorts the sales according to the selected criterion.  
-
-**3.b.2 By month**  
-3.b.2.1 The user selects to sort sales by month (Ascending or Descending).  
-3.b.2.2 The system sorts the sales according to the selected criterion.  
-
-**3.b.3 By year**  
-3.b.3.1 The user selects to sort sales by year (Ascending or Descending).  
-3.b.3.2 The system sorts the sales according to the selected criterion.  
-
-**3.b.4 By time**  
-3.b.4.1 The user selects to sort sales by time (Ascending or Descending).  
-3.b.4.2 The system sorts the sales according to the selected criterion.  
 
 **3.c Sale filtering**
 
 **3.c.1 By day**  
-3.c.1.1 The user selects a specific day or the "All" option.  
+3.c.1.1 The user selects a specific day.
 3.c.1.2 The system filters sales according to the selected day.  
 
 **3.c.2 By month**  
-3.c.2.1 The user selects a specific month or the "All" option.  
+3.c.2.1 The user selects a specific month.
 3.c.2.2 The system filters sales according to the selected month.  
 
 **3.c.3 By year**  
-3.c.3.1 The user selects a specific year or the "All" option.  
+3.c.3.1 The user selects a specific year.
 3.c.3.2 The system filters sales according to the selected year.  
 
 **3.d Sale not found**  
@@ -364,16 +352,9 @@ The system must allow the user to view sales registered in the system, displayin
 3.d.2 The system displays a message: "No sales found".  
 
 ### Business Rules
-- The system must allow viewing all registered sales.  
-- The system must allow sorting sales by day, month, year, and time, in ascending or descending order.  
-- The system must allow filtering sales by day, month, and year.  
-- Filters by day, month, and year must include the "All" option to indicate no filtering.  
-- If no day filter is selected, the system uses the current day by default.  
-- If no month filter is selected, the system uses the current month by default.  
-- If no year filter is selected, the system uses the current year by default.  
-- If no sorting criterion by day is selected, the system sorts sales by day in descending order by default.  
-- If no sorting criterion by month is selected, the system sorts sales by month in descending order by default.  
-- If no sorting criterion by year is selected, the system sorts sales by year in descending order by default.  
+- The system must allow viewing sales filtered by a specific date (day, month, and year).
+- The system must allow sorting sales by time, in ascending or descending order.  
+- By default, the system must use the current date (current day, month, and year).
 - If no sorting criterion by time is selected, the system sorts sales by time in descending order by default.    
 
 ---
