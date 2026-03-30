@@ -72,7 +72,7 @@ CREATE TABLE core.user (
 CREATE TABLE core.sale(
 	sale_id BIGINT DEFAULT nextval('core.sale_seq'),
 	sale_date DATE NOT NULL DEFAULT CURRENT_DATE,
-	sale_time TIME NOT NULL DEFAULT CURRENT_TIME
+	sale_time TIME NOT NULL DEFAULT CURRENT_TIME,
 	total_amount NUMERIC(12,2) NOT NULL,
 	user_id BIGINT,
 	CONSTRAINT pk_sale
