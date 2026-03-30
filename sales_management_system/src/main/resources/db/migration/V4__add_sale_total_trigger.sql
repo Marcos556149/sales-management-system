@@ -39,7 +39,7 @@ $$ LANGUAGE plpgsql;
 -- allowing access to NEW and OLD values.
 -- ============================================================
 
-CREATE TRIGGER core.trg_sale_detail_update_total
+CREATE TRIGGER trg_sale_detail_update_total
 AFTER INSERT OR UPDATE OR DELETE
 ON core.sale_detail
 FOR EACH ROW
