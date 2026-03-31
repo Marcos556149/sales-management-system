@@ -104,7 +104,7 @@ CREATE TABLE core.sale_detail(
 		FOREIGN KEY(product_code)
 		REFERENCES core.product(product_code)
 		ON UPDATE CASCADE
-		ON DELETE CASCADE,
+		ON DELETE RESTRICT,
 	CONSTRAINT chk_sale_detail_product_quantity
 		CHECK (product_quantity > 0),
 	CONSTRAINT chk_sale_detail_sale_price
