@@ -61,7 +61,7 @@ The system must allow the user to register a new product.
 - The available stock is mandatory and must be a real number greater than or equal to 0.  
 - The system must assign a default value of 0 to both price and stock when creating the product.  
 - The product name must be descriptive and clearly distinguishable from other similar products in the system.  
-- The unit of measure is mandatory (e.g., unit, kilogram, liter).  
+- The unit of measure is mandatory (e.g., unit, kilogram, liter), and defaults to "Units".  
 - If the unit of measure is "unit", the stock must be expressed in integer values.  
 
 ---
