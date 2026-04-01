@@ -128,11 +128,10 @@ To access the system, the user must enter:
 - Corresponding password  
 
 ## 10. User Interface
-The system must allow the user to change the interface language between Spanish and English at any time during the session.
 
-This functionality must affect all interface texts, including menus, labels, messages, and notifications.
+The system must provide a user interface that allows interaction with all system functionalities.
 
-The selected language must persist throughout the user session.
+The interface must support multiple languages (Spanish and English), according to the configuration defined in the system.
 
 ## 11. Sales Statistics
 The system must allow the user to obtain statistical information about sales within a selected time range (day, month, year).
@@ -145,4 +144,21 @@ The system must allow:
 - Selecting a specific day of the year (e.g., August 15, 2026) and displaying the corresponding information  
 - Selecting a specific month of a year (e.g., July 2025) and displaying the corresponding information  
 - Selecting a specific year (e.g., 2024) and displaying the corresponding information  
-- Refreshing the information displayed on screen to reflect recent changes in the system  
+- Refreshing the information displayed on screen to reflect recent changes in the system
+
+## 12. System Configuration
+
+The system must allow managing basic configuration settings of the business.
+
+The system must allow storing and updating the following configuration data:
+
+- Business name  
+- Interface language (Spanish or English)  
+
+The system must allow:
+- Viewing current configuration settings  
+- Updating the business name  
+- Changing the interface language  
+
+The business name is required and must be used in the sales receipt generation.  
+The interface language selection must persist during the user session.  
