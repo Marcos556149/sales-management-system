@@ -23,13 +23,15 @@ import lombok.Getter;
 
 @Getter
 public enum UnitOfMeasure {
-    UNITS("Units"),
-    KILOGRAMS("Kilograms"),
-    LITERS("Liters");
+    UNITS("Units","u"),
+    KILOGRAMS("Kilograms","kg"),
+    LITERS("Liters","lt");
 
     private final String displayName;
+    private final String abbreviation;
 
-    UnitOfMeasure(String displayName) {
+    UnitOfMeasure(String displayName, String abbreviation) {
         this.displayName = displayName;
+        this.abbreviation = abbreviation;
     }
 }
