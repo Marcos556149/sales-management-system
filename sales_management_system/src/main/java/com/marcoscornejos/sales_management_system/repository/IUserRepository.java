@@ -1,3 +1,18 @@
+/**
+ * Repository interface for managing {@link User} entities.
+ *
+ * <p>
+ * Extends {@link JpaRepository}, providing standard CRUD operations
+ * such as save, delete, findById, and findAll without requiring
+ * explicit implementation.
+ * </p>
+ *
+ * <p>
+ * This repository handles data access for users.
+ * Custom query methods can be defined here when needed.
+ * </p>
+ */
+
 package com.marcoscornejos.sales_management_system.repository;
 
 import com.marcoscornejos.sales_management_system.model.User;
