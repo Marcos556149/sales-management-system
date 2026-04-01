@@ -810,6 +810,8 @@ The system must allow the user to modify certain system settings, including the 
 - The business name is mandatory.
 - All changes must persist during the user's session.
 
+---
+
 ## General Rules
 
 ### System Access Rules
@@ -837,6 +839,7 @@ The system must allow the user to modify certain system settings, including the 
 - Can authenticate in the system (RF-15).  
 - Can change the interface language (RF-19).  
 - Can view sales statistics (RF-20).
+- Can change the interface language and business name (RF-21).
 
 **Operator (Cashier)**
 - Can authenticate in the system (RF-15).  
@@ -852,6 +855,7 @@ The system must allow the user to modify certain system settings, including the 
 - Can refresh product and sales lists (RF-16).  
 - Can change the interface language (RF-19).  
 - Can view sales statistics (RF-20).  
+- Can change the interface language (RF-21).
 - Cannot register products (RF-1).  
 - Cannot update products (RF-3).  
 - Cannot deactivate products (RF-4).  
@@ -859,6 +863,7 @@ The system must allow the user to modify certain system settings, including the 
 - Cannot update sales (RF-9).  
 - Cannot delete sales (RF-10).  
 - Cannot remove products from sales once the sale has been registered in the system (RF-13).
+- Cannot change business name (RF-21)
 
 ---
 
