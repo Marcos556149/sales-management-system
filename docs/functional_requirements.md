@@ -717,18 +717,28 @@ The system must allow the user to view detailed information of a specific sale r
 
 ---
 
-## RF-19: Change Interface Language
+## RF-19: Change System Configuration
 
 ### Description
-The system must allow the user to change the interface language between Spanish and English.
+The system must allow the user to modify certain system settings, including the interface language and the business name.
 
 ### Main Flow
-1. The user accesses the interface settings.  
-2. The user selects the desired language (Spanish or English).  
-3. The system applies the language change immediately to all visible text.  
-4. The system confirms the change by displaying the interface in the selected language.
+1. The user accesses the system configuration section.  
+2. The user can perform the following actions:  
+   - Change the interface language
+   - Update the business name.  
+3. The system validates the entered data
+4. The system applies the changes immediately.  
+5. The system confirms the changes by updating the displayed interface and business name.
+
+### Alternate Flow
+**3.a Invalid data**  
+3.a.1 The system displays an error message indicating the incorrect fields.  
+3.a.2 The user corrects the data.  
 
 ### Business Rules
+- The business name is mandatory.
+- All changes must persist during the user's session.
 - The language change must not affect the data stored in the system.  
 - The selected language must persist throughout the user session.  
 - All interface elements (menus, buttons, messages, notifications) must be displayed in the selected language.
@@ -784,32 +794,6 @@ The system must allow the user to view sales statistics within a selected time r
    - "Unsold products" displays only products with a quantity sold equal to 0.  
 - If the user does not select a product sales filter, the system uses "Sold products" by default.  
 - If the user does not select a sorting criterion, the system sorts products by default using "Most sold → least sold".
-
----
-
-## RF-21: Change System Configuration
-
-### Description
-The system must allow the user to modify certain system settings, including the interface language and the business name.
-
-### Main Flow
-1. The user accesses the system configuration section.  
-2. The user can perform the following actions:  
-   - Change the interface language (see RF-19: Change Interface Language).  
-   - Update the business name.  
-3. The system validates the entered data
-4. The system applies the changes immediately.  
-5. The system confirms the changes by updating the displayed interface and business name.
-
-### Alternate Flow
-**3.a Invalid data**  
-3.a.1 The system displays an error message indicating the incorrect fields.  
-3.a.2 The user corrects the data.  
-
-### Business Rules
-- The rules for changing the interface language must follow the business rules established in RF-19.
-- The business name is mandatory.
-- All changes must persist during the user's session.
 
 ---
 
