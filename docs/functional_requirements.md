@@ -19,9 +19,9 @@
 - [RF-16: Refresh Product / Sale / Sales Statistics List](#rf-16-refresh-product--sale--sales-statistics-list)
 - [RF-17: View Product](#rf-17-view-product)
 - [RF-18: View Sale](#rf-18-view-sale)
-- [RF-19: Change Interface Language](#rf-19-change-interface-language)
+- [RF-19: Change System Configuration](#rf-19-change-system-configuration)
 - [RF-20: View Sales Statistics](#rf-20-view-sales-statistics)
-- [RF-21: Change System Configuration](#rf-21-change-system-configuration)
+
 
 ### General Rules
 - [System Access Rules](#system-access-rules)
