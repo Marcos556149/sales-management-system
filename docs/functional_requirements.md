@@ -840,6 +840,7 @@ The system must allow the user to log out from the account they are currently us
 - Can authenticate in the system (RF-15).  
 - Can change all system configuration settings (RF-19).
 - Can view sales statistics (RF-20).
+- Can log out of the system (RF-21).
 
 **Operator (Cashier)**
 - Can authenticate in the system (RF-15).  
@@ -854,8 +855,9 @@ The system must allow the user to log out from the account they are currently us
 - Can generate sale tickets (RF-14).  
 - Can refresh product and sales lists (RF-16).  
 - Can change the interface language (RF-19).  
-- Can view sales statistics (RF-20).  
+- Can view sales statistics (RF-20).
 - Can change the interface language (RF-19).
+- Can log out of the system (RF-21).
 - Cannot register products (RF-1).  
 - Cannot update products (RF-3).  
 - Cannot deactivate products (RF-4).  
