@@ -36,10 +36,10 @@
 CREATE TABLE core.product(
     product_code VARCHAR(100) NOT NULL,
     product_name VARCHAR(100) NOT NULL,
-    product_price NUMERIC(12,2) NOT NULL DEFAULT 0,
-    product_stock NUMERIC(12,2) NOT NULL DEFAULT 0,
+    product_price NUMERIC(12,2) NOT NULL,
+    product_stock NUMERIC(12,2) NOT NULL,
     unit_of_measure VARCHAR(30) NOT NULL,
-    product_status BOOLEAN NOT NULL DEFAULT TRUE,
+    product_status BOOLEAN NOT NULL,
 
     CONSTRAINT pk_product
         PRIMARY KEY(product_code),
