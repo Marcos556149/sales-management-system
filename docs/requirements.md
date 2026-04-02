@@ -127,11 +127,22 @@ To access the system, the user must enter:
 - Username (unique identifier assigned to the user)  
 - Corresponding password  
 
-## 10. User Interface
+## 10. System Configuration
 
-The system must provide a user interface that allows interaction with all system functionalities.
+The system must provide a user interface for managing basic business configuration settings.
 
-The interface must support multiple languages (Spanish and English), according to the configuration defined in the system.
+The system must allow storing and updating the following configuration data:
+
+- Business name (required; used in sales receipt generation)
+- Interface language (Spanish or English)
+
+The system must allow users to:
+
+- View current configuration settings
+- Update the business name
+- Change the interface language, which must persist during the user session
+
+The interface must support multiple languages according to the configuration defined in the system.
 
 ## 11. Sales Statistics
 The system must allow the user to obtain statistical information about sales within a selected time range (day, month, year).
@@ -145,20 +156,3 @@ The system must allow:
 - Selecting a specific month of a year (e.g., July 2025) and displaying the corresponding information  
 - Selecting a specific year (e.g., 2024) and displaying the corresponding information  
 - Refreshing the information displayed on screen to reflect recent changes in the system
-
-## 12. System Configuration
-
-The system must allow managing basic configuration settings of the business.
-
-The system must allow storing and updating the following configuration data:
-
-- Business name  
-- Interface language (Spanish or English)  
-
-The system must allow:
-- Viewing current configuration settings  
-- Updating the business name  
-- Changing the interface language  
-
-The business name is required and must be used in the sales receipt generation.  
-The interface language selection must persist during the user session.  
