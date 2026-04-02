@@ -156,3 +156,11 @@ The system must allow:
 - Selecting a specific month of a year (e.g., July 2025) and displaying the corresponding information  
 - Selecting a specific year (e.g., 2024) and displaying the corresponding information  
 - Refreshing the information displayed on screen to reflect recent changes in the system
+
+## 12. Logout
+
+The system must allow the user to log out from the current session.
+
+The system must allow:
+- Terminating the user's session upon confirmation  
+- Redirecting the user to the login screen
