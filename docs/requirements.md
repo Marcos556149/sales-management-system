@@ -97,6 +97,8 @@ The system must have two predefined access types (roles):
 - Can generate sales receipts  
 - Can view detailed product and sales information  
 - Can view sales statistics  
+- Can update the business name
+- Can change their interface language
 
 **Operator (cashier)**
 - Can access the system through authentication  
@@ -108,9 +110,11 @@ The system must have two predefined access types (roles):
 - Can search products by barcode  
 - Can view sales  
 - Can view sales statistics  
+- Can change their interface language
 - Cannot create, update, or deactivate products  
 - Cannot register products by barcode  
 - Cannot modify or delete sales or their details once registered  
+- Cannot modify the business name
 
 The system must store information about each user to manage access and permissions. Each user will have the following data:
 - User ID: unique internal identifier  
