@@ -117,6 +117,7 @@ The system must store information about each user to manage access and permissio
 - Username: unique name used to log into the system  
 - Role: user type that determines system permissions  
 - Password: password associated with the user account, used for authentication  
+- Preferred language: interface language selected by the user (Spanish or English)
 
 **Note:** This information is stored in the database to authenticate users and control access to system functionalities.
 
@@ -129,18 +130,31 @@ To access the system, the user must enter:
 
 ## 10. System Configuration
 
-The system must provide a user interface for managing basic business configuration settings.
+The system must provide a user interface for managing configuration settings at both global and user levels.
 
-The system must allow storing and updating the following configuration data:
+### Global Configuration
+
+The system must allow storing and updating the following global configuration data:
 
 - Business name (required; used in sales receipt generation)
+
+This configuration is shared across all users of the system.
+
+### User Configuration
+
+The system must allow each user to manage their own interface preferences:
+
 - Interface language (Spanish or English)
 
-The system must allow users to:
+### Functionalities
 
-- View current configuration settings
-- Update the business name
-- Change the interface language, which must persist during the user session
+The system must allow:
+
+- Viewing current global configuration settings  
+- Updating the business name (administrator only)  
+- Changing the interface language (all authenticated users)  
+
+The selected interface language must persist for each user and be applied automatically upon login.
 
 The interface must support multiple languages according to the configuration defined in the system.
 
