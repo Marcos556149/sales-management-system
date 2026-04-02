@@ -822,9 +822,8 @@ The system must allow the user to view sales statistics within a selected time r
 - Can view a specific sale (RF-18).  
 - Can refresh product and sales lists (RF-16).  
 - Can authenticate in the system (RF-15).  
-- Can change the interface language (RF-19).  
+- Can change all system configuration settings (RF-19).
 - Can view sales statistics (RF-20).
-- Can change the interface language and business name (RF-21).
 
 **Operator (Cashier)**
 - Can authenticate in the system (RF-15).  
@@ -840,7 +839,7 @@ The system must allow the user to view sales statistics within a selected time r
 - Can refresh product and sales lists (RF-16).  
 - Can change the interface language (RF-19).  
 - Can view sales statistics (RF-20).  
-- Can change the interface language (RF-21).
+- Can change the interface language (RF-19).
 - Cannot register products (RF-1).  
 - Cannot update products (RF-3).  
 - Cannot deactivate products (RF-4).  
@@ -848,7 +847,7 @@ The system must allow the user to view sales statistics within a selected time r
 - Cannot update sales (RF-9).  
 - Cannot delete sales (RF-10).  
 - Cannot remove products from sales once the sale has been registered in the system (RF-13).
-- Cannot change business name (RF-21)
+- Cannot change business name (RF-19)
 
 ---
 
