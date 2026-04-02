@@ -21,6 +21,7 @@
 - [RF-18: View Sale](#rf-18-view-sale)
 - [RF-19: Change System Configuration](#rf-19-change-system-configuration)
 - [RF-20: View Sales Statistics](#rf-20-view-sales-statistics)
+- [RF-21: Logout](#rf-21-logout)
 
 
 ### General Rules
