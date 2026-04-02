@@ -797,6 +797,22 @@ The system must allow the user to view sales statistics within a selected time r
 
 ---
 
+## RF-21: Logout
+
+### Description
+The system must allow the user to log out from the account they are currently using.
+
+### Main Flow
+1. The user clicks the "Logout" button.  
+2. The system displays a confirmation message: "Are you sure you want to log out? Any unsaved data will be lost."  
+3. If the user confirms, the system terminates the user's session.  
+4. The system redirects the user to the login screen.
+
+### Business Rules
+- The system must ensure that the session is fully terminated.
+
+---
+
 ## General Rules
 
 ### System Access Rules
