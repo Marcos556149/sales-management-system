@@ -721,28 +721,36 @@ The system must allow the user to view detailed information of a specific sale r
 ## RF-19: Change System Configuration
 
 ### Description
-The system must allow the user to modify certain system settings, including the interface language and the business name.
+The system must allow managing configuration settings at both global and user levels, including the business name and the interface language.
 
 ### Main Flow
 1. The user accesses the system configuration section.  
-2. The user can perform the following actions:  
-   - Change the interface language
-   - Update the business name.  
-3. The system validates the entered data
-4. The system applies the changes immediately.  
-5. The system confirms the changes by updating the displayed interface and business name.
+2. The system displays current configuration values.  
+3. The user can perform the following actions depending on their role:  
+   - Change the interface language (all users)  
+   - Update the business name (administrator only)  
+4. The system validates the entered data.  
+5. The system applies the changes immediately:  
+   - The business name is updated globally  
+   - The interface language is updated for the current user  
+6. The system confirms the changes by updating the interface and displayed business name.
 
 ### Alternate Flow
-**3.a Invalid data**  
-3.a.1 The system displays an error message indicating the incorrect fields.  
-3.a.2 The user corrects the data.  
+**4.a Invalid data**  
+4.a.1 The system displays an error message indicating the incorrect fields.  
+4.a.2 The user corrects the data.  
 
 ### Business Rules
 - The business name is mandatory.
-- All changes must persist during the user's session.
+- The business name is shared by all users.
+- The system must initialize the business name with a default value ("My Business").
+- Only administrators can modify the business name.
+- The interface language is specific to each user.
+- The interface language is mandatory for each user.
+- The selected language must persist for each user and be applied automatically on login.
 - The language change must not affect the data stored in the system.  
-- The selected language must persist throughout the user session.  
 - All interface elements (menus, buttons, messages, notifications) must be displayed in the selected language.
+- The system must assign a default interface language (English) when a user is created.
 
 ---
 
