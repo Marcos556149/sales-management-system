@@ -62,6 +62,7 @@ public class SaleDetail {
     private BigDecimal salePrice;
 
     /** Subtotal amount for this line (quantity * price). */
+    @Transient
     private BigDecimal subtotal;
 
     public SaleDetail(Product product, Sale sale, BigDecimal productQuantity, BigDecimal salePrice, BigDecimal subtotal) {
