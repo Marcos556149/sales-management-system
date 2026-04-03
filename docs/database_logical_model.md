@@ -56,6 +56,8 @@ Represents the global configuration of the system.
 - system_configuration_id (PK)
 - business_name
 
+Note: This table is initialized with a single row containing the system's default configuration(system_configuration_id=1, business_name="My Business").
+
 ## Normalization
 
 The database model has been normalized up to the Fourth Normal Form (4NF).
