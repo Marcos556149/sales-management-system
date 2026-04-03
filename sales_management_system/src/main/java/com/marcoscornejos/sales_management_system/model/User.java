@@ -43,10 +43,15 @@ public class User {
     @Column(name = "user_password")
     private String userPassword;
 
-    public User(String userName, String userRole, String userPassword) {
+    /** Interface language preference for the user. */
+    @Column(name = "language")
+    private String language;
+
+    public User(String userName, String userRole, String userPassword, String language) {
         this.userName = userName;
         this.userRole = userRole;
         this.userPassword = userPassword;
+        this.language = language;
     }
 
 }
