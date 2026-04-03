@@ -26,6 +26,7 @@ Represents the system users.
 - user_name
 - user_role
 - user_password
+- language
 
 ---
 
@@ -48,6 +49,12 @@ Represents the details of each sale, linking products to sales.
 - product_quantity
 - sale_id (FK → sale.sale_id)
 - product_code (FK → product.product_code)
+
+### system_configuration
+Represents the global configuration of the system.
+
+- system_configuration_id (PK)
+- business_name
 
 ## Normalization
 
