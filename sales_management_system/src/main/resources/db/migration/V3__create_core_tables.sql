@@ -63,9 +63,12 @@ CREATE TABLE core.user (
     user_name VARCHAR(100) NOT NULL UNIQUE,
     user_role VARCHAR(20) NOT NULL,
     user_password VARCHAR(255) NOT NULL,
+	language VARCHAR(20) NOT NULL DEFAULT 'EN',
     CONSTRAINT pk_user PRIMARY KEY(user_id),
     CONSTRAINT chk_user_role
-		CHECK (user_role IN ('Administrator', 'Operator'))
+		CHECK (user_role IN ('Administrator', 'Operator')),
+	CONSTRAINT chk_user_language
+        CHECK (language IN ('EN', 'ES'))
 );
 
 -- Sale table: stores sales transactions
@@ -111,4 +114,12 @@ CREATE TABLE core.sale_detail(
 		CHECK (sale_price >= 0),
 	CONSTRAINT uq_sale_detail_sale_id_product_code 
 		UNIQUE(sale_id, product_code)
+);
+
+-- System configuration table: stores global configuration settings
+CREATE TABLE core.system_configuration(
+    system_configuration_id BIGINT NOT NULL,
+    business_name VARCHAR(100) NOT NULL,
+    CONSTRAINT pk_system_configuration
+        PRIMARY KEY(system_configuration_id)
 );
