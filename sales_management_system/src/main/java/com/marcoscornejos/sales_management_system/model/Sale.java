@@ -51,9 +51,12 @@ public class Sale {
 
     /**
      * User responsible for the sale.
-     * Represents the user who performed the transaction.
+     *
+     * <p>Represents the user who performed the transaction.</p>
+     *
+     * <p>Loaded lazily to avoid unnecessary queries unless accessed.</p>
      */
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 
