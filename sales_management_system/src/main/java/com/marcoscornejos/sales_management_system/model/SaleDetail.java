@@ -37,15 +37,17 @@ public class SaleDetail {
     /**
      * Product associated with this sale detail.
      * Represents the item being sold.
+     * Loaded lazily to avoid unnecessary queries unless accessed.
      * */
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_code")
     private Product product;
 
     /**
      * Sale to which this detail belongs.
+     * Loaded lazily as it is typically accessed through the sale context.
      */
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "sale_id")
     private Sale sale;
 

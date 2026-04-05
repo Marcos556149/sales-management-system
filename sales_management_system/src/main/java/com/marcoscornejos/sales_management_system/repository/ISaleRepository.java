@@ -22,6 +22,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface ISaleRepository extends JpaRepository<Sale, Long> {
@@ -37,4 +38,17 @@ public interface ISaleRepository extends JpaRepository<Sale, Long> {
             JOIN FETCH s.user
             """)
     List<Sale> findAllWithUser();
+
+    /**
+     * Retrieves a sale with its details and products.
+     *
+     * <p>Uses JOIN FETCH to avoid additional queries.</p>
+     */
+    @Query("""
+        SELECT DISTINCT s FROM Sale s
+        JOIN FETCH s.saleDetails sd
+        JOIN FETCH sd.product
+        WHERE s.saleId = :idSale
+        """)
+    Optional<Sale> findByIdWithDetailsAndProducts(Long idSale);
 }
