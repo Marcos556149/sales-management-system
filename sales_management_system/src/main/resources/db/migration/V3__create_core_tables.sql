@@ -39,7 +39,7 @@ CREATE TABLE core.product(
     product_price NUMERIC(12,2) NOT NULL,
     product_stock NUMERIC(12,2) NOT NULL,
     unit_of_measure VARCHAR(30) NOT NULL,
-    product_status BOOLEAN NOT NULL,
+    product_status VARCHAR(30) NOT NULL,
 
     CONSTRAINT pk_product
         PRIMARY KEY(product_code),
@@ -52,9 +52,11 @@ CREATE TABLE core.product(
 
     CONSTRAINT chk_product_stock_integer_if_unit
         CHECK (
-            unit_of_measure <> 'Units'
+            unit_of_measure <> 'UNITS'
             OR product_stock = FLOOR(product_stock)
         )
+	CONSTRAINT chk_product_status
+        CHECK (product_status IN ('ACTIVE', 'INACTIVE'))
 );
 
 -- User table: stores system users and roles
@@ -66,7 +68,7 @@ CREATE TABLE core.user (
 	language VARCHAR(20) NOT NULL DEFAULT 'EN',
     CONSTRAINT pk_user PRIMARY KEY(user_id),
     CONSTRAINT chk_user_role
-		CHECK (user_role IN ('Administrator', 'Operator')),
+		CHECK (user_role IN ('ADMIN', 'OPERATOR')),
 	CONSTRAINT chk_user_language
         CHECK (language IN ('EN', 'ES'))
 );
