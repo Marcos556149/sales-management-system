@@ -84,7 +84,7 @@ CREATE TABLE core.sale(
 		FOREIGN KEY(user_id)
 		REFERENCES core.user(user_id)
 		ON UPDATE CASCADE
-		ON DELETE SET NULL,
+		ON DELETE RESTRICT,
 	CONSTRAINT chk_sale_total_amount
 		CHECK (total_amount >= 0)
 );
