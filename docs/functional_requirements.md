@@ -636,6 +636,7 @@ The system must allow users to access its functionalities through an authenticat
 - The system automatically determines the user role from the user record and restricts access to functionalities accordingly.
 - Only users with "Active" status can access the system.  
 - Users with "Suspended" or "Deleted" status must be denied access.
+- The system must apply the user's preferred language configuration upon successful authentication.
 
 ---
 
@@ -892,7 +893,9 @@ The system must allow the user to log out from the account they are currently us
   - User ID: internal unique identifier.  
   - Username: unique name to identify the user in the system.  
   - Role: user type that determines system permissions.  
-  - Password: associated with the user account.  
+  - Password: associated with the user account. 
+  - Status: indicates whether the user is active, suspended, or logically deleted.  
+  - Preferred language: interface language selected by the user. Defaults to English (EN) upon account creation.
 
 ---
 
