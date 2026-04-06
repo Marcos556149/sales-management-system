@@ -39,7 +39,7 @@ For each sale, the following data must be stored:
 - Sale date  
 - Sale time  
 - Total amount  
-- User who performed the sale  
+- User who performed the sale (must be an active user at the time of the transaction)
 
 The system must allow:
 - Register a new sale  
@@ -99,6 +99,8 @@ The system must have two predefined access types (roles):
 - Can view sales statistics  
 - Can update the business name
 - Can change their interface language
+- Can create, update, and manage users (operators)
+- Can activate, suspend, and logically delete users
 
 **Operator (cashier)**
 - Can access the system through authentication  
@@ -122,8 +124,34 @@ The system must store information about each user to manage access and permissio
 - Role: user type that determines system permissions  
 - Password: password associated with the user account, used for authentication  
 - Preferred language: interface language selected by the user (Spanish or English)
+- Status: indicates whether the user is active, suspended, or logically deleted
+
+User status can be:
+- Active: the user can access and operate in the system
+- Suspended: the user cannot access the system temporarily
+- Deleted: the user is logically removed and cannot access the system, but remains stored for historical data integrity
 
 **Note:** This information is stored in the database to authenticate users and control access to system functionalities.
+
+The system must validate the user's status during authentication:
+
+- Only users with "Active" status can access the system  
+- Users with "Suspended" or "Deleted" status must be denied access
+
+### User Management
+
+The system must allow administrators to manage system users.
+
+The system must allow:
+- Register a new user (operator role only)
+- View existing users
+- Update user data
+- Change user status (active, suspended, deleted)
+
+Only users with the Administrator role can perform these actions.
+
+**Initial Setup:**
+The system must include a predefined administrator account created during system initialization. This account will be used to manage users within the system.
 
 ## 9. System Access
 The system must require authentication to allow access to its functionalities.
