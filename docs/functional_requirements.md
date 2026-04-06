@@ -609,14 +609,15 @@ The system must allow generating a purchase ticket for each registered sale, rep
 ## RF-15: User Authentication
 
 ### Description
-The system must allow users to access its functionalities through an authentication process based on a **unique username** and password.
+The system must allow users to access its functionalities through an authentication process based on a unique username and password associated with a registered user account.
 
 ### Main Flow
 1. The user accesses the login screen.  
 2. The user enters their unique username.  
 3. The user enters their password.  
 4. The system validates that the entered credentials are correct.  
-5. The system determines the user role (`Administrator` or `Operator`) and grants access to functionalities according to the associated permissions.
+5. The system validates that the user status is "Active". 
+6. The system determines the user role (`Administrator` or `Operator`) and grants access to functionalities according to the associated permissions.
 
 ### Alternative Flows
 
@@ -624,10 +625,17 @@ The system must allow users to access its functionalities through an authenticat
 4.a.1 The system detects that the username does not exist or that the password is incorrect.  
 4.a.2 The system displays a message: "Invalid credentials".
 
+**5.b Inactive User**  
+5.b.1 The system detects that the user status is "Suspended" or "Deleted".  
+5.b.2 The system denies access.  
+5.b.3 The system displays an error message: "User account is not active".
+
 ### Business Rules
 - Access to the system requires prior authentication.  
 - The entered password must match the provided username.  
 - The system automatically determines the user role from the user record and restricts access to functionalities accordingly.
+- Only users with "Active" status can access the system.  
+- Users with "Suspended" or "Deleted" status must be denied access.
 
 ---
 
