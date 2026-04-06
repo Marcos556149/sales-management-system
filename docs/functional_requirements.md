@@ -1022,6 +1022,11 @@ The system must allow administrators to change the status of a user.
 - Can change all system configuration settings (RF-19).
 - Can view sales statistics (RF-20).
 - Can log out of the system (RF-21).
+- Can register users (RF-22).  
+- Can view users (RF-23).  
+- Can view a specific user (RF-24).  
+- Can update users (RF-25).  
+- Can change user status (RF-26). 
 
 **Operator (Cashier)**
 - Can authenticate in the system (RF-15).  
@@ -1046,6 +1051,11 @@ The system must allow administrators to change the status of a user.
 - Cannot delete sales (RF-10).  
 - Cannot remove products from sales once the sale has been registered in the system (RF-13).
 - Cannot change business name (RF-19)
+- Cannot register users (RF-22).  
+- Cannot view users (RF-23).  
+- Cannot view a specific user (RF-24).  
+- Cannot update users (RF-25).  
+- Cannot change user status (RF-26).  
 
 ---
 
