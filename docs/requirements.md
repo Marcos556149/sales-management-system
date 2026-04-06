@@ -2,6 +2,33 @@
 
 Sales management system for a kiosk
 
+## Index
+
+### System Overview
+- [1. General Description](#1-general-description)
+- [2. System Objective](#2-system-objective)
+
+### Core Functional Areas
+- [3. Product Management](#3-product-management)
+- [4. Sales Management](#4-sales-management)
+- [5. Sale Detail](#5-sale-detail)
+- [6. Barcode Scanning](#6-barcode-scanning)
+- [7. Sales Receipt Generation](#7-sales-receipt-generation)
+
+### User and Access Management
+- [8. Users](#8-users)
+  - [User Management](#user-management)
+- [9. System Access](#9-system-access)
+
+### System Configuration
+- [10. System Configuration](#10-system-configuration)
+  - [Global Configuration](#global-configuration)
+  - [User Configuration](#user-configuration)
+
+### Additional Functionalities
+- [11. Sales Statistics](#11-sales-statistics)
+- [12. Logout](#12-logout)
+
 ## 1. General Description
 A client requests the development of a web application that allows managing products and sales of their business.  
 The system must allow registering products, performing sales, and generating a receipt with the details of each transaction.
