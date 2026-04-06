@@ -1,5 +1,20 @@
 # Logical Database Model
 
+## Index
+
+### General
+- [Description](#description)
+- [Normalization](#normalization)
+
+### Entities
+- [product](#product)
+- [user](#user)
+- [sale](#sale)
+- [sale_detail](#sale_detail)
+- [system_configuration](#system_configuration)
+
+---
+
 ## Description
 This document describes the logical structure of the database for the sales management system, including tables, primary keys (PK), and foreign keys (FK).
 

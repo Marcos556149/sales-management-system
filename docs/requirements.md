@@ -29,6 +29,8 @@ Sales management system for a kiosk
 - [11. Sales Statistics](#11-sales-statistics)
 - [12. Logout](#12-logout)
 
+---
+
 ## 1. General Description
 A client requests the development of a web application that allows managing products and sales of their business.  
 The system must allow registering products, performing sales, and generating a receipt with the details of each transaction.
