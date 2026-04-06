@@ -101,6 +101,7 @@ The system must have two predefined access types (roles):
 - Can change their interface language
 - Can create, update, and manage users (operators)
 - Can activate, suspend, and logically delete users
+- Can log out from the system
 
 **Operator (cashier)**
 - Can access the system through authentication  
@@ -113,10 +114,13 @@ The system must have two predefined access types (roles):
 - Can view sales  
 - Can view sales statistics  
 - Can change their interface language
+- Can log out from the system
 - Cannot create, update, or deactivate products  
 - Cannot register products by barcode  
 - Cannot modify or delete sales or their details once registered  
 - Cannot modify the business name
+- Cannot create, update, or manage users
+- Cannot activate, suspend, or delete users
 
 The system must store information about each user to manage access and permissions. Each user will have the following data:
 - User ID: unique internal identifier  
