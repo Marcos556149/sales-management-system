@@ -32,7 +32,6 @@
 ### General Rules
 - [System Access Rules](#system-access-rules)
   - [User Types](#user-types)
-- [Stored User Data](#stored-user-data)
 - [Numeric and Decimal Data](#numeric-and-decimal-data)
 - [Date and Time Formats](#date-and-time-formats)
 
@@ -1056,19 +1055,6 @@ The system must allow administrators to change the status of a user.
 - Cannot view a specific user (RF-24).  
 - Cannot update users (RF-25).  
 - Cannot change user status (RF-26).  
-
----
-
-### Stored User Data
-
-- The system must store information for each user to manage access and permissions.  
-- Each user will have:
-  - User ID: internal unique identifier.  
-  - Username: unique name to identify the user in the system.  
-  - Role: user type that determines system permissions.  
-  - Password: associated with the user account. 
-  - Status: indicates whether the user is active, suspended, or logically deleted.  
-  - Preferred language: interface language selected by the user. Defaults to English (EN) upon account creation.
 
 ---
 
