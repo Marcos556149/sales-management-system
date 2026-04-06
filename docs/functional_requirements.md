@@ -22,6 +22,11 @@
 - [RF-19: Change System Configuration](#rf-19-change-system-configuration)
 - [RF-20: View Sales Statistics](#rf-20-view-sales-statistics)
 - [RF-21: Logout](#rf-21-logout)
+- [RF-22: Register User](#rf-22-register-user)
+- [RF-23: View Users](#rf-23-view-users)
+- [RF-24: View User](#rf-24-view-user)
+- [RF-25: Update User](#rf-25-update-user)
+- [RF-26: Change User Status](#rf-26-change-user-status)
 
 
 ### General Rules
@@ -828,6 +833,164 @@ The system must allow the user to log out from the account they are currently us
 
 ### Business Rules
 - The system must ensure that the session is fully terminated.
+
+---
+
+## RF-22: Register User
+
+### Description
+The system must allow administrators to register new users with the Operator role.
+
+### Main Flow
+1. The administrator accesses the user management section.  
+2. The administrator selects the option to register a new user.  
+3. The administrator enters the required user data:
+   - Username  
+   - Password  
+4. The system validates that the entered data is correct.  
+5. The system verifies that the username is unique.  
+6. The system assigns the role "Operator" to the new user.  
+7. The system assigns the status "Active" to the new user.  
+8. The system assigns the default language "EN" to the new user.  
+9. The system assigns a unique identifier (User ID) to the new user.  
+10. The system stores the user in the database.  
+11. The system confirms that the user has been successfully registered.
+
+### Alternative Flows
+
+**5.a Username already exists**  
+5.a.1 The system detects that the username is already registered.  
+5.a.2 The system displays an error message: "Username already exists".
+
+**4.a Invalid input data**  
+4.a.1 The system detects invalid or incomplete input data.  
+4.a.2 The system displays an error message indicating invalid input.
+
+### Business Rules
+- Only users with the Administrator role can perform this action.  
+- The username must be unique within the system.  
+- The system must assign the "Operator" role by default.  
+- The system must assign the "Active" status by default.  
+- The system must assign "EN" as the default language.
+- The system assigns a unique identifier to the user upon creation.
+
+---
+
+## RF-23: View Users
+
+### Description
+The system must allow administrators to view the list of registered users.
+
+### Main Flow
+1. The administrator accesses the user management section.  
+2. The system retrieves the list of users from the database.  
+3. The system displays the list of users with their main information:
+   - Username  
+   - Role  
+   - Status  
+
+### Alternative Flows
+
+**2.a No users found**  
+2.a.1 The system detects that there are no registered users.  
+2.a.2 The system displays a message: "No users found".
+
+### Business Rules
+- Only users with the Administrator role can perform this action.  
+- The system must display all users regardless of their status.
+
+---
+
+## RF-24: View User
+
+### Description
+The system must allow administrators to view detailed information of a specific user.
+
+### Main Flow
+1. The administrator accesses the user management section.  
+2. The administrator selects a specific user from the list.  
+3. The system retrieves the user information from the database.  
+4. The system displays the user details, including:
+   - Username  
+   - Role  
+   - Status  
+
+### Alternative Flows
+
+**3.a User not found**  
+3.a.1 The system detects that the selected user does not exist.  
+3.a.2 The system displays an error message: "User not found".
+
+### Business Rules
+- Only users with the Administrator role can perform this action.  
+- The system must not display the user's password.  
+- The system must display the user information regardless of their status.
+
+---
+
+## RF-25: Update User
+
+### Description
+The system must allow administrators to update user information.
+
+### Main Flow
+1. The administrator accesses the user management section.  
+2. The administrator selects a user to update.  
+3. The system displays the current user data, excluding the password.  
+4. The administrator modifies the desired fields:
+   - Username (optional)  
+   - New password (optional)  
+5. The system validates the updated data.  
+6. The system verifies that the new username (if modified) is unique.  
+7. The system updates the user information in the database.  
+8. The system confirms that the user has been successfully updated.
+
+### Alternative Flows
+
+**5.a Invalid input data**  
+5.a.1 The system detects invalid or incomplete input data.  
+5.a.2 The system displays an error message indicating invalid input.
+
+**6.a Username already exists**  
+6.a.1 The system detects that the new username is already in use.  
+6.a.2 The system displays an error message: "Username already exists".
+
+### Business Rules
+- Only users with the Administrator role can perform this action.  
+- The username must remain unique within the system.  
+- The system must not display the current user password.  
+- If a new password is provided, it must replace the existing password.
+
+---
+
+## RF-26: Change User Status
+
+### Description
+The system must allow administrators to change the status of a user.
+
+### Main Flow
+1. The administrator accesses the user management section.  
+2. The administrator selects a user.  
+3. The system displays the current user status.  
+4. The administrator selects a new status:
+   - Active  
+   - Suspended  
+   - Deleted  
+5. The system validates the selected status.  
+6. The system updates the user status in the database.  
+7. The system confirms that the user status has been successfully updated.
+
+### Alternative Flows
+
+**5.a Invalid status selection**  
+5.a.1 The system detects an invalid status value.  
+5.a.2 The system displays an error message: "Invalid user status".
+
+### Business Rules
+- Only users with the Administrator role can perform this action.  
+- The system must allow only the following status values: Active, Suspended, Deleted.  
+- Users with "Deleted" status must not be physically removed from the database.  
+- Users with "Suspended" or "Deleted" status must not be able to access the system.
 
 ---
 
