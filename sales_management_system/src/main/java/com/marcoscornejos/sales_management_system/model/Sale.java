@@ -14,6 +14,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -62,15 +64,28 @@ public class Sale {
 
     /**
      * List of sale details associated with this sale.
-     * Includes all products and quantities involved.
+     * Represents all products included in the sale and their quantities.
      *
-     * <p>Cascade ALL ensures that changes to the sale
-     * propagate to its details. Orphan removal ensures
-     * that removed details are deleted from the database.</p>
+     * <p>The configuration ensures the following behaviors:</p>
+     * <ul>
+     *   <li><b>Persisting or merging the sale:</b> Any new or updated SaleDetail objects
+     *       in this list are automatically persisted or merged in the database.</li>
+     *   <li><b>Removing a SaleDetail from the list:</b> If a detail is removed from this
+     *       list and the sale is persisted, the removed detail is also deleted from the database
+     *       (orphanRemoval = true).</li>
+     *   <li><b>Deleting the sale:</b> When a Sale is deleted, the database automatically deletes
+     *       all associated SaleDetail rows thanks to the @OnDelete annotation, avoiding extra
+     *       queries from JPA.</li>
+     *   <li><b>No CascadeType.REMOVE:</b> Hibernate does not issue explicit delete queries for
+     *       children when the parent is removed; deletion is delegated to the database cascade.</li>
+     * </ul>
      */
-    @OneToMany(mappedBy = "sale",
-            cascade = CascadeType.ALL,
-            orphanRemoval = true)
+    @OneToMany(
+            mappedBy = "sale",
+            cascade = { CascadeType.PERSIST, CascadeType.MERGE }, // <- NO REMOVE
+            orphanRemoval = true
+    )
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private List<SaleDetail> saleDetails=new ArrayList<>();
 
     public Sale(LocalDate saleDate, LocalTime saleTime, BigDecimal totalAmount, User user) {
