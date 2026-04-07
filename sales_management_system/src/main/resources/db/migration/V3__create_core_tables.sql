@@ -82,7 +82,7 @@ CREATE TABLE core.sale(
 	sale_date DATE NOT NULL DEFAULT CURRENT_DATE,
 	sale_time TIME NOT NULL DEFAULT CURRENT_TIME,
 	total_amount NUMERIC(12,2) NOT NULL,
-	user_id BIGINT,
+	user_id BIGINT NOT NULL,
 	CONSTRAINT pk_sale
 		PRIMARY KEY(sale_id),
 	CONSTRAINT fk_sale_user
