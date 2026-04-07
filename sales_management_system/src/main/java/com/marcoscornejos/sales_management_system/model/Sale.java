@@ -39,13 +39,21 @@ public class Sale {
     @Column(name = "sale_id")
     private Long saleId;
 
-    /** Date when the sale was made. */
+    /**
+     * Date when the sale was made.
+     *
+     * <p>Defaults to the current system date when the entity is created</p>
+     */
     @Column(name = "sale_date")
-    private LocalDate saleDate;
+    private LocalDate saleDate=LocalDate.now();
 
-    /** Time when the sale was made. */
+    /**
+     * Time when the sale was made.
+     *
+     * <p>Defaults to the current system time when the entity is created</p>
+     */
     @Column(name = "sale_time")
-    private LocalTime saleTime;
+    private LocalTime saleTime=LocalTime.now();
 
     /** Total monetary amount of the sale. */
     @Column(name = "total_amount")
