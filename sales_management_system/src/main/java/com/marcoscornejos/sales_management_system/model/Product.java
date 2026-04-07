@@ -2,7 +2,7 @@
  * Represents a product available for sale in the system.
  *
  * <p>Stores basic product information such as name, price, stock,
- * status (active/inactive), and unit of measure.</p>
+ * status (ACTIVE/INACTIVE), and unit of measure.</p>
  *
  * <p>A product can be associated with multiple sale details,
  * representing its participation in different sales.</p>
@@ -43,13 +43,23 @@ public class Product {
     @Column(name = "product_stock")
     private BigDecimal productStock;
 
-    /** Logical status of the product (true = Active, false = Inactive). */
+    /**
+     * Logical status of the product (e.g., ACTIVE, INACTIVE).
+     *
+     * <p>Stored as a string in the database for readability and stability.</p>
+     */
     @Column(name = "product_status")
-    private boolean productStatus;
+    @Enumerated(EnumType.STRING)
+    private ProductStatus productStatus=ProductStatus.ACTIVE;
 
-    /** Unit of measure (e.g., Kilograms, Units, Liters). */
+    /**
+     * Unit of measure for the product (e.g., KILOGRAMS, UNITS, LITERS).
+     *
+     * <p>Stored as a string in the database to ensure consistency.</p>
+     */
     @Column(name = "unit_of_measure")
-    private String unitOfMeasure;
+    @Enumerated(EnumType.STRING)
+    private UnitOfMeasure unitOfMeasure;
 
     /**
      * Sale details associated with this product.
