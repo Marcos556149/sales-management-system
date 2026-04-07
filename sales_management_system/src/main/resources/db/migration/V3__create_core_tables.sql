@@ -39,7 +39,7 @@ CREATE TABLE core.product(
     product_price NUMERIC(12,2) NOT NULL,
     product_stock NUMERIC(12,2) NOT NULL,
     unit_of_measure VARCHAR(30) NOT NULL,
-    product_status VARCHAR(30) NOT NULL,
+    product_status VARCHAR(30) NOT NULL DEFAULT 'ACTIVE',
 
     CONSTRAINT pk_product
         PRIMARY KEY(product_code),
