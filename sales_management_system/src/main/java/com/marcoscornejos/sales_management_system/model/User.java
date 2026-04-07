@@ -35,23 +35,43 @@ public class User {
     @Column(name = "user_name")
     private String userName;
 
-    /** Role assigned to the user (e.g., Administrator, Operator). */
+    /**
+     * Role assigned to the user (e.g., ADMIN, OPERATOR).
+     *
+     * <p>Stored as a string in the database for readability and stability.</p>
+     */
     @Column(name = "user_role")
-    private String userRole;
+    @Enumerated(EnumType.STRING)
+    private UserRole userRole=UserRole.OPERATOR;
 
     /** Encrypted password of the user. */
     @Column(name = "user_password")
     private String userPassword;
 
-    /** Interface language preference for the user. */
+    /**
+     * Interface language preference for the user.
+     *
+     * <p>Stored as a string to ensure consistency with supported system languages.</p>
+     */
     @Column(name = "language")
-    private String language;
+    @Enumerated(EnumType.STRING)
+    private Language language=Language.EN;
 
-    public User(String userName, String userRole, String userPassword, String language) {
+    /**
+     * Logical status of the user (e.g., ACTIVE, SUSPENDED, DELETED).
+     *
+     * <p>Determines whether the user can access or interact with the system.</p>
+     */
+    @Column(name = "user_status")
+    @Enumerated(EnumType.STRING)
+    private UserStatus userStatus=UserStatus.ACTIVE;
+
+    public User(String userName, UserRole userRole, String userPassword, Language language, UserStatus userStatus) {
         this.userName = userName;
         this.userRole = userRole;
         this.userPassword = userPassword;
         this.language = language;
+        this.userStatus=userStatus;
     }
 
 }
