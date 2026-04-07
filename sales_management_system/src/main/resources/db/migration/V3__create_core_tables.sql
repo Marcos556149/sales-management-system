@@ -63,14 +63,17 @@ CREATE TABLE core.product(
 CREATE TABLE core.user (
     user_id BIGINT DEFAULT nextval('core.user_seq'),
     user_name VARCHAR(100) NOT NULL UNIQUE,
-    user_role VARCHAR(20) NOT NULL,
+    user_role VARCHAR(20) NOT NULL DEFAULT 'OPERATOR',
     user_password VARCHAR(255) NOT NULL,
 	language VARCHAR(20) NOT NULL DEFAULT 'EN',
+	user_status VARCHAR(30) NOT NULL DEFAULT 'ACTIVE',
     CONSTRAINT pk_user PRIMARY KEY(user_id),
     CONSTRAINT chk_user_role
 		CHECK (user_role IN ('ADMIN', 'OPERATOR')),
 	CONSTRAINT chk_user_language
-        CHECK (language IN ('EN', 'ES'))
+        CHECK (language IN ('EN', 'ES')),
+	CONSTRAINT chk_user_status
+        CHECK (user_status IN ('ACTIVE', 'SUSPENDED','DELETED'))
 );
 
 -- Sale table: stores sales transactions
