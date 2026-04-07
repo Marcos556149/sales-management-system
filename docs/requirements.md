@@ -58,6 +58,7 @@ The system must allow:
 - View existing products  
 - Update product data  
 - Logically deactivate a product (mark it as inactive)  
+- Activate a product (mark it as active)
 - Refresh the product list displayed on screen to reflect recent changes in the system  
 
 ## 4. Sales Management

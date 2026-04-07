@@ -67,8 +67,8 @@ The system must allow the user to register a new product.
 - The available stock is mandatory and must be a real number greater than or equal to 0.  
 - The system must assign a default value of 0 to both price and stock when creating the product.  
 - The product name must be descriptive and clearly distinguishable from other similar products in the system.  
-- The unit of measure is mandatory (e.g., unit, kilogram, liter), and defaults to "Units".  
-- If the unit of measure is "unit", the stock must be expressed in integer values.  
+- The unit of measure is mandatory (e.g., Units, Kilograms, Liters), and defaults to "Units".  
+- If the unit of measure is "Units", the stock must be expressed in integer values.  
 
 ---
 
@@ -86,7 +86,7 @@ The system must allow the user to view the products registered in the system.
    - Product name  
    - Price  
    - Status  
-   - Available stock (displayed with its unit of measure, e.g., "2.5 kg", "3 units")  
+   - Available stock (displayed with its unit of measure, e.g., "2.5 kg", "3 u")  
 
 ### Alternative Flows
 
@@ -123,7 +123,7 @@ The system must allow the user to view the products registered in the system.
 ### Business Rules
 - The system must allow viewing all registered products.  
 - The system must allow searching products by name or code.  
-- The system must allow sorting products by name (ascending or descending).  
+- The system must allow sorting products by name (Ascending or Descending).  
 - The system must allow filtering products by status (Active, Inactive, or All).  
 - If no status filter is selected, the system displays "All" by default.  
 - If no sorting criterion is selected, the system applies "Ascending" by default.  
@@ -585,7 +585,7 @@ The system must allow generating a purchase ticket for each registered sale, rep
    - Ticket issue date  
    - Ticket issue time  
    - Name of each sold product  
-   - Quantity of each product along with its unit of measure (e.g., "2.5 kg", "1 unit")  
+   - Quantity of each product along with its unit of measure (e.g., "2.5 kg", "1 u")  
    - Unit price  
    - Subtotal of each product  
    - Total sale amount  
