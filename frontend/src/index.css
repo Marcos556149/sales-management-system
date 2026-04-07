@@ -1,0 +1,160 @@
+/* Reset and unified color setup for a premium dashboard feel */
+:root {
+  --bg-color: #f4f6f8;
+  --primary-color: #2563eb;
+  --primary-hover: #1d4ed8;
+  --text-primary: #1f2937;
+  --text-secondary: #6b7280;
+  --card-bg: #ffffff;
+  --border-color: #e5e7eb;
+  --error-bg: #fee2e2;
+  --error-text: #b91c1c;
+  --success-bg: #dcfce7;
+  --success-text: #15803d;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Inter', system-ui, Avenir, Helvetica, Arial, sans-serif;
+  background-color: var(--bg-color);
+  color: var(--text-primary);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  margin: 0;
+  -webkit-font-smoothing: antialiased;
+}
+
+.app-layout {
+  width: 100%;
+}
+
+/* Main container that centers the card, responsive padding */
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+/* Form Card - Increased size and font-sizes for better readability */
+.login-card {
+  background-color: var(--card-bg);
+  padding: 48px 40px; /* Increased padding */
+  border-radius: 16px; /* Slightly rounder */
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+  width: 100%;
+  max-width: 500px; /* Made the card wider (from 400px to 500px) */
+  text-align: center;
+  border: 1px solid var(--border-color);
+}
+
+.login-card h2 {
+  font-size: 2rem; /* Larger title */
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.login-subtitle {
+  font-size: 1rem; /* Larger subtitle */
+  color: var(--text-secondary);
+  margin-bottom: 32px;
+}
+
+/* Inputs and labels */
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px; /* More space between fields */
+  text-align: left;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-group label {
+  font-size: 1rem; /* Larger label */
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.form-group input {
+  padding: 14px 16px; /* Bigger inputs */
+  border-radius: 10px;
+  border: 1px solid var(--border-color);
+  font-size: 1rem; /* Larger text inside input */
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  width: 100%; /* Ensure it takes full width of container */
+}
+
+.form-group input:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1); /* Slightly stronger shadow */
+}
+
+/* Submit Button */
+.login-button {
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  padding: 16px; /* Bigger button */
+  font-weight: 600;
+  font-size: 1.125rem; /* Larger text */
+  cursor: pointer;
+  transition: background-color 0.2s, transform 0.1s;
+  margin-top: 10px;
+  width: 100%; /* Responsive button */
+}
+
+.login-button:hover {
+  background-color: var(--primary-hover);
+}
+
+.login-button:active {
+  transform: translateY(1px);
+}
+
+/* Error and success alerts */
+.alert {
+  padding: 14px;
+  border-radius: 8px;
+  font-size: 1rem;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.alert-error {
+  background-color: var(--error-bg);
+  color: var(--error-text);
+  border: 1px solid #fecaca;
+}
+
+.alert-success {
+  background-color: var(--success-bg);
+  color: var(--success-text);
+  border: 1px solid #bbf7d0;
+}
+
+/* Media Query for smaller screens (Mobile Responsiveness) */
+@media (max-width: 600px) {
+  .login-card {
+    padding: 30px 20px; /* Less padding on small screens */
+    max-width: 100%; /* Take full width minus the container padding */
+  }
+  
+  .login-card h2 {
+    font-size: 1.75rem;
+  }
+}
