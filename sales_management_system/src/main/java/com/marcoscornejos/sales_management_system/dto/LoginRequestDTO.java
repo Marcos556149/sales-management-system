@@ -22,9 +22,9 @@ public class LoginRequestDTO {
 
     /** Username entered by the user. Must not be blank. */
     @NotBlank(message = "Username cannot be blank")
-    private String username;
+    private String userName;
 
     /** Password entered by the user. Must not be blank. */
     @NotBlank(message = "Password cannot be blank")
-    private String password;
+    private String userPassword;
 }
