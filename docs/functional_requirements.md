@@ -43,7 +43,7 @@ The system must allow the user to register a new product.
 ### Main Flow
 1. The user accesses the product section.  
 2. The user requests to register a new product.  
-3. The system requests the following product data: code, name, price, unit of measure, status, and available stock.  
+3. The system requests the following product data: code, name, price, unit of measure, and available stock.  
 4. The user enters the required data.  
 5. The system validates the entered information.  
 6. The system saves the product in the database.  
@@ -62,7 +62,7 @@ The system must allow the user to register a new product.
 ### Business Rules
 - The product code is mandatory and must be unique within the system.  
 - The product name is mandatory.  
-- The product status is mandatory and defaults to "Active".  
+- The product status is not required as input and is automatically set to "Active" when the product is created.
 - The product price is mandatory and must be a real number greater than or equal to 0.  
 - The available stock is mandatory and must be a real number greater than or equal to 0.  
 - The system must assign a default value of 0 to both price and stock when creating the product.  
