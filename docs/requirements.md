@@ -119,7 +119,7 @@ The system must have two predefined access types (roles):
 **Administrator**
 - Has full access to all system functionalities  
 - Can view and manage products  
-- Can register, update, and deactivate products  
+- Can register, update, deactivate, and activate products  
 - Can search products by barcode  
 - Can view and manage sales, including sale details  
 - Can register, update, and delete sales  
@@ -145,7 +145,7 @@ The system must have two predefined access types (roles):
 - Can view sales statistics  
 - Can change their interface language
 - Can log out from the system
-- Cannot create, update, or deactivate products  
+- Cannot create, update, deactivate, or activate products  
 - Cannot register products by barcode  
 - Cannot modify or delete sales or their details once registered  
 - Cannot modify the business name
