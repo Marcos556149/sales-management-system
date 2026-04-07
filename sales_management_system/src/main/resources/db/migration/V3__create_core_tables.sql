@@ -56,7 +56,9 @@ CREATE TABLE core.product(
             OR product_stock = FLOOR(product_stock)
         )
 	CONSTRAINT chk_product_status
-        CHECK (product_status IN ('ACTIVE', 'INACTIVE'))
+        CHECK (product_status IN ('ACTIVE', 'INACTIVE')),
+	CONSTRAINT chk_product_unit_of_measure
+        CHECK (unit_of_measure IN ('UNITS', 'KILOGRAMS','LITERS'))
 );
 
 -- User table: stores system users and roles
