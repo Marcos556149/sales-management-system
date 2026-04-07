@@ -27,6 +27,7 @@
 - [RF-24: View User](#rf-24-view-user)
 - [RF-25: Update User](#rf-25-update-user)
 - [RF-26: Change User Status](#rf-26-change-user-status)
+- [RF-27: Activate Product](#rf-27-activate-product)
 
 
 ### General Rules
@@ -993,6 +994,41 @@ The system must allow administrators to change the status of a user.
 
 ---
 
+## RF-27: Activate Product
+
+### Description
+The system must allow the user to activate an inactive product by marking it as active.
+
+### Main Flow
+1. The user accesses the product section.  
+2. The user selects a product.  
+3. The system displays the product data.  
+4. The user requests to activate the product.  
+5. The system requests confirmation of the action.  
+6. The user confirms the operation.  
+7. The system updates the product status to "Active".  
+8. The system displays a confirmation message: "Product successfully activated".  
+
+### Alternative Flows
+
+**2.a Product not found**  
+2.a.1 The system detects that the selected product does not exist.  
+2.a.2 The system displays a message: "Product does not exist".  
+
+**5.a Operation canceled**  
+5.a.1 The user cancels the operation.  
+5.a.2 The system does not apply any changes to the product.  
+
+**7.a Product already active**  
+7.a.1 The system detects that the product is already active.  
+7.a.2 The system displays a message: "Product is already active".  
+
+### Business Rules
+- Only inactive products can be activated.  
+- An active product is available for sales operations.  
+
+---
+
 ## General Rules
 
 ### System Access Rules
@@ -1005,6 +1041,7 @@ The system must allow administrators to change the status of a user.
 - Can view products (RF-2).  
 - Can update products (RF-3).  
 - Can deactivate products (RF-4).  
+- Can activate products (RF-27).  
 - Can search products by barcode (RF-5).  
 - Can register products by barcode (RF-6).  
 - Can view a specific product (RF-17).  
@@ -1055,6 +1092,7 @@ The system must allow administrators to change the status of a user.
 - Cannot view a specific user (RF-24).  
 - Cannot update users (RF-25).  
 - Cannot change user status (RF-26).  
+- Cannot activate products (RF-27).  
 
 ---
 
