@@ -54,7 +54,7 @@ CREATE TABLE core.product(
         CHECK (
             unit_of_measure <> 'UNITS'
             OR product_stock = FLOOR(product_stock)
-        )
+        ),
 	CONSTRAINT chk_product_status
         CHECK (product_status IN ('ACTIVE', 'INACTIVE')),
 	CONSTRAINT chk_product_unit_of_measure

@@ -50,7 +50,7 @@ body {
   border-radius: 16px; /* Slightly rounder */
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
   width: 100%;
-  max-width: 500px; /* Made the card wider (from 400px to 500px) */
+  max-width: 600px; /* Made the card wider */
   text-align: center;
   border: 1px solid var(--border-color);
 }
@@ -157,4 +157,33 @@ body {
   .login-card h2 {
     font-size: 1.75rem;
   }
+}
+
+/* Field-specific validation error styles */
+.field-error-text {
+  color: var(--error-text);
+  font-size: 0.8rem;
+  margin-top: -4px;
+  font-weight: 500;
+}
+
+.input-error {
+  border-color: var(--error-text) !important;
+  box-shadow: 0 0 0 2px rgba(185, 28, 28, 0.1) !important;
+}
+
+/* Containers to reserve exact vertical space and prevent layout jumping */
+.status-container {
+  height: 95px; /* Fixed height tall enough for the 3-line success message */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin-bottom: 5px;
+}
+
+.field-error-container {
+  height: 24px; /* Fixed height for 1 line of error text */
+  display: flex;
+  align-items: flex-start;
+  overflow: hidden;
 }

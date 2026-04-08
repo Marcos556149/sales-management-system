@@ -16,7 +16,7 @@ import org.springframework.stereotype.Service;
  * <p>Validates user credentials and ensures the user account is active.</p>
  */
 @Service
-public class AuthService {
+public class AuthService implements IAuthService{
 
     private final IUserRepository iUserRepository;
     private final ILoginRequestMapper iLoginRequestMapper;
