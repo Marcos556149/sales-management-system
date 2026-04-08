@@ -10,7 +10,7 @@ import org.mapstruct.Mapper;
  * <p>Handles transformations needed for authentication requests and User data.</p>
  */
 @Mapper(componentModel = "spring")
-public interface LoginRequestMapper {
+public interface ILoginRequestMapper {
 
     /**
      * Maps a {@link LoginRequestDTO} to a {@link User} entity.
