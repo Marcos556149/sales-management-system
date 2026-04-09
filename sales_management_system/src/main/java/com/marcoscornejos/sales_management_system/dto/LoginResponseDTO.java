@@ -1,7 +1,6 @@
 package com.marcoscornejos.sales_management_system.dto;
 
-import com.marcoscornejos.sales_management_system.model.Language;
-import com.marcoscornejos.sales_management_system.model.UserRole;
+import com.marcoscornejos.sales_management_system.dto.EnumDTO;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -23,10 +22,10 @@ public class LoginResponseDTO {
     /** Username of the authenticated user. */
     private String userName;
 
-    /** Role assigned to the user. */
-    private UserRole userRole;
+    /** Role assigned to the user (code + label). */
+    private EnumDTO userRole;
 
-    /** Preferred interface language of the user. */
-    private Language language;
+    /** Preferred interface language (code + label). */
+    private EnumDTO language;
 
 }
