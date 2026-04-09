@@ -81,7 +81,7 @@ The system must allow the user to view the products registered in the system.
 ### Main Flow
 1. The user accesses the product section.  
 2. The user requests to view products.  
-3. The system retrieves the list of products from the database.  
+3. The system retrieves a paginated list of products from the database.
 4. The system displays the registered products with the following data:
    - Product code  
    - Product name  
@@ -93,7 +93,7 @@ The system must allow the user to view the products registered in the system.
 
 **3.a No registered products**  
 3.a.1 The system detects that there are no products in the database.  
-3.a.2 The system displays a message: "No products found".  
+3.a.2 The system displays a message: "No products available".  
 
 **3.b Product search**  
 
@@ -119,15 +119,20 @@ The system must allow the user to view the products registered in the system.
 
 **3.f Product not found**  
 3.f.1 The system detects that no products match the search criteria.  
-3.f.2 The system displays a message: "No products found".  
+3.f.2 The system displays a message: "No products match the search criteria".  
 
 ### Business Rules
+- The system must allow viewing all registered products using pagination.
+- The system must retrieve products in pages of 50 items by default.
+- The system must allow navigation between pages of products (e.g., next page, previous page, or direct page selection).
+- If no page is specified, the system must return the first page by default.
 - The system must allow viewing all registered products.  
 - The system must allow searching products by name or code.  
 - The system must allow sorting products by name (Ascending or Descending).  
 - The system must allow filtering products by status (Active, Inactive, or All Status).  
 - If no status filter is selected, the system displays "All Status" by default.  
 - If no sorting criterion is selected, the system applies "Ascending" by default.  
+- The system must ensure that only the products belonging to the requested page are retrieved from the database (server-side pagination).
 
 ---
 
