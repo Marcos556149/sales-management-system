@@ -5,7 +5,7 @@ import React, { useState } from 'react';
  * This functional React component represents the login form.
  * It connects to the Spring Boot backend via /api/auth/login
  */
-const LoginForm = () => {
+const LoginForm = ({ onLoginSuccess }) => {
   // State to keep track of text field values
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -16,8 +16,7 @@ const LoginForm = () => {
   // State to handle field-specific errors (400 validation errors)
   const [fieldErrors, setFieldErrors] = useState({});
 
-  // State for a successful login message and user data
-  const [success, setSuccess] = useState('');
+  // State for user data (to keep component logical, although we'll pass to parent)
   const [userData, setUserData] = useState(null);
 
   /**
@@ -29,7 +28,6 @@ const LoginForm = () => {
     // Reset errors and success states
     setGlobalError('');
     setFieldErrors({});
-    setSuccess('');
     setUserData(null);
 
     // Basic frontend-level check
@@ -67,8 +65,10 @@ const LoginForm = () => {
       const data = await response.json();
 
       if (response.ok) { // HTTP Status 200-299
-        setSuccess('Login successful!');
         setUserData(data); // Expecting userName, userRole, language
+        if (onLoginSuccess) {
+          onLoginSuccess(data); // Immediately redirect using parent handler
+        }
       } else {
         // Handle non-200 responses based on our GlobalExceptionHandler
         
@@ -87,7 +87,6 @@ const LoginForm = () => {
       }
     } catch (err) {
       console.error("Fetch error:", err);
-      // This catch is usually for Network errors (when the backend is entirely down)
       setGlobalError('Network error. Make sure the Spring Boot backend server (port 8080) is running.');
     }
   };
@@ -101,13 +100,6 @@ const LoginForm = () => {
         {/* Status message container to reserve space and prevent layout jumping */}
         <div className="status-container">
           {globalError && <div className="alert alert-error">{globalError}</div>}
-          {success && (
-            <div className="alert alert-success">
-              {success} <br/>
-              <strong>Welcome, {userData?.userName}!</strong> <br/>
-              Role: {userData?.userRole} | Lang: {userData?.language}
-            </div>
-          )}
         </div>
 
         <form onSubmit={handleLogin} className="login-form">

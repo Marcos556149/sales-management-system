@@ -25,7 +25,7 @@ import lombok.Getter;
 public enum ProductStatus {
     ACTIVE("Active"),
     INACTIVE("Inactive"),
-    ALL("All");
+    ALL("All Status");
 
     private final String displayName;
 

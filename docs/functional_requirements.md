@@ -114,7 +114,7 @@ The system must allow the user to view the products registered in the system.
 **3.d Product filtering**  
 
 **3.d.1 By status**  
-3.d.1.1 The user selects a product status (Active, Inactive, or All).  
+3.d.1.1 The user selects a product status (Active, Inactive, or All Status).  
 3.d.1.2 The system filters products according to the selected status.  
 
 **3.f Product not found**  
@@ -125,8 +125,8 @@ The system must allow the user to view the products registered in the system.
 - The system must allow viewing all registered products.  
 - The system must allow searching products by name or code.  
 - The system must allow sorting products by name (Ascending or Descending).  
-- The system must allow filtering products by status (Active, Inactive, or All).  
-- If no status filter is selected, the system displays "All" by default.  
+- The system must allow filtering products by status (Active, Inactive, or All Status).  
+- If no status filter is selected, the system displays "All Status" by default.  
 - If no sorting criterion is selected, the system applies "Ascending" by default.  
 
 ---
