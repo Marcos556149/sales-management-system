@@ -8,6 +8,7 @@ import com.marcoscornejos.sales_management_system.mapper.ILoginResponseMapper;
 import com.marcoscornejos.sales_management_system.model.User;
 import com.marcoscornejos.sales_management_system.model.UserStatus;
 import com.marcoscornejos.sales_management_system.repository.IUserRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 /**
@@ -16,17 +17,12 @@ import org.springframework.stereotype.Service;
  * <p>Validates user credentials and ensures the user account is active.</p>
  */
 @Service
+@RequiredArgsConstructor
 public class AuthService implements IAuthService{
 
     private final IUserRepository iUserRepository;
     private final ILoginRequestMapper iLoginRequestMapper;
     private final ILoginResponseMapper iLoginResponseMapper;
-
-    public AuthService(IUserRepository iUserRepository, ILoginRequestMapper iLoginRequestMapper, ILoginResponseMapper iLoginResponseMapper) {
-        this.iUserRepository = iUserRepository;
-        this.iLoginRequestMapper = iLoginRequestMapper;
-        this.iLoginResponseMapper = iLoginResponseMapper;
-    }
 
     /**
      * Validates login credentials for a user.

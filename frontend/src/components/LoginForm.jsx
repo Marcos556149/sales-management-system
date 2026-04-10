@@ -61,8 +61,14 @@ const LoginForm = ({ onLoginSuccess }) => {
         })
       });
 
-      // Parse JSON from backend regardless of the status
-      const data = await response.json();
+      // Safely parse JSON from backend
+      const text = await response.text();
+      let data;
+      try {
+        data = text ? JSON.parse(text) : {};
+      } catch (err) {
+        data = { error: 'Invalid response from server' };
+      }
 
       if (response.ok) { // HTTP Status 200-299
         setUserData(data); // Expecting userName, userRole, language
