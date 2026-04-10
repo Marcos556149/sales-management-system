@@ -1,0 +1,14 @@
+package com.marcoscornejos.sales_management_system.service;
+
+import com.marcoscornejos.sales_management_system.dto.PageResponseDTO;
+import com.marcoscornejos.sales_management_system.dto.ProductFiltersResponseDTO;
+import com.marcoscornejos.sales_management_system.dto.ProductListResponseDTO;
+import com.marcoscornejos.sales_management_system.model.ProductStatus;
+import com.marcoscornejos.sales_management_system.model.SortOrder;
+
+
+public interface IProductService {
+    PageResponseDTO<ProductListResponseDTO> getProducts(String searchCodeOrName, ProductStatus statusFilter, SortOrder nameSort, int page, int size);
+
+    ProductFiltersResponseDTO getFilters();
+}
