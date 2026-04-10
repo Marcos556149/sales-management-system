@@ -7,6 +7,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -62,5 +63,34 @@ public class GlobalExceptionHandler {
         Map<String, String> error = new HashMap<>();
         error.put("error", "An unexpected error occurred: " + ex.getMessage());
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
+    }
+
+    /**
+     * Handles errors when a request parameter cannot be converted
+     * to the expected type.
+     *
+     * <p>This typically happens when the client sends an invalid value
+     * (e.g., a wrong enum value, a string instead of a number, etc.).</p>
+     *
+     * <p>Returns a simple error message indicating the incorrect value
+     * provided by the client.</p>
+     *
+     * @param ex the exception thrown when type conversion fails
+     * @return a 400 Bad Request response with the invalid value message
+     */
+
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<Map<String, String>> handleTypeMismatch(MethodArgumentTypeMismatchException ex) {
+
+        Map<String, String> error = new HashMap<>();
+
+        String message = String.format(
+                "Incorrect value: %s",
+                ex.getValue()
+        );
+
+        error.put(ex.getName(), message);
+
+        return ResponseEntity.badRequest().body(error);
     }
 }
