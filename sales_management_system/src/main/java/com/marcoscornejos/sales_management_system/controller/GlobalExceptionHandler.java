@@ -93,4 +93,22 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity.badRequest().body(error);
     }
+
+    /**
+     * Handles illegal argument exceptions thrown when request parameters
+     * contain invalid values (e.g., negative pagination values).
+     *
+     * <p>Returns a 400 Bad Request response with a descriptive error message.</p>
+     *
+     * @param ex the exception containing validation details
+     * @return a 400 Bad Request response with the error message
+     */
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<Map<String, String>> handleIllegalArgument(IllegalArgumentException ex) {
+
+        Map<String, String> error = new HashMap<>();
+        error.put("error", ex.getMessage());
+
+        return ResponseEntity.badRequest().body(error);
+    }
 }
