@@ -311,7 +311,7 @@ const ProductsView = () => {
                     <td className="font-mono text-sm">{product.productCode}</td>
                     <td className="font-medium">{product.productName}</td>
                     <td>${product.productPrice?.toFixed(2) ?? '0.00'}</td>
-                    <td>
+                    <td className="stock-cell">
                       {product.productStock ?? '0'} <span className="unit-text">{product.unitOfMeasure?.code === 'UNITS' ? 'u' : (product.unitOfMeasure?.label || '')}</span>
                     </td>
                     <td>

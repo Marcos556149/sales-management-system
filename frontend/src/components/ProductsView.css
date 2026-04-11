@@ -147,10 +147,14 @@
   font-weight: 500;
 }
 
+.stock-cell {
+  white-space: nowrap;
+}
+
 .unit-text {
   color: var(--text-secondary);
   font-size: 0.85rem;
-  margin-left: 2px;
+  margin-left: 4px;
 }
 
 .status-badge {
@@ -177,9 +181,13 @@
 }
 
 .actions-cell {
-  display: flex;
-  justify-content: flex-end;
-  gap: 8px;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.actions-cell .action-btn {
+  margin-left: 8px;
+  vertical-align: middle;
 }
 
 .action-btn {
