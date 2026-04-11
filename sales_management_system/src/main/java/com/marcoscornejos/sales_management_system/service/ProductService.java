@@ -4,6 +4,7 @@ import com.marcoscornejos.sales_management_system.dto.EnumDTO;
 import com.marcoscornejos.sales_management_system.dto.PageResponseDTO;
 import com.marcoscornejos.sales_management_system.dto.ProductFiltersResponseDTO;
 import com.marcoscornejos.sales_management_system.dto.ProductListResponseDTO;
+import com.marcoscornejos.sales_management_system.exception.InvalidProductDataException;
 import com.marcoscornejos.sales_management_system.mapper.IPageResponseMapper;
 import com.marcoscornejos.sales_management_system.mapper.IProductListResponseMapper;
 import com.marcoscornejos.sales_management_system.model.Product;
@@ -63,15 +64,15 @@ public class ProductService implements IProductService {
 
         // Validate pagination parameters
         if (page < 0) {
-            throw new IllegalArgumentException("Page index must not be negative");
+            throw new InvalidProductDataException("Page index must not be negative");
         }
 
         if (size <= 0) {
-            throw new IllegalArgumentException("Page size must be greater than zero");
+            throw new InvalidProductDataException("Page size must be greater than zero");
         }
 
         if (size > 50) {
-            throw new IllegalArgumentException("Page size must not exceed 50");
+            throw new InvalidProductDataException("Page size must not exceed 50");
         }
 
         // Build sorting configuration (applied at database level)

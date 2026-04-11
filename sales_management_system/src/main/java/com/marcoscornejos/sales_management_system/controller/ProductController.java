@@ -9,7 +9,6 @@ import com.marcoscornejos.sales_management_system.model.SortOrder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 
 /**
  * REST controller responsible for handling product queries.
