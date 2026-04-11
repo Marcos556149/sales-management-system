@@ -1,12 +1,14 @@
 package com.marcoscornejos.sales_management_system.controller;
 
 import com.marcoscornejos.sales_management_system.dto.PageResponseDTO;
+import com.marcoscornejos.sales_management_system.dto.ProductDetailResponseDTO;
 import com.marcoscornejos.sales_management_system.dto.ProductFiltersResponseDTO;
 import com.marcoscornejos.sales_management_system.dto.ProductListResponseDTO;
 import com.marcoscornejos.sales_management_system.service.ProductService;
 import com.marcoscornejos.sales_management_system.model.ProductStatus;
 import com.marcoscornejos.sales_management_system.model.SortOrder;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -59,5 +61,26 @@ public class ProductController {
     @GetMapping("/filters")
     public ProductFiltersResponseDTO getFilters() {
         return productService.getFilters();
+    }
+
+    /**
+     * Retrieves detailed information of a specific product by its code.
+     *
+     * <p>
+     * This endpoint allows clients to fetch a single product's data,
+     * including its code, name, price, unit of measure, status, and stock.
+     * </p>
+     *
+     * @param productCode the unique identifier of the product
+     * @return the product details as a response DTO
+     */
+    @GetMapping("/{productCode}")
+    public ResponseEntity<ProductDetailResponseDTO> getProductByCode(
+            @PathVariable String productCode
+    ) {
+
+        ProductDetailResponseDTO product = productService.getProductByCode(productCode);
+
+        return ResponseEntity.ok(product);
     }
 }
