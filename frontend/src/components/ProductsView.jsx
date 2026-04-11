@@ -2,10 +2,13 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Search, Plus, Filter, Edit2, Ban, CheckCircle2, X } from 'lucide-react';
 import Pagination from './Pagination';
+import ConfirmModal from './ConfirmModal';
+import { useToast } from './ToastContext';
 import './ProductsView.css';
 
 const ProductsView = () => {
   const navigate = useNavigate();
+  const { addToast } = useToast();
 
   // --- UI State ---
   const [searchTerm, setSearchTerm] = useState('');
@@ -24,6 +27,12 @@ const ProductsView = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
+  const [actionLoading, setActionLoading] = useState(false);
+  
+  // --- Modal State ---
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [productToDeactivate, setProductToDeactivate] = useState(null);
   
   // --- Pagination State ---
   const [pageFrontend, setPageFrontend] = useState(1);
@@ -157,7 +166,7 @@ const ProductsView = () => {
         abortControllerRef.current.abort();
       }
     };
-  }, [appliedSearch, statusFilter, sortOrder, pageFrontend]);
+  }, [appliedSearch, statusFilter, sortOrder, pageFrontend, refreshTrigger]);
 
   // Handle immediate search on Enter key
   const handleKeyDown = (e) => {
@@ -177,6 +186,49 @@ const ProductsView = () => {
     setSearchTerm('');
     setPageFrontend(1);
     setAppliedSearch('');
+  };
+
+  const handleDeactivateProduct = (productCode) => {
+    setProductToDeactivate(productCode);
+    setIsModalOpen(true);
+  };
+
+  const confirmDeactivateProduct = async () => {
+    if (!productToDeactivate) return;
+
+    setActionLoading(true);
+    try {
+      const response = await fetch(`/api/products/${productToDeactivate}/deactivate`, {
+        method: 'PATCH',
+      });
+
+      let message = '';
+      try {
+        const text = await response.text();
+        try {
+          const json = JSON.parse(text);
+          message = json.error || json.message || text;
+        } catch (e) {
+          message = text;
+        }
+      } catch (e) {
+        message = "An error occurred";
+      }
+
+      if (!response.ok) {
+        addToast(message || "An error occurred while deactivating", 'error');
+      } else {
+        addToast(message || "Product successfully deactivated", 'success');
+      }
+    } catch (err) {
+      addToast(err.message || "An error occurred", 'error');
+    } finally {
+      setPageFrontend(1);
+      setRefreshTrigger(prev => prev + 1);
+      setActionLoading(false);
+      setIsModalOpen(false);
+      setProductToDeactivate(null);
+    }
   };
 
   // Check if we have active filters besides the defaults
@@ -324,11 +376,24 @@ const ProductsView = () => {
                         <Edit2 size={16} />
                       </button>
                       {product.productStatus?.code === 'ACTIVE' ? (
-                        <button className="action-btn deactivate-btn" title="Deactivate Product">
+                        <button 
+                          className="action-btn deactivate-btn" 
+                          title="Deactivate Product"
+                          disabled={actionLoading}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDeactivateProduct(product.productCode);
+                          }}
+                        >
                           <Ban size={16} />
                         </button>
                       ) : (
-                        <button className="action-btn activate-btn" title="Activate Product">
+                        <button 
+                          className="action-btn activate-btn" 
+                          title="Activate Product"
+                          disabled={actionLoading}
+                          onClick={(e) => e.stopPropagation()}
+                        >
                           <CheckCircle2 size={16} />
                         </button>
                       )}
@@ -351,6 +416,18 @@ const ProductsView = () => {
           />
         )}
       </div>
+
+      <ConfirmModal
+        isOpen={isModalOpen}
+        title="Confirm Deactivation"
+        message="Are you sure you want to deactivate this product?"
+        onConfirm={confirmDeactivateProduct}
+        onCancel={() => {
+          setIsModalOpen(false);
+          setProductToDeactivate(null);
+        }}
+        isConfirming={actionLoading}
+      />
     </div>
   );
 };

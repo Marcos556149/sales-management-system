@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Edit2, Ban, CheckCircle2, PackageCheck } from 'lucide-react';
+import ConfirmModal from './ConfirmModal';
+import { useToast } from './ToastContext';
 import './ProductDetailView.css';
 
 // Custom hook to handle data fetching isolated from the component logic
@@ -8,6 +10,9 @@ const useProductDetail = (productCode) => {
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
+
+  const refetch = () => setRefreshTrigger(prev => prev + 1);
 
   useEffect(() => {
     let isMounted = true;
@@ -46,19 +51,60 @@ const useProductDetail = (productCode) => {
     return () => {
       isMounted = false;
     };
-  }, [productCode]);
+  }, [productCode, refreshTrigger]);
 
-  return { product, loading, error };
+  return { product, loading, error, refetch };
 };
 
 const ProductDetailView = () => {
   const { id: productCode } = useParams();
   const navigate = useNavigate();
   
-  const { product, loading, error } = useProductDetail(productCode);
+  const { product, loading, error, refetch } = useProductDetail(productCode);
+  const [actionLoading, setActionLoading] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const { addToast } = useToast();
 
   const handleBack = () => {
     navigate('/dashboard/products');
+  };
+
+  const handleDeactivate = () => {
+    setIsModalOpen(true);
+  };
+
+  const confirmDeactivate = async () => {
+    setActionLoading(true);
+    try {
+      const response = await fetch(`/api/products/${productCode}/deactivate`, {
+        method: 'PATCH',
+      });
+
+      let message = '';
+      try {
+        const text = await response.text();
+        try {
+          const json = JSON.parse(text);
+          message = json.error || json.message || text;
+        } catch (e) {
+          message = text;
+        }
+      } catch (e) {
+        message = "An error occurred";
+      }
+
+      if (!response.ok) {
+        addToast(message || "An error occurred while deactivating", 'error');
+      } else {
+        addToast(message || "Product successfully deactivated", 'success');
+        refetch();
+      }
+    } catch (err) {
+      addToast(err.message || "An error occurred", 'error');
+    } finally {
+      setActionLoading(false);
+      setIsModalOpen(false);
+    }
   };
 
   if (loading) {
@@ -87,8 +133,7 @@ const ProductDetailView = () => {
           </button>
         </div>
         <div className="not-found-card">
-          <h2>Error Loading Product</h2>
-          <p>{error || "The product you are looking for does not exist."}</p>
+          <h2>{error || "Product not found"}</h2>
         </div>
       </div>
     );
@@ -110,12 +155,19 @@ const ProductDetailView = () => {
           </button>
           
           {product.productStatus?.code === 'ACTIVE' ? (
-            <button className="btn-outline-danger whitespace-nowrap">
+            <button 
+              className="btn-outline-danger whitespace-nowrap"
+              disabled={actionLoading}
+              onClick={handleDeactivate}
+            >
               <Ban size={16} />
               <span>Deactivate</span>
             </button>
           ) : (
-            <button className="btn-outline-success whitespace-nowrap">
+            <button 
+              className="btn-outline-success whitespace-nowrap"
+              disabled={actionLoading}
+            >
               <CheckCircle2 size={16} />
               <span>Activate</span>
             </button>
@@ -164,6 +216,15 @@ const ProductDetailView = () => {
           </div>
         </div>
       </div>
+
+      <ConfirmModal
+        isOpen={isModalOpen}
+        title="Confirm Deactivation"
+        message="Are you sure you want to deactivate this product?"
+        onConfirm={confirmDeactivate}
+        onCancel={() => setIsModalOpen(false)}
+        isConfirming={actionLoading}
+      />
     </div>
   );
 };
