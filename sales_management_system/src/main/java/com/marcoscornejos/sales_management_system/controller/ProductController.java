@@ -83,4 +83,23 @@ public class ProductController {
 
         return ResponseEntity.ok(product);
     }
+
+    /**
+     * Deactivates a product (soft delete).
+     *
+     * <p>
+     * This operation updates the product status to INACTIVE without
+     * physically removing it from the database.
+     * </p>
+     *
+     * @param productCode the unique code of the product
+     * @return confirmation message
+     */
+    @PatchMapping("/{productCode}/deactivate")
+    public ResponseEntity<String> deactivateProduct(@PathVariable String productCode) {
+
+        productService.deactivateProduct(productCode);
+
+        return ResponseEntity.ok("Product successfully deactivated");
+    }
 }
