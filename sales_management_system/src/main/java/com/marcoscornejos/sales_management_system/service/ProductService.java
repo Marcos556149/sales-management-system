@@ -1,11 +1,10 @@
 package com.marcoscornejos.sales_management_system.service;
 
-import com.marcoscornejos.sales_management_system.dto.EnumDTO;
-import com.marcoscornejos.sales_management_system.dto.PageResponseDTO;
-import com.marcoscornejos.sales_management_system.dto.ProductFiltersResponseDTO;
-import com.marcoscornejos.sales_management_system.dto.ProductListResponseDTO;
+import com.marcoscornejos.sales_management_system.dto.*;
 import com.marcoscornejos.sales_management_system.exception.InvalidProductDataException;
+import com.marcoscornejos.sales_management_system.exception.ProductNotFoundException;
 import com.marcoscornejos.sales_management_system.mapper.IPageResponseMapper;
+import com.marcoscornejos.sales_management_system.mapper.IProductDetailResponseMapper;
 import com.marcoscornejos.sales_management_system.mapper.IProductListResponseMapper;
 import com.marcoscornejos.sales_management_system.model.Product;
 import com.marcoscornejos.sales_management_system.model.ProductStatus;
@@ -33,6 +32,7 @@ public class ProductService implements IProductService {
     private final IProductRepository iProductRepository;
     private final IProductListResponseMapper iProductListResponseMapper;
     private final IPageResponseMapper iPageResponseMapper;
+    private final IProductDetailResponseMapper iProductDetailResponseMapper;
 
     /**
      * Retrieves a paginated list of products applying:
@@ -149,5 +149,26 @@ public class ProductService implements IProductService {
         dto.setSortOptions(sortOptions);
 
         return dto;
+    }
+
+    /**
+     * Retrieves a product by its unique code.
+     *
+     * <p>
+     * Searches for a product in the database using the provided code.
+     * Throws an exception if the product does not exist.
+     * </p>
+     *
+     * @param productCode the unique identifier of the product
+     * @return the product details as a DTO
+     * @throws ProductNotFoundException if the product is not found
+     */
+    @Override
+    public ProductDetailResponseDTO getProductByCode(String productCode) {
+
+        Product product = iProductRepository.findById(productCode)
+                .orElseThrow(() -> new ProductNotFoundException("Product not found"));
+
+        return iProductDetailResponseMapper.toDto(product);
     }
 }
