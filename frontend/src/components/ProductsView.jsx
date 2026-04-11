@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Search, Plus, Filter, Edit2, Ban, CheckCircle2, X } from 'lucide-react';
+import { Search, Plus, Filter, Edit2, Ban, CheckCircle2, X, RefreshCw } from 'lucide-react';
 import Pagination from './Pagination';
 import ConfirmModal from './ConfirmModal';
 import { useToast } from './ToastContext';
@@ -150,6 +150,7 @@ const ProductsView = () => {
         } else if (abortControllerRef.current === abortController) {
           console.error("Failed to fetch products:", err);
           setError('Failed to load products. Please try again later.');
+          addToast("The list could not be refreshed. Please try again.", "error");
         }
       } finally {
         if (abortControllerRef.current === abortController) {
@@ -186,6 +187,11 @@ const ProductsView = () => {
     setSearchTerm('');
     setPageFrontend(1);
     setAppliedSearch('');
+  };
+
+  const handleManualRefresh = () => {
+    setPageFrontend(1);
+    setRefreshTrigger(prev => prev + 1);
   };
 
   const handleDeactivateProduct = (productCode) => {
@@ -314,7 +320,15 @@ const ProductsView = () => {
           </div>
         </div>
 
-        <div className="toolbar-right">
+        <div className="toolbar-right" style={{ display: 'flex', gap: '12px' }}>
+          <button 
+            className="btn-secondary" 
+            onClick={handleManualRefresh} 
+            disabled={loading}
+          >
+            <RefreshCw size={18} className={loading ? "spin-animation" : ""} />
+            <span>{loading ? 'Refreshing...' : 'Refresh'}</span>
+          </button>
           <button className="btn-primary">
             <Plus size={18} />
             <span>New Product</span>
