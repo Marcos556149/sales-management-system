@@ -1,6 +1,7 @@
 package com.marcoscornejos.sales_management_system.controller;
 
 import com.marcoscornejos.sales_management_system.exception.AuthException;
+import com.marcoscornejos.sales_management_system.exception.ProductException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -95,16 +96,18 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * Handles illegal argument exceptions thrown when request parameters
-     * contain invalid values (e.g., negative pagination values).
+     * Handles product-related exceptions thrown when business rules
+     * or validations fail within the Product domain.
      *
-     * <p>Returns a 400 Bad Request response with a descriptive error message.</p>
+     * <p>
+     * Returns a 400 Bad Request response with a descriptive error message.
+     * </p>
      *
-     * @param ex the exception containing validation details
+     * @param ex the exception containing error details
      * @return a 400 Bad Request response with the error message
      */
-    @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<Map<String, String>> handleIllegalArgument(IllegalArgumentException ex) {
+    @ExceptionHandler(ProductException.class)
+    public ResponseEntity<Map<String, String>> handleProductException(ProductException ex) {
 
         Map<String, String> error = new HashMap<>();
         error.put("error", ex.getMessage());
