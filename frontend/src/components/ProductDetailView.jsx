@@ -1,34 +1,98 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Edit2, Ban, CheckCircle2, PackageCheck } from 'lucide-react';
-import { PLACEHOLDER_PRODUCTS } from '../data/mockProducts';
 import './ProductDetailView.css';
 
+// Custom hook to handle data fetching isolated from the component logic
+const useProductDetail = (productCode) => {
+  const [product, setProduct] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const fetchProduct = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const response = await fetch(`/api/products/${productCode}`);
+        
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({}));
+          // Use backend error response if available, otherwise generic
+          throw new Error(errorData.error || 'Failed to fetch product details.');
+        }
+
+        const data = await response.json();
+        if (isMounted) {
+          setProduct(data);
+        }
+      } catch (err) {
+        if (isMounted) {
+          setError(err.message);
+        }
+      } finally {
+        if (isMounted) {
+          setLoading(false);
+        }
+      }
+    };
+
+    if (productCode) {
+      fetchProduct();
+    }
+
+    return () => {
+      isMounted = false;
+    };
+  }, [productCode]);
+
+  return { product, loading, error };
+};
+
 const ProductDetailView = () => {
-  const { id } = useParams();
+  const { id: productCode } = useParams();
   const navigate = useNavigate();
   
-  // Find product by id from mock data
-  const product = PLACEHOLDER_PRODUCTS.find(p => p.id === parseInt(id));
+  const { product, loading, error } = useProductDetail(productCode);
 
-  if (!product) {
+  const handleBack = () => {
+    navigate('/dashboard/products');
+  };
+
+  if (loading) {
     return (
       <div className="view-container">
-        <div className="not-found-card">
-          <h2>Product Not Found</h2>
-          <p>The product you are looking for does not exist or has been removed.</p>
-          <button className="btn-secondary mt-4" onClick={() => navigate('/dashboard/products')}>
+        <div className="detail-toolbar">
+          <button className="btn-secondary" onClick={handleBack}>
             <ArrowLeft size={16} />
             <span>Back to Products</span>
           </button>
+        </div>
+        <div className="detail-card" style={{ padding: '48px', textAlign: 'center', color: 'var(--text-secondary)' }}>
+          <p>Loading product details...</p>
         </div>
       </div>
     );
   }
 
-  const handleBack = () => {
-    navigate('/dashboard/products');
-  };
+  if (error || !product) {
+    return (
+      <div className="view-container">
+        <div className="detail-toolbar">
+          <button className="btn-secondary" onClick={handleBack}>
+            <ArrowLeft size={16} />
+            <span>Back to Products</span>
+          </button>
+        </div>
+        <div className="not-found-card">
+          <h2>Error Loading Product</h2>
+          <p>{error || "The product you are looking for does not exist."}</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="view-container">
@@ -45,7 +109,7 @@ const ProductDetailView = () => {
             <span>Edit</span>
           </button>
           
-          {product.status.code === 'ACTIVE' ? (
+          {product.productStatus?.code === 'ACTIVE' ? (
             <button className="btn-outline-danger whitespace-nowrap">
               <Ban size={16} />
               <span>Deactivate</span>
@@ -67,12 +131,13 @@ const ProductDetailView = () => {
               <PackageCheck size={32} className="product-main-icon" />
             </div>
             <div>
-              <h2 className="detail-title">{product.name}</h2>
-              <p className="detail-subtitle">Code: <span className="font-mono">{product.code}</span></p>
+              <h2 className="detail-title">{product.productName}</h2>
+              <p className="detail-subtitle">Code: <span className="font-mono">{product.productCode}</span></p>
             </div>
           </div>
-          <span className={`status-badge large-badge ${product.status.code.toLowerCase()}`}>
-            {product.status.label}
+          {/* dynamic status class using the status code */}
+          <span className={`status-badge large-badge ${(product.productStatus?.code || '').toLowerCase()}`}>
+            {product.productStatus?.label || 'Unknown'}
           </span>
         </div>
 
@@ -80,22 +145,21 @@ const ProductDetailView = () => {
           <div className="info-grid">
             <div className="info-box">
               <h3 className="info-label">Price</h3>
-              <p className="info-value price-value">${product.price.toFixed(2)}</p>
+              <p className="info-value price-value">${product.productPrice?.toFixed(2) ?? '0.00'}</p>
             </div>
             
             <div className="info-box">
               <h3 className="info-label">Available Stock</h3>
               <div className="stock-info">
-                <p className={`info-value ${product.stock === 0 ? 'text-danger' : ''}`}>
-                  {product.stock}
+                <p className={`info-value ${product.productStock === 0 ? 'text-danger' : ''}`}>
+                  {product.productStock ?? '0'}
                 </p>
-                <span className="info-unit">{product.unit.code === 'UNITS' ? 'u' : 'kg'}</span>
               </div>
             </div>
 
             <div className="info-box">
               <h3 className="info-label">Unit of Measure</h3>
-              <p className="info-value unit-only">{product.unit.label}</p>
+              <p className="info-value unit-only">{product.unitOfMeasure?.label || 'Unknown'}</p>
             </div>
           </div>
         </div>

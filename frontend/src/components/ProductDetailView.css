@@ -92,7 +92,7 @@
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   gap: 24px;
 }
 
@@ -100,6 +100,13 @@
   display: flex;
   gap: 20px;
   align-items: center;
+  flex: 1;
+  min-width: 0;
+}
+
+.detail-title-group > div:not(.product-icon-container) {
+  min-width: 0;
+  flex: 1;
 }
 
 .product-icon-container {
@@ -111,6 +118,7 @@
   justify-content: center;
   align-items: center;
   color: var(--primary-color);
+  flex-shrink: 0;
 }
 
 .detail-title {
@@ -118,16 +126,22 @@
   font-weight: 700;
   color: var(--text-primary);
   margin-bottom: 6px;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 .detail-subtitle {
   color: var(--text-secondary);
   font-size: 1rem;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 .large-badge {
-  font-size: 0.85rem;
-  padding: 6px 14px;
+  font-size: 1rem;
+  padding: 8px 16px;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .detail-body {
