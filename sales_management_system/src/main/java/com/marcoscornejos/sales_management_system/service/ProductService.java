@@ -10,6 +10,7 @@ import com.marcoscornejos.sales_management_system.model.Product;
 import com.marcoscornejos.sales_management_system.model.ProductStatus;
 import com.marcoscornejos.sales_management_system.model.SortOrder;
 import com.marcoscornejos.sales_management_system.repository.IProductRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -170,5 +171,36 @@ public class ProductService implements IProductService {
                 .orElseThrow(() -> new ProductNotFoundException("Product not found"));
 
         return iProductDetailResponseMapper.toDto(product);
+    }
+
+    /**
+     * Deactivates a product by setting its status to INACTIVE.
+     *
+     * <p>
+     * This operation performs a logical deletion. If the product does not exist
+     * or is already inactive, an exception is thrown.
+     * </p>
+     *
+     * Executes the operation within a transactional context to ensure
+     * that the product status update is applied atomically.
+     *
+     * @param productCode the unique identifier of the product
+     * @throws ProductNotFoundException if the product does not exist
+     * @throws InvalidProductDataException if the product is already inactive
+     */
+    @Override
+    @Transactional
+    public void deactivateProduct(String productCode) {
+
+        Product product = iProductRepository.findById(productCode)
+                .orElseThrow(() -> new ProductNotFoundException("Product not found"));
+
+        if (product.getProductStatus() == ProductStatus.INACTIVE) {
+            throw new InvalidProductDataException("Product is already inactive");
+        }
+
+        product.setProductStatus(ProductStatus.INACTIVE);
+
+        iProductRepository.save(product);
     }
 }

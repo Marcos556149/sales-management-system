@@ -14,4 +14,6 @@ public interface IProductService {
     ProductFiltersResponseDTO getFilters();
 
     ProductDetailResponseDTO getProductByCode(String productCode);
+
+    void deactivateProduct(String productCode);
 }
