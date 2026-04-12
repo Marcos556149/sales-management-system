@@ -34,6 +34,7 @@ public class AuthService implements IAuthService{
      * @return LoginResponseDTO with userName, userRole, and language
      * @throws IllegalArgumentException if credentials are invalid or user is not active
      */
+    @Override
     public LoginResponseDTO login(LoginRequestDTO request) {
         // Convert DTO to User
         User loginUser = iLoginRequestMapper.toUser(request);

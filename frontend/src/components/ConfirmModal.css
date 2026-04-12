@@ -78,6 +78,15 @@
   background-color: #dc2626;
 }
 
+.confirm-modal-btn-success {
+  background-color: #10b981;
+  color: white;
+}
+
+.confirm-modal-btn-success:hover:not(:disabled) {
+  background-color: #059669;
+}
+
 @keyframes modalFadeIn {
   from {
     opacity: 0;

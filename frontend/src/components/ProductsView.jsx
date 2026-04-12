@@ -34,6 +34,9 @@ const ProductsView = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [productToDeactivate, setProductToDeactivate] = useState(null);
   
+  const [isActivateModalOpen, setIsActivateModalOpen] = useState(false);
+  const [productToActivate, setProductToActivate] = useState(null);
+  
   // --- Pagination State ---
   const [pageFrontend, setPageFrontend] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -237,6 +240,49 @@ const ProductsView = () => {
     }
   };
 
+  const handleActivateProduct = (productCode) => {
+    setProductToActivate(productCode);
+    setIsActivateModalOpen(true);
+  };
+
+  const confirmActivateProduct = async () => {
+    if (!productToActivate) return;
+
+    setActionLoading(true);
+    try {
+      const response = await fetch(`/api/products/${productToActivate}/activate`, {
+        method: 'PATCH',
+      });
+
+      let message = '';
+      try {
+        const text = await response.text();
+        try {
+          const json = JSON.parse(text);
+          message = json.error || json.message || text;
+        } catch (e) {
+          message = text;
+        }
+      } catch (e) {
+        message = "An error occurred";
+      }
+
+      if (!response.ok) {
+        addToast(message || "An error occurred while activating", 'error');
+      } else {
+        addToast(message || "Product successfully activated", 'success');
+      }
+    } catch (err) {
+      addToast(err.message || "An error occurred", 'error');
+    } finally {
+      setPageFrontend(1);
+      setRefreshTrigger(prev => prev + 1);
+      setActionLoading(false);
+      setIsActivateModalOpen(false);
+      setProductToActivate(null);
+    }
+  };
+
   // Check if we have active filters besides the defaults
   const hasActiveFilters = appliedSearch.trim().length > 0 || statusFilter !== 'ALL' || sortOrder !== 'ASCENDING';
 
@@ -406,7 +452,10 @@ const ProductsView = () => {
                           className="action-btn activate-btn" 
                           title="Activate Product"
                           disabled={actionLoading}
-                          onClick={(e) => e.stopPropagation()}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleActivateProduct(product.productCode);
+                          }}
                         >
                           <CheckCircle2 size={16} />
                         </button>
@@ -441,6 +490,20 @@ const ProductsView = () => {
           setProductToDeactivate(null);
         }}
         isConfirming={actionLoading}
+      />
+
+      <ConfirmModal
+        isOpen={isActivateModalOpen}
+        title="Confirm Activation"
+        message="Are you sure you want to activate this product?"
+        onConfirm={confirmActivateProduct}
+        onCancel={() => {
+          setIsActivateModalOpen(false);
+          setProductToActivate(null);
+        }}
+        isConfirming={actionLoading}
+        confirmText="Activate"
+        confirmButtonTheme="success"
       />
     </div>
   );

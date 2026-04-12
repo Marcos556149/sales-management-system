@@ -63,6 +63,7 @@ const ProductDetailView = () => {
   const { product, loading, error, refetch } = useProductDetail(productCode);
   const [actionLoading, setActionLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isActivateModalOpen, setIsActivateModalOpen] = useState(false);
   const { addToast } = useToast();
 
   const handleBack = () => {
@@ -104,6 +105,44 @@ const ProductDetailView = () => {
     } finally {
       setActionLoading(false);
       setIsModalOpen(false);
+    }
+  };
+
+  const handleActivate = () => {
+    setIsActivateModalOpen(true);
+  };
+
+  const confirmActivate = async () => {
+    setActionLoading(true);
+    try {
+      const response = await fetch(`/api/products/${productCode}/activate`, {
+        method: 'PATCH',
+      });
+
+      let message = '';
+      try {
+        const text = await response.text();
+        try {
+          const json = JSON.parse(text);
+          message = json.error || json.message || text;
+        } catch (e) {
+          message = text;
+        }
+      } catch (e) {
+        message = "An error occurred";
+      }
+
+      if (!response.ok) {
+        addToast(message || "An error occurred while activating", 'error');
+      } else {
+        addToast(message || "Product successfully activated", 'success');
+        refetch();
+      }
+    } catch (err) {
+      addToast(err.message || "An error occurred", 'error');
+    } finally {
+      setActionLoading(false);
+      setIsActivateModalOpen(false);
     }
   };
 
@@ -167,6 +206,7 @@ const ProductDetailView = () => {
             <button 
               className="btn-outline-success whitespace-nowrap"
               disabled={actionLoading}
+              onClick={handleActivate}
             >
               <CheckCircle2 size={16} />
               <span>Activate</span>
@@ -224,6 +264,17 @@ const ProductDetailView = () => {
         onConfirm={confirmDeactivate}
         onCancel={() => setIsModalOpen(false)}
         isConfirming={actionLoading}
+      />
+
+      <ConfirmModal
+        isOpen={isActivateModalOpen}
+        title="Confirm Activation"
+        message="Are you sure you want to activate this product?"
+        onConfirm={confirmActivate}
+        onCancel={() => setIsActivateModalOpen(false)}
+        isConfirming={actionLoading}
+        confirmText="Activate"
+        confirmButtonTheme="success"
       />
     </div>
   );

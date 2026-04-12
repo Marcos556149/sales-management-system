@@ -1,7 +1,16 @@
 import React from 'react';
 import './ConfirmModal.css';
 
-const ConfirmModal = ({ isOpen, title, message, onConfirm, onCancel, isConfirming }) => {
+const ConfirmModal = ({ 
+  isOpen, 
+  title, 
+  message, 
+  onConfirm, 
+  onCancel, 
+  isConfirming,
+  confirmText = 'Deactivate',
+  confirmButtonTheme = 'danger'
+}) => {
   if (!isOpen) return null;
 
   return (
@@ -18,11 +27,11 @@ const ConfirmModal = ({ isOpen, title, message, onConfirm, onCancel, isConfirmin
             Cancel
           </button>
           <button 
-            className="confirm-modal-btn confirm-modal-btn-danger" 
+            className={`confirm-modal-btn confirm-modal-btn-${confirmButtonTheme}`} 
             onClick={onConfirm} 
             disabled={isConfirming}
           >
-            {isConfirming ? 'Processing...' : 'Deactivate'}
+            {isConfirming ? 'Processing...' : confirmText}
           </button>
         </div>
       </div>
