@@ -2,13 +2,16 @@ package com.marcoscornejos.sales_management_system.service;
 
 import com.marcoscornejos.sales_management_system.dto.*;
 import com.marcoscornejos.sales_management_system.exception.InvalidProductDataException;
+import com.marcoscornejos.sales_management_system.exception.ProductAlreadyExistsException;
 import com.marcoscornejos.sales_management_system.exception.ProductNotFoundException;
 import com.marcoscornejos.sales_management_system.mapper.IPageResponseMapper;
+import com.marcoscornejos.sales_management_system.mapper.IProductCreateRequestMapper;
 import com.marcoscornejos.sales_management_system.mapper.IProductDetailResponseMapper;
 import com.marcoscornejos.sales_management_system.mapper.IProductListResponseMapper;
 import com.marcoscornejos.sales_management_system.model.Product;
 import com.marcoscornejos.sales_management_system.model.ProductStatus;
 import com.marcoscornejos.sales_management_system.model.SortOrder;
+import com.marcoscornejos.sales_management_system.model.UnitOfMeasure;
 import com.marcoscornejos.sales_management_system.repository.IProductRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -34,6 +37,7 @@ public class ProductService implements IProductService {
     private final IProductListResponseMapper iProductListResponseMapper;
     private final IPageResponseMapper iPageResponseMapper;
     private final IProductDetailResponseMapper iProductDetailResponseMapper;
+    private final IProductCreateRequestMapper iProductCreateRequestMapper;
 
     /**
      * Retrieves a paginated list of products applying:
@@ -232,5 +236,71 @@ public class ProductService implements IProductService {
         product.setProductStatus(ProductStatus.ACTIVE);
 
         iProductRepository.save(product);
+    }
+
+    /**
+     * Registers a new product in the system.
+     *
+     * <p>
+     * This operation validates that the product does not already exist
+     * and persists it in the database. The product status is automatically
+     * set to ACTIVE.
+     * </p>
+     *
+     * <p>
+     * If a product with the same code already exists, an exception is thrown.
+     * </p>
+     *
+     * Executes the operation within a transactional context to ensure
+     * that the product creation is applied atomically.
+     *
+     * @param request the product creation request containing product data
+     * @throws ProductAlreadyExistsException if a product with the same code already exists
+     */
+    @Override
+    @Transactional
+    public void registerProduct(ProductCreateRequestDTO request) {
+
+        // Check if product already exists
+        if (iProductRepository.existsById(request.getProductCode())) {
+            throw new ProductAlreadyExistsException("Product is already registered");
+        }
+
+        // Validates that stock is integer when unit of measure is UNITS
+        if (request.getUnitOfMeasure() == UnitOfMeasure.UNITS) {
+            if (request.getProductStock().stripTrailingZeros().scale() > 0) {
+                throw new InvalidProductDataException(
+                        "Stock must be an integer value when unit of measure is Units"
+                );
+            }
+        }
+
+        // Map DTO to entity
+        Product product = iProductCreateRequestMapper.toProduct(request);
+
+        // Persist product
+        iProductRepository.save(product);
+    }
+
+    /**
+     * Retrieves metadata required for product-related operations.
+     *
+     * <p>
+     * Includes available unit of measure options for product creation.
+     * </p>
+     *
+     * @return product metadata
+     */
+    @Override
+    public ProductMetadataResponseDTO getProductMetadata() {
+
+        List<EnumDTO> unitOfMeasureOptions = Arrays.stream(UnitOfMeasure.values())
+                .map(unit -> new EnumDTO(
+                        unit.name(),
+                        unit.getDisplayName()
+                ))
+                .toList();
+
+        return new ProductMetadataResponseDTO(unitOfMeasureOptions);
     }
 }
