@@ -203,4 +203,34 @@ public class ProductService implements IProductService {
 
         iProductRepository.save(product);
     }
+
+    /**
+     * Activates a product by setting its status to ACTIVE.
+     *
+     * <p>
+     * This operation restores a previously deactivated product. If the product does not exist
+     * or is already active, an exception is thrown.
+     * </p>
+     *
+     * Executes the operation within a transactional context to ensure
+     * that the product status update is applied atomically.
+     *
+     * @param productCode the unique identifier of the product
+     * @throws ProductNotFoundException if the product does not exist
+     * @throws InvalidProductDataException if the product is already active
+     */
+    @Override
+    @Transactional
+    public void activateProduct(String productCode) {
+        Product product = iProductRepository.findById(productCode)
+                .orElseThrow(() -> new ProductNotFoundException("Product not found"));
+
+        if (product.getProductStatus() == ProductStatus.ACTIVE) {
+            throw new InvalidProductDataException("Product is already active");
+        }
+
+        product.setProductStatus(ProductStatus.ACTIVE);
+
+        iProductRepository.save(product);
+    }
 }
