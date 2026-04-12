@@ -1,0 +1,126 @@
+.form-card {
+  background-color: var(--card-bg, #ffffff);
+  border-radius: 12px;
+  border: 1px solid var(--border-color, #e5e7eb);
+  overflow: hidden;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.form-header {
+  padding: 32px;
+  border-bottom: 1px solid var(--border-color, #e5e7eb);
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.form-icon-container {
+  width: 64px;
+  height: 64px;
+  border-radius: 16px;
+  background-color: rgba(37, 99, 235, 0.08); /* light primary */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: var(--primary-color, #2563eb);
+  flex-shrink: 0;
+}
+
+.form-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-primary, #1f2937);
+  margin-bottom: 6px;
+}
+
+.form-subtitle {
+  color: var(--text-secondary, #6b7280);
+  font-size: 0.95rem;
+}
+
+.product-form {
+  padding: 32px;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+  margin-bottom: 32px;
+}
+
+@media (min-width: 640px) {
+  .form-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-group label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-primary, #374151);
+}
+
+.required {
+  color: var(--error-text, #ef4444);
+}
+
+.form-input {
+  padding: 10px 14px;
+  border: 1px solid var(--border-color, #d1d5db);
+  border-radius: 8px;
+  font-size: 0.95rem;
+  background-color: var(--bg-color, #f9fafb);
+  color: var(--text-primary, #111827);
+  transition: all 0.2s;
+  font-family: inherit;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: var(--primary-color, #3b82f6);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  background-color: var(--card-bg, #ffffff);
+}
+
+.form-input.error {
+  border-color: var(--error-text, #ef4444);
+  background-color: rgba(239, 68, 68, 0.05);
+}
+
+.form-input.error:focus {
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+}
+
+.form-input:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.error-text {
+  color: var(--error-text, #ef4444);
+  font-size: 0.8rem;
+  margin-top: 4px;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border-color, #e5e7eb);
+}
+
+.form-submit-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}

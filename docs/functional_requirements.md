@@ -1018,7 +1018,7 @@ The system must allow the user to activate an inactive product by marking it as 
 
 **2.a Product not found**  
 2.a.1 The system detects that the selected product does not exist.  
-2.a.2 The system displays a message: "Product does not exist".  
+2.a.2 The system displays a message: "Product not found".  
 
 **5.a Operation canceled**  
 5.a.1 The user cancels the operation.  

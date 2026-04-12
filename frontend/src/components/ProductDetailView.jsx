@@ -97,7 +97,7 @@ const ProductDetailView = () => {
       if (!response.ok) {
         addToast(message || "An error occurred while deactivating", 'error');
       } else {
-        addToast(message || "Product successfully deactivated", 'success');
+        addToast(message, 'success');
         refetch();
       }
     } catch (err) {
@@ -135,7 +135,7 @@ const ProductDetailView = () => {
       if (!response.ok) {
         addToast(message || "An error occurred while activating", 'error');
       } else {
-        addToast(message || "Product successfully activated", 'success');
+        addToast(message, 'success');
         refetch();
       }
     } catch (err) {

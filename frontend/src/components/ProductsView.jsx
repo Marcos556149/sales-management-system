@@ -227,7 +227,7 @@ const ProductsView = () => {
       if (!response.ok) {
         addToast(message || "An error occurred while deactivating", 'error');
       } else {
-        addToast(message || "Product successfully deactivated", 'success');
+        addToast(message, 'success');
       }
     } catch (err) {
       addToast(err.message || "An error occurred", 'error');
@@ -270,7 +270,7 @@ const ProductsView = () => {
       if (!response.ok) {
         addToast(message || "An error occurred while activating", 'error');
       } else {
-        addToast(message || "Product successfully activated", 'success');
+        addToast(message, 'success');
       }
     } catch (err) {
       addToast(err.message || "An error occurred", 'error');
@@ -375,7 +375,10 @@ const ProductsView = () => {
             <RefreshCw size={18} className={loading ? "spin-animation" : ""} />
             <span>{loading ? 'Refreshing...' : 'Refresh'}</span>
           </button>
-          <button className="btn-primary">
+          <button 
+            className="btn-primary"
+            onClick={() => navigate('/dashboard/products/new')}
+          >
             <Plus size={18} />
             <span>New Product</span>
           </button>

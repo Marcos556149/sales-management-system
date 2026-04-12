@@ -3,6 +3,7 @@ import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import LoginForm from './components/LoginForm';
 import DashboardLayout from './components/DashboardLayout';
 import ProductsView from './components/ProductsView';
+import ProductCreateView from './components/ProductCreateView';
 
 import ProductDetailView from './components/ProductDetailView';
 
@@ -79,6 +80,7 @@ function App() {
         {/* Nested routes will be rendered inside DashboardLayout's <Outlet /> */}
         <Route index element={<Navigate to="/dashboard/products" replace />} />
         <Route path="products" element={<ProductsView />} />
+        <Route path="products/new" element={<ProductCreateView />} />
         <Route path="products/:id" element={<ProductDetailView />} />
         <Route path="sales" element={<SalesPlaceholder />} />
         <Route path="statistics" element={<StatisticsPlaceholder />} />
