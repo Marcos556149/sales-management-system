@@ -4,6 +4,7 @@ import com.marcoscornejos.sales_management_system.exception.AuthException;
 import com.marcoscornejos.sales_management_system.exception.ProductException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -111,6 +112,26 @@ public class GlobalExceptionHandler {
 
         Map<String, String> error = new HashMap<>();
         error.put("error", ex.getMessage());
+
+        return ResponseEntity.badRequest().body(error);
+    }
+
+    /**
+     * Handles exceptions thrown when the request body contains invalid or
+     * unreadable data (e.g., incorrect data types or invalid enum values).
+     *
+     * <p>
+     * Returns a 400 Bad Request response with a generic error message.
+     * </p>
+     *
+     * @param ex the exception containing error details
+     * @return a 400 Bad Request response with the error message
+     */
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<Map<String, String>> handleHttpMessageNotReadable(HttpMessageNotReadableException ex) {
+
+        Map<String, String> error = new HashMap<>();
+        error.put("error", "Invalid request body. Please check the provided values");
 
         return ResponseEntity.badRequest().body(error);
     }
