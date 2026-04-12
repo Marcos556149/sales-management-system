@@ -102,4 +102,23 @@ public class ProductController {
 
         return ResponseEntity.ok("Product successfully deactivated");
     }
+
+    /**
+     * Activates a product.
+     *
+     * <p>
+     * This operation updates the product status to ACTIVE,
+     * allowing it to be available again in the system.
+     * </p>
+     *
+     * @param productCode the unique code of the product
+     * @return confirmation message
+     */
+    @PatchMapping("/{productCode}/activate")
+    public ResponseEntity<String> activateProduct(@PathVariable String productCode) {
+
+        productService.activateProduct(productCode);
+
+        return ResponseEntity.ok("Product successfully activated");
+    }
 }
