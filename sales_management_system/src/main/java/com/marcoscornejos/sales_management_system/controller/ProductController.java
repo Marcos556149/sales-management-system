@@ -1,12 +1,10 @@
 package com.marcoscornejos.sales_management_system.controller;
 
-import com.marcoscornejos.sales_management_system.dto.PageResponseDTO;
-import com.marcoscornejos.sales_management_system.dto.ProductDetailResponseDTO;
-import com.marcoscornejos.sales_management_system.dto.ProductFiltersResponseDTO;
-import com.marcoscornejos.sales_management_system.dto.ProductListResponseDTO;
+import com.marcoscornejos.sales_management_system.dto.*;
 import com.marcoscornejos.sales_management_system.service.ProductService;
 import com.marcoscornejos.sales_management_system.model.ProductStatus;
 import com.marcoscornejos.sales_management_system.model.SortOrder;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -120,5 +118,44 @@ public class ProductController {
         productService.activateProduct(productCode);
 
         return ResponseEntity.ok("Product successfully activated");
+    }
+
+    /**
+     * Registers a new product in the system.
+     *
+     * <p>
+     * This endpoint allows the creation of a new product by providing
+     * the required information such as code, name, price, unit of measure,
+     * and stock. The product status is automatically set to ACTIVE.
+     * </p>
+     *
+     * <p>
+     * If the product code already exists, an error is returned.
+     * </p>
+     *
+     * @param request the product data required to create a new product
+     * @return confirmation message indicating successful registration
+     */
+    @PostMapping
+    public ResponseEntity<String> registerProduct(@RequestBody @Valid ProductCreateRequestDTO request) {
+
+        productService.registerProduct(request);
+
+        return ResponseEntity.ok("Product successfully registered");
+    }
+
+    /**
+     * Retrieves metadata required for product-related operations.
+     *
+     * <p>
+     * Includes dynamic data such as available unit of measure options
+     * used in product forms.
+     * </p>
+     *
+     * @return product metadata
+     */
+    @GetMapping("/metadata")
+    public ProductMetadataResponseDTO getProductMetadata() {
+        return productService.getProductMetadata();
     }
 }
