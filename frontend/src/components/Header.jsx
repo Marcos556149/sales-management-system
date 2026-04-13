@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Settings, LogOut } from 'lucide-react';
+import BarcodeScanner from './BarcodeScanner';
 import './Header.css';
 
 const Header = ({ userName = "Admin User" }) => {
@@ -23,6 +24,8 @@ const Header = ({ userName = "Admin User" }) => {
         <h1>Welcome, <span className="highlight-name">{userName}</span></h1>
         <p className="header-subtitle">{formattedDate} | {formattedTime}</p>
       </div>
+      
+      <BarcodeScanner />
       
       <div className="header-actions">
         <button className="icon-button settings-button" aria-label="Settings">

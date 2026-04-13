@@ -1,18 +1,21 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect, useRef } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useToast } from './ToastContext';
 import { ArrowLeft, Save, Box } from 'lucide-react';
 import './ProductCreateView.css';
 
 const ProductCreateView = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { addToast } = useToast();
+  
+  const productNameRef = useRef(null);
 
   const [formData, setFormData] = useState({
     productCode: '',
     productName: '',
-    productPrice: '',
-    productStock: '',
+    productPrice: '0.00',
+    productStock: '0.00',
     unitOfMeasure: 'UNITS',
   });
 
@@ -44,6 +47,22 @@ const ProductCreateView = () => {
     fetchMetadata();
     return () => { isMounted = false; };
   }, [addToast]);
+
+  // Handle URL parameter for pre-filling scanned barcode
+  useEffect(() => {
+    const searchParams = new URLSearchParams(location.search);
+    const codeFromUrl = searchParams.get('productCode');
+    
+    if (codeFromUrl) {
+      setFormData(prev => ({ ...prev, productCode: codeFromUrl }));
+      // Focus on product name if code is provided via scanner
+      setTimeout(() => {
+        if (productNameRef.current) {
+          productNameRef.current.focus();
+        }
+      }, 100);
+    }
+  }, [location.search]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -203,12 +222,15 @@ const ProductCreateView = () => {
                 disabled={submitting}
                 placeholder="Ex. P-1004"
               />
-              {formErrors.productCode && <p className="error-text">{formErrors.productCode}</p>}
+              <p className={`error-text ${formErrors.productCode ? 'visible' : ''}`}>
+                {formErrors.productCode || '\u00A0'}
+              </p>
             </div>
 
             <div className="form-group">
               <label htmlFor="productName">Product Name <span className="required">*</span></label>
               <input 
+                ref={productNameRef}
                 type="text" 
                 id="productName" 
                 name="productName" 
@@ -218,7 +240,9 @@ const ProductCreateView = () => {
                 disabled={submitting}
                 placeholder="Ex. Coca Cola 2.25L"
               />
-              {formErrors.productName && <p className="error-text">{formErrors.productName}</p>}
+              <p className={`error-text ${formErrors.productName ? 'visible' : ''}`}>
+                {formErrors.productName || '\u00A0'}
+              </p>
             </div>
 
             <div className="form-group">
@@ -233,9 +257,11 @@ const ProductCreateView = () => {
                 value={formData.productPrice} 
                 onChange={handleChange}
                 disabled={submitting}
-                placeholder="0.00"
+                placeholder="0,00"
               />
-              {formErrors.productPrice && <p className="error-text">{formErrors.productPrice}</p>}
+              <p className={`error-text ${formErrors.productPrice ? 'visible' : ''}`}>
+                {formErrors.productPrice || '\u00A0'}
+              </p>
             </div>
 
             <div className="form-group">
@@ -253,7 +279,9 @@ const ProductCreateView = () => {
                   <option key={opt.code} value={opt.code}>{opt.label}</option>
                 ))}
               </select>
-              {formErrors.unitOfMeasure && <p className="error-text">{formErrors.unitOfMeasure}</p>}
+              <p className={`error-text ${formErrors.unitOfMeasure ? 'visible' : ''}`}>
+                {formErrors.unitOfMeasure || '\u00A0'}
+              </p>
             </div>
 
             <div className="form-group">
@@ -268,9 +296,11 @@ const ProductCreateView = () => {
                 value={formData.productStock} 
                 onChange={handleChange}
                 disabled={submitting}
-                placeholder="0"
+                placeholder="0,00"
               />
-              {formErrors.productStock && <p className="error-text">{formErrors.productStock}</p>}
+              <p className={`error-text ${formErrors.productStock ? 'visible' : ''}`}>
+                {formErrors.productStock || '\u00A0'}
+              </p>
             </div>
           </div>
 
