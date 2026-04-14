@@ -158,4 +158,25 @@ public class ProductController {
     public ProductMetadataResponseDTO getProductMetadata() {
         return productService.getProductMetadata();
     }
+
+    /**
+     * Updates an existing product.
+     *
+     * <p>Validates the provided data and updates the product
+     * in the system if it exists.</p>
+     *
+     * @param productCode the code of the product to update
+     * @param request the updated product data
+     * @return ResponseEntity with confirmation message
+     */
+    @PutMapping("/{productCode}")
+    public ResponseEntity<String> updateProduct(
+            @PathVariable String productCode,
+            @RequestBody @Valid ProductUpdateRequestDTO request
+    ) {
+
+        productService.updateProduct(productCode, request);
+
+        return ResponseEntity.ok("Product successfully updated");
+    }
 }
