@@ -146,7 +146,7 @@ The system must allow the user to update the data of an existing product.
 2. The user selects a product.  
 3. The system displays the current product data.  
 4. The user requests to update the product.  
-5. The user modifies the following product data: code, name, price, unit of measure, and available stock.  
+5. The user modifies the following product data: Name, price, unit of measure, and available stock.  
 6. The system validates the entered information.  
 7. The system updates the product data in the database.  
 8. The system displays a confirmation message: "Product successfully updated".  
@@ -155,25 +155,20 @@ The system must allow the user to update the data of an existing product.
 
 **2.a Product not found**  
 2.a.1 The system detects that the selected product does not exist.  
-2.a.2 The system displays a message: "Product does not exist".  
+2.a.2 The system displays a message: "Product not found".  
 
 **6.a Invalid data**  
 6.a.1 The system displays an error message indicating the incorrect fields.  
 6.a.2 The user corrects the data.  
 
-**6.b Duplicate product code**  
-6.b.1 The system detects that the entered code already belongs to another product.  
-6.b.2 The system displays an error message: "Product code is already in use".  
-
 ### Business Rules
 - The product code must be unique within the system.  
-- All editable fields (code, name, price, unit of measure, and stock) are mandatory.  
+- All editable fields (Name, price, unit of measure, and stock) are mandatory.  
 - The product price must be a real number greater than or equal to 0.  
 - The available stock must be a real number greater than or equal to 0.  
 - The product status cannot be modified in this process.  
-- The product code can be modified as long as it is not used by another product.  
+- The product code cannot be modified in this process
 - The product name must be descriptive and clearly distinguishable from other similar products in the system.  
-- The unit of measure is mandatory.  
 - If the unit of measure is "unit", the stock must be expressed in integer values.  
 - If the unit of measure is modified, the system must validate that the stock complies with the new unit constraints.
 
@@ -326,7 +321,7 @@ The system must allow the user to view sales registered in the system, displayin
 ### Main Flow
 1. The user accesses the sales section.  
 2. The user requests to view sales.  
-3. The system retrieves the list of sales from the database.  
+3. The system retrieves a paginated list of sales from the database.  
 4. The system displays the registered sales with the following data:
    - Unique sale identifier  
    - Sale date and time  
@@ -339,35 +334,44 @@ The system must allow the user to view sales registered in the system, displayin
 3.a.1 The system detects that there are no sales in the database.  
 3.a.2 The system displays a message: "No sales found".  
 
-**3.b Sale sorting**
+**3.b Sale pagination**  
 
-**3.b.1 By time**  
-3.b.1.1 The user selects to sort sales by time (Ascending or Descending).  
-3.b.1.2 The system sorts the sales according to the selected criterion.  
+3.b.1 The system allows navigation between pages of sales (e.g., next page, previous page, or direct page selection).  
 
-**3.c Sale filtering**
+**3.c Sale sorting**
 
-**3.c.1 By day**  
-3.c.1.1 The user selects a specific day.
-3.c.1.2 The system filters sales according to the selected day.  
+**3.c.1 By time**  
+3.c.1.1 The user selects to sort sales by time (Ascending or Descending).  
+3.c.1.2 The system sorts the sales according to the selected criterion.  
 
-**3.c.2 By month**  
-3.c.2.1 The user selects a specific month.
-3.c.2.2 The system filters sales according to the selected month.  
+**3.d Sale filtering**
 
-**3.c.3 By year**  
-3.c.3.1 The user selects a specific year.
-3.c.3.2 The system filters sales according to the selected year.  
+**3.d.1 By day**  
+3.d.1.1 The user selects a specific day.  
+3.d.1.2 The system filters sales according to the selected day.  
 
-**3.d Sale not found**  
-3.d.1 The system detects that no sales match the applied criteria.  
-3.d.2 The system displays a message: "No sales found".  
+**3.d.2 By month**  
+3.d.2.1 The user selects a specific month.  
+3.d.2.2 The system filters sales according to the selected month.  
+
+**3.d.3 By year**  
+3.d.3.1 The user selects a specific year.  
+3.d.3.2 The system filters sales according to the selected year.  
+
+**3.e Sale not found**  
+3.e.1 The system detects that no sales match the applied criteria.  
+3.e.2 The system displays a message: "No sales found".  
 
 ### Business Rules
+- The system must allow viewing all registered sales using pagination.
+- The system must retrieve sales in pages of 50 items by default.
+- The system must allow navigation between pages of sales (e.g., next page, previous page, or direct page selection).
+- If no page is specified, the system must return the first page by default.
 - The system must allow viewing sales filtered by a specific date (day, month, and year).
 - The system must allow sorting sales by time, in ascending or descending order.  
 - By default, the system must use the current date (current day, month, and year).
-- If no sorting criterion by time is selected, the system sorts sales by time in descending order by default.    
+- If no sorting criterion by time is selected, the system sorts sales by time in descending order by default.
+- The system must ensure that only the sales belonging to the requested page are retrieved from the database (server-side pagination). 
 
 ---
 
