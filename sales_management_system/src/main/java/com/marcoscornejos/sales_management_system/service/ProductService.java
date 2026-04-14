@@ -4,10 +4,7 @@ import com.marcoscornejos.sales_management_system.dto.*;
 import com.marcoscornejos.sales_management_system.exception.InvalidProductDataException;
 import com.marcoscornejos.sales_management_system.exception.ProductAlreadyExistsException;
 import com.marcoscornejos.sales_management_system.exception.ProductNotFoundException;
-import com.marcoscornejos.sales_management_system.mapper.IPageResponseMapper;
-import com.marcoscornejos.sales_management_system.mapper.IProductCreateRequestMapper;
-import com.marcoscornejos.sales_management_system.mapper.IProductDetailResponseMapper;
-import com.marcoscornejos.sales_management_system.mapper.IProductListResponseMapper;
+import com.marcoscornejos.sales_management_system.mapper.*;
 import com.marcoscornejos.sales_management_system.model.Product;
 import com.marcoscornejos.sales_management_system.model.ProductStatus;
 import com.marcoscornejos.sales_management_system.model.SortOrder;
@@ -38,6 +35,7 @@ public class ProductService implements IProductService {
     private final IPageResponseMapper iPageResponseMapper;
     private final IProductDetailResponseMapper iProductDetailResponseMapper;
     private final IProductCreateRequestMapper iProductCreateRequestMapper;
+    private final IProductUpdateRequestMapper iProductUpdateRequestMapper;
 
     /**
      * Retrieves a paginated list of products applying:
@@ -302,5 +300,51 @@ public class ProductService implements IProductService {
                 .toList();
 
         return new ProductMetadataResponseDTO(unitOfMeasureOptions);
+    }
+
+    /**
+     * Updates an existing product in the system.
+     *
+     * <p>
+     * This operation validates that the product exists and that the updated data
+     * complies with business rules before persisting the changes.
+     * </p>
+     *
+     * <p>
+     * Validations include:
+     * - Product existence
+     * - Stock constraints based on unit of measure
+     * </p>
+     *
+     * Executes the operation within a transactional context to ensure
+     * that the update is applied atomically.
+     *
+     * @param productCode the current code of the product to update
+     * @param request the product update request containing new data
+     * @throws ProductNotFoundException if the product does not exist
+     * @throws InvalidProductDataException if the data does not comply with business rules
+     */
+    @Override
+    @Transactional
+    public void updateProduct(String productCode, ProductUpdateRequestDTO request) {
+
+        // 1. Check if product exists
+        Product product = iProductRepository.findById(productCode)
+                .orElseThrow(() -> new ProductNotFoundException("Product not found"));
+
+        // 2. Validate stock based on unit of measure
+        if (request.getUnitOfMeasure() == UnitOfMeasure.UNITS) {
+            if (request.getProductStock().stripTrailingZeros().scale() > 0) {
+                throw new InvalidProductDataException(
+                        "Stock must be an integer value when unit of measure is Units"
+                );
+            }
+        }
+
+        // 3. Apply updates
+        iProductUpdateRequestMapper.updateProductFromDto(request, product);
+
+        // 4. Persist changes
+        iProductRepository.save(product);
     }
 }

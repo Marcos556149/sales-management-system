@@ -19,4 +19,6 @@ public interface IProductService {
     void registerProduct(ProductCreateRequestDTO request);
 
     ProductMetadataResponseDTO getProductMetadata();
+
+    void updateProduct(String productCode, ProductUpdateRequestDTO request);
 }
