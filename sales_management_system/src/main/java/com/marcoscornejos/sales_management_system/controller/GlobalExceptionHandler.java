@@ -2,12 +2,14 @@ package com.marcoscornejos.sales_management_system.controller;
 
 import com.marcoscornejos.sales_management_system.exception.AuthException;
 import com.marcoscornejos.sales_management_system.exception.ProductException;
+import com.marcoscornejos.sales_management_system.exception.SaleException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
@@ -143,6 +145,46 @@ public class GlobalExceptionHandler {
 
         Map<String, String> error = new HashMap<>();
         error.put("error", "Invalid request body. Please check the provided values");
+
+        return ResponseEntity.badRequest().body(error);
+    }
+
+    /**
+     * Handles sale-related exceptions thrown when business rules
+     * or validations fail within the Sale domain.
+     *
+     * <p>
+     * Returns a 400 Bad Request response with a descriptive error message.
+     * </p>
+     *
+     * @param ex the exception containing error details
+     * @return a 400 Bad Request response with the error message
+     */
+    @ExceptionHandler(SaleException.class)
+    public ResponseEntity<Map<String, String>> handleSaleException(SaleException ex) {
+
+        Map<String, String> error = new HashMap<>();
+        error.put("error", ex.getMessage());
+
+        return ResponseEntity.badRequest().body(error);
+    }
+
+    /**
+     * Handles missing request parameter exceptions.
+     *
+     * <p>
+     * Triggered when a required query parameter is not provided in the request.
+     * Returns a 400 Bad Request response indicating which parameter is missing.
+     * </p>
+     *
+     * @param ex the exception containing details about the missing parameter
+     * @return a 400 Bad Request response with an error message
+     */
+    @ExceptionHandler(MissingServletRequestParameterException.class)
+    public ResponseEntity<Map<String, String>> handleMissingParams(MissingServletRequestParameterException ex) {
+
+        Map<String, String> error = new HashMap<>();
+        error.put("error", "Missing required parameter: " + ex.getParameterName());
 
         return ResponseEntity.badRequest().body(error);
     }
