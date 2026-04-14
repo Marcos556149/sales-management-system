@@ -6,6 +6,7 @@ import ProductsView from './components/ProductsView';
 import ProductCreateView from './components/ProductCreateView';
 
 import ProductDetailView from './components/ProductDetailView';
+import ProductEditView from './components/ProductEditView';
 
 // Placeholder Pages for Sales and Statistics
 const SalesPlaceholder = () => (
@@ -82,6 +83,7 @@ function App() {
         <Route path="products" element={<ProductsView />} />
         <Route path="products/new" element={<ProductCreateView />} />
         <Route path="products/:id" element={<ProductDetailView />} />
+        <Route path="products/edit/:id" element={<ProductEditView />} />
         <Route path="sales" element={<SalesPlaceholder />} />
         <Route path="statistics" element={<StatisticsPlaceholder />} />
       </Route>

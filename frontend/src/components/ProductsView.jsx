@@ -52,17 +52,24 @@ const ProductsView = () => {
   // 0. Fetch Filter Options on Mount
   useEffect(() => {
     const fetchFilters = async () => {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 8000);
       try {
-        const response = await fetch('/api/products/filters');
+        const response = await fetch('/api/products/filters', { signal: controller.signal });
+        clearTimeout(timeoutId);
         if (!response.ok) throw new Error('Failed to fetch filters');
         const data = await response.json();
         
         setStatusOptions(data.statusOptions || []);
         setSortOptions(data.sortOptions || []);
       } catch (err) {
+        clearTimeout(timeoutId);
         console.error("Error loading filters:", err);
         setStatusOptions([]);
         setSortOptions([]);
+        if (err.name === 'AbortError') {
+           addToast("Filters request timed out", "error");
+        }
       } finally {
         setFiltersLoading(false);
       }
@@ -105,13 +112,14 @@ const ProductsView = () => {
       const abortController = new AbortController();
       abortControllerRef.current = abortController;
 
+      const timeoutId = setTimeout(() => abortController.abort(), 10000);
+
       setLoading(true);
       setError(null);
 
       try {
         const params = new URLSearchParams();
         
-        // Only append search if it's not empty or just spaces
         const trimmedSearch = appliedSearch.trim();
         if (trimmedSearch.length > 0) {
           params.append('searchCodeOrName', trimmedSearch);
@@ -119,7 +127,6 @@ const ProductsView = () => {
 
         params.append('statusFilter', statusFilter);
         params.append('nameSort', sortOrder);
-        // Add pagination params (page is 0-based for backend)
         params.append('page', pageFrontend - 1);
         params.append('size', 50);
 
@@ -127,33 +134,39 @@ const ProductsView = () => {
           signal: abortController.signal
         });
 
+        clearTimeout(timeoutId);
+
         if (!response.ok) {
-          throw new Error(`Error: ${response.status} ${response.statusText}`);
+          const errorData = await response.json().catch(() => ({}));
+          throw new Error(errorData.error || errorData.message || `Error: ${response.status}`);
         }
 
         const data = await response.json();
         
-        // Prevent setting state if this request was aborted or a new one started
         if (abortControllerRef.current === abortController) {
           if (data.content !== undefined) {
             setProducts(data.content);
             setTotalPages(data.totalPages || 1);
             setTotalElements(data.totalElements || 0);
           } else {
-            // Fallback just in case
             setProducts(Array.isArray(data) ? data : []);
             setTotalPages(1);
             setTotalElements(0);
           }
         }
       } catch (err) {
+        clearTimeout(timeoutId);
         if (err.name === 'AbortError') {
-          // It's normal, request was cancelled
-          console.log('Previous request cancelled');
+          if (abortControllerRef.current === abortController) {
+             setError('Request timed out. Please refresh the page.');
+             addToast("Product list request timed out", "error");
+          } else {
+             console.log('Previous request cancelled');
+          }
         } else if (abortControllerRef.current === abortController) {
           console.error("Failed to fetch products:", err);
-          setError('Failed to load products. Please try again later.');
-          addToast("The list could not be refreshed. Please try again.", "error");
+          setError(err.message || 'Failed to load products. Please try again later.');
+          addToast(err.message || "The list could not be refreshed. Please try again.", "error");
         }
       } finally {
         if (abortControllerRef.current === abortController) {
@@ -206,11 +219,16 @@ const ProductsView = () => {
     if (!productToDeactivate) return;
 
     setActionLoading(true);
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 8000);
+
     try {
       const response = await fetch(`/api/products/${productToDeactivate}/deactivate`, {
         method: 'PATCH',
+        signal: controller.signal
       });
 
+      clearTimeout(timeoutId);
       let message = '';
       try {
         const text = await response.text();
@@ -230,7 +248,9 @@ const ProductsView = () => {
         addToast(message, 'success');
       }
     } catch (err) {
-      addToast(err.message || "An error occurred", 'error');
+      clearTimeout(timeoutId);
+      const msg = err.name === 'AbortError' ? 'Deactivation request timed out' : (err.message || "An error occurred");
+      addToast(msg, 'error');
     } finally {
       setPageFrontend(1);
       setRefreshTrigger(prev => prev + 1);
@@ -249,11 +269,16 @@ const ProductsView = () => {
     if (!productToActivate) return;
 
     setActionLoading(true);
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 8000);
+
     try {
       const response = await fetch(`/api/products/${productToActivate}/activate`, {
         method: 'PATCH',
+        signal: controller.signal
       });
 
+      clearTimeout(timeoutId);
       let message = '';
       try {
         const text = await response.text();
@@ -273,7 +298,9 @@ const ProductsView = () => {
         addToast(message, 'success');
       }
     } catch (err) {
-      addToast(err.message || "An error occurred", 'error');
+      clearTimeout(timeoutId);
+      const msg = err.name === 'AbortError' ? 'Activation request timed out' : (err.message || "An error occurred");
+      addToast(msg, 'error');
     } finally {
       setPageFrontend(1);
       setRefreshTrigger(prev => prev + 1);
@@ -435,7 +462,14 @@ const ProductsView = () => {
                       </span>
                     </td>
                     <td className="actions-cell text-right" onClick={(e) => e.stopPropagation()}>
-                      <button className="action-btn edit-btn" title="Edit Product">
+                      <button 
+                        className="action-btn edit-btn" 
+                        title="Edit Product"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          navigate(`/dashboard/products/edit/${product.productCode}`);
+                        }}
+                      >
                         <Edit2 size={16} />
                       </button>
                       {product.productStatus?.code === 'ACTIVE' ? (

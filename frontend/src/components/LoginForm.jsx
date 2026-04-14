@@ -50,16 +50,20 @@ const LoginForm = ({ onLoginSuccess }) => {
     }
 
     try {
-      // Send HTTP POST request to the Spring Boot backend
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 10000);
+
       const response = await fetch('/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        // Mapping our component state to the expected LoginRequestDTO structure
         body: JSON.stringify({ 
           userName: username, 
           userPassword: password 
-        })
+        }),
+        signal: controller.signal
       });
+
+      clearTimeout(timeoutId);
 
       // Safely parse JSON from backend
       const text = await response.text();
@@ -85,15 +89,18 @@ const LoginForm = ({ onLoginSuccess }) => {
         } else if (response.status === 401) {
           // Authentication Error (from AuthException)
           // `data` will be { error: "Message" }
-          setGlobalError(data.error || 'Invalid credentials');
+          setGlobalError(data.error || data.message || 'Invalid credentials');
         } else {
-          // 500 Internal Server Error or any other unexpected code
-          setGlobalError(data.error || 'An unexpected error occurred while connecting to the server.');
+          setGlobalError(data.error || data.message || 'An unexpected error occurred while connecting to the server.');
         }
       }
     } catch (err) {
-      console.error("Fetch error:", err);
-      setGlobalError('Network error. Make sure the Spring Boot backend server (port 8080) is running.');
+      if (err.name === 'AbortError') {
+        setGlobalError('Login request timed out. Please try again.');
+      } else {
+        console.error("Fetch error:", err);
+        setGlobalError('Network error. Make sure the Spring Boot backend server (port 8080) is running.');
+      }
     }
   };
 

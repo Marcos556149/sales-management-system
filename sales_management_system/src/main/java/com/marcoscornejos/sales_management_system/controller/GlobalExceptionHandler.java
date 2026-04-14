@@ -2,6 +2,7 @@ package com.marcoscornejos.sales_management_system.controller;
 
 import com.marcoscornejos.sales_management_system.exception.AuthException;
 import com.marcoscornejos.sales_management_system.exception.ProductException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -23,6 +24,7 @@ import java.util.Map;
  * <p>It handles both authentication-related exceptions and
  * validation errors from request DTOs annotated with {@link jakarta.validation.Valid}.</p>
  */
+@Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
@@ -55,15 +57,24 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * Handles all other uncaught exceptions.
+     * Handles all unexpected exceptions.
+     *
+     * <p>Returns a generic error message to the client while logging
+     * the full exception details internally.</p>
      *
      * @param ex the unexpected {@link Exception}
-     * @return ResponseEntity with HTTP 500 Internal Server Error and a generic error message
+     * @return ResponseEntity with HTTP 500 Internal Server Error and a sanitized message
      */
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Map<String, String>> handleGenericException(Exception ex) {
+
+        // Log full error details for debugging
+        log.error("Unexpected error occurred", ex);
+
+        // Return sanitized response
         Map<String, String> error = new HashMap<>();
-        error.put("error", "An unexpected error occurred: " + ex.getMessage());
+        error.put("message", "An internal server error occurred");
+
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
     }
 

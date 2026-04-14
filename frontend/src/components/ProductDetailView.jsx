@@ -18,15 +18,18 @@ const useProductDetail = (productCode) => {
     let isMounted = true;
 
     const fetchProduct = async () => {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 8000);
       setLoading(true);
       setError(null);
       try {
-        const response = await fetch(`/api/products/${productCode}`);
+        const response = await fetch(`/api/products/${productCode}`, { signal: controller.signal });
+        clearTimeout(timeoutId);
         
         if (!response.ok) {
           const errorData = await response.json().catch(() => ({}));
-          // Use backend error response if available, otherwise generic
-          throw new Error(errorData.error || 'Failed to fetch product details.');
+          const errMsg = errorData.error || errorData.message || 'Failed to fetch product details.';
+          throw new Error(errMsg);
         }
 
         const data = await response.json();
@@ -34,8 +37,10 @@ const useProductDetail = (productCode) => {
           setProduct(data);
         }
       } catch (err) {
+        clearTimeout(timeoutId);
         if (isMounted) {
-          setError(err.message);
+          const msg = err.name === 'AbortError' ? 'Product request timed out' : (err.message || 'Error loading product');
+          setError(msg);
         }
       } finally {
         if (isMounted) {
@@ -76,11 +81,15 @@ const ProductDetailView = () => {
 
   const confirmDeactivate = async () => {
     setActionLoading(true);
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 8000);
     try {
       const response = await fetch(`/api/products/${productCode}/deactivate`, {
         method: 'PATCH',
+        signal: controller.signal
       });
 
+      clearTimeout(timeoutId);
       let message = '';
       try {
         const text = await response.text();
@@ -101,7 +110,9 @@ const ProductDetailView = () => {
         refetch();
       }
     } catch (err) {
-      addToast(err.message || "An error occurred", 'error');
+      clearTimeout(timeoutId);
+      const msg = err.name === 'AbortError' ? 'Deactivation request timed out' : (err.message || "An error occurred");
+      addToast(msg, 'error');
     } finally {
       setActionLoading(false);
       setIsModalOpen(false);
@@ -114,11 +125,15 @@ const ProductDetailView = () => {
 
   const confirmActivate = async () => {
     setActionLoading(true);
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 8000);
     try {
       const response = await fetch(`/api/products/${productCode}/activate`, {
         method: 'PATCH',
+        signal: controller.signal
       });
 
+      clearTimeout(timeoutId);
       let message = '';
       try {
         const text = await response.text();
@@ -139,7 +154,9 @@ const ProductDetailView = () => {
         refetch();
       }
     } catch (err) {
-      addToast(err.message || "An error occurred", 'error');
+      clearTimeout(timeoutId);
+      const msg = err.name === 'AbortError' ? 'Activation request timed out' : (err.message || "An error occurred");
+      addToast(msg, 'error');
     } finally {
       setActionLoading(false);
       setIsActivateModalOpen(false);
@@ -188,7 +205,10 @@ const ProductDetailView = () => {
         </button>
         
         <div className="detail-actions">
-          <button className="btn-outline-primary whitespace-nowrap">
+          <button 
+            className="btn-outline-primary whitespace-nowrap"
+            onClick={() => navigate(`/dashboard/products/edit/${productCode}`)}
+          >
             <Edit2 size={16} />
             <span>Edit</span>
           </button>

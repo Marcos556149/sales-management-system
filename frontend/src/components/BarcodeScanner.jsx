@@ -40,8 +40,8 @@ const BarcodeScanner = () => {
         return;
       }
 
-      // Only buffer alphanumeric keys (this matches the regex logic)
-      if (/^[a-zA-Z0-9]$/.test(e.key)) {
+      // Only buffer alphanumeric keys and hyphens (this matches the regex logic)
+      if (/^[a-zA-Z0-9-]$/.test(e.key)) {
         bufferRef.current += e.key;
 
         // Scanners press keys extremely fast (usually < 50ms interval)
@@ -64,8 +64,8 @@ const BarcodeScanner = () => {
   }, [isProductsGeneralView, navigate, addToast]);
 
   const validateCode = (code) => {
-    // Alphanumeric, strictly 8 to 30 characters
-    const regex = /^[a-zA-Z0-9]{8,30}$/;
+    // Alphanumeric and hyphens, strictly 8 to 30 characters
+    const regex = /^[a-zA-Z0-9-]{8,30}$/;
     return regex.test(code);
   };
 
@@ -75,8 +75,12 @@ const BarcodeScanner = () => {
       return; 
     }
 
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 5000);
+
     try {
-      const response = await fetch(`/api/products/${code}`);
+      const response = await fetch(`/api/products/${code}`, { signal: controller.signal });
+      clearTimeout(timeoutId);
       
       if (response.ok) {
         // Product exists
@@ -88,11 +92,13 @@ const BarcodeScanner = () => {
            navigate(`/dashboard/products/new?productCode=${code}`);
            // Removed the warning toast as requested
         } else {
-           addToast('Error searching for product', 'error');
+           addToast(errorData.error || errorData.message || 'Error searching for product', 'error');
         }
       }
     } catch (error) {
-      addToast('Network error while searching for product', 'error');
+      clearTimeout(timeoutId);
+      const msg = error.name === 'AbortError' ? 'Product search timed out' : 'Network error while searching for product';
+      addToast(msg, 'error');
     }
   };
 
