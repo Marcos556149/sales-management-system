@@ -1,13 +1,15 @@
 package com.marcoscornejos.sales_management_system.service;
 
-import com.marcoscornejos.sales_management_system.dto.PageResponseDTO;
-import com.marcoscornejos.sales_management_system.dto.SaleListResponseDTO;
+import com.marcoscornejos.sales_management_system.dto.*;
 import com.marcoscornejos.sales_management_system.exception.InvalidSaleDataException;
+import com.marcoscornejos.sales_management_system.exception.SaleNotFoundException;
 import com.marcoscornejos.sales_management_system.mapper.IPageResponseMapper;
 import com.marcoscornejos.sales_management_system.mapper.ISaleListResponseMapper;
+import com.marcoscornejos.sales_management_system.mapper.ISaleWithDetailsResponseMapper;
 import com.marcoscornejos.sales_management_system.model.Sale;
 import com.marcoscornejos.sales_management_system.model.SortOrder;
 import com.marcoscornejos.sales_management_system.repository.ISaleRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -16,6 +18,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.Arrays;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -24,6 +28,7 @@ public class SaleService implements ISaleService{
     private final ISaleRepository iSaleRepository;
     private final IPageResponseMapper iPageResponseMapper;
     private final ISaleListResponseMapper iSaleListResponseMapper;
+    private final ISaleWithDetailsResponseMapper iSaleWithDetailsResponseMapper;
 
     /**
      * Retrieves a paginated list of sales applying:
@@ -98,5 +103,58 @@ public class SaleService implements ISaleService{
                 salePage.getTotalPages(),
                 salePage.getTotalElements()
         );
+    }
+
+    /**
+     * Retrieves a sale by its unique identifier.
+     *
+     * <p>
+     * Searches for a sale in the database including its details and products.
+     * Throws an exception if the sale does not exist.
+     * </p>
+     *
+     * @param saleId the unique identifier of the sale
+     * @return the sale details as a DTO
+     * @throws SaleNotFoundException if the sale is not found
+     */
+    @Override
+    @Transactional
+    public SaleWithDetailsResponseDTO getSaleById(Long saleId) {
+
+        Sale sale = iSaleRepository.findByIdWithDetailsAndProducts(saleId)
+                .orElseThrow(() -> new SaleNotFoundException("Sale not found"));
+
+        return iSaleWithDetailsResponseMapper.toDto(sale);
+    }
+
+    /**
+     * Builds and returns available sorting options for sales.
+     *
+     * <p>
+     * This method extracts values from {@link SortOrder} enum
+     * and converts them into a frontend-friendly {@link EnumDTO} format.
+     * </p>
+     *
+     * <p>
+     * It ensures that the frontend always receives up-to-date options
+     * without requiring code changes on the client side.
+     * </p>
+     *
+     * @return SaleFiltersResponseDTO containing sort options
+     */
+    @Override
+    public SaleFiltersResponseDTO getFilters() {
+
+        List<EnumDTO> sortOptions = Arrays.stream(SortOrder.values())
+                .map(sort -> new EnumDTO(
+                        sort.name(),
+                        sort.getDisplayName()
+                ))
+                .toList();
+
+        SaleFiltersResponseDTO dto = new SaleFiltersResponseDTO();
+        dto.setSortOptions(sortOptions);
+
+        return dto;
     }
 }

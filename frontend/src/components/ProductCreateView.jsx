@@ -94,14 +94,16 @@ const ProductCreateView = () => {
       errors.productName = "Product name must not exceed 100 characters";
     }
     
-    const priceStr = String(formData.productPrice).replace(',', '.');
-    if (String(formData.productPrice).trim() === '') {
+    const priceRaw = String(formData.productPrice).trim();
+    const numRegex = /^\d+([.,]\d+)?$/;
+
+    if (priceRaw === '') {
       errors.productPrice = "Product price is required";
+    } else if (!numRegex.test(priceRaw)) {
+      errors.productPrice = "Product price must be a valid number (e.g. 10 or 10.5)";
     } else {
-      const price = Number(priceStr);
-      if (isNaN(price)) {
-        errors.productPrice = "Product price must be a valid number";
-      } else if (price < 0) {
+      const price = Number(priceRaw.replace(',', '.'));
+      if (price < 0) {
         errors.productPrice = "Product price must be greater than or equal to 0";
       } else {
         const parts = price.toString().split('.');
@@ -111,14 +113,14 @@ const ProductCreateView = () => {
       }
     }
 
-    const stockStr = String(formData.productStock).replace(',', '.');
-    if (String(formData.productStock).trim() === '') {
+    const stockRaw = String(formData.productStock).trim();
+    if (stockRaw === '') {
       errors.productStock = "Product stock is required";
+    } else if (!numRegex.test(stockRaw)) {
+      errors.productStock = "Product stock must be a valid number (e.g. 10 or 10.5)";
     } else {
-      const stock = Number(stockStr);
-      if (isNaN(stock)) {
-        errors.productStock = "Product stock must be a valid number";
-      } else if (stock < 0) {
+      const stock = Number(stockRaw.replace(',', '.'));
+      if (stock < 0) {
         errors.productStock = "Product stock must be greater than or equal to 0";
       } else {
         const parts = stock.toString().split('.');

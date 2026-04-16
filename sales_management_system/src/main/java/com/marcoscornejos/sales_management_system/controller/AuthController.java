@@ -2,11 +2,9 @@ package com.marcoscornejos.sales_management_system.controller;
 
 import com.marcoscornejos.sales_management_system.dto.LoginRequestDTO;
 import com.marcoscornejos.sales_management_system.dto.LoginResponseDTO;
-import com.marcoscornejos.sales_management_system.exception.AuthException;
 import com.marcoscornejos.sales_management_system.service.IAuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
