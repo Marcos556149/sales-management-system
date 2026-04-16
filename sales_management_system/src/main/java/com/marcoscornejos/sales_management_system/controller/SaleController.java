@@ -1,11 +1,14 @@
 package com.marcoscornejos.sales_management_system.controller;
 
 import com.marcoscornejos.sales_management_system.dto.PageResponseDTO;
+import com.marcoscornejos.sales_management_system.dto.SaleFiltersResponseDTO;
 import com.marcoscornejos.sales_management_system.dto.SaleListResponseDTO;
+import com.marcoscornejos.sales_management_system.dto.SaleWithDetailsResponseDTO;
 import com.marcoscornejos.sales_management_system.model.SortOrder;
 import com.marcoscornejos.sales_management_system.service.SaleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -59,5 +62,43 @@ public class SaleController {
             int size
     ) {
         return saleService.getSales(date, timeSort, page, size);
+    }
+
+    /**
+     * Retrieves detailed information of a specific sale by its identifier.
+     *
+     * <p>
+     * This endpoint allows clients to fetch a single sale's data,
+     * including its identifier, date, time, seller username,
+     * total amount, and the list of sold products with their details.
+     * </p>
+     *
+     * @param saleId the unique identifier of the sale
+     * @return the sale details as a response DTO
+     */
+    @GetMapping("/{saleId}")
+    public ResponseEntity<SaleWithDetailsResponseDTO> getSaleById(
+            @PathVariable Long saleId
+    ) {
+
+        SaleWithDetailsResponseDTO sale = saleService.getSaleById(saleId);
+
+        return ResponseEntity.ok(sale);
+    }
+
+    /**
+     * Retrieves available sorting options for sales.
+     *
+     * <p>
+     * This endpoint provides dynamic configuration data for the frontend,
+     * including sorting options by sale time.
+     * It avoids hardcoded values in the client application.
+     * </p>
+     *
+     * @return SaleFiltersResponseDTO containing sort options
+     */
+    @GetMapping("/filters")
+    public SaleFiltersResponseDTO getFilters() {
+        return saleService.getFilters();
     }
 }
