@@ -58,15 +58,22 @@ public interface ISaleRepository extends JpaRepository<Sale, Long> {
     Page<Sale> findSales(LocalDate date, Pageable pageable);
 
     /**
-     * Retrieves a sale with its details and products.
+     * Retrieves a sale with its details, products, and user.
      *
-     * <p>Uses JOIN FETCH to avoid additional queries.</p>
+     * <p>
+     * Uses JOIN FETCH to load associated entities and avoid additional queries
+     * caused by lazy loading.
+     * </p>
+     *
+     * @param idSale the unique identifier of the sale
+     * @return an Optional containing the sale with its details, products, and user
      */
     @Query("""
         SELECT DISTINCT s FROM Sale s
         JOIN FETCH s.saleDetails sd
         JOIN FETCH sd.product
+        JOIN FETCH s.user
         WHERE s.saleId = :idSale
-        """)
+    """)
     Optional<Sale> findByIdWithDetailsAndProducts(Long idSale);
 }
