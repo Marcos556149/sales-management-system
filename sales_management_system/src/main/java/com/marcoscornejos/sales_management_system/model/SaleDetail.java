@@ -63,16 +63,11 @@ public class SaleDetail {
     @Column(name = "sale_price")
     private BigDecimal salePrice;
 
-    /** Subtotal amount for this line (quantity * price). */
-    @Transient
-    private BigDecimal subtotal;
-
-    public SaleDetail(Product product, Sale sale, BigDecimal productQuantity, BigDecimal salePrice, BigDecimal subtotal) {
+    public SaleDetail(Product product, Sale sale, BigDecimal productQuantity, BigDecimal salePrice) {
         this.product = product;
         this.sale = sale;
         this.productQuantity = productQuantity;
         this.salePrice = salePrice;
-        this.subtotal = subtotal;
     }
 
 
