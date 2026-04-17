@@ -269,7 +269,7 @@ The system must allow the user to register sales made in the business, storing t
 3. The system creates a sale in progress.  
 4. The user adds products to the sale using the Add Product to Sale operation (RF-12).  
 5. The system displays, for each added product, its name, price, and quantity along with its unit of measure.  
-6. The system calculates line subtotals, total items and the total sale amount.  
+6. The system calculates line subtotals and the total sale amount.  
 7. The system automatically records the current date and time of the sale.  
 8. The user confirms the sale.  
 9. The system registers the sale with the following data:
@@ -278,7 +278,6 @@ The system must allow the user to register sales made in the business, storing t
    - Sale time  
    - Total amount  
    - User who performed the sale  
-   *Note:* Total items is automatically calculated from the quantities of the products associated with the sale.
 10. The system registers the sale details associated with the sale.  
 11. The system displays a confirmation message: "Sale successfully registered. Do you want to print the receipt?".  
 12. The user confirms receipt printing, invoking the Generate Receipt operation (RF-14).  
@@ -301,7 +300,7 @@ The system must allow the user to register sales made in the business, storing t
 ### Business Rules
 - A sale must have at least one associated product to be registered.  
 - Products are added to the sale using the operation defined in RF-12.  
-- Subtotals, total items and total sale amount are calculated automatically.  
+- Subtotals and total sale amount are calculated automatically.  
 - While a sale is in progress, it may exist without associated products.  
 - If all products are removed during the registration process, the sale must not be automatically deleted.  
 - During the registration process, the user can modify product quantities.  
@@ -386,7 +385,7 @@ The system must allow the user to update an existing sale by modifying the produ
 2. The user selects an existing sale.  
 3. The system displays the current sale data and its details, including the quantity of each product along with its unit of measure.  
 4. The user modifies the quantity of one or more products, respecting the quantity rules according to the product's unit of measure.  
-5. The system automatically recalculates line subtotals, total items and the total sale amount.  
+5. The system automatically recalculates line subtotals and the total sale amount.  
 6. The user confirms the changes.  
 7. The system updates the sale data in the database.  
 8. The system updates the stock of affected products.  
@@ -414,8 +413,7 @@ The system must allow the user to update an existing sale by modifying the produ
 - Only product quantities can be modified.  
 - The sale identifier, date, time, and total amount cannot be manually modified.  
 - The product price in the sale must not be modified.  
-- Line subtotals are calculated automatically.  
-- Total items are calculated automatically.  
+- Line subtotals are calculated automatically.   
 - The total sale amount is automatically recalculated based on the changes made.  
 - A quantity greater than the available stock cannot be assigned when the modification implies an increase.  
 - Quantity must be a real number greater than 0.  
@@ -511,7 +509,7 @@ The system must allow associating a product to a sale by specifying the desired 
    - Added quantity  
    - Unit price  
    *Note:* The subtotal is automatically calculated as `quantity × unit price` and is *not stored*.  
-10. The system updates the sale total amount and the sale total items.  
+10. The system updates the sale total amount.  
 11. The system reflects the product in the sale detail.
 
 ### Alternative Flows
@@ -543,7 +541,7 @@ The system must allow associating a product to a sale by specifying the desired 
 - The unique identifier of the sale detail is automatically assigned by the system.  
 - The quantity must be a number greater than 0 and compatible with the product’s unit of measure.  
 - If the product’s unit of measure is "unit", the quantity must not contain decimals.
-- After associating a product to a sale, the system must recalculate the sale total amount and total items.
+- After associating a product to a sale, the system must recalculate the sale total amount.
 
 ---
 
@@ -582,7 +580,7 @@ The system must allow removing a product from a sale by deleting the correspondi
 - If the sale has already been registered, removing a sale detail will also automatically adjust the stock by increasing the corresponding quantity.  
 - If the sale is in progress and all its products are removed, the sale must not be automatically deleted.  
 - If the sale has already been registered and all its products are removed, the sale must be automatically deleted.
-- After removing a product from a sale, the system must recalculate the sale total amount and total items.
+- After removing a product from a sale, the system must recalculate the sale total amount.
 
 ---
 
@@ -603,7 +601,6 @@ The system must allow generating a purchase ticket for each registered sale, rep
    - Quantity of each product along with its unit of measure (e.g., "2.5 kg", "1 u")  
    - Unit price  
    - Subtotal of each product  
-   - Total items
    - Total sale amount  
 5. The system displays the generated ticket or sends it to the corresponding output medium (screen or printer).
 
@@ -732,7 +729,6 @@ The system must allow the user to view detailed information of a specific sale r
    - Sale time  
    - Seller username (user_name)  
    - Total sale amount  
-   - Total items 
    - Details of each sold product: code, name, quantity along with its unit of measure, price at the time of sale, and subtotal  
 
 ### Alternative Flows

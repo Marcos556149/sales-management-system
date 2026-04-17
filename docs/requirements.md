@@ -86,7 +86,6 @@ For each product included in a sale, the following data must be stored:
 - Price at the time of the sale  
 - Quantity sold (according to the product’s unit of measure)  
 - Line subtotal  
-- Total items
 
 The system must allow:
 - Add a product to a sale  
@@ -110,7 +109,6 @@ For each recorded sale, the system must be able to generate a purchase receipt t
 - Quantity of each product  
 - Unit price  
 - Subtotal for each product  
-- Total items sold
 - Total sale amount  
 
 The receipt must represent proof of the completed transaction.
