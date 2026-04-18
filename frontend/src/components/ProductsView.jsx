@@ -4,28 +4,33 @@ import { Search, Plus, Filter, Edit2, Ban, CheckCircle2, X, RefreshCw } from 'lu
 import Pagination from './Pagination';
 import ConfirmModal from './ConfirmModal';
 import { useToast } from './ToastContext';
+import { useProductsContext } from './ProductsContext';
 import './ProductsView.css';
 
 const ProductsView = () => {
   const navigate = useNavigate();
   const { addToast } = useToast();
 
-  // --- UI State ---
-  const [searchTerm, setSearchTerm] = useState('');
-  
-  // --- API Query State ---
-  const [appliedSearch, setAppliedSearch] = useState('');
-  const [statusFilter, setStatusFilter] = useState('ALL');
-  const [sortOrder, setSortOrder] = useState('ASCENDING');
+  // --- Context State ---
+  const {
+      searchTerm, setSearchTerm,
+      appliedSearch, setAppliedSearch,
+      statusFilter, setStatusFilter,
+      sortOrder, setSortOrder,
+      pageFrontend, setPageFrontend,
+      productsData: products, setProductsData: setProducts,
+      totalPages, setTotalPages,
+      totalElements, setTotalElements,
+      statusOptions, setStatusOptions,
+      sortOptions, setSortOptions,
+      scrollPositionRef,
+      isCached, setIsCached
+  } = useProductsContext();
 
-  // --- Filter Options State ---
-  const [statusOptions, setStatusOptions] = useState([]);
-  const [sortOptions, setSortOptions] = useState([]);
-  const [filtersLoading, setFiltersLoading] = useState(true);
+  const [filtersLoading, setFiltersLoading] = useState(statusOptions.length === 0);
 
   // --- Data State ---
-  const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(!isCached);
   const [error, setError] = useState(null);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
   const [actionLoading, setActionLoading] = useState(false);
@@ -36,11 +41,6 @@ const ProductsView = () => {
   
   const [isActivateModalOpen, setIsActivateModalOpen] = useState(false);
   const [productToActivate, setProductToActivate] = useState(null);
-  
-  // --- Pagination State ---
-  const [pageFrontend, setPageFrontend] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const [totalElements, setTotalElements] = useState(0);
 
   const abortControllerRef = useRef(null);
 
@@ -52,6 +52,11 @@ const ProductsView = () => {
   // 0. Fetch Filter Options on Mount
   useEffect(() => {
     const fetchFilters = async () => {
+      if (statusOptions.length > 0 && sortOptions.length > 0) {
+        setFiltersLoading(false);
+        return;
+      }
+      
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 8000);
       try {
@@ -101,8 +106,48 @@ const ProductsView = () => {
     };
   }, [searchTerm]);
 
+  const isInitialMount = useRef(true);
+
+  // Scroll Position Management
+  useEffect(() => {
+    const container = document.querySelector('.content-area');
+    
+    // If we came back from another view and have data, restore scroll
+    if (isCached && products.length > 0) {
+      if (container && scrollPositionRef.current) {
+         requestAnimationFrame(() => {
+           container.scrollTop = scrollPositionRef.current;
+         });
+      }
+    }
+
+    const handleScroll = () => {
+      if (container) {
+        scrollPositionRef.current = container.scrollTop;
+      }
+    };
+    
+    if (container) {
+      container.addEventListener('scroll', handleScroll, { passive: true });
+    }
+    
+    return () => {
+      if (container) {
+        container.removeEventListener('scroll', handleScroll);
+      }
+    };
+  }, [isCached, products.length, scrollPositionRef]); // Run once on mount or when context changes
+
   // 2. Fetch data when filters/search/page changes
   useEffect(() => {
+    if (isInitialMount.current) {
+      isInitialMount.current = false;
+      // Skip fetch on mount if we already have data cached in context
+      if (isCached) {
+        return;
+      }
+    }
+
     const fetchProducts = async () => {
       // Cancel previous request if it exists to avoid race conditions
       if (abortControllerRef.current) {
@@ -153,6 +198,7 @@ const ProductsView = () => {
             setTotalPages(1);
             setTotalElements(0);
           }
+          setIsCached(true); // Cache fetched data
         }
       } catch (err) {
         clearTimeout(timeoutId);
@@ -183,7 +229,7 @@ const ProductsView = () => {
         abortControllerRef.current.abort();
       }
     };
-  }, [appliedSearch, statusFilter, sortOrder, pageFrontend, refreshTrigger]);
+  }, [appliedSearch, statusFilter, sortOrder, pageFrontend, refreshTrigger, isCached, setProducts, setTotalPages, setTotalElements, setIsCached, addToast]);
 
   // Handle immediate search on Enter key
   const handleKeyDown = (e) => {

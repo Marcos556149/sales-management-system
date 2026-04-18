@@ -7,14 +7,12 @@ import ProductCreateView from './components/ProductCreateView';
 
 import ProductDetailView from './components/ProductDetailView';
 import ProductEditView from './components/ProductEditView';
+import { ProductsLayout } from './components/ProductsContext';
+import SalesView from './components/SalesView';
+import SaleDetailView from './components/SaleDetailView';
+import { SalesLayout } from './components/SalesContext';
 
-// Placeholder Pages for Sales and Statistics
-const SalesPlaceholder = () => (
-  <div className="coming-soon">
-    <h2>Sales Module</h2>
-    <p>This functional area is currently under development.</p>
-  </div>
-);
+// Placeholder Pages for Statistics
 
 const StatisticsPlaceholder = () => (
   <div className="coming-soon">
@@ -80,11 +78,16 @@ function App() {
       >
         {/* Nested routes will be rendered inside DashboardLayout's <Outlet /> */}
         <Route index element={<Navigate to="/dashboard/products" replace />} />
-        <Route path="products" element={<ProductsView />} />
-        <Route path="products/new" element={<ProductCreateView />} />
-        <Route path="products/:id" element={<ProductDetailView />} />
-        <Route path="products/edit/:id" element={<ProductEditView />} />
-        <Route path="sales" element={<SalesPlaceholder />} />
+        <Route path="products" element={<ProductsLayout />}>
+          <Route index element={<ProductsView />} />
+          <Route path="new" element={<ProductCreateView />} />
+          <Route path=":id" element={<ProductDetailView />} />
+          <Route path="edit/:id" element={<ProductEditView />} />
+        </Route>
+        <Route path="sales" element={<SalesLayout />}>
+          <Route index element={<SalesView />} />
+          <Route path=":id" element={<SaleDetailView />} />
+        </Route>
         <Route path="statistics" element={<StatisticsPlaceholder />} />
       </Route>
 

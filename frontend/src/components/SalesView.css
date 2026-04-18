@@ -1,0 +1,138 @@
+.sales-view-container {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+
+
+
+.date-filter-label {
+  font-size: 0.9rem;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+/* Inheriting standard styles implicitly from globals or we redefine the specific ones here */
+/* In case they delete Products we supply the basic table stuff */
+
+.sales-table-card {
+  background-color: var(--card-bg);
+  border-radius: 12px;
+  border: 1px solid var(--border-color);
+  overflow: hidden;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+}
+
+.total-amount-cell {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+/* Custom DatePicker Styles */
+.custom-datepicker-wrapper {
+  display: inline-flex;
+  align-items: center;
+  position: relative;
+}
+
+.date-picker-wrapper {
+  width: auto;
+}
+
+.react-datepicker-wrapper {
+  display: inline-block;
+  padding: 0;
+  border: 0;
+}
+
+/* Custom Input Button (Replaces typical text input) */
+.custom-date-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px; /* Tightly packs text and icon with no empty gap */
+  padding: 0;
+  font-family: inherit;
+  color: var(--text-primary);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  outline: none;
+}
+
+.datepicker-inline-icon {
+  color: var(--text-secondary);
+}
+
+/* React Datepicker Custom Theme for SalesView */
+.react-datepicker {
+  font-family: inherit !important;
+  border: 1px solid var(--border-color) !important;
+  border-radius: 12px !important;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1) !important;
+  overflow: hidden;
+}
+
+.react-datepicker__header {
+  background-color: var(--bg-color) !important;
+  border-bottom: 1px solid var(--border-color) !important;
+  padding-top: 12px !important;
+}
+
+.react-datepicker__current-month {
+  font-weight: 600 !important;
+  color: var(--text-primary) !important;
+}
+
+.react-datepicker__day-name,
+.react-datepicker__day {
+  color: var(--text-primary) !important;
+  width: 2rem !important;
+  line-height: 2rem !important;
+  margin: 0.2rem !important;
+  border-radius: 50% !important;
+}
+
+.react-datepicker__day:hover {
+  background-color: var(--sidebar-hover-bg) !important;
+  color: var(--text-primary) !important;
+}
+
+.react-datepicker__day--selected,
+.react-datepicker__day--keyboard-selected {
+  background-color: #3b82f6 !important;
+  color: #ffffff !important;
+  font-weight: 600 !important;
+}
+
+.react-datepicker__day--keyboard-selected {
+  background-color: rgba(59, 130, 246, 0.2) !important;
+  color: #3b82f6 !important;
+}
+
+/* Hide days outside of current month */
+.react-datepicker__day--outside-month {
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
+.react-datepicker__today-button {
+  background: var(--bg-color) !important;
+  border-top: 1px solid var(--border-color) !important;
+  padding: 10px 0 !important;
+  font-weight: 600 !important;
+  color: #3b82f6 !important;
+  transition: background-color 0.2s !important;
+  border-bottom-left-radius: 12px !important;
+  border-bottom-right-radius: 12px !important;
+}
+
+.react-datepicker__today-button:hover {
+  background: var(--sidebar-hover-bg) !important;
+}
+
+/* Action Buttons Hover Specifics for Sales Table */
+.print-btn:hover {
+  color: var(--success-text);
+}
+
