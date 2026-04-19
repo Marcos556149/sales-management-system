@@ -57,7 +57,7 @@ public class Sale {
 
     /** Total monetary amount of the sale. */
     @Column(name = "total_amount")
-    private BigDecimal totalAmount;
+    private BigDecimal totalAmount=BigDecimal.ZERO;
 
     /**
      * User responsible for the sale.
