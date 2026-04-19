@@ -3,6 +3,7 @@ package com.marcoscornejos.sales_management_system.controller;
 import com.marcoscornejos.sales_management_system.exception.AuthException;
 import com.marcoscornejos.sales_management_system.exception.ProductException;
 import com.marcoscornejos.sales_management_system.exception.SaleException;
+import com.marcoscornejos.sales_management_system.exception.UserException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -185,6 +186,26 @@ public class GlobalExceptionHandler {
 
         Map<String, String> error = new HashMap<>();
         error.put("error", "Missing required parameter: " + ex.getParameterName());
+
+        return ResponseEntity.badRequest().body(error);
+    }
+
+    /**
+     * Handles user-related exceptions thrown when business rules
+     * or validations fail within the User domain.
+     *
+     * <p>
+     * Returns a 400 Bad Request response with a descriptive error message.
+     * </p>
+     *
+     * @param ex the exception containing error details
+     * @return a 400 Bad Request response with the error message
+     */
+    @ExceptionHandler(UserException.class)
+    public ResponseEntity<Map<String, String>> handleUserException(UserException ex) {
+
+        Map<String, String> error = new HashMap<>();
+        error.put("error", ex.getMessage());
 
         return ResponseEntity.badRequest().body(error);
     }
