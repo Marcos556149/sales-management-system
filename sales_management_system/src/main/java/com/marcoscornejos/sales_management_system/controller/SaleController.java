@@ -1,11 +1,9 @@
 package com.marcoscornejos.sales_management_system.controller;
 
-import com.marcoscornejos.sales_management_system.dto.PageResponseDTO;
-import com.marcoscornejos.sales_management_system.dto.SaleFiltersResponseDTO;
-import com.marcoscornejos.sales_management_system.dto.SaleListResponseDTO;
-import com.marcoscornejos.sales_management_system.dto.SaleWithDetailsResponseDTO;
+import com.marcoscornejos.sales_management_system.dto.*;
 import com.marcoscornejos.sales_management_system.model.SortOrder;
 import com.marcoscornejos.sales_management_system.service.SaleService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
@@ -100,5 +98,32 @@ public class SaleController {
     @GetMapping("/filters")
     public SaleFiltersResponseDTO getFilters() {
         return saleService.getFilters();
+    }
+
+    /**
+     * Registers a new sale in the system.
+     *
+     * <p>
+     * This endpoint allows the creation of a new sale by providing
+     * the required information, including the associated products
+     * and their quantities. The system automatically assigns the
+     * sale identifier, current date, time, total amount, and user.
+     * </p>
+     *
+     * <p>
+     * A sale must contain at least one valid product detail.
+     * If any product is invalid, inactive, or has insufficient stock,
+     * an error is returned.
+     * </p>
+     *
+     * @param request the sale data required to register a new sale
+     * @return confirmation message indicating successful registration
+     */
+    @PostMapping
+    public ResponseEntity<String> registerSale(@RequestBody @Valid SaleCreateRequestDTO request) {
+
+        saleService.registerSale(request);
+
+        return ResponseEntity.ok("Sale successfully registered");
     }
 }
