@@ -101,7 +101,7 @@ const SalesView = () => {
     fetchFilters();
   }, [addToast]);
 
-  const isInitialMount = useRef(true);
+  const prevParams = useRef({ dateFilter, sortOrder, pageFrontend, refreshTrigger });
 
   // Scroll Position Management
   useEffect(() => {
@@ -131,16 +131,21 @@ const SalesView = () => {
         container.removeEventListener('scroll', handleScroll);
       }
     };
-  }, []); // Run once on mount
+  }, [isCached, sales.length, scrollPositionRef]); // Run once on mount or context change
 
   // 1. Fetch data when filters/page changes
   useEffect(() => {
-    if (isInitialMount.current) {
-      isInitialMount.current = false;
-      // Skip fetch on mount if we already have data cached in context
-      if (isCached) {
-        return;
-      }
+    const paramsChanged = 
+      prevParams.current.dateFilter !== dateFilter ||
+      prevParams.current.sortOrder !== sortOrder ||
+      prevParams.current.pageFrontend !== pageFrontend ||
+      prevParams.current.refreshTrigger !== refreshTrigger;
+
+    prevParams.current = { dateFilter, sortOrder, pageFrontend, refreshTrigger };
+
+    // Skip fetch entirely if we are cached and this is just a mount/remount
+    if (!paramsChanged && isCached) {
+      return;
     }
 
     const fetchSales = async () => {
@@ -235,15 +240,19 @@ const SalesView = () => {
       }
     };
 
-    fetchSales();
+    // Debounce slightly to kill the React StrictMode double-mount network request
+    const mountDebounceReq = setTimeout(() => {
+      fetchSales();
+    }, 15);
     
-    // Cleanup on unmount
+    // Cleanup on unmount or re-run
     return () => {
+      clearTimeout(mountDebounceReq);
       if (abortControllerRef.current) {
         abortControllerRef.current.abort();
       }
     };
-  }, [dateFilter, sortOrder, pageFrontend, refreshTrigger, addToast, isCached, setSales, setTotalPages, setTotalElements, setIsCached]);
+  }, [dateFilter, sortOrder, pageFrontend, refreshTrigger]);
 
 
   // Actions

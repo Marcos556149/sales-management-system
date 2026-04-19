@@ -106,7 +106,7 @@ const ProductsView = () => {
     };
   }, [searchTerm]);
 
-  const isInitialMount = useRef(true);
+  const prevParams = useRef({ appliedSearch, statusFilter, sortOrder, pageFrontend, refreshTrigger });
 
   // Scroll Position Management
   useEffect(() => {
@@ -140,12 +140,17 @@ const ProductsView = () => {
 
   // 2. Fetch data when filters/search/page changes
   useEffect(() => {
-    if (isInitialMount.current) {
-      isInitialMount.current = false;
-      // Skip fetch on mount if we already have data cached in context
-      if (isCached) {
-        return;
-      }
+    const paramsChanged = 
+      prevParams.current.appliedSearch !== appliedSearch ||
+      prevParams.current.statusFilter !== statusFilter ||
+      prevParams.current.sortOrder !== sortOrder ||
+      prevParams.current.pageFrontend !== pageFrontend ||
+      prevParams.current.refreshTrigger !== refreshTrigger;
+
+    prevParams.current = { appliedSearch, statusFilter, sortOrder, pageFrontend, refreshTrigger };
+
+    if (!paramsChanged && isCached) {
+      return;
     }
 
     const fetchProducts = async () => {
@@ -221,15 +226,18 @@ const ProductsView = () => {
       }
     };
 
-    fetchProducts();
+    const mountDebounceReq = setTimeout(() => {
+      fetchProducts();
+    }, 15);
     
-    // Cleanup on unmount
+    // Cleanup on unmount or re-run
     return () => {
+      clearTimeout(mountDebounceReq);
       if (abortControllerRef.current) {
         abortControllerRef.current.abort();
       }
     };
-  }, [appliedSearch, statusFilter, sortOrder, pageFrontend, refreshTrigger, isCached, setProducts, setTotalPages, setTotalElements, setIsCached, addToast]);
+  }, [appliedSearch, statusFilter, sortOrder, pageFrontend, refreshTrigger]); // Prevent double-fetching on mount
 
   // Handle immediate search on Enter key
   const handleKeyDown = (e) => {
