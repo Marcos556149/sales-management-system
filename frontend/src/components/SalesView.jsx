@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Search, Calendar, Filter, Edit2, Printer, X, RefreshCw, Trash2 } from 'lucide-react';
+import { Search, Calendar, Filter, Edit2, Printer, X, RefreshCw, Trash2, Plus } from 'lucide-react';
 import Pagination from './Pagination';
 import { useToast } from './ToastContext';
 import DatePicker from 'react-datepicker';
@@ -341,10 +341,13 @@ const SalesView = () => {
             <span>{loading ? 'Refreshing...' : 'Refresh'}</span>
           </button>
           
-          {/* 
-            Placeholder for future New Sale button if required.
-            Usually sales are made from the scanner/POS screen, not this view.
-          */}
+          <button 
+            className="btn-primary"
+            onClick={() => navigate('/dashboard/sales/new')}
+          >
+            <Plus size={18} />
+            <span>New Sale</span>
+          </button>
         </div>
       </div>
 

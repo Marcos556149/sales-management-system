@@ -11,6 +11,7 @@ import { ProductsLayout } from './components/ProductsContext';
 import SalesView from './components/SalesView';
 import SaleDetailView from './components/SaleDetailView';
 import { SalesLayout } from './components/SalesContext';
+import RegisterSaleView from './components/RegisterSaleView';
 
 // Placeholder Pages for Statistics
 
@@ -86,6 +87,7 @@ function App() {
         </Route>
         <Route path="sales" element={<SalesLayout />}>
           <Route index element={<SalesView />} />
+          <Route path="new" element={<RegisterSaleView />} />
           <Route path=":id" element={<SaleDetailView />} />
         </Route>
         <Route path="statistics" element={<StatisticsPlaceholder />} />
