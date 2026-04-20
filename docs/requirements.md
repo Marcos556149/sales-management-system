@@ -1,6 +1,6 @@
-# System Requirements
+# PrimeSale - System Requirements
 
-Sales management system for a kiosk
+Web-based sales and inventory management system for retail businesses
 
 ## Index
 
@@ -32,34 +32,46 @@ Sales management system for a kiosk
 ---
 
 ## 1. General Description
-A client requests the development of a web application that allows managing products and sales of their business.  
-The system must allow registering products, performing sales, and generating a receipt with the details of each transaction.
+
+PrimeSale is a web-based business management system designed to help retail businesses manage their daily commercial operations.
+
+The system provides tools for product administration, inventory control, sales registration, receipt generation, user management and access control, configuration settings, and business reporting and analytics through an intuitive and efficient interface.
 
 ## 2. System Objective
-The objective of the system is to allow a business to:
-- Maintain a record of its products  
-- Control available stock  
-- Record completed sales  
-- Obtain a detailed receipt for each transaction  
+
+The objective of PrimeSale is to allow a business to:
+
+- Manage and maintain product information  
+- Control available inventory and stock levels  
+- Register and track completed sales transactions  
+- Generate detailed receipts for each transaction  
+- Manage system users and access permissions  
+- Obtain reports and statistical insights about sales and products  
+- Centralize daily commercial operations in an efficient web-based platform
 
 ## 3. Product Management
-The system must allow storing and managing information about the products available in the business.  
+
+The system must allow managing the products available in the business, including their registration, maintenance, availability control, and consultation.
 
 For each product, the following data must be recorded:
+
 - Product name  
 - Product code (unique identifier within the system)  
 - Product price  
 - Unit of measure (e.g., unit, kilogram, liter)  
 - Available stock  
-- Product status (active/inactive)  
+- Minimum stock level used to identify low stock products  
+- Product status (active/inactive)
 
 The system must allow:
+
 - Register a new product  
-- View existing products  
-- Update product data  
+- View the list of existing products  
+- View detailed information of a specific product  
+- Update product information  
 - Logically deactivate a product (mark it as inactive)  
-- Activate a product (mark it as active)
-- Refresh the product list displayed on screen to reflect recent changes in the system  
+- Reactivate a product (mark it as active)  
+- Refresh the product list displayed on screen to reflect recent changes in the system
 
 ## 4. Sales Management
 The system must allow recording sales made in the business.  
