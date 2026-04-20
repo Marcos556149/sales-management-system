@@ -130,9 +130,10 @@ The system must have two predefined access types (roles):
 
 **Administrator**
 - Has full access to all system functionalities  
-- Can view and manage products  
-- Can register, update, deactivate, and activate products  
-- Can search products by barcode  
+- Can manage products, including registration, updates, activation, and deactivation  
+- Can register and search products by barcode  
+- Can view product lists, product details, and stock information
+- Can refresh the product list displayed on screen
 - Can view and manage sales, including sale details  
 - Can register, update, and delete sales  
 - Can add and remove products from sales  
@@ -146,19 +147,22 @@ The system must have two predefined access types (roles):
 - Can log out from the system
 
 **Operator (cashier)**
+- Can search products by barcode  
+- Can view product lists, product details, and stock information  
+- Can refresh the product list displayed on screen
 - Can access the system through authentication  
 - Can register sales  
 - Can add products to sales  
 - Can remove products from sales only during sale registration  
-- Can generate sales receipts  
-- Can view products  
-- Can search products by barcode  
+- Can generate sales receipts    
 - Can view sales  
 - Can view sales statistics  
 - Can change their interface language
 - Can log out from the system
-- Cannot create, update, deactivate, or activate products  
-- Cannot register products by barcode  
+- Cannot register products  
+- Cannot update product information  
+- Cannot deactivate or reactivate products  
+- Cannot register products by barcode
 - Cannot modify or delete sales or their details once registered  
 - Cannot modify the business name
 - Cannot register, view, and update users (operators)
