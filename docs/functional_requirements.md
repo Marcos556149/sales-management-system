@@ -44,7 +44,7 @@ The system must allow the user to register a new product.
 ### Main Flow
 1. The user accesses the product section.  
 2. The user requests to register a new product.  
-3. The system requests the following product data: code, name, price, unit of measure, and available stock.  
+3. The system requests the following product data: code, name, price, unit of measure, available stock, and minimum stock level. 
 4. The user enters the required data.  
 5. The system validates the entered information.  
 6. The system saves the product in the database.  
@@ -63,13 +63,16 @@ The system must allow the user to register a new product.
 ### Business Rules
 - The product code is mandatory and must be unique within the system.  
 - The product name is mandatory.  
+- The product status can only take the values "Active" or "Inactive".
 - The product status is not required as input and is automatically set to "Active" when the product is created.
 - The product price is mandatory and must be a real number greater than or equal to 0.  
 - The available stock is mandatory and must be a real number greater than or equal to 0.  
-- The system must assign a default value of 0 to both price and stock when creating the product.  
-- The product name must be descriptive and clearly distinguishable from other similar products in the system.  
-- The unit of measure is mandatory (e.g., Units, Kilograms, Liters), and defaults to "Units".  
-- If the unit of measure is "Units", the stock must be expressed in integer values.  
+- The minimum stock level is mandatory and must be a real number greater than or equal to 0.
+- The price, available stock, and minimum stock level fields must be initialized with a default value of 0 in the registration form.
+- The product name should be descriptive and clearly distinguishable from other similar products in the system.
+- The unit of measure must be one of the following values: "Units", "Kilograms", or "Liters".
+- The unit of measure is mandatory and defaults to "Units" in the registration form.
+- If the unit of measure is "Units", both available stock and minimum stock level must be expressed in integer values.
 
 ---
 
@@ -108,16 +111,22 @@ The system must allow the user to view the products registered in the system.
 **3.c Product sorting**  
 
 **3.c.1 By name**  
-3.c.1.1 The user selects a sorting criterion by name (ascending or descending).  
+3.c.1.1 The user selects a sorting criterion by name ("Ascending" or "Descending").  
 3.c.1.2 The system sorts the products according to the selected criterion.  
 
 **3.d Product filtering**  
 
 **3.d.1 By status**  
-3.d.1.1 The user selects a product status (Active, Inactive, or All Status).  
+3.d.1.1 The user selects a product status ("Active", "Inactive", or "All Status").  
 3.d.1.2 The system filters products according to the selected status.  
 
-**3.f Product not found**  
+**3.d.2 By stock level**
+
+**3.d.2 By stock level**  
+3.d.2.1 The user selects a stock filter ("All Stock Levels", "Normal Stock", "Low Stock", or "Out of Stock").  
+3.d.2.2 The system filters products according to the selected stock condition.
+
+**3.f Products not found**  
 3.f.1 The system detects that no products match the search criteria.  
 3.f.2 The system displays a message: "No products match the search criteria".  
 
@@ -126,13 +135,19 @@ The system must allow the user to view the products registered in the system.
 - The system must retrieve products in pages of 50 items by default.
 - The system must allow navigation between pages of products (e.g., next page, previous page, or direct page selection).
 - If no page is specified, the system must return the first page by default.
-- The system must allow viewing all registered products.  
 - The system must allow searching products by name or code.  
-- The system must allow sorting products by name (Ascending or Descending).  
-- The system must allow filtering products by status (Active, Inactive, or All Status).  
+- The system must allow sorting products by name ("Ascending" or "Descending").  
+- The system must allow filtering products by status ("Active", "Inactive", or "All Status").  
 - If no status filter is selected, the system displays "All Status" by default.  
 - If no sorting criterion is selected, the system applies "Ascending" by default.  
 - The system must ensure that only the products belonging to the requested page are retrieved from the database (server-side pagination).
+- The system must visually indicate the stock condition of each product based on available stock and minimum stock level.
+- A product is considered "Normal Stock" when available stock is greater than minimum stock level.
+- A product is considered "Low Stock" when available stock is greater than 0 and less than or equal to minimum stock level.
+- A product is considered "Out of Stock" when available stock is equal to 0.
+- Products with Low Stock or Out of Stock condition must be visually highlighted in the product list.
+- The system must allow filtering products by stock condition ("All Stock Levels", "Normal Stock", "Low Stock", or "Out of Stock").
+- If no stock filter is selected, the system displays "All Stock Levels" by default.
 
 ---
 
@@ -143,13 +158,12 @@ The system must allow the user to update the data of an existing product.
 
 ### Main Flow
 1. The user accesses the product section.  
-2. The user selects a product.  
-3. The system displays the current product data.  
-4. The user requests to update the product.  
-5. The user modifies the following product data: Name, price, unit of measure, and available stock.  
-6. The system validates the entered information.  
-7. The system updates the product data in the database.  
-8. The system displays a confirmation message: "Product successfully updated".  
+2. The user selects the update option for an existing product.  
+3. The system displays the current selected product data in editable form.
+4. The user modifies the following product data: Name, price, unit of measure, available stock, and minimum stock level.  
+5. The system validates the entered information.  
+6. The system updates the product data in the database.  
+7. The system displays a confirmation message: "Product successfully updated".  
 
 ### Alternative Flows
 
@@ -157,20 +171,21 @@ The system must allow the user to update the data of an existing product.
 2.a.1 The system detects that the selected product does not exist.  
 2.a.2 The system displays a message: "Product not found".  
 
-**6.a Invalid data**  
-6.a.1 The system displays an error message indicating the incorrect fields.  
-6.a.2 The user corrects the data.  
+**5.a Invalid data**  
+5.a.1 The system displays an error message indicating the incorrect fields.  
+5.a.2 The user corrects the data.  
 
 ### Business Rules
-- The product code must be unique within the system.  
-- All editable fields (Name, price, unit of measure, and stock) are mandatory.  
-- The product price must be a real number greater than or equal to 0.  
-- The available stock must be a real number greater than or equal to 0.  
+- All editable fields (name, price, unit of measure, available stock, and minimum stock level) are mandatory.
+- The product price must be a real number greater than or equal to 0.
+- The available stock must be a real number greater than or equal to 0.
+- The minimum stock level must be a real number greater than or equal to 0.
 - The product status cannot be modified in this process.  
 - The product code cannot be modified in this process
-- The product name must be descriptive and clearly distinguishable from other similar products in the system.  
-- If the unit of measure is "unit", the stock must be expressed in integer values.  
-- If the unit of measure is modified, the system must validate that the stock complies with the new unit constraints.
+- The product name should be descriptive and clearly distinguishable from other similar products in the system.
+- The unit of measure must be one of the following values: "Units", "Kilograms", or "Liters".
+- If the unit of measure is "Units", both available stock and minimum stock level must be expressed in integer values.
+- If the unit of measure is modified, the system must validate that available stock and minimum stock level comply with the new unit constraints.
 
 ---
 
@@ -180,33 +195,34 @@ The system must allow the user to update the data of an existing product.
 The system must allow the user to logically deactivate a product by marking it as inactive.
 
 ### Main Flow
+
 1. The user accesses the product section.  
-2. The user selects a product.  
-3. The system displays the product data.  
-4. The user requests to deactivate the product.  
-5. The system requests confirmation of the action.  
-6. The user confirms the operation.  
-7. The system updates the product status to "Inactive".  
-8. The system displays a confirmation message: "Product successfully deactivated".  
+The user selects the deactivate option for an active product.
+3. The system requests confirmation of the action.  
+4. The user confirms the operation.  
+5. The system updates the product status to "Inactive".  
+6. The system displays a confirmation message: "Product successfully deactivated".
 
 ### Alternative Flows
 
 **2.a Product not found**  
 2.a.1 The system detects that the selected product does not exist.  
-2.a.2 The system displays a message: "Product not found".  
+2.a.2 The system displays a message: "Product not found".
 
-**5.a Operation canceled**  
-5.a.1 The user cancels the operation.  
-5.a.2 The system does not apply any changes to the product.  
+**3.a Operation canceled**  
+3.a.1 The user cancels the operation.  
+3.a.2 The system does not apply any changes to the product.
 
-**7.a Product already inactive**  
-7.a.1 The system detects that the product is already inactive.  
-7.a.2 The system displays a message: "Product is already inactive".  
+**5.a Product already inactive**  
+5.a.1 The system detects that the product is already inactive.  
+5.a.2 The system displays a message: "Product is already inactive".
 
 ### Business Rules
+
 - Product deactivation is logical, not physical.  
-- The product status can be "Active" or "Inactive".  
+- The product status can only take the values "Active" or "Inactive".  
 - An inactive product must not be available for sales operations.  
+- Product historical data must remain stored after deactivation.
 
 ---
 
@@ -218,22 +234,22 @@ The system must allow the user to identify an existing product by scanning its b
 ### Main Flow
 1. The user accesses the product section.  
 2. The user scans the product barcode using a reader.  
-3. The system recognizes the barcode.  
-4. The system displays the product data using the View Product operation (RF-17): code, name, price, unit of measure, status, and available stock.  
+3. The system retrieves the product associated with the scanned barcode.  
+4. The system displays the product data using the View Product operation (RF-17).
 
 ### Alternative Flows
 
-**3.a Unreadable or unrecognized barcode**  
-3.a.1 The system detects that the barcode cannot be read.  
-3.a.2 The system displays a message: "Barcode not recognized, please try again".  
+**2.a Unreadable or unrecognized barcode**  
+2.a.1 The system detects that the barcode cannot be read.  
+2.a.2 The system displays a message: "Barcode not recognized, please try again".  
 
-**4.a Product not found**  
-4.a.1 The system detects that no product exists with the scanned code.  
-4.a.2 The system offers the user the option to register a new product using the scanned barcode (see RF-6: Register Product by Barcode).  
+**3.a Product not found**  
+3.a.1 The system detects that no product exists with the scanned code.  
+3.a.2 The system offers the user the option to register a new product using the scanned barcode (see RF-6: Register Product by Barcode).  
 
 ### Business Rules
 - The barcode must be unique within the system.  
-- The product must exist in the database to be identified.  
+- The scanned barcode must correspond to an existing product in the database.
 
 ---
 
@@ -243,15 +259,10 @@ The system must allow the user to identify an existing product by scanning its b
 The system allows the user to initiate product registration using a scanned barcode as an identifier. This functionality complements RF-1: Register Product.
 
 ### Main Flow
-1. The user accesses the product registration section.  
+
+1. The user accesses the product section.  
 2. The user scans the product barcode using a reader.  
-3. The system redirects to RF-1: Register Product to complete the registration.  
-
-### Alternative Flows
-
-**3.a Barcode already registered**  
-3.a.1 The system detects that the scanned barcode already belongs to another product.  
-3.a.2 The system offers the user the option to view the product data using the scanned barcode (see RF-5: Search Product by Barcode).  
+3. The system opens the product registration process (RF-1) with the scanned barcode prefilled as the product code.
 
 ### Business Rules
 - Full product registration follows the rules defined in RF-1: Register Product.    
@@ -669,7 +680,7 @@ The system must allow the user to refresh the list of products, sales, or sales 
 4. The system displays the updated list on screen:  
    - Products  
    - Sales  
-   - Sales Statistics (total revenue and list of sold products with quantities)
+   - Sales Statistics
 
 ### Alternative Flows
 
@@ -690,17 +701,18 @@ The system must allow the user to refresh the list of products, sales, or sales 
 The system must allow the user to view detailed information of a specific product registered in the system.
 
 ### Main Flow
-1. The user accesses the products section.  
-2. The user selects a specific product.  
-3. The system receives the product identifier.  
-4. The system retrieves the product data from the database.  
-5. The system displays the product information with the following data:
+
+1. The user accesses the product section.  
+2. The user requests to view a specific product.  
+3. The system retrieves the product using its product code.  
+4. The system displays the product information with the following data:
    - Product code  
    - Product name  
    - Price  
    - Unit of measure  
    - Status  
    - Available stock  
+   - Minimum stock level  
 
 ### Alternative Flows
 
@@ -709,7 +721,10 @@ The system must allow the user to view detailed information of a specific produc
 3.a.2 The system displays a message: "Product not found".
 
 ### Business Rules
-- The system must allow querying a specific product using its identifier.  
+
+- The system must allow querying a specific product using its product code.  
+- The product information displayed must reflect the latest data stored in the database. 
+- Products with "Low Stock" or "Out of Stock" condition must be visually highlighted in the product detail view. 
 
 ---
 
@@ -1012,32 +1027,33 @@ The system must allow administrators to change the status of a user.
 The system must allow the user to activate an inactive product by marking it as active.
 
 ### Main Flow
+
 1. The user accesses the product section.  
-2. The user selects a product.  
-3. The system displays the product data.  
-4. The user requests to activate the product.  
-5. The system requests confirmation of the action.  
-6. The user confirms the operation.  
-7. The system updates the product status to "Active".  
-8. The system displays a confirmation message: "Product successfully activated".  
+2. The user selects the activate option for an inactive product.  
+3. The system requests confirmation of the action.  
+4. The user confirms the operation.  
+5. The system updates the product status to "Active".  
+6. The system displays a confirmation message: "Product successfully activated".
 
 ### Alternative Flows
 
 **2.a Product not found**  
 2.a.1 The system detects that the selected product does not exist.  
-2.a.2 The system displays a message: "Product not found".  
+2.a.2 The system displays a message: "Product not found".
 
-**5.a Operation canceled**  
-5.a.1 The user cancels the operation.  
-5.a.2 The system does not apply any changes to the product.  
+**3.a Operation canceled**  
+3.a.1 The user cancels the operation.  
+3.a.2 The system does not apply any changes to the product.
 
-**7.a Product already active**  
-7.a.1 The system detects that the product is already active.  
-7.a.2 The system displays a message: "Product is already active".  
+**5.a Product already active**  
+5.a.1 The system detects that the product is already active.  
+5.a.2 The system displays a message: "Product is already active".
 
 ### Business Rules
+
 - Only inactive products can be activated.  
 - An active product is available for sales operations.  
+- Product activation is a logical update and does not modify historical data.
 
 ---
 
