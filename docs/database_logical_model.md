@@ -31,6 +31,7 @@ Represents the products available in the system.
 - product_status
 - product_stock
 - unit_of_measure
+- minimum_stock
 
 ---
 
