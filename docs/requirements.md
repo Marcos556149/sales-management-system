@@ -71,7 +71,6 @@ The system must allow:
 - Update product information  
 - Logically deactivate a product (mark it as inactive)  
 - Reactivate a product (mark it as active)  
-- Refresh the product list displayed on screen to reflect recent changes in the system
 
 ## 4. Sales Management
 The system must allow recording sales made in the business.  
@@ -88,7 +87,6 @@ The system must allow:
 - View existing sales  
 - Update sale data  
 - Delete a sale  
-- Refresh the sales list displayed on screen to reflect recent changes in the system  
 
 ## 5. Sale Detail
 For each product included in a sale, the following data must be stored:
@@ -133,7 +131,6 @@ The system must have two predefined access types (roles):
 - Can manage products, including registration, updates, activation, and deactivation  
 - Can register and search products by barcode  
 - Can view product lists, product details, and stock information
-- Can refresh the product list displayed on screen
 - Can view and manage sales, including sale details  
 - Can register, update, and delete sales  
 - Can add and remove products from sales  
@@ -149,7 +146,6 @@ The system must have two predefined access types (roles):
 **Operator (cashier)**
 - Can search products by barcode  
 - Can view product lists, product details, and stock information  
-- Can refresh the product list displayed on screen
 - Can access the system through authentication  
 - Can register sales  
 - Can add products to sales  
@@ -251,7 +247,6 @@ The system must allow:
 - Selecting a specific day of the year (e.g., August 15, 2026) and displaying the corresponding information  
 - Selecting a specific month of a year (e.g., July 2025) and displaying the corresponding information  
 - Selecting a specific year (e.g., 2024) and displaying the corresponding information  
-- Refreshing the information displayed on screen to reflect recent changes in the system
 
 ## 12. Logout
 

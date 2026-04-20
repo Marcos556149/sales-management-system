@@ -16,7 +16,6 @@
 - [RF-13: Remove Product from Sale](#rf-13-remove-product-from-sale)
 - [RF-14: Generate Sale Ticket](#rf-14-generate-sale-ticket)
 - [RF-15: User Authentication](#rf-15-user-authentication)
-- [RF-16: Refresh Product / Sale / Sales Statistics List](#rf-16-refresh-product--sale--sales-statistics-list)
 - [RF-17: View Product](#rf-17-view-product)
 - [RF-18: View Sale](#rf-18-view-sale)
 - [RF-19: Change System Configuration](#rf-19-change-system-configuration)
@@ -668,33 +667,6 @@ The system must allow users to access its functionalities through an authenticat
 
 ---
 
-## RF-16: Refresh Product / Sale / Sales Statistics List
-
-### Description
-The system must allow the user to refresh the list of products, sales, or sales statistics displayed on screen, reflecting any changes that have occurred in the system since the last view.
-
-### Main Flow
-1. The user accesses the Products, Sales, or Sales Statistics section.  
-2. The user clicks the "Refresh" button.  
-3. The system retrieves the most recent information from the database.  
-4. The system displays the updated list on screen:  
-   - Products  
-   - Sales  
-   - Sales Statistics
-
-### Alternative Flows
-
-**3.a Data Retrieval Error**  
-3.a.1 The system detects an error while fetching the information.  
-3.a.2 The system displays a message: "The list could not be refreshed. Please try again."
-
-### Business Rules
-- The refresh operation must only update the displayed information without modifying existing data.  
-- The system must reflect changes made by other users or processes since the last update.  
-- The refresh button must be available to all users with viewing permissions in the corresponding section (Products, Sales, or Sales Statistics).
-
----
-
 ## RF-17: View Product
 
 ### Description
@@ -1081,7 +1053,6 @@ The system must allow the user to activate an inactive product by marking it as 
 - Can remove products from sales (RF-13).  
 - Can generate sale tickets (RF-14).  
 - Can view a specific sale (RF-18).  
-- Can refresh product and sales lists (RF-16).  
 - Can authenticate in the system (RF-15).  
 - Can change all system configuration settings (RF-19).
 - Can view sales statistics (RF-20).
@@ -1103,7 +1074,6 @@ The system must allow the user to activate an inactive product by marking it as 
 - Can associate products to sales (RF-11, RF-12).  
 - Can remove products from sales during the sale registration process (RF-13).  
 - Can generate sale tickets (RF-14).  
-- Can refresh product and sales lists (RF-16).  
 - Can change the interface language (RF-19).  
 - Can view sales statistics (RF-20).
 - Can log out of the system (RF-21).
@@ -1126,7 +1096,7 @@ The system must allow the user to activate an inactive product by marking it as 
 
 ### Numeric and Decimal Data
 
-- All numeric values representing monetary amounts or product quantities must be stored and displayed with a maximum of 2 decimal places.  
+- All numeric values representing monetary amounts or product quantities must be stored and displayed with a maximum of 2 decimal places and 10 digits in the integer part.  
   This includes:  
   - Product price.  
   - Product price in sale detail (sale price).  
@@ -1134,6 +1104,8 @@ The system must allow the user to activate an inactive product by marking it as 
   - Total sale amount.  
   - Product stock.  
   - Product quantity in each sale detail.
+  - Minimum stock of a product.
+- For products with unit of measure "Units", stock, quantity, and minimum stock must be integers, even though the system supports decimal precision.
 
 ---
 
@@ -1142,3 +1114,4 @@ The system must allow the user to activate an inactive product by marking it as 
 - All dates in the system must be displayed in `DD/MM/YYYY` format.  
 - All times in the system must be displayed in 24-hour format with seconds `HH:MM:SS`.  
 - These formats apply to the user interface and reports.  
+- Any milliseconds stored in the database must not be displayed in the user interface or reports.
