@@ -9,7 +9,8 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.marcoscornejos</groupId>
-	<artifactId>sales_management_system</artifactId>
+	<artifactId>backend</artifactId>
+	<name>PrimeSale Backend</name>
 	<version>0.0.1-SNAPSHOT</version>
 	<properties>
 		<java.version>17</java.version>
