@@ -1,11 +1,15 @@
 /**
  * Represents a product available for sale in the system.
  *
- * <p>Stores basic product information such as name, price, stock,
- * status (ACTIVE/INACTIVE), and unit of measure.</p>
+ * <p>
+ * Stores basic product information such as name, price, stock,
+ * minimum stock level, status, and unit of measure.
+ * </p>
  *
- * <p>A product can be associated with multiple sale details,
- * representing its participation in different sales.</p>
+ * <p>
+ * A product can be associated with multiple sale details,
+ * representing its participation in different sales.
+ * </p>
  */
 
 package com.marcoscornejos.sales_management_system.model;
@@ -42,6 +46,17 @@ public class Product {
     /** Available stock quantity. */
     @Column(name = "product_stock")
     private BigDecimal productStock;
+
+    /**
+     * Minimum stock level configured for the product.
+     *
+     * <p>
+     * Used to determine when the product should be considered
+     * low stock in inventory views and reports.
+     * </p>
+     */
+    @Column(name = "minimum_stock")
+    private BigDecimal minimumStock;
 
     /**
      * Logical status of the product (e.g., ACTIVE, INACTIVE).
