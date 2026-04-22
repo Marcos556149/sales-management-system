@@ -47,38 +47,87 @@ public class GlobalExceptionHandler {
     /**
      * Handles validation errors for request DTOs annotated with {@link jakarta.validation.Valid}.
      *
-     * @param ex the {@link MethodArgumentNotValidException} containing validation errors
-     * @return ResponseEntity with HTTP 400 Bad Request and a map of field-specific error messages
+     * <p>
+     * This exception is triggered when Bean Validation constraints fail.
+     * Only the first validation error is returned to simplify frontend handling.
+     * </p>
+     *
+     * <p>Returns a standardized error response:</p>
+     *
+     * <pre>
+     * {
+     *   "error": {
+     *     "code": "VALIDATION_ERROR",
+     *     "message": "Product code is required",
+     *     "field": "productCode"
+     *   }
+     * }
+     * </pre>
+     *
+     * @param ex the validation exception
+     * @return ResponseEntity with HTTP 400 Bad Request and structured error body
      */
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Map<String, String>> handleValidationExceptions(MethodArgumentNotValidException ex) {
-        Map<String, String> errors = new HashMap<>();
-        for (FieldError fieldError : ex.getBindingResult().getFieldErrors()) {
-            errors.put(fieldError.getField(), fieldError.getDefaultMessage());
-        }
-        return ResponseEntity.badRequest().body(errors);
+    public ResponseEntity<Map<String, Object>> handleValidationExceptions(MethodArgumentNotValidException ex) {
+
+        FieldError fieldError = ex.getBindingResult().getFieldErrors().get(0);
+
+        Map<String, Object> errorBody = new HashMap<>();
+        errorBody.put("code", "VALIDATION_ERROR");
+        errorBody.put("field", fieldError.getField());
+        errorBody.put("message", fieldError.getDefaultMessage());
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("error", errorBody);
+
+        return ResponseEntity.badRequest().body(response);
     }
 
     /**
-     * Handles all unexpected exceptions.
+     * Handles all unexpected exceptions that are not explicitly managed
+     * by specific exception handlers.
      *
-     * <p>Returns a generic error message to the client while logging
-     * the full exception details internally.</p>
+     * <p>
+     * This is a fallback mechanism to ensure that no exception leaks
+     * unstructured responses to the client.
+     * </p>
      *
-     * @param ex the unexpected {@link Exception}
-     * @return ResponseEntity with HTTP 500 Internal Server Error and a sanitized message
+     * <p>
+     * The response follows the standardized error format:
+     * </p>
+     *
+     * <pre>
+     * {
+     *   "error": {
+     *     "code": "INTERNAL_SERVER_ERROR",
+     *     "message": "An unexpected error occurred",
+     *     "field": null
+     *   }
+     * }
+     * </pre>
+     *
+     * <p>
+     * Full exception details are logged internally for debugging purposes.
+     * </p>
+     *
+     * @param ex the unexpected exception
+     * @return a 500 Internal Server Error response with standardized error format
      */
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<Map<String, String>> handleGenericException(Exception ex) {
+    public ResponseEntity<Map<String, Object>> handleGenericException(Exception ex) {
 
         // Log full error details for debugging
         log.error("Unexpected error occurred", ex);
 
-        // Return sanitized response
-        Map<String, String> error = new HashMap<>();
-        error.put("message", "An internal server error occurred");
+        Map<String, Object> errorBody = new HashMap<>();
+        errorBody.put("code", "INTERNAL_SERVER_ERROR");
+        errorBody.put("message", "An unexpected error occurred");
+        errorBody.put("field", null);
 
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
+        Map<String, Object> response = new HashMap<>();
+        response.put("error", errorBody);
+
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
     }
 
     /**
@@ -88,24 +137,37 @@ public class GlobalExceptionHandler {
      * <p>This typically happens when the client sends an invalid value
      * (e.g., a wrong enum value, a string instead of a number, etc.).</p>
      *
-     * <p>Returns a simple error message indicating the incorrect value
-     * provided by the client.</p>
+     * <p>Returns a standardized error response using the global error format:</p>
+     *
+     * <pre>
+     * {
+     *   "error": {
+     *     "code": "INVALID_PARAMETER_TYPE",
+     *     "message": "Invalid value 'ACTVEE' for parameter 'statusFilter'",
+     *     "field": "statusFilter"
+     *   }
+     * }
+     * </pre>
      *
      * @param ex the exception thrown when type conversion fails
-     * @return a 400 Bad Request response with the invalid value message
+     * @return a 400 Bad Request response with structured error format
      */
-
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
-    public ResponseEntity<Map<String, String>> handleTypeMismatch(MethodArgumentTypeMismatchException ex) {
+    public ResponseEntity<Map<String, Object>> handleTypeMismatch(MethodArgumentTypeMismatchException ex) {
 
-        Map<String, String> error = new HashMap<>();
+        Map<String, Object> error = new HashMap<>();
 
-        String message = String.format(
-                "Incorrect value: %s",
-                ex.getValue()
+        String field = ex.getName();
+        Object value = ex.getValue();
+
+        Map<String, Object> errorBody = new HashMap<>();
+        errorBody.put("code", "INVALID_PARAMETER_TYPE");
+        errorBody.put("field", field);
+        errorBody.put("message",
+                String.format("Invalid value '%s' for parameter '%s'", value, field)
         );
 
-        error.put(ex.getName(), message);
+        error.put("error", errorBody);
 
         return ResponseEntity.badRequest().body(error);
     }
@@ -115,39 +177,75 @@ public class GlobalExceptionHandler {
      * or validations fail within the Product domain.
      *
      * <p>
-     * Returns a 400 Bad Request response with a descriptive error message.
+     * This handler centralizes all exceptions that extend {@code ProductException},
+     * ensuring a consistent error response format across the application.
      * </p>
      *
-     * @param ex the exception containing error details
-     * @return a 400 Bad Request response with the error message
+     * <p>
+     * The response follows the standardized structure:
+     * </p>
+     *
+     * <pre>
+     * {
+     *   "error": {
+     *     "code": "ERROR_CODE",
+     *     "message": "Human readable message",
+     *     "field": "Optional field related to the error"
+     *   }
+     * }
+     * </pre>
+     *
+     * <p>
+     * The frontend should use:
+     * <ul>
+     *   <li><b>code</b>: to determine error type and UI behavior</li>
+     *   <li><b>message</b>: to display or log human-readable information</li>
+     *   <li><b>field</b>: to associate validation errors with specific inputs</li>
+     * </ul>
+     * </p>
+     *
+     * @param ex the product-related exception containing error details
+     * @return a 400 Bad Request response with a standardized error body
      */
     @ExceptionHandler(ProductException.class)
-    public ResponseEntity<Map<String, String>> handleProductException(ProductException ex) {
+    public ResponseEntity<Map<String, Object>> handleProductException(ProductException ex) {
 
-        Map<String, String> error = new HashMap<>();
-        error.put("error", ex.getMessage());
+        Map<String, Object> errorBody = new HashMap<>();
+        errorBody.put("code", ex.getCode());
+        errorBody.put("message", ex.getMessage());
+        errorBody.put("field", ex.getField());
 
-        return ResponseEntity.badRequest().body(error);
+        Map<String, Object> response = new HashMap<>();
+        response.put("error", errorBody);
+
+        return ResponseEntity.badRequest().body(response);
     }
 
     /**
      * Handles exceptions thrown when the request body contains invalid or
-     * unreadable data (e.g., incorrect data types or invalid enum values).
+     * unreadable data (e.g., incorrect JSON format, invalid enum values,
+     * or type mismatches in request payload).
      *
      * <p>
-     * Returns a 400 Bad Request response with a generic error message.
+     * Returns a standardized 400 Bad Request response with structured error format.
      * </p>
      *
-     * @param ex the exception containing error details
-     * @return a 400 Bad Request response with the error message
+     * @param ex the exception containing parsing or deserialization errors
+     * @return a 400 Bad Request response with structured error details
      */
     @ExceptionHandler(HttpMessageNotReadableException.class)
-    public ResponseEntity<Map<String, String>> handleHttpMessageNotReadable(HttpMessageNotReadableException ex) {
+    public ResponseEntity<Map<String, Object>> handleHttpMessageNotReadable(HttpMessageNotReadableException ex) {
 
-        Map<String, String> error = new HashMap<>();
-        error.put("error", "Invalid request body. Please check the provided values");
+        Map<String, Object> errorBody = new HashMap<>();
 
-        return ResponseEntity.badRequest().body(error);
+        errorBody.put("code", "INVALID_REQUEST_BODY");
+        errorBody.put("field", null);
+        errorBody.put("message", "Invalid request body. Please check the provided values");
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("error", errorBody);
+
+        return ResponseEntity.badRequest().body(response);
     }
 
     /**

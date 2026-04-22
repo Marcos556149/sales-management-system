@@ -3,10 +3,16 @@ package com.marcoscornejos.sales_management_system.service;
 import com.marcoscornejos.sales_management_system.dto.*;
 import com.marcoscornejos.sales_management_system.model.ProductStatus;
 import com.marcoscornejos.sales_management_system.model.SortOrder;
+import com.marcoscornejos.sales_management_system.model.StockLevelFilter;
 
 
 public interface IProductService {
-    PageResponseDTO<ProductListResponseDTO> getProducts(String searchCodeOrName, ProductStatus statusFilter, SortOrder nameSort, int page, int size);
+    PageResponseDTO<ProductListResponseDTO> getProducts(String searchCodeOrName,
+                                                        ProductStatus statusFilter,
+                                                        StockLevelFilter stockFilter,
+                                                        SortOrder nameSort,
+                                                        int page,
+                                                        int size);
 
     ProductFiltersResponseDTO getFilters();
 
@@ -16,9 +22,9 @@ public interface IProductService {
 
     void activateProduct(String productCode);
 
-    void registerProduct(ProductCreateRequestDTO request);
+    ProductDetailResponseDTO registerProduct(ProductCreateRequestDTO request);
 
     ProductMetadataResponseDTO getProductMetadata();
 
-    void updateProduct(String productCode, ProductUpdateRequestDTO request);
+    ProductDetailResponseDTO updateProduct(String productCode, ProductUpdateRequestDTO request);
 }

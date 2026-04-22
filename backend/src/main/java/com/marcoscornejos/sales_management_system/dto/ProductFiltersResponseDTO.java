@@ -35,6 +35,14 @@ public class ProductFiltersResponseDTO {
      * <p>Each option is represented as an {@link EnumDTO},
      * containing the sort code and its display label.</p>
      */
-    private List<EnumDTO> sortOptions;
+    private List<EnumDTO> nameSortOptions;
+
+    /**
+     * List of available stock level filter options.
+     * * <p>Each option is represented as an {@link EnumDTO}
+     *
+     * <p>Represents predefined stock filtering states
+     */
+    private List<EnumDTO> stockLevelOptions;
 
 }

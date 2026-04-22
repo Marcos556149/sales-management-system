@@ -1,11 +1,13 @@
 package com.marcoscornejos.sales_management_system.controller;
 
 import com.marcoscornejos.sales_management_system.dto.*;
+import com.marcoscornejos.sales_management_system.model.StockLevelFilter;
 import com.marcoscornejos.sales_management_system.service.ProductService;
 import com.marcoscornejos.sales_management_system.model.ProductStatus;
 import com.marcoscornejos.sales_management_system.model.SortOrder;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,24 +29,40 @@ public class ProductController {
      * Retrieves a paginated list of products with optional filtering,
      * searching, and sorting capabilities.
      *
-     * <p>Supports server-side pagination to efficiently handle large datasets.</p>
+     * <p>
+     * Supports server-side pagination to efficiently handle large datasets.
+     * Allows filtering by product status and stock level,
+     * searching by code or name, and sorting by product name.
+     * </p>
      *
      * @param searchCodeOrName Optional product code or name (or part of it)
      * @param statusFilter Product status filter (default: ALL)
+     * @param stockFilter Product stock level filter (default: ALL)
      * @param nameSort Sorting order by name (default: ASCENDING)
      * @param page Page number (default: 0)
      * @param size Number of products per page (default: 50)
      * @return A paginated response containing products and pagination metadata
      */
     @GetMapping
-    public PageResponseDTO<ProductListResponseDTO> getProducts(
+    public ResponseEntity<PageResponseDTO<ProductListResponseDTO>> getProducts(
             @RequestParam(required = false) String searchCodeOrName,
             @RequestParam(defaultValue = "ALL") ProductStatus statusFilter,
+            @RequestParam(defaultValue = "ALL") StockLevelFilter stockFilter,
             @RequestParam(defaultValue = "ASCENDING") SortOrder nameSort,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "50") int size
     ) {
-        return productService.getProducts(searchCodeOrName, statusFilter, nameSort, page, size);
+
+        PageResponseDTO<ProductListResponseDTO> response = productService.getProducts(
+                searchCodeOrName,
+                statusFilter,
+                stockFilter,
+                nameSort,
+                page,
+                size
+        );
+
+        return ResponseEntity.ok(response);
     }
 
     /**
@@ -57,8 +75,11 @@ public class ProductController {
      * @return ProductFiltersResponseDTO containing filter and sort options
      */
     @GetMapping("/filters")
-    public ProductFiltersResponseDTO getFilters() {
-        return productService.getFilters();
+    public ResponseEntity<ProductFiltersResponseDTO> getFilters() {
+
+        ProductFiltersResponseDTO response = productService.getFilters();
+
+        return ResponseEntity.ok(response);
     }
 
     /**
@@ -67,6 +88,13 @@ public class ProductController {
      * <p>
      * This endpoint allows clients to fetch a single product's data,
      * including its code, name, price, unit of measure, status, and stock.
+     * </p>
+     *
+     * <p>
+     * Possible errors:
+     * <ul>
+     *   <li><b>PRODUCT_NOT_FOUND</b>: when the product does not exist</li>
+     * </ul>
      * </p>
      *
      * @param productCode the unique identifier of the product
@@ -91,14 +119,22 @@ public class ProductController {
      * </p>
      *
      * @param productCode the unique code of the product
-     * @return confirmation message
+     * @return standardized success response
      */
     @PatchMapping("/{productCode}/deactivate")
-    public ResponseEntity<String> deactivateProduct(@PathVariable String productCode) {
+    public ResponseEntity<SuccessResponseDTO<Void>> deactivateProduct(
+            @PathVariable String productCode
+    ) {
 
         productService.deactivateProduct(productCode);
 
-        return ResponseEntity.ok("Product successfully deactivated");
+        SuccessResponseDTO<Void> response = new SuccessResponseDTO<>(
+                "PRODUCT_DEACTIVATED",
+                "Product successfully deactivated",
+                null
+        );
+
+        return ResponseEntity.ok(response);
     }
 
     /**
@@ -110,14 +146,22 @@ public class ProductController {
      * </p>
      *
      * @param productCode the unique code of the product
-     * @return confirmation message
+     * @return standardized success response
      */
     @PatchMapping("/{productCode}/activate")
-    public ResponseEntity<String> activateProduct(@PathVariable String productCode) {
+    public ResponseEntity<SuccessResponseDTO<Void>> activateProduct(
+            @PathVariable String productCode
+    ) {
 
         productService.activateProduct(productCode);
 
-        return ResponseEntity.ok("Product successfully activated");
+        SuccessResponseDTO<Void> response = new SuccessResponseDTO<>(
+                "PRODUCT_ACTIVATED",
+                "Product successfully activated",
+                null
+        );
+
+        return ResponseEntity.ok(response);
     }
 
     /**
@@ -134,14 +178,22 @@ public class ProductController {
      * </p>
      *
      * @param request the product data required to create a new product
-     * @return confirmation message indicating successful registration
+     * @return standardized success response with created product
      */
     @PostMapping
-    public ResponseEntity<String> registerProduct(@RequestBody @Valid ProductCreateRequestDTO request) {
+    public ResponseEntity<SuccessResponseDTO<ProductDetailResponseDTO>> registerProduct(
+            @RequestBody @Valid ProductCreateRequestDTO request
+    ) {
 
-        productService.registerProduct(request);
+        ProductDetailResponseDTO createdProduct = productService.registerProduct(request);
 
-        return ResponseEntity.ok("Product successfully registered");
+        SuccessResponseDTO<ProductDetailResponseDTO> response = new SuccessResponseDTO<>(
+                "PRODUCT_CREATED",
+                "Product successfully registered",
+                createdProduct
+        );
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     /**
@@ -155,28 +207,39 @@ public class ProductController {
      * @return product metadata
      */
     @GetMapping("/metadata")
-    public ProductMetadataResponseDTO getProductMetadata() {
-        return productService.getProductMetadata();
+    public ResponseEntity<ProductMetadataResponseDTO> getProductMetadata() {
+
+        ProductMetadataResponseDTO response=productService.getProductMetadata();
+
+        return ResponseEntity.ok(response);
     }
 
     /**
      * Updates an existing product.
      *
-     * <p>Validates the provided data and updates the product
-     * in the system if it exists.</p>
+     * <p>
+     * Updates product data if the product exists and the provided
+     * information is valid.
+     * </p>
      *
-     * @param productCode the code of the product to update
+     * @param productCode the unique code of the product to update
      * @param request the updated product data
-     * @return ResponseEntity with confirmation message
+     * @return standardized success response confirming the update
      */
     @PutMapping("/{productCode}")
-    public ResponseEntity<String> updateProduct(
+    public ResponseEntity<SuccessResponseDTO<ProductDetailResponseDTO>> updateProduct(
             @PathVariable String productCode,
             @RequestBody @Valid ProductUpdateRequestDTO request
     ) {
 
-        productService.updateProduct(productCode, request);
+        ProductDetailResponseDTO updatedProduct=productService.updateProduct(productCode, request);
 
-        return ResponseEntity.ok("Product successfully updated");
+        SuccessResponseDTO<ProductDetailResponseDTO> response = new SuccessResponseDTO<>(
+                "PRODUCT_UPDATED",
+                "Product successfully updated",
+                updatedProduct
+        );
+
+        return ResponseEntity.ok(response);
     }
 }

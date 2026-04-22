@@ -57,7 +57,7 @@ The system must allow the user to register a new product.
 
 **5.b Product already exists in the database**  
 5.b.1 The system detects that a product with the same code already exists.  
-5.b.2 The system displays an error message: "Product is already registered".  
+5.b.2 The system displays an error message: "Product with code '{productCode}' already exists".  
 
 ### Business Rules
 - The product code is mandatory and must be unique within the system.  
@@ -168,7 +168,7 @@ The system must allow the user to update the data of an existing product.
 
 **2.a Product not found**  
 2.a.1 The system detects that the selected product does not exist.  
-2.a.2 The system displays a message: "Product not found".  
+2.a.2 The system displays a message: "Product with code '{productCode}' not found".  
 
 **5.a Invalid data**  
 5.a.1 The system displays an error message indicating the incorrect fields.  
@@ -690,7 +690,7 @@ The system must allow the user to view detailed information of a specific produc
 
 **3.a Product Not Found**  
 3.a.1 The system detects that the product does not exist.  
-3.a.2 The system displays a message: "Product not found".
+3.a.2 The system displays a message: "Product with code '{productCode}' not found".
 
 ### Business Rules
 

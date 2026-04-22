@@ -74,4 +74,9 @@ public class ProductCreateRequestDTO {
     @NotNull(message = "Unit of measure is required")
     private UnitOfMeasure unitOfMeasure;
 
+    @NotNull(message = "Minimum stock is required")
+    @DecimalMin(value = "0.0", inclusive = true, message = "Minimum stock must be greater than or equal to 0")
+    @Digits(integer = 10, fraction = 2, message = "Minimum stock must have up to 10 digits and 2 decimals")
+    private BigDecimal minimumStock;
+
 }

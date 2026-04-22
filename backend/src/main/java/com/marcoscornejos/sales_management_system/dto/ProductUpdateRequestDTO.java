@@ -11,8 +11,8 @@ import java.math.BigDecimal;
  * DTO used to update an existing product in the system.
  *
  * <p>
- * Contains all editable product fields. The product status and code
- * is not included because it cannot be modified in this process.
+ * Contains all editable product fields. The product code and status
+ * cannot be modified.
  * </p>
  */
 @Getter
@@ -65,5 +65,13 @@ public class ProductUpdateRequestDTO {
      */
     @NotNull(message = "Unit of measure is required")
     private UnitOfMeasure unitOfMeasure;
+
+    /**
+     * Updated minimum stock threshold.
+     */
+    @NotNull(message = "Minimum stock is required")
+    @DecimalMin(value = "0.0", inclusive = true, message = "Minimum stock must be greater than or equal to 0")
+    @Digits(integer = 10, fraction = 2, message = "Minimum stock must have up to 10 digits and 2 decimals")
+    private BigDecimal minimumStock;
 
 }

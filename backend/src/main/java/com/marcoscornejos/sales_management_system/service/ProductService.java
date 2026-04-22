@@ -5,10 +5,7 @@ import com.marcoscornejos.sales_management_system.exception.InvalidProductDataEx
 import com.marcoscornejos.sales_management_system.exception.ProductAlreadyExistsException;
 import com.marcoscornejos.sales_management_system.exception.ProductNotFoundException;
 import com.marcoscornejos.sales_management_system.mapper.*;
-import com.marcoscornejos.sales_management_system.model.Product;
-import com.marcoscornejos.sales_management_system.model.ProductStatus;
-import com.marcoscornejos.sales_management_system.model.SortOrder;
-import com.marcoscornejos.sales_management_system.model.UnitOfMeasure;
+import com.marcoscornejos.sales_management_system.model.*;
 import com.marcoscornejos.sales_management_system.repository.IProductRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -42,6 +39,7 @@ public class ProductService implements IProductService {
      * <ul>
      * <li>Search by name or code</li>
      * <li>Filter by status (ALL = no filter)</li>
+     * <li>Filter by stock level (ALL = no filter)</li>
      * <li>Sorting by name</li>
      * <li>Pagination (page number and size)</li>
      * </ul>
@@ -53,6 +51,7 @@ public class ProductService implements IProductService {
      *
      * @param searchCodeOrName Optional search term
      * @param statusFilter     Product status filter
+     * @param stockFilter      Product stock level filter
      * @param nameSort         Sorting order (ASCENDING / DESCENDING)
      * @param page             Page number (0-based)
      * @param size             Number of elements per page
@@ -61,21 +60,31 @@ public class ProductService implements IProductService {
     @Override
     public PageResponseDTO<ProductListResponseDTO> getProducts(String searchCodeOrName,
                                                                ProductStatus statusFilter,
+                                                               StockLevelFilter stockFilter,
                                                                SortOrder nameSort,
                                                                int page,
                                                                int size) {
 
         // Validate pagination parameters
         if (page < 0) {
-            throw new InvalidProductDataException("Page index must not be negative");
+            throw new InvalidProductDataException(
+                    "Page index must not be negative",
+                    "page"
+            );
         }
 
         if (size <= 0) {
-            throw new InvalidProductDataException("Page size must be greater than zero");
+            throw new InvalidProductDataException(
+                    "Page size must be greater than zero",
+                    "size"
+            );
         }
 
         if (size > 50) {
-            throw new InvalidProductDataException("Page size must not exceed 50");
+            throw new InvalidProductDataException(
+                    "Page size must not exceed 50",
+                    "size"
+            );
         }
 
         // Build sorting configuration (applied at database level)
@@ -99,10 +108,11 @@ public class ProductService implements IProductService {
         // page size, and sorting criteria to be applied at database level.
         Pageable pageable = PageRequest.of(page, size, sort);
 
-        // Execute query with search, filtering, and pageable
+        // Execute query with search, status filter, stock filter and pageable
         Page<Product> productPage = iProductRepository.findProducts(
                 searchCodeOrName,
                 statusFilter,
+                stockFilter.name(),
                 pageable
         );
 
@@ -122,17 +132,19 @@ public class ProductService implements IProductService {
     /**
      * Builds and returns available filter and sorting options for products.
      *
-     * <p>This method extracts values from {@link ProductStatus} and
-     * {@link SortOrder} enums and converts them into a frontend-friendly
-     * {@link EnumDTO} format.</p>
+     * <p>This method extracts values from {@link ProductStatus},
+     * {@link SortOrder} and {@link StockLevelFilter} enums and converts them
+     * into a frontend-friendly {@link EnumDTO} format.</p>
      *
      * <p>It ensures that the frontend always receives up-to-date options
-     * without requiring code changes on the client side.</p>
+     * without requiring code changes on the client side, acting as the single
+     * source of truth for product filtering capabilities.</p>
      *
-     * @return ProductFiltersResponseDTO containing status and sort options
+     * @return ProductFiltersResponseDTO containing status, sort and stock filter options
      */
     @Override
     public ProductFiltersResponseDTO getFilters() {
+
         List<EnumDTO> statusOptions = Arrays.stream(ProductStatus.values())
                 .map(status -> new EnumDTO(
                         status.name(),
@@ -140,18 +152,25 @@ public class ProductService implements IProductService {
                 ))
                 .toList();
 
-        List<EnumDTO> sortOptions = Arrays.stream(SortOrder.values())
+        List<EnumDTO> nameSortOptions = Arrays.stream(SortOrder.values())
                 .map(sort -> new EnumDTO(
                         sort.name(),
                         sort.getDisplayName()
                 ))
                 .toList();
 
-        ProductFiltersResponseDTO dto = new ProductFiltersResponseDTO();
-        dto.setStatusOptions(statusOptions);
-        dto.setSortOptions(sortOptions);
+        List<EnumDTO> stockLevelOptions = Arrays.stream(StockLevelFilter.values())
+                .map(stock -> new EnumDTO(
+                        stock.name(),
+                        stock.getDisplayName()
+                ))
+                .toList();
 
-        return dto;
+        return new ProductFiltersResponseDTO(
+                statusOptions,
+                nameSortOptions,
+                stockLevelOptions
+        );
     }
 
     /**
@@ -170,7 +189,9 @@ public class ProductService implements IProductService {
     public ProductDetailResponseDTO getProductByCode(String productCode) {
 
         Product product = iProductRepository.findById(productCode)
-                .orElseThrow(() -> new ProductNotFoundException("Product not found"));
+                .orElseThrow(() -> new ProductNotFoundException(
+                        String.format("Product with code '%s' not found", productCode)
+                ));
 
         return iProductDetailResponseMapper.toDto(product);
     }
@@ -180,11 +201,13 @@ public class ProductService implements IProductService {
      *
      * <p>
      * This operation performs a logical deletion. If the product does not exist
-     * or is already inactive, an exception is thrown.
+     * or is already inactive, a business exception is thrown.
      * </p>
      *
-     * Executes the operation within a transactional context to ensure
-     * that the product status update is applied atomically.
+     * <p>
+     * The operation is executed within a transactional context to ensure
+     * atomicity of the status update.
+     * </p>
      *
      * @param productCode the unique identifier of the product
      * @throws ProductNotFoundException if the product does not exist
@@ -195,10 +218,14 @@ public class ProductService implements IProductService {
     public void deactivateProduct(String productCode) {
 
         Product product = iProductRepository.findById(productCode)
-                .orElseThrow(() -> new ProductNotFoundException("Product not found"));
+                .orElseThrow(() -> new ProductNotFoundException(
+                        String.format("Product with code '%s' not found", productCode)
+                ));
 
         if (product.getProductStatus() == ProductStatus.INACTIVE) {
-            throw new InvalidProductDataException("Product is already inactive");
+            throw new InvalidProductDataException(
+                    String.format("Product with code '%s is already inactive", productCode)
+            );
         }
 
         product.setProductStatus(ProductStatus.INACTIVE);
@@ -211,11 +238,13 @@ public class ProductService implements IProductService {
      *
      * <p>
      * This operation restores a previously deactivated product. If the product does not exist
-     * or is already active, an exception is thrown.
+     * or is already active, a business exception is thrown.
      * </p>
      *
-     * Executes the operation within a transactional context to ensure
-     * that the product status update is applied atomically.
+     * <p>
+     * The operation is executed within a transactional context to ensure
+     * atomicity of the status update.
+     * </p>
      *
      * @param productCode the unique identifier of the product
      * @throws ProductNotFoundException if the product does not exist
@@ -224,11 +253,16 @@ public class ProductService implements IProductService {
     @Override
     @Transactional
     public void activateProduct(String productCode) {
+
         Product product = iProductRepository.findById(productCode)
-                .orElseThrow(() -> new ProductNotFoundException("Product not found"));
+                .orElseThrow(() -> new ProductNotFoundException(
+                        String.format("Product with code '%s' not found", productCode)
+                ));
 
         if (product.getProductStatus() == ProductStatus.ACTIVE) {
-            throw new InvalidProductDataException("Product is already active");
+            throw new InvalidProductDataException(
+                    String.format("Product with code '%s' is already active", productCode)
+            );
         }
 
         product.setProductStatus(ProductStatus.ACTIVE);
@@ -246,29 +280,43 @@ public class ProductService implements IProductService {
      * </p>
      *
      * <p>
-     * If a product with the same code already exists, an exception is thrown.
+     * If a product with the same code already exists or validation rules
+     * are violated, a business exception is thrown.
      * </p>
      *
-     * Executes the operation within a transactional context to ensure
-     * that the product creation is applied atomically.
+     * <p>
+     * The operation is executed within a transactional context to ensure
+     * atomicity of the product creation.
+     * </p>
      *
      * @param request the product creation request containing product data
      * @throws ProductAlreadyExistsException if a product with the same code already exists
+     * @throws InvalidProductDataException if business validation rules are violated
      */
     @Override
     @Transactional
-    public void registerProduct(ProductCreateRequestDTO request) {
+    public ProductDetailResponseDTO registerProduct(ProductCreateRequestDTO request) {
 
         // Check if product already exists
         if (iProductRepository.existsById(request.getProductCode())) {
-            throw new ProductAlreadyExistsException("Product is already registered");
+            throw new ProductAlreadyExistsException(
+                    String.format("Product with code '%s' already exists", request.getProductCode())
+            );
         }
 
-        // Validates that stock is integer when unit of measure is UNITS
+        // Validate stock format when unit is UNITS
         if (request.getUnitOfMeasure() == UnitOfMeasure.UNITS) {
             if (request.getProductStock().stripTrailingZeros().scale() > 0) {
                 throw new InvalidProductDataException(
-                        "Stock must be an integer value when unit of measure is Units"
+                        "Stock must be an integer value when unit of measure is Units",
+                        "productStock"
+                );
+            }
+
+            if (request.getMinimumStock().stripTrailingZeros().scale() > 0) {
+                throw new InvalidProductDataException(
+                        "Minimum stock must be an integer value when unit of measure is Units",
+                        "minimumStock"
                 );
             }
         }
@@ -278,6 +326,13 @@ public class ProductService implements IProductService {
 
         // Persist product
         iProductRepository.save(product);
+
+        // Reload persisted entity to ensure we return the exact state stored in DB
+        Product persisted = iProductRepository.findById(product.getProductCode())
+                .orElseThrow();
+
+        // Map entity to response DTO
+        return iProductDetailResponseMapper.toDto(persisted);
     }
 
     /**
@@ -306,37 +361,41 @@ public class ProductService implements IProductService {
      * Updates an existing product in the system.
      *
      * <p>
-     * This operation validates that the product exists and that the updated data
-     * complies with business rules before persisting the changes.
+     * This operation validates that the product exists and applies business rules
+     * before persisting the updated data.
+     * The product is updated atomically within a transactional context.
      * </p>
      *
-     * <p>
-     * Validations include:
-     * - Product existence
-     * - Stock constraints based on unit of measure
-     * </p>
-     *
-     * Executes the operation within a transactional context to ensure
-     * that the update is applied atomically.
-     *
-     * @param productCode the current code of the product to update
-     * @param request the product update request containing new data
+     * @param productCode the code of the product to update
+     * @param request the updated product data
+     * @return the updated product details
      * @throws ProductNotFoundException if the product does not exist
-     * @throws InvalidProductDataException if the data does not comply with business rules
+     * @throws InvalidProductDataException if business rules are violated
      */
     @Override
     @Transactional
-    public void updateProduct(String productCode, ProductUpdateRequestDTO request) {
+    public ProductDetailResponseDTO updateProduct(String productCode, ProductUpdateRequestDTO request) {
 
         // 1. Check if product exists
         Product product = iProductRepository.findById(productCode)
-                .orElseThrow(() -> new ProductNotFoundException("Product not found"));
+                .orElseThrow(() -> new ProductNotFoundException(
+                        String.format("Product with code '%s' not found", productCode)
+                ));
 
-        // 2. Validate stock based on unit of measure
+        // 2. Validate stock rules when unit is UNITS
         if (request.getUnitOfMeasure() == UnitOfMeasure.UNITS) {
+
             if (request.getProductStock().stripTrailingZeros().scale() > 0) {
                 throw new InvalidProductDataException(
-                        "Stock must be an integer value when unit of measure is Units"
+                        "Stock must be an integer value when unit of measure is Units",
+                        "productStock"
+                );
+            }
+
+            if (request.getMinimumStock().stripTrailingZeros().scale() > 0) {
+                throw new InvalidProductDataException(
+                        "Minimum stock must be an integer value when unit of measure is Units",
+                        "minimumStock"
                 );
             }
         }
@@ -346,5 +405,12 @@ public class ProductService implements IProductService {
 
         // 4. Persist changes
         iProductRepository.save(product);
+
+        // 5. Reload persisted entity to ensure we return the exact state stored in DB
+        Product persisted = iProductRepository.findById(product.getProductCode())
+                .orElseThrow();
+
+        // 6. Map entity to response DTO
+        return iProductDetailResponseMapper.toDto(persisted);
     }
 }

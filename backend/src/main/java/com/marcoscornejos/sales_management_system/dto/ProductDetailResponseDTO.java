@@ -50,6 +50,10 @@ public class ProductDetailResponseDTO {
      */
     private BigDecimal productStock;
 
+    /**
+     * Minimum stock threshold for the product.
+     */
+    private BigDecimal minimumStock;
 
 
 }

@@ -45,6 +45,11 @@ public class ProductListResponseDTO {
     private BigDecimal productStock;
 
     /**
+     * Minimum stock threshold configured for the product.
+     */
+    private BigDecimal minimumStock;
+
+    /**
      * Unit of measure associated with the stock (e.g., kg, u).
      */
     private EnumDTO unitOfMeasure;
