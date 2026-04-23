@@ -114,24 +114,30 @@ public class ProductController {
      * Deactivates a product (soft delete).
      *
      * <p>
-     * This operation updates the product status to INACTIVE without
-     * physically removing it from the database.
+     * This operation updates the product status to {@code INACTIVE} without
+     * physically removing it from the database. After updating, the method
+     * returns the updated product information as a {@link ProductDetailResponseDTO}.
+     * </p>
+     *
+     * <p>
+     * This avoids an additional client request to fetch the updated state,
+     * ensuring the response reflects the latest database state.
      * </p>
      *
      * @param productCode the unique code of the product
-     * @return standardized success response
+     * @return a standardized success response containing the updated product details
      */
     @PatchMapping("/{productCode}/deactivate")
-    public ResponseEntity<SuccessResponseDTO<Void>> deactivateProduct(
+    public ResponseEntity<SuccessResponseDTO<ProductDetailResponseDTO>> deactivateProduct(
             @PathVariable String productCode
     ) {
 
-        productService.deactivateProduct(productCode);
+        ProductDetailResponseDTO product = productService.deactivateProduct(productCode);
 
-        SuccessResponseDTO<Void> response = new SuccessResponseDTO<>(
+        SuccessResponseDTO<ProductDetailResponseDTO> response = new SuccessResponseDTO<>(
                 "PRODUCT_DEACTIVATED",
                 "Product successfully deactivated",
-                null
+                product
         );
 
         return ResponseEntity.ok(response);
@@ -141,24 +147,25 @@ public class ProductController {
      * Activates a product.
      *
      * <p>
-     * This operation updates the product status to ACTIVE,
-     * allowing it to be available again in the system.
+     * This operation updates the product status to {@code ACTIVE},
+     * making it available again in the system. The method returns the
+     * updated product information after the state change.
      * </p>
      *
      * @param productCode the unique code of the product
-     * @return standardized success response
+     * @return standardized success response containing the updated product details
      */
     @PatchMapping("/{productCode}/activate")
-    public ResponseEntity<SuccessResponseDTO<Void>> activateProduct(
+    public ResponseEntity<SuccessResponseDTO<ProductDetailResponseDTO>> activateProduct(
             @PathVariable String productCode
     ) {
 
-        productService.activateProduct(productCode);
+        ProductDetailResponseDTO product = productService.activateProduct(productCode);
 
-        SuccessResponseDTO<Void> response = new SuccessResponseDTO<>(
+        SuccessResponseDTO<ProductDetailResponseDTO> response = new SuccessResponseDTO<>(
                 "PRODUCT_ACTIVATED",
                 "Product successfully activated",
-                null
+                product
         );
 
         return ResponseEntity.ok(response);

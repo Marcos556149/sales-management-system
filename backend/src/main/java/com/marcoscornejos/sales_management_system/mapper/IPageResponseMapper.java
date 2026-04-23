@@ -19,6 +19,7 @@ public interface IPageResponseMapper {
      * @param size          page size
      * @param totalPages    total number of pages
      * @param totalElements total number of elements
+     * @param totalGlobalElements total number of records without filters
      * @param <T>           type of content
      * @return PageResponseDTO with pagination data
      */
@@ -27,14 +28,16 @@ public interface IPageResponseMapper {
             int page,
             int size,
             int totalPages,
-            long totalElements
+            long totalElements,
+            Long totalGlobalElements
     ) {
         return new PageResponseDTO<>(
                 content,
                 page,
                 size,
                 totalPages,
-                totalElements
+                totalElements,
+                totalGlobalElements
         );
     }
 }

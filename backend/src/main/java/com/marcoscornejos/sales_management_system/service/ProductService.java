@@ -116,6 +116,21 @@ public class ProductService implements IProductService {
                 pageable
         );
 
+        // Total number of products in database without filters.
+        // This value is only calculated when the filtered query returns no results,
+        // allowing the frontend to distinguish between:
+        //
+        // 1) No products exist in the database
+        // 2) Products exist, but none match the current search/filter criteria
+        //
+        // When filtered results exist, this value remains null to avoid an
+        // unnecessary extra COUNT(*) query and improve performance.
+        Long totalGlobalElements = null;
+
+        if (productPage.getTotalElements() == 0) {
+            totalGlobalElements = iProductRepository.count();
+        }
+
         // Map entities to DTOs
         return iPageResponseMapper.toPageResponseDTO(
                 productPage.getContent()
@@ -125,7 +140,8 @@ public class ProductService implements IProductService {
                 productPage.getNumber(),
                 productPage.getSize(),
                 productPage.getTotalPages(),
-                productPage.getTotalElements()
+                productPage.getTotalElements(),
+                totalGlobalElements
         );
     }
 
@@ -215,7 +231,7 @@ public class ProductService implements IProductService {
      */
     @Override
     @Transactional
-    public void deactivateProduct(String productCode) {
+    public ProductDetailResponseDTO deactivateProduct(String productCode) {
 
         Product product = iProductRepository.findById(productCode)
                 .orElseThrow(() -> new ProductNotFoundException(
@@ -230,7 +246,11 @@ public class ProductService implements IProductService {
 
         product.setProductStatus(ProductStatus.INACTIVE);
 
+        // Persist change
         iProductRepository.save(product);
+
+        // Map directly from managed entity (no re-fetch needed)
+        return iProductDetailResponseMapper.toDto(product);
     }
 
     /**
@@ -252,7 +272,7 @@ public class ProductService implements IProductService {
      */
     @Override
     @Transactional
-    public void activateProduct(String productCode) {
+    public ProductDetailResponseDTO activateProduct(String productCode) {
 
         Product product = iProductRepository.findById(productCode)
                 .orElseThrow(() -> new ProductNotFoundException(
@@ -267,7 +287,11 @@ public class ProductService implements IProductService {
 
         product.setProductStatus(ProductStatus.ACTIVE);
 
+        // Persist change
         iProductRepository.save(product);
+
+        // Map directly from managed entity (no re-fetch needed)
+        return iProductDetailResponseMapper.toDto(product);
     }
 
     /**
@@ -327,12 +351,8 @@ public class ProductService implements IProductService {
         // Persist product
         iProductRepository.save(product);
 
-        // Reload persisted entity to ensure we return the exact state stored in DB
-        Product persisted = iProductRepository.findById(product.getProductCode())
-                .orElseThrow();
-
-        // Map entity to response DTO
-        return iProductDetailResponseMapper.toDto(persisted);
+        // Map directly from managed entity (no re-fetch needed)
+        return iProductDetailResponseMapper.toDto(product);
     }
 
     /**
@@ -406,11 +426,7 @@ public class ProductService implements IProductService {
         // 4. Persist changes
         iProductRepository.save(product);
 
-        // 5. Reload persisted entity to ensure we return the exact state stored in DB
-        Product persisted = iProductRepository.findById(product.getProductCode())
-                .orElseThrow();
-
-        // 6. Map entity to response DTO
-        return iProductDetailResponseMapper.toDto(persisted);
+        // 5. Map directly from managed entity (no re-fetch needed)
+        return iProductDetailResponseMapper.toDto(product);
     }
 }

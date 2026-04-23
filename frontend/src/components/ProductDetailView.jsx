@@ -1,21 +1,30 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { ArrowLeft, Edit2, Ban, CheckCircle2, PackageCheck } from 'lucide-react';
+import { useKeyboardShortcuts } from '../hooks/useKeyboardShortcuts';
 import ConfirmModal from './ConfirmModal';
 import { useToast } from './ToastContext';
+import { productService } from '../services/productService';
+import { TEXTS } from '../constants/texts';
 import './ProductDetailView.css';
 
 // Custom hook to handle data fetching isolated from the component logic
-const useProductDetail = (productCode) => {
-  const [product, setProduct] = useState(null);
-  const [loading, setLoading] = useState(true);
+const useProductDetail = (productCode, initialProduct = null) => {
+  const [product, setProduct] = useState(initialProduct && initialProduct.productCode === productCode ? initialProduct : null);
+  const [loading, setLoading] = useState(!product);
   const [error, setError] = useState(null);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
 
   const refetch = () => setRefreshTrigger(prev => prev + 1);
+  const updateProduct = (newData) => setProduct(newData);
 
   useEffect(() => {
     let isMounted = true;
+    
+    // If we already have the product from navigation state, don't fetch on mount
+    if (product && refreshTrigger === 0) {
+      return;
+    }
 
     const fetchProduct = async () => {
       const controller = new AbortController();
@@ -23,23 +32,16 @@ const useProductDetail = (productCode) => {
       setLoading(true);
       setError(null);
       try {
-        const response = await fetch(`/api/products/${productCode}`, { signal: controller.signal });
+        const response = await productService.getProduct(productCode, { signal: controller.signal });
         clearTimeout(timeoutId);
         
-        if (!response.ok) {
-          const errorData = await response.json().catch(() => ({}));
-          const errMsg = errorData.error || errorData.message || 'Failed to fetch product details.';
-          throw new Error(errMsg);
-        }
-
-        const data = await response.json();
         if (isMounted) {
-          setProduct(data);
+          setProduct(response.data);
         }
       } catch (err) {
         clearTimeout(timeoutId);
         if (isMounted) {
-          const msg = err.name === 'AbortError' ? 'Product request timed out' : (err.message || 'Error loading product');
+          const msg = err.name === 'AbortError' ? 'Product request timed out' : (err.message || TEXTS.common.errorOccurred);
           setError(msg);
         }
       } finally {
@@ -58,18 +60,32 @@ const useProductDetail = (productCode) => {
     };
   }, [productCode, refreshTrigger]);
 
-  return { product, loading, error, refetch };
+  return { product, loading, error, refetch, updateProduct };
 };
 
 const ProductDetailView = () => {
   const { id: productCode } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
   
-  const { product, loading, error, refetch } = useProductDetail(productCode);
+  const { product, loading, error, refetch, updateProduct } = useProductDetail(productCode, location.state?.product);
   const [actionLoading, setActionLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isActivateModalOpen, setIsActivateModalOpen] = useState(false);
   const { addToast } = useToast();
+  
+  // Register contextual shortcuts
+  useKeyboardShortcuts(React.useMemo(() => ({
+    'ctrl+b': () => handleBack(),
+    'e': () => handleEdit(),
+    'a': () => {
+      if (product?.productStatus?.code === 'ACTIVE') {
+        handleDeactivate();
+      } else {
+        handleActivate();
+      }
+    }
+  }), [navigate, product, actionLoading]));
 
   const handleBack = () => {
     navigate('/dashboard/products');
@@ -84,34 +100,13 @@ const ProductDetailView = () => {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 8000);
     try {
-      const response = await fetch(`/api/products/${productCode}/deactivate`, {
-        method: 'PATCH',
-        signal: controller.signal
-      });
-
+      const res = await productService.deactivateProduct(productCode, { signal: controller.signal });
       clearTimeout(timeoutId);
-      let message = '';
-      try {
-        const text = await response.text();
-        try {
-          const json = JSON.parse(text);
-          message = json.error || json.message || text;
-        } catch (e) {
-          message = text;
-        }
-      } catch (e) {
-        message = "An error occurred";
-      }
-
-      if (!response.ok) {
-        addToast(message || "An error occurred while deactivating", 'error');
-      } else {
-        addToast(message, 'success');
-        refetch();
-      }
+      addToast(res.message || TEXTS.products.deactivateSuccess, 'success');
+      updateProduct(res.data);
     } catch (err) {
       clearTimeout(timeoutId);
-      const msg = err.name === 'AbortError' ? 'Deactivation request timed out' : (err.message || "An error occurred");
+      const msg = err.name === 'AbortError' ? 'Deactivation request timed out' : (err.message || TEXTS.common.errorOccurred);
       addToast(msg, 'error');
     } finally {
       setActionLoading(false);
@@ -128,38 +123,41 @@ const ProductDetailView = () => {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 8000);
     try {
-      const response = await fetch(`/api/products/${productCode}/activate`, {
-        method: 'PATCH',
-        signal: controller.signal
-      });
-
+      const res = await productService.activateProduct(productCode, { signal: controller.signal });
       clearTimeout(timeoutId);
-      let message = '';
-      try {
-        const text = await response.text();
-        try {
-          const json = JSON.parse(text);
-          message = json.error || json.message || text;
-        } catch (e) {
-          message = text;
-        }
-      } catch (e) {
-        message = "An error occurred";
-      }
-
-      if (!response.ok) {
-        addToast(message || "An error occurred while activating", 'error');
-      } else {
-        addToast(message, 'success');
-        refetch();
-      }
+      addToast(res.message || TEXTS.products.activateSuccess, 'success');
+      updateProduct(res.data);
     } catch (err) {
       clearTimeout(timeoutId);
-      const msg = err.name === 'AbortError' ? 'Activation request timed out' : (err.message || "An error occurred");
+      const msg = err.name === 'AbortError' ? 'Activation request timed out' : (err.message || TEXTS.common.errorOccurred);
       addToast(msg, 'error');
     } finally {
       setActionLoading(false);
       setIsActivateModalOpen(false);
+    }
+  };
+
+  const handleEdit = async () => {
+    if (actionLoading) return;
+    
+    setActionLoading(true);
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 8000);
+    try {
+      // Check if product exists before navigating to edit
+      const response = await productService.getProduct(productCode, { signal: controller.signal });
+      clearTimeout(timeoutId);
+      navigate(`/dashboard/products/edit/${productCode}`, { state: { product: response.data } });
+    } catch (err) {
+      clearTimeout(timeoutId);
+      if (err.status === 400) {
+        addToast(err.message || `Product with code ${productCode} not found`, 'error');
+      } else {
+        const msg = err.name === 'AbortError' ? 'Product check timed out' : (err.message || TEXTS.common.errorOccurred);
+        addToast(msg, 'error');
+      }
+    } finally {
+      setActionLoading(false);
     }
   };
 
@@ -202,15 +200,18 @@ const ProductDetailView = () => {
         <button className="btn-secondary" onClick={handleBack}>
           <ArrowLeft size={16} />
           <span>Back to Products</span>
+          <span className="btn-shortcut">Ctrl+B</span>
         </button>
         
         <div className="detail-actions">
           <button 
             className="btn-outline-primary whitespace-nowrap"
-            onClick={() => navigate(`/dashboard/products/edit/${productCode}`)}
+            disabled={actionLoading}
+            onClick={handleEdit}
           >
             <Edit2 size={16} />
             <span>Edit</span>
+            <span className="btn-shortcut">E</span>
           </button>
           
           {product.productStatus?.code === 'ACTIVE' ? (
@@ -221,6 +222,7 @@ const ProductDetailView = () => {
             >
               <Ban size={16} />
               <span>Deactivate</span>
+              <span className="btn-shortcut">A</span>
             </button>
           ) : (
             <button 
@@ -230,6 +232,7 @@ const ProductDetailView = () => {
             >
               <CheckCircle2 size={16} />
               <span>Activate</span>
+              <span className="btn-shortcut">A</span>
             </button>
           )}
         </div>
@@ -261,12 +264,29 @@ const ProductDetailView = () => {
             </div>
             
             <div className="info-box">
-              <h3 className="info-label">Available Stock</h3>
+              <h3 className="info-label">{TEXTS.products.stock}</h3>
               <div className="stock-info">
-                <p className={`info-value ${product.productStock === 0 ? 'text-danger' : ''}`}>
-                  {product.productStock ?? '0'}
-                </p>
+                {(() => {
+                  const stock = product.productStock ?? 0;
+                  const min = product.minimumStock ?? 0;
+                  if (stock === 0) {
+                    return <p className="info-value" style={{ color: 'var(--danger-color, #ef4444)' }}>{TEXTS.products.outOfStock}</p>;
+                  }
+                  if (stock <= min) {
+                    return (
+                      <p className="info-value" style={{ color: 'var(--danger-color, #ef4444)' }}>
+                        {stock}
+                      </p>
+                    );
+                  }
+                  return <p className="info-value">{stock}</p>;
+                })()}
               </div>
+            </div>
+
+            <div className="info-box">
+              <h3 className="info-label">Minimum Stock</h3>
+              <p className="info-value">{product.minimumStock ?? 0}</p>
             </div>
 
             <div className="info-box">

@@ -108,7 +108,7 @@ const LoginForm = ({ onLoginSuccess }) => {
     <div className="login-container">
       <div className="login-card">
         <h2>System Login</h2>
-        <p className="login-subtitle">Sales Management System</p>
+        <p className="login-subtitle">PrimeSale</p>
 
         {/* Status message container to reserve space and prevent layout jumping */}
         <div className="status-container">

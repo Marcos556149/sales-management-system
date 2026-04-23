@@ -16,6 +16,7 @@ export const ProductsLayout = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [appliedSearch, setAppliedSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('ALL');
+  const [stockLevelFilter, setStockLevelFilter] = useState('ALL');
   const [sortOrder, setSortOrder] = useState('ASCENDING');
   const [pageFrontend, setPageFrontend] = useState(1);
   const [isCached, setIsCached] = useState(false);
@@ -24,9 +25,11 @@ export const ProductsLayout = () => {
   const [productsData, setProductsData] = useState([]);
   const [totalPages, setTotalPages] = useState(1);
   const [totalElements, setTotalElements] = useState(0);
+  const [totalGlobalElements, setTotalGlobalElements] = useState(null);
   
   // Filters Cache (Optional, to prevent refetching during navigation)
   const [statusOptions, setStatusOptions] = useState([]);
+  const [stockLevelOptions, setStockLevelOptions] = useState([]);
   const [sortOptions, setSortOptions] = useState([]);
 
   // Scroll Ref
@@ -37,12 +40,15 @@ export const ProductsLayout = () => {
       searchTerm, setSearchTerm,
       appliedSearch, setAppliedSearch,
       statusFilter, setStatusFilter,
+      stockLevelFilter, setStockLevelFilter,
       sortOrder, setSortOrder,
       pageFrontend, setPageFrontend,
       productsData, setProductsData,
       totalPages, setTotalPages,
       totalElements, setTotalElements,
+      totalGlobalElements, setTotalGlobalElements,
       statusOptions, setStatusOptions,
+      stockLevelOptions, setStockLevelOptions,
       sortOptions, setSortOptions,
       scrollPositionRef,
       isCached, setIsCached

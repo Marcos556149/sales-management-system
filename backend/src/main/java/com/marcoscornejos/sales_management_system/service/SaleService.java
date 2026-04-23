@@ -99,6 +99,10 @@ public class SaleService implements ISaleService{
                 pageable
         );
 
+
+        // Total records in database without filters
+        long totalGlobalElements = iProductRepository.count();
+
         // Map entities to DTOs using MapStruct
         return iPageResponseMapper.toPageResponseDTO(
                 salePage.getContent()
@@ -108,7 +112,8 @@ public class SaleService implements ISaleService{
                 salePage.getNumber(),
                 salePage.getSize(),
                 salePage.getTotalPages(),
-                salePage.getTotalElements()
+                salePage.getTotalElements(),
+                totalGlobalElements
         );
     }
 

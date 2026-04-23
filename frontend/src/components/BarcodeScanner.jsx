@@ -1,6 +1,8 @@
 import React, { useRef, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useToast } from './ToastContext';
+import { productService } from '../services/productService';
+
 
 const BarcodeScanner = () => {
   const navigate = useNavigate();
@@ -79,26 +81,26 @@ const BarcodeScanner = () => {
     const timeoutId = setTimeout(() => controller.abort(), 5000);
 
     try {
-      const response = await fetch(`/api/products/${code}`, { signal: controller.signal });
+      // Use the service for consistency and to get the data in one go
+      const response = await productService.getProduct(code, { signal: controller.signal });
       clearTimeout(timeoutId);
       
-      if (response.ok) {
-        // Product exists
-        navigate(`/dashboard/products/${code}`);
-      } else {
-        const errorData = await response.json().catch(() => ({}));
-        
-        if (response.status === 404 || response.status === 400) {
-           navigate(`/dashboard/products/new?productCode=${code}`);
-           // Removed the warning toast as requested
-        } else {
-           addToast(errorData.error || errorData.message || 'Error searching for product', 'error');
-        }
-      }
-    } catch (error) {
+      // If we are here, the product exists (the service throws for non-2xx)
+      // Pass the product in the state so ProductDetailView doesn't have to fetch again
+      navigate(`/dashboard/products/${code}`, { state: { product: response.data } });
+      
+    } catch (err) {
       clearTimeout(timeoutId);
-      const msg = error.name === 'AbortError' ? 'Product search timed out' : 'Network error while searching for product';
-      addToast(msg, 'error');
+      
+      if (err.name === 'AbortError') {
+        addToast('Product search timed out', 'error');
+      } else if (err.status === 404 || err.status === 400) {
+        // Product doesn't exist, navigate to create
+        navigate(`/dashboard/products/new?productCode=${code}`);
+      } else {
+        // Network or other error
+        addToast(err.message || 'Error searching for product', 'error');
+      }
     }
   };
 

@@ -5,6 +5,9 @@ import Pagination from './Pagination';
 import ConfirmModal from './ConfirmModal';
 import { useToast } from './ToastContext';
 import { useProductsContext } from './ProductsContext';
+import { productService } from '../services/productService';
+import { TEXTS } from '../constants/texts';
+import { useKeyboardShortcuts } from '../hooks/useKeyboardShortcuts';
 import './ProductsView.css';
 
 const ProductsView = () => {
@@ -16,12 +19,15 @@ const ProductsView = () => {
       searchTerm, setSearchTerm,
       appliedSearch, setAppliedSearch,
       statusFilter, setStatusFilter,
+      stockLevelFilter, setStockLevelFilter,
       sortOrder, setSortOrder,
       pageFrontend, setPageFrontend,
       productsData: products, setProductsData: setProducts,
       totalPages, setTotalPages,
       totalElements, setTotalElements,
+      totalGlobalElements, setTotalGlobalElements,
       statusOptions, setStatusOptions,
+      stockLevelOptions, setStockLevelOptions,
       sortOptions, setSortOptions,
       scrollPositionRef,
       isCached, setIsCached
@@ -43,10 +49,49 @@ const ProductsView = () => {
   const [productToActivate, setProductToActivate] = useState(null);
 
   const abortControllerRef = useRef(null);
+  const searchInputRef = useRef(null);
 
   // Handle row click
-  const handleRowClick = (id) => {
-    navigate(`/dashboard/products/${id}`);
+  const handleRowClick = async (id) => {
+    if (actionLoading) return;
+    
+    setActionLoading(true);
+    try {
+      // Check if product exists before navigating
+      const response = await productService.getProduct(id);
+      // Pass the product data to the detail view to avoid a second request
+      navigate(`/dashboard/products/${id}`, { state: { product: response.data } });
+    } catch (err) {
+      if (err.status === 400) {
+        addToast(err.message || `Product with code ${id} not found`, 'error');
+        // Refresh the list to remove the missing product
+        setRefreshTrigger(prev => prev + 1);
+      } else {
+        addToast(err.message || 'Error checking product', 'error');
+      }
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  const handleEditClick = async (productCode) => {
+    if (actionLoading) return;
+    
+    setActionLoading(true);
+    try {
+      // Check existence and get fresh data
+      const response = await productService.getProduct(productCode);
+      navigate(`/dashboard/products/edit/${productCode}`, { state: { product: response.data } });
+    } catch (err) {
+      if (err.status === 400) {
+        addToast(err.message || `Product with code ${productCode} not found`, 'error');
+        setRefreshTrigger(prev => prev + 1);
+      } else {
+        addToast(err.message || 'Error checking product', 'error');
+      }
+    } finally {
+      setActionLoading(false);
+    }
   };
 
   // 0. Fetch Filter Options on Mount
@@ -60,18 +105,18 @@ const ProductsView = () => {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 8000);
       try {
-        const response = await fetch('/api/products/filters', { signal: controller.signal });
+        const response = await productService.getFilters({ signal: controller.signal });
         clearTimeout(timeoutId);
-        if (!response.ok) throw new Error('Failed to fetch filters');
-        const data = await response.json();
         
-        setStatusOptions(data.statusOptions || []);
-        setSortOptions(data.sortOptions || []);
+        setStatusOptions(response.data.statusOptions || []);
+        setSortOptions(response.data.nameSortOptions || []);
+        setStockLevelOptions(response.data.stockLevelOptions || []);
       } catch (err) {
         clearTimeout(timeoutId);
         console.error("Error loading filters:", err);
         setStatusOptions([]);
         setSortOptions([]);
+        setStockLevelOptions([]);
         if (err.name === 'AbortError') {
            addToast("Filters request timed out", "error");
         }
@@ -106,7 +151,7 @@ const ProductsView = () => {
     };
   }, [searchTerm]);
 
-  const prevParams = useRef({ appliedSearch, statusFilter, sortOrder, pageFrontend, refreshTrigger });
+  const prevParams = useRef({ appliedSearch, statusFilter, stockLevelFilter, sortOrder, pageFrontend, refreshTrigger });
 
   // Scroll Position Management
   useEffect(() => {
@@ -143,11 +188,12 @@ const ProductsView = () => {
     const paramsChanged = 
       prevParams.current.appliedSearch !== appliedSearch ||
       prevParams.current.statusFilter !== statusFilter ||
+      prevParams.current.stockLevelFilter !== stockLevelFilter ||
       prevParams.current.sortOrder !== sortOrder ||
       prevParams.current.pageFrontend !== pageFrontend ||
       prevParams.current.refreshTrigger !== refreshTrigger;
 
-    prevParams.current = { appliedSearch, statusFilter, sortOrder, pageFrontend, refreshTrigger };
+    prevParams.current = { appliedSearch, statusFilter, stockLevelFilter, sortOrder, pageFrontend, refreshTrigger };
 
     if (!paramsChanged && isCached) {
       return;
@@ -168,40 +214,34 @@ const ProductsView = () => {
       setError(null);
 
       try {
-        const params = new URLSearchParams();
-        
+        const params = {
+          statusFilter,
+          stockFilter: stockLevelFilter,
+          nameSort: sortOrder,
+          page: pageFrontend - 1,
+          size: 50
+        };
         const trimmedSearch = appliedSearch.trim();
         if (trimmedSearch.length > 0) {
-          params.append('searchCodeOrName', trimmedSearch);
+          params.searchCodeOrName = trimmedSearch;
         }
 
-        params.append('statusFilter', statusFilter);
-        params.append('nameSort', sortOrder);
-        params.append('page', pageFrontend - 1);
-        params.append('size', 50);
-
-        const response = await fetch(`/api/products?${params.toString()}`, {
-          signal: abortController.signal
-        });
-
+        const response = await productService.getProducts(params, { signal: abortController.signal });
         clearTimeout(timeoutId);
 
-        if (!response.ok) {
-          const errorData = await response.json().catch(() => ({}));
-          throw new Error(errorData.error || errorData.message || `Error: ${response.status}`);
-        }
-
-        const data = await response.json();
+        const data = response.data;
         
         if (abortControllerRef.current === abortController) {
           if (data.content !== undefined) {
             setProducts(data.content);
             setTotalPages(data.totalPages || 1);
             setTotalElements(data.totalElements || 0);
+            setTotalGlobalElements(data.totalGlobalElements !== undefined ? data.totalGlobalElements : null);
           } else {
             setProducts(Array.isArray(data) ? data : []);
             setTotalPages(1);
             setTotalElements(0);
+            setTotalGlobalElements(null);
           }
           setIsCached(true); // Cache fetched data
         }
@@ -237,7 +277,7 @@ const ProductsView = () => {
         abortControllerRef.current.abort();
       }
     };
-  }, [appliedSearch, statusFilter, sortOrder, pageFrontend, refreshTrigger]); // Prevent double-fetching on mount
+  }, [appliedSearch, statusFilter, stockLevelFilter, sortOrder, pageFrontend, refreshTrigger]); // Prevent double-fetching on mount
 
   // Handle immediate search on Enter key
   const handleKeyDown = (e) => {
@@ -277,33 +317,12 @@ const ProductsView = () => {
     const timeoutId = setTimeout(() => controller.abort(), 8000);
 
     try {
-      const response = await fetch(`/api/products/${productToDeactivate}/deactivate`, {
-        method: 'PATCH',
-        signal: controller.signal
-      });
-
+      const res = await productService.deactivateProduct(productToDeactivate, { signal: controller.signal });
       clearTimeout(timeoutId);
-      let message = '';
-      try {
-        const text = await response.text();
-        try {
-          const json = JSON.parse(text);
-          message = json.error || json.message || text;
-        } catch (e) {
-          message = text;
-        }
-      } catch (e) {
-        message = "An error occurred";
-      }
-
-      if (!response.ok) {
-        addToast(message || "An error occurred while deactivating", 'error');
-      } else {
-        addToast(message, 'success');
-      }
+      addToast(res.message || TEXTS.products.deactivateSuccess, 'success');
     } catch (err) {
       clearTimeout(timeoutId);
-      const msg = err.name === 'AbortError' ? 'Deactivation request timed out' : (err.message || "An error occurred");
+      const msg = err.name === 'AbortError' ? 'Deactivation request timed out' : (err.message || TEXTS.common.errorOccurred);
       addToast(msg, 'error');
     } finally {
       setPageFrontend(1);
@@ -327,33 +346,12 @@ const ProductsView = () => {
     const timeoutId = setTimeout(() => controller.abort(), 8000);
 
     try {
-      const response = await fetch(`/api/products/${productToActivate}/activate`, {
-        method: 'PATCH',
-        signal: controller.signal
-      });
-
+      const res = await productService.activateProduct(productToActivate, { signal: controller.signal });
       clearTimeout(timeoutId);
-      let message = '';
-      try {
-        const text = await response.text();
-        try {
-          const json = JSON.parse(text);
-          message = json.error || json.message || text;
-        } catch (e) {
-          message = text;
-        }
-      } catch (e) {
-        message = "An error occurred";
-      }
-
-      if (!response.ok) {
-        addToast(message || "An error occurred while activating", 'error');
-      } else {
-        addToast(message, 'success');
-      }
+      addToast(res.message || TEXTS.products.activateSuccess, 'success');
     } catch (err) {
       clearTimeout(timeoutId);
-      const msg = err.name === 'AbortError' ? 'Activation request timed out' : (err.message || "An error occurred");
+      const msg = err.name === 'AbortError' ? 'Activation request timed out' : (err.message || TEXTS.common.errorOccurred);
       addToast(msg, 'error');
     } finally {
       setPageFrontend(1);
@@ -366,6 +364,23 @@ const ProductsView = () => {
 
   // Check if we have active filters besides the defaults
   const hasActiveFilters = appliedSearch.trim().length > 0 || statusFilter !== 'ALL' || sortOrder !== 'ASCENDING';
+  
+  // Register contextual shortcuts
+  useKeyboardShortcuts(React.useMemo(() => ({
+    'shift+n': () => navigate('/dashboard/products/new'),
+    'ctrl+shift+r': () => handleManualRefresh(),
+    '/': () => searchInputRef.current?.focus(),
+    'arrowright': () => {
+      if (pageFrontend < totalPages) {
+        setPageFrontend(prev => prev + 1);
+      }
+    },
+    'arrowleft': () => {
+      if (pageFrontend > 1) {
+        setPageFrontend(prev => prev - 1);
+      }
+    }
+  }), [navigate, handleManualRefresh, pageFrontend, totalPages, setPageFrontend]));
 
   return (
     <div className="view-container">
@@ -375,21 +390,25 @@ const ProductsView = () => {
           <div className="search-bar">
             <Search className="search-icon" size={18} />
             <input 
+              ref={searchInputRef}
               type="text" 
               placeholder="Search by name or code..." 
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               onKeyDown={handleKeyDown}
             />
-            {searchTerm && (
-              <button 
-                className="clear-search-btn" 
-                onClick={handleClearSearch}
-                title="Clear Search"
-              >
-                <X size={16} />
-              </button>
-            )}
+            <div className="search-actions">
+              {searchTerm && (
+                <button 
+                  className="clear-search-btn" 
+                  onClick={handleClearSearch}
+                  title="Clear Search"
+                >
+                  <X size={16} />
+                </button>
+              )}
+              <span className="search-hint">/</span>
+            </div>
           </div>
           
           <div className="filter-group">
@@ -420,7 +439,7 @@ const ProductsView = () => {
             </div>
             
             {/* Sort Order Control */}
-            <div className="filter-item" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <div className="filter-item">
               <span style={{ fontSize: '0.9rem', color: '#6b7280', fontWeight: '500' }}>Order by Name:</span>
               <select 
                 value={sortOrder} 
@@ -444,10 +463,35 @@ const ProductsView = () => {
                 )}
               </select>
             </div>
+            {/* Stock Level Filter */}
+            <div className="filter-item">
+              <span style={{ fontSize: '0.9rem', color: '#6b7280', fontWeight: '500' }}>{TEXTS.products.stockLevel}</span>
+              <select 
+                value={stockLevelFilter} 
+                onChange={(e) => {
+                  setStockLevelFilter(e.target.value);
+                  setPageFrontend(1);
+                }}
+                className="select-dropdown"
+                disabled={filtersLoading || stockLevelOptions.length === 0}
+              >
+                {filtersLoading ? (
+                  <option value="ALL">{TEXTS.common.loading}</option>
+                ) : stockLevelOptions.length === 0 ? (
+                  <option value="ALL">All Stock</option>
+                ) : (
+                  stockLevelOptions.map(opt => (
+                    <option key={opt.code} value={opt.code}>
+                      {opt.label}
+                    </option>
+                  ))
+                )}
+              </select>
+            </div>
           </div>
         </div>
 
-        <div className="toolbar-right" style={{ display: 'flex', gap: '12px' }}>
+        <div className="toolbar-right">
           <button 
             className="btn-secondary" 
             onClick={handleManualRefresh} 
@@ -455,6 +499,7 @@ const ProductsView = () => {
           >
             <RefreshCw size={18} className={loading ? "spin-animation" : ""} />
             <span>{loading ? 'Refreshing...' : 'Refresh'}</span>
+            <span className="btn-shortcut">Ctrl+Shift+R</span>
           </button>
           <button 
             className="btn-primary"
@@ -462,6 +507,7 @@ const ProductsView = () => {
           >
             <Plus size={18} />
             <span>New Product</span>
+            <span className="btn-shortcut" style={{ backgroundColor: 'rgba(255, 255, 255, 0.2)', color: 'white', borderColor: 'rgba(255, 255, 255, 0.3)' }}>Shift+N</span>
           </button>
         </div>
       </div>
@@ -478,9 +524,9 @@ const ProductsView = () => {
           </div>
         ) : products.length === 0 ? (
           <div className="empty-state">
-            {hasActiveFilters 
-              ? <p>No products match the search criteria</p>
-              : <p>No products available</p>
+            {totalGlobalElements === 0 
+              ? <p>No products available</p>
+              : <p>No products match the search criteria</p>
             }
           </div>
         ) : (
@@ -508,7 +554,25 @@ const ProductsView = () => {
                     <td className="font-medium">{product.productName}</td>
                     <td>${product.productPrice?.toFixed(2) ?? '0.00'}</td>
                     <td className="stock-cell">
-                      {product.productStock ?? '0'} <span className="unit-text">{product.unitOfMeasure?.code === 'UNITS' ? 'u' : (product.unitOfMeasure?.label || '')}</span>
+                      {(() => {
+                        const stock = product.productStock ?? 0;
+                        const min = product.minimumStock ?? 0;
+                        if (stock === 0) {
+                          return <span style={{ color: 'var(--danger-color, #ef4444)', fontWeight: 'bold' }}>{TEXTS.products.outOfStock}</span>;
+                        }
+                        if (stock <= min) {
+                          return (
+                            <span style={{ color: 'var(--danger-color, #ef4444)', fontWeight: 'bold' }}>
+                              {stock} <span className="unit-text">{product.unitOfMeasure?.code === 'UNITS' ? 'u' : (product.unitOfMeasure?.label || '')}</span>
+                            </span>
+                          );
+                        }
+                        return (
+                          <span>
+                            {stock} <span className="unit-text">{product.unitOfMeasure?.code === 'UNITS' ? 'u' : (product.unitOfMeasure?.label || '')}</span>
+                          </span>
+                        );
+                      })()}
                     </td>
                     <td>
                       <span className={`status-badge ${(product.productStatus?.code || '').toLowerCase()}`}>
@@ -521,7 +585,7 @@ const ProductsView = () => {
                         title="Edit Product"
                         onClick={(e) => {
                           e.stopPropagation();
-                          navigate(`/dashboard/products/edit/${product.productCode}`);
+                          handleEditClick(product.productCode);
                         }}
                       >
                         <Edit2 size={16} />

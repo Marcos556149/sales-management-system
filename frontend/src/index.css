@@ -187,3 +187,17 @@ body {
   align-items: flex-start;
   overflow: hidden;
 }
+
+/* Keyboard Shortcut Visibility Fix */
+.btn-shortcut, .nav-shortcut {
+  display: inline-block !important;
+  visibility: visible !important;
+}
+
+@media (max-width: 768px) {
+  .btn-shortcut, .nav-shortcut {
+    display: inline-block !important;
+    visibility: visible !important;
+    opacity: 0.7 !important;
+  }
+}

@@ -20,14 +20,16 @@ const Pagination = ({
           disabled={currentPage === 1}
         >
           <ChevronLeft size={16} />
-          Previous
+          <span className="btn-shortcut">←</span>
+          <span>Previous</span>
         </button>
         <button 
           className="pagination-btn" 
           onClick={() => onPageChange(Math.min(totalPages, currentPage + 1))}
           disabled={currentPage >= totalPages || totalPages === 0}
         >
-          Next
+          <span>Next</span>
+          <span className="btn-shortcut">→</span>
           <ChevronRight size={16} />
         </button>
       </div>

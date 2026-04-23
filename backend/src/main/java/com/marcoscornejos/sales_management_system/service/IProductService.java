@@ -18,9 +18,9 @@ public interface IProductService {
 
     ProductDetailResponseDTO getProductByCode(String productCode);
 
-    void deactivateProduct(String productCode);
+    ProductDetailResponseDTO deactivateProduct(String productCode);
 
-    void activateProduct(String productCode);
+    ProductDetailResponseDTO activateProduct(String productCode);
 
     ProductDetailResponseDTO registerProduct(ProductCreateRequestDTO request);
 

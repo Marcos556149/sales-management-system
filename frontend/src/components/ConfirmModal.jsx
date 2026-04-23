@@ -11,6 +11,27 @@ const ConfirmModal = ({
   confirmText = 'Deactivate',
   confirmButtonTheme = 'danger'
 }) => {
+  React.useEffect(() => {
+    if (!isOpen) return;
+
+    const handleKeyDown = (e) => {
+      if (isConfirming) return;
+      
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        onConfirm();
+      } else if (e.key === 'Escape') {
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        onCancel();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown, true);
+    return () => window.removeEventListener('keydown', handleKeyDown, true);
+  }, [isOpen, onConfirm, onCancel, isConfirming]);
+
   if (!isOpen) return null;
 
   return (

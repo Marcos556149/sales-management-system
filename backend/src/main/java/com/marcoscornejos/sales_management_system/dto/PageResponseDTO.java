@@ -43,4 +43,9 @@ public class PageResponseDTO<T> {
      * Total number of elements across all pages.
      */
     private long totalElements;
+
+    /**
+     * Total number of records in the table without filters.
+     */
+    private Long totalGlobalElements;
 }

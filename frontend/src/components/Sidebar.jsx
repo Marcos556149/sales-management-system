@@ -13,7 +13,7 @@ const Sidebar = () => {
   return (
     <aside className="sidebar">
       <div className="sidebar-brand">
-        <h2>Sales Management System</h2>
+        <h2>PrimeSale</h2>
         <button className="mobile-toggle-btn" onClick={toggleMobileMenu}>
           {isMobileOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
@@ -29,6 +29,7 @@ const Sidebar = () => {
             >
               <Package className="nav-icon" size={20} />
               <span>Products</span>
+              <span className="nav-shortcut">Ctrl+Shift+P</span>
             </NavLink>
           </li>
           

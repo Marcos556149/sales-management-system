@@ -139,3 +139,32 @@
   align-items: center;
   gap: 8px;
 }
+
+/* Remove arrows from number inputs */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
+.btn-shortcut {
+  margin-left: 8px;
+  font-size: 0.7rem;
+  opacity: 0.5;
+  background-color: rgba(0, 0, 0, 0.05);
+  padding: 1px 5px;
+  border-radius: 4px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  text-transform: none;
+}
+
+.btn-secondary:hover .btn-shortcut {
+  opacity: 0.8;
+  background-color: rgba(0, 0, 0, 0.08);
+}
