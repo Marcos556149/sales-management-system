@@ -9,24 +9,20 @@
 - [RF-6: Register Product by Barcode](#rf-6-register-product-by-barcode)
 - [RF-7: Register Sale](#rf-7-register-sale)
 - [RF-8: View Sales](#rf-8-view-sales)
-- [RF-9: Update Sale](#rf-9-update-sale)
-- [RF-10: Delete Sale](#rf-10-delete-sale)
-- [RF-11: Add Product to Sale via Barcode](#rf-11-add-product-to-sale-via-barcode)
-- [RF-12: Associate Product to Sale](#rf-12-associate-product-to-sale)
-- [RF-13: Remove Product from Sale](#rf-13-remove-product-from-sale)
-- [RF-14: Generate Sale Ticket](#rf-14-generate-sale-ticket)
-- [RF-15: User Authentication](#rf-15-user-authentication)
-- [RF-17: View Product](#rf-17-view-product)
-- [RF-18: View Sale](#rf-18-view-sale)
-- [RF-19: Change System Configuration](#rf-19-change-system-configuration)
-- [RF-20: View Sales Statistics](#rf-20-view-sales-statistics)
-- [RF-21: Logout](#rf-21-logout)
-- [RF-22: Register User](#rf-22-register-user)
-- [RF-23: View Users](#rf-23-view-users)
-- [RF-24: View User](#rf-24-view-user)
-- [RF-25: Update User](#rf-25-update-user)
-- [RF-26: Change User Status](#rf-26-change-user-status)
-- [RF-27: Activate Product](#rf-27-activate-product)
+- [RF-9: Add Product to Sale via Barcode](#rf-9-add-product-to-sale-via-barcode)
+- [RF-10: Generate Sale Ticket](#rf-10-generate-sale-ticket)
+- [RF-11: User Authentication](#rf-11-user-authentication)
+- [RF-12: View Product](#rf-12-view-product)
+- [RF-13: View Sale](#rf-13-view-sale)
+- [RF-14: Change System Configuration](#rf-14-change-system-configuration)
+- [RF-15: View Sales Statistics](#rf-15-view-sales-statistics)
+- [RF-16: Logout](#rf-16-logout)
+- [RF-17: Register User](#rf-17-register-user)
+- [RF-18: View Users](#rf-18-view-users)
+- [RF-19: View User](#rf-19-view-user)
+- [RF-20: Update User](#rf-20-update-user)
+- [RF-21: Change User Status](#rf-21-change-user-status)
+- [RF-22: Activate Product](#rf-22-activate-product)
 
 
 ### General Rules
@@ -119,15 +115,16 @@ The system must allow the user to view the products registered in the system.
 3.d.1.1 The user selects a product status ("Active", "Inactive", or "All Status").  
 3.d.1.2 The system filters products according to the selected status.  
 
-**3.d.2 By stock level**
-
 **3.d.2 By stock level**  
 3.d.2.1 The user selects a stock filter ("All Stock Levels", "Normal Stock", "Low Stock", or "Out of Stock").  
 3.d.2.2 The system filters products according to the selected stock condition.
 
-**3.f Products not found**  
-3.f.1 The system detects that no products match the search criteria.  
-3.f.2 The system displays a message: "No products match the search criteria".  
+**3.f Product pagination**
+3.f.1 The system allows navigation between pages of products (e.g., next page, previous page, or direct page selection).
+
+**3.g Products not found**  
+3.g.1 The system detects that no products match the search criteria.  
+3.g.2 The system displays a message: "No products match the search criteria".  
 
 ### Business Rules
 - The system must allow viewing all registered products using pagination.
@@ -196,7 +193,7 @@ The system must allow the user to logically deactivate a product by marking it a
 ### Main Flow
 
 1. The user accesses the product section.  
-The user selects the deactivate option for an active product.
+2. The user selects the deactivate option for an active product.
 3. The system requests confirmation of the action.  
 4. The user confirms the operation.  
 5. The system updates the product status to "Inactive".  
@@ -234,7 +231,7 @@ The system must allow the user to identify an existing product by scanning its b
 1. The user accesses the product section.  
 2. The user scans the product barcode using a reader.  
 3. The system retrieves the product associated with the scanned barcode.  
-4. The system displays the product data using the View Product operation (RF-17).
+4. The system displays the product data using the View Product operation (RF-12).
 
 ### Alternative Flows
 
@@ -271,55 +268,98 @@ The system allows the user to initiate product registration using a scanned barc
 ## RF-7: Register Sale
 
 ### Description
-The system must allow the user to register sales made in the business, storing the general sale data and managing associated products through operations on sale details.
+The system must allow the user to register sales made in the business, storing the general sale data and managing the products included in the sale during the registration process.
 
 ### Main Flow
 1. The user accesses the sales section.  
 2. The user requests to register a new sale.  
 3. The system creates a sale in progress.  
-4. The user adds products to the sale using the Add Product to Sale operation (RF-12).  
-5. The system displays, for each added product, its name, price, and quantity along with its unit of measure.  
-6. The system calculates line subtotals and the total sale amount.  
-7. The system automatically records the current date and time of the sale.  
-8. The user confirms the sale.  
-9. The system registers the sale with the following data:
+4. The system displays an empty sale detail and the product selection interface. 
+5. The system displays the product selection interface, which includes:
+   - Product search by name or code  
+   - Product list with pagination  
+   - Refresh product list option   
+6. The user searches and selects a product from the available product list.
+7. The system displays the selected product information:
+   - Product code  
+   - Product name  
+   - Unit price  
+   - Available stock (displayed with its unit of measure, e.g., "2.5 kg", "3 u")   
+8. The system assigns a default quantity of 1 and allows the user to modify it.  
+9. The user confirms the product addition.  
+10. The system validates the quantity and product availability.  
+11. The system records the product in the sale.  
+12. If the product is already included in the sale, the system increases its quantity instead of creating a duplicate line.  
+13. The system displays the updated sale in progress.  
+14. The user may repeat the product addition process as many times as needed.  
+15. The user may remove any product previously added to the sale.  
+16. The user confirms the sale.  
+17. The system automatically records the current date and time of the sale.  
+18. The system registers the sale with the following data:
    - Unique sale identifier (automatically generated by the system)  
    - Sale date  
    - Sale time  
    - Total amount  
    - User who performed the sale  
-10. The system registers the sale details associated with the sale.  
-11. The system displays a confirmation message: "Sale successfully registered. Do you want to print the receipt?".  
-12. The user confirms receipt printing, invoking the Generate Receipt operation (RF-14).  
-13. The system automatically returns to the sales section.  
+19. The system stores the associated sale details with the following data:
+   - Unique sale detail identifier (automatically generated by the system)  
+   - Associated product  
+   - Associated sale  
+   - Quantity sold  
+   - Unit price at the time of the sale  
+   - Subtotal (calculated as quantity × unit price, not stored) 
+20. The system displays a confirmation message: "Sale successfully registered. Do you want to print the receipt?"  
+21. The user confirms receipt printing, invoking the Generate Receipt operation (RF-10).  
+22. The system returns to the sales section.
 
 ### Alternative Flows
 
-**4.a Error adding product**  
-4.a.1 The system detects an error during the product addition (according to RF-12).  
-4.a.2 The system displays the corresponding message and allows the operation to continue.  
+**3.a Product Not Found**  
+3.a.1 The system detects that the product does not exist.  
+3.a.2 The system displays a message: "Product with code '{productCode}' not found".
 
-**8.a Sale canceled**  
-8.a.1 The user decides to cancel the sale before confirming it.  
-8.a.2 The system discards the sale in progress and returns to the sales section.  
+**10.a Invalid quantity**  
+10.a.1 The system detects that the entered quantity is less than or equal to 0, greater than available stock, or incompatible with the product's unit of measure.  
+10.a.2 The system displays an error message indicating the required correction.
 
-**12.a Receipt printing canceled**  
-12.a.1 The user cancels the receipt printing.  
-12.a.2 The system completes the sale process and returns to the sales section without generating the receipt.  
+**10.b Inactive product**  
+10.b.1 The system detects that the selected product has inactive status.  
+10.b.2 The system displays a message: "Product '{productCode}' is inactive and cannot be added to the sale".
+
+**16.a Sale canceled**  
+16.a.1 The user decides to cancel the sale before confirmation.  
+16.a.2 The system discards the sale in progress and returns to the sales section.
+
+**16.b Sale without products**  
+16.b.1 The system detects that the sale has no associated products.  
+16.b.2 The system displays a message: "The sale must contain at least one product".
+
+**21.a Receipt printing canceled**  
+21.a.1 The user cancels receipt printing.  
+21.a.2 The system completes the sale process and returns to the sales section without generating the receipt.
 
 ### Business Rules
-- A sale must have at least one associated product to be registered.  
-- Products are added to the sale using the operation defined in RF-12.  
-- Subtotals and total sale amount are calculated automatically.  
-- While a sale is in progress, it may exist without associated products.  
-- If all products are removed during the registration process, the sale must not be automatically deleted.  
-- During the registration process, the user can modify product quantities.  
-- If a product quantity increases during registration, the system decreases the stock by the corresponding difference.  
-- If a product quantity decreases or a detail is removed, the system increases the stock by the corresponding difference.  
-- During the registration process, the user can remove products (sale details) using the operation defined in RF-13.  
-- The unique sale identifier is automatically assigned by the system.  
-- Each sale is associated with the user who registered it.  
-- Receipt generation is performed using the operation defined in RF-14.  
+- A sale must contain at least one associated product to be registered.
+- Products can only be added or removed while the sale is in progress.
+- Products with status "Inactive" cannot be added to a sale.
+- The quantity must be greater than 0 and compatible with the product's unit of measure.
+- If the unit of measure is "Units", the quantity must not contain decimals.
+- A quantity greater than available stock cannot be assigned.
+- If a product is already included in the sale, its quantity must be increased instead of duplicating the line.
+- If all products are removed during the registration process, the sale in progress must remain available until confirmed or canceled.
+- The system must update line subtotals and the total sale amount whenever products are added, removed, or their quantities are modified.
+- Each sale detail must have an automatically generated unique identifier assigned by the system.
+- The unique sale identifier is automatically assigned by the system upon confirmation.
+- Each sale must be associated with the authenticated user who registered it.
+- Product stock must be updated after the sale is confirmed, according to the final quantities of the sale.
+- Receipt generation is performed using the operation defined in RF-10. 
+- The product selection interface must allow searching products by name or product code.
+- The product selection interface must support pagination of 10 items per page.
+- The system must allow navigation between product pages (next and previous).
+- The system must allow refreshing the product list to retrieve updated data.
+- The product selection interface must only display active products with available stock greater than 0.
+- The system must exclude inactive products and products with zero stock from the product selection list.
+- The product selection interface must visually indicate products with low stock to assist the user during the sale process.
 
 ---
 
@@ -344,267 +384,92 @@ The system must allow the user to view sales registered in the system, displayin
 3.a.1 The system detects that there are no sales in the database.  
 3.a.2 The system displays a message: "No sales found".  
 
-**3.b Sale pagination**  
+**3.b Sale search**
 
-3.b.1 The system allows navigation between pages of sales (e.g., next page, previous page, or direct page selection).  
+**3.b.1 By sale code**  
+3.b.1.1 The user enters a sale code or part of the sale code.  
+3.b.1.2 The system filters sales that match the entered code.
 
-**3.c Sale sorting**
+**3.c Sale pagination**  
+3.c.1 The system allows navigation between pages of sales (e.g., next page, previous page, or direct page selection).  
 
-**3.c.1 By time**  
-3.c.1.1 The user selects to sort sales by time (Ascending or Descending).  
-3.c.1.2 The system sorts the sales according to the selected criterion.  
+**3.d Sale sorting**
 
-**3.d Sale filtering**
+**3.d.1 By time**  
+3.d.1.1 The user selects to sort sales by time ("Most recent first" or "Oldest first").  
+3.d.1.2 The system sorts the sales according to the selected criterion.
 
-**3.d.1 By day**  
-3.d.1.1 The user selects a specific day.  
-3.d.1.2 The system filters sales according to the selected day.  
+**3.e Sale filtering**
 
-**3.d.2 By month**  
-3.d.2.1 The user selects a specific month.  
-3.d.2.2 The system filters sales according to the selected month.  
+**3.e.1 By date**  
+3.e.1.1 The user selects a specific date.  
+3.e.1.2 The system filters sales according to the selected date.
 
-**3.d.3 By year**  
-3.d.3.1 The user selects a specific year.  
-3.d.3.2 The system filters sales according to the selected year.  
-
-**3.e Sale not found**  
-3.e.1 The system detects that no sales match the applied criteria.  
-3.e.2 The system displays a message: "No sales match the search criteria".  
+**3.f Sales not found**  
+3.f.1 The system detects that no sales match the applied criteria.  
+3.f.2 The system displays a message: "No sales match the search criteria". 
 
 ### Business Rules
 - The system must allow viewing all registered sales using pagination.
 - The system must retrieve sales in pages of 50 items by default.
 - The system must allow navigation between pages of sales (e.g., next page, previous page, or direct page selection).
 - If no page is specified, the system must return the first page by default.
+- The system must allow searching sales by sale code.
 - The system must allow viewing sales filtered by a specific date (day, month, and year).
-- The system must allow sorting sales by time, in ascending or descending order.  
-- By default, the system must use the current date (current day, month, and year).
-- If no sorting criterion by time is selected, the system sorts sales by time in descending order by default.
-- The system must ensure that only the sales belonging to the requested page are retrieved from the database (server-side pagination). 
+- The system must allow sorting sales by time ("Most recent first" or "Oldest first").
+- If no date filter is selected, the system uses the current date (current day, month, and year) by default.
+- If no sorting criterion by time is selected, the system sorts sales by time using "Most recent first" by default.
+- The system must ensure that only the sales belonging to the requested page are retrieved from the database (server-side pagination).
 
 ---
 
-## RF-9: Update Sale
+## RF-9: Add Product to Sale via Barcode
 
 ### Description
-The system must allow the user to update an existing sale by modifying the products included in the sale and their quantities.
+The system must allow products to be added to the current sale using barcode scanning, acting as a shortcut for product selection during the sale registration process.
 
 ### Main Flow
+
 1. The user accesses the sales section.  
-2. The user selects an existing sale.  
-3. The system displays the current sale data and its details, including the quantity of each product along with its unit of measure.  
-4. The user modifies the quantity of one or more products, respecting the quantity rules according to the product's unit of measure.  
-5. The system automatically recalculates line subtotals and the total sale amount.  
-6. The user confirms the changes.  
-7. The system updates the sale data in the database.  
-8. The system updates the stock of affected products.  
-9. The system displays a confirmation message: "Sale successfully updated".  
+2. The user scans a product barcode using a barcode reader.  
+3. The system identifies the product associated with the scanned barcode.  
+4. The system adds the product to the current sale using the same rules defined in RF-7 for product addition during sale registration.
 
 ### Alternative Flows
 
-**2.a Sale not found**  
-2.a.1 The system detects that the selected sale does not exist.  
-2.a.2 The system displays a message: "The sale does not exist".  
+**3.a Product not found**  
+3.a.1 The system cannot find a product associated with the scanned barcode.  
+3.a.2 The system displays a message: "Product with code '{productCode}' not found".  
 
-**4.a Invalid quantity**  
-4.a.1 The system detects that the entered quantity is less than or equal to 0 or greater than the available stock (in case of increase).  
-4.a.2 The system displays an error message indicating the required correction.  
-
-**4.b Sale detail not found**  
-4.b.1 The system detects that the selected product to modify no longer exists in the sale.  
-4.b.2 The system displays a message: "The product is not associated with this sale" and does not apply changes for that product.  
-
-**6.a Update canceled**  
-6.a.1 The user cancels the update.  
-6.a.2 The system does not apply changes and returns to the sales section.  
+**4.a No sale in progress**  
+4.a.1 The system detects that no sale is currently in progress.  
+4.a.2 The system automatically creates a sale in progress.  
+4.a.3 The system proceeds with product addition.
 
 ### Business Rules
-- Only product quantities can be modified.  
-- The sale identifier, date, time, and total amount cannot be manually modified.  
-- The product price in the sale must not be modified.  
-- Line subtotals are calculated automatically.   
-- The total sale amount is automatically recalculated based on the changes made.  
-- A quantity greater than the available stock cannot be assigned when the modification implies an increase.  
-- Quantity must be a real number greater than 0.  
-- Product stock must be updated based on the changes made.  
-- If a product quantity increases, the system decreases the stock by the corresponding difference.  
-- If a product quantity decreases, the system increases the stock by the corresponding difference.  
-- If a product quantity remains unchanged, the system must not modify the stock.  
-- Modified quantities must be valid according to the product's unit of measure.  
-- If the unit of measure is "unit", the quantity must not contain decimals.  
+
+- A barcode must uniquely identify a product in the system.  
+- The product must exist, be active, and have available stock greater than 0 to be added to a sale.
+- If no sale is in progress, the system must create one in "in progress" state.  
+- Product addition must follow the rules defined in RF-7.  
+- Stock is not updated during sale registration, only upon sale confirmation.  
 
 ---
 
-## RF-10: Delete Sale
-
-### Description
-The system must allow the user to delete an existing sale, including all associated sale details.
-
-### Main Flow
-1. The user accesses the sales section.  
-2. The user selects an existing sale.  
-3. The system displays the sale data and its details.  
-4. The user requests to delete the sale.  
-5. The system requests confirmation.  
-6. The user confirms the deletion.  
-7. The system deletes the sale and all its associated details from the database.  
-8. The system displays a confirmation message: "Sale successfully deleted".  
-
-### Alternative Flows
-
-**2.a Sale not found**  
-2.a.1 The system detects that the selected sale does not exist.  
-2.a.2 The system displays a message: "The sale does not exist".  
-
-**5.a Deletion canceled**  
-5.a.1 The user cancels the operation.  
-5.a.2 The system does not apply changes and returns to the sales section.  
-
-### Business Rules
-- Deleting a sale implies deleting all its associated details.  
-- Sale deletion is physical (removed from the database).  
-- Deleting a sale automatically updates product stock, increasing quantities according to the removed sale details.  
-
----
-
-## RF-11: Add Product to Sale via Barcode
-
-### Description
-The system must allow faster product selection during the sale process using barcode scanning, adding products to the current sale or automatically starting a new one.  
-This operation uses RF-12 to associate the product once identified.  
-
-### Main Flow
-1. The user accesses the sales section.  
-2. The user scans a product using a barcode reader.  
-3. The system identifies the product associated with the scanned code.  
-4. The system uses the operation defined in RF-12 to add the product to the sale, including quantity and stock update.  
-
-### Alternative Flows
-
-**2.a Product not found**  
-2.a.1 The system cannot find a product associated with the scanned barcode.  
-2.a.2 The system displays a message: "Product not found".  
-
-**3.a No active sale**  
-3.a.1 The system detects that no sale is in progress.  
-3.a.2 The system automatically starts a new sale.  
-3.a.3 The system continues with step 4.  
-
-### Business Rules
-- A barcode must uniquely identify a product.  
-- Product addition follows RF-12 rules.  
-- If no sale is in progress, the system must start one automatically.  
-
----
-
-## RF-12: Associate Product to Sale
-
-### Description
-The system must allow associating a product to a sale by specifying the desired quantity, regardless of whether the sale is in the process of being registered or has already been registered.
-
-### Main Flow
-1. The user provides a sale.  
-2. The user selects a product.  
-3. The system displays the product information.  
-4. The system prompts the user to enter the quantity of units to add, displaying the product’s unit of measure for clarity.  
-5. The user enters the desired quantity.  
-6. The system validates the entered quantity, ensuring it complies with the product’s unit of measure rules.  
-7. The system associates the product to the sale.  
-8. The system updates the product stock based on the added quantity.  
-9. The system records the sale detail with the following data:  
-   - Unique identifier of the sale detail (automatically generated by the system)  
-   - Associated product  
-   - Associated sale  
-   - Added quantity  
-   - Unit price  
-   *Note:* The subtotal is automatically calculated as `quantity × unit price` and is *not stored*.  
-10. The system updates the sale total amount.  
-11. The system reflects the product in the sale detail.
-
-### Alternative Flows
-
-**1.a Invalid Sale**  
-1.a.1 The system detects that the sale does not exist or is not valid.  
-1.a.2 The system displays a message: "Invalid sale".
-
-**2.a Product Not Found**  
-2.a.1 The system cannot find the selected product.  
-2.a.2 The system displays a message: "Product not found".
-
-**5.a Invalid Quantity**  
-5.a.1 The system detects that the entered quantity is less than or equal to 0, greater than the available stock, or not compatible with the product’s unit of measure (e.g., a decimal number for products sold per unit).  
-5.a.2 The system displays an error message indicating the required correction.
-
-**7.a Product Already Associated to the Sale**  
-7.a.1 The system detects that the product is already associated with the sale.  
-7.a.2 The system increments the product quantity in the sale.  
-7.a.3 The system continues with the main flow.
-
-### Business Rules
-- The sale must exist as a valid entity in the system (in progress or registered).  
-- The product must exist in the system.  
-- A quantity greater than the available stock cannot be added.  
-- If the product is already associated with the sale, its quantity must be increased instead of duplicating the record.  
-- Products with status "Inactive" cannot be added to the sale.  
-- By default, when associating a product to a sale, the system assigns an initial quantity of 1 unit, which the user can modify before confirmation.  
-- The unique identifier of the sale detail is automatically assigned by the system.  
-- The quantity must be a number greater than 0 and compatible with the product’s unit of measure.  
-- If the product’s unit of measure is "unit", the quantity must not contain decimals.
-- After associating a product to a sale, the system must recalculate the sale total amount.
-
----
-
-## RF-13: Remove Product from Sale
-
-### Description
-The system must allow removing a product from a sale by deleting the corresponding sale detail.
-
-### Main Flow
-1. The user provides a sale.  
-2. The user selects a product associated with the sale.  
-3. The system identifies the corresponding sale detail.  
-4. The user requests to remove the product from the sale.  
-5. The system deletes the sale detail.  
-6. The system updates the sale information.  
-7. The system displays the updated sale.
-
-### Alternative Flows
-
-**1.a Invalid Sale**  
-1.a.1 The system detects that the sale does not exist or is not valid.  
-1.a.2 The system displays a message: "Invalid sale".
-
-**2.a Product Not Associated**  
-2.a.1 The system detects that the product is not associated with the sale.  
-2.a.2 The system displays a message: "The product is not associated with the sale".
-
-**4.a Operation Cancelled**  
-4.a.1 The user cancels the operation.  
-4.a.2 The system makes no changes.
-
-### Business Rules
-- The sale must exist as a valid entity in the system (in progress or registered).  
-- The product must be previously associated with the sale.  
-- If the sale is in progress, removing a sale detail will automatically adjust the stock by increasing the corresponding quantity.  
-- If the sale has already been registered, removing a sale detail will also automatically adjust the stock by increasing the corresponding quantity.  
-- If the sale is in progress and all its products are removed, the sale must not be automatically deleted.  
-- If the sale has already been registered and all its products are removed, the sale must be automatically deleted.
-- After removing a product from a sale, the system must recalculate the sale total amount.
-
----
-
-## RF-14: Generate Sale Ticket
+## RF-10: Generate Sale Ticket
 
 ### Description
 The system must allow generating a purchase ticket for each registered sale, representing the proof of the transaction and including the relevant information of the sale and its associated products.
 
 ### Main Flow
-1. The system receives a registered sale.  
-2. The system retrieves the general sale data.  
-3. The system retrieves the associated sale details.  
-4. The system generates the sale ticket with the following information:  
+1. The user accesses the sales section.  
+2. The user selects a registered sale.  
+3. The user requests to print the sale ticket.   
+4. The system retrieves the general sale data.  
+5. The system retrieves the associated sale details.  
+6. The system generates the sale ticket with the following information:  
    - Business name  
+   - Business address
    - Ticket issue date  
    - Ticket issue time  
    - Name of each sold product  
@@ -612,17 +477,17 @@ The system must allow generating a purchase ticket for each registered sale, rep
    - Unit price  
    - Subtotal of each product  
    - Total sale amount  
-5. The system displays the generated ticket or sends it to the corresponding output medium (screen or printer).
+7. The system generates and prints the sale ticket using the configured output printer.
 
 ### Alternative Flows
 
-**1.a Invalid Sale**  
-1.a.1 The system detects that the sale does not exist or has not been registered.  
-1.a.2 The system displays a message: "Invalid sale".
+**2.a Sale Not Found**  
+2.a.1 The system detects that the sale does not exist.  
+2.a.2 The system displays a message: "Sale with ID '{saleId}' not found".
 
-**5.a Ticket Generation Error**  
-5.a.1 The system detects an error while generating or printing the ticket.  
-5.a.2 The system displays a message: "The ticket could not be generated".
+**7.a Ticket Generation Error**  
+7.a.1 The system detects an error while generating or printing the ticket.  
+7.a.2 The system displays a message: "The ticket could not be generated".
 
 ### Business Rules
 - The ticket can only be generated for previously registered sales.  
@@ -633,7 +498,7 @@ The system must allow generating a purchase ticket for each registered sale, rep
 
 ---
 
-## RF-15: User Authentication
+## RF-11: User Authentication
 
 ### Description
 The system must allow users to access its functionalities through an authentication process based on a unique username and password associated with a registered user account.
@@ -667,7 +532,7 @@ The system must allow users to access its functionalities through an authenticat
 
 ---
 
-## RF-17: View Product
+## RF-12: View Product
 
 ### Description
 The system must allow the user to view detailed information of a specific product registered in the system.
@@ -700,7 +565,7 @@ The system must allow the user to view detailed information of a specific produc
 
 ---
 
-## RF-18: View Sale
+## RF-13: View Sale
 
 ### Description
 The system must allow the user to view detailed information of a specific sale registered in the system.
@@ -722,7 +587,7 @@ The system must allow the user to view detailed information of a specific sale r
 
 **3.a Sale Not Found**  
 3.a.1 The system detects that the sale does not exist.  
-3.a.2 The system displays a message: "Sale not found".
+3.a.2 The system displays a message: "Sale with ID '{saleId}' not found".
 
 ### Business Rules
 - The system must allow querying a specific sale using its identifier.  
@@ -731,21 +596,24 @@ The system must allow the user to view detailed information of a specific sale r
 
 ---
 
-## RF-19: Change System Configuration
+## RF-14: Change System Configuration
 
 ### Description
-The system must allow managing configuration settings at both global and user levels, including the business name and the interface language.
+The system must allow managing configuration settings at both global and user levels, including the business name, business address, and the interface language.
 
 ### Main Flow
 1. The user accesses the system configuration section.  
-2. The system displays current configuration values.  
-3. The user can perform the following actions depending on their role:  
-   - Change the interface language (all users)  
-   - Update the business name (administrator only)  
+2. The system displays the current configuration values:
+   - Business name  
+   - Business address  
+   - Interface language  
+3. The user modifies configuration values depending on their role:
+   - Interface language (all users)  
+   - Business name and business address (administrator only)  
 4. The system validates the entered data.  
-5. The system applies the changes immediately:  
-   - The business name is updated globally  
-   - The interface language is updated for the current user  
+5. The system applies the changes:
+   - The business name and business address are updated globally (if modified by an administrator)  
+   - The interface language is updated for the current user   
 6. The system confirms the changes by updating the interface and displayed business name.
 
 ### Alternate Flow
@@ -756,8 +624,11 @@ The system must allow managing configuration settings at both global and user le
 ### Business Rules
 - The business name is mandatory.
 - The business name is shared by all users.
+- The business address is mandatory.  
+- The business address is shared by all users.
 - The system must initialize the business name with a default value ("My Business").
-- Only administrators can modify the business name.
+- The system must initialize the business address with a default value ("Business Address").
+- Only administrators can modify the business name and business address.
 - The interface language is specific to each user.
 - The interface language is mandatory for each user.
 - The selected language must persist for each user and be applied automatically on login.
@@ -767,7 +638,7 @@ The system must allow managing configuration settings at both global and user le
 
 ---
 
-## RF-20: View Sales Statistics
+## RF-15: View Sales Statistics
 
 ### Description
 The system must allow the user to view sales statistics within a selected time range, showing the total revenue and the list of products sold during that period.
@@ -819,7 +690,7 @@ The system must allow the user to view sales statistics within a selected time r
 
 ---
 
-## RF-21: Logout
+## RF-16: Logout
 
 ### Description
 The system must allow the user to log out from the account they are currently using.
@@ -835,7 +706,7 @@ The system must allow the user to log out from the account they are currently us
 
 ---
 
-## RF-22: Register User
+## RF-17: Register User
 
 ### Description
 The system must allow administrators to register new users with the Operator role.
@@ -875,7 +746,7 @@ The system must allow administrators to register new users with the Operator rol
 
 ---
 
-## RF-23: View Users
+## RF-18: View Users
 
 ### Description
 The system must allow administrators to view the list of registered users.
@@ -900,7 +771,7 @@ The system must allow administrators to view the list of registered users.
 
 ---
 
-## RF-24: View User
+## RF-19: View User
 
 ### Description
 The system must allow administrators to view detailed information of a specific user.
@@ -927,7 +798,7 @@ The system must allow administrators to view detailed information of a specific 
 
 ---
 
-## RF-25: Update User
+## RF-20: Update User
 
 ### Description
 The system must allow administrators to update user information.
@@ -962,7 +833,7 @@ The system must allow administrators to update user information.
 
 ---
 
-## RF-26: Change User Status
+## RF-21: Change User Status
 
 ### Description
 The system must allow administrators to change the status of a user.
@@ -993,7 +864,7 @@ The system must allow administrators to change the status of a user.
 
 ---
 
-## RF-27: Activate Product
+## RF-22: Activate Product
 
 ### Description
 The system must allow the user to activate an inactive product by marking it as active.
@@ -1041,56 +912,49 @@ The system must allow the user to activate an inactive product by marking it as 
 - Can view products (RF-2).  
 - Can update products (RF-3).  
 - Can deactivate products (RF-4).  
-- Can activate products (RF-27).  
+- Can activate products (RF-22).  
 - Can search products by barcode (RF-5).  
 - Can register products by barcode (RF-6).  
-- Can view a specific product (RF-17).  
+- Can view a specific product (RF-12).  
 - Can register sales (RF-7).  
 - Can view sales (RF-8).  
-- Can update sales (RF-9).  
-- Can delete sales (RF-10).  
-- Can associate products to sales (RF-11, RF-12).  
-- Can remove products from sales (RF-13).  
-- Can generate sale tickets (RF-14).  
-- Can view a specific sale (RF-18).  
-- Can authenticate in the system (RF-15).  
-- Can change all system configuration settings (RF-19).
-- Can view sales statistics (RF-20).
-- Can log out of the system (RF-21).
-- Can register users (RF-22).  
-- Can view users (RF-23).  
-- Can view a specific user (RF-24).  
-- Can update users (RF-25).  
-- Can change user status (RF-26). 
+- Can add products to a sale via barcode (RF-9).  
+- Can generate sale tickets (RF-10).  
+- Can view a specific sale (RF-13).  
+- Can authenticate in the system (RF-11).  
+- Can change system configuration settings, including business name, business address, and interface language (RF-14).
+- Can view sales statistics (RF-15).
+- Can log out of the system (RF-16).
+- Can register users (RF-17).  
+- Can view users (RF-18).  
+- Can view a specific user (RF-19).  
+- Can update users (RF-20).  
+- Can change user status (RF-21). 
 
 **Operator (Cashier)**
-- Can authenticate in the system (RF-15).  
+- Can authenticate in the system (RF-11).  
 - Can view products (RF-2).  
-- Can view a specific product (RF-17).  
 - Can search products by barcode (RF-5).  
-- Can view sales (RF-8).  
-- Can view a specific sale (RF-18).  
+- Can view a specific product (RF-12).  
 - Can register sales (RF-7).  
-- Can associate products to sales (RF-11, RF-12).  
-- Can remove products from sales during the sale registration process (RF-13).  
-- Can generate sale tickets (RF-14).  
-- Can change the interface language (RF-19).  
-- Can view sales statistics (RF-20).
-- Can log out of the system (RF-21).
+- Can view sales (RF-8).  
+- Can add products to a sale via barcode (RF-9).  
+- Can generate sale tickets (RF-10).  
+- Can view a specific sale (RF-13).  
+- Can change the interface language (RF-14).  
+- Can log out of the system (RF-16). 
 - Cannot register products (RF-1).  
 - Cannot update products (RF-3).  
 - Cannot deactivate products (RF-4).  
+- Cannot activate products (RF-22).  
 - Cannot register products by barcode (RF-6).  
-- Cannot update sales (RF-9).  
-- Cannot delete sales (RF-10).  
-- Cannot remove products from sales once the sale has been registered in the system (RF-13).
-- Cannot change business name (RF-19)
-- Cannot register users (RF-22).  
-- Cannot view users (RF-23).  
-- Cannot view a specific user (RF-24).  
-- Cannot update users (RF-25).  
-- Cannot change user status (RF-26).  
-- Cannot activate products (RF-27).  
+- Cannot modify business name or business address (RF-14).  
+- Cannot view sales statistics (RF-15).  
+- Cannot register users (RF-17).  
+- Cannot view users (RF-18).  
+- Cannot view a specific user (RF-19).  
+- Cannot update users (RF-20).  
+- Cannot change user status (RF-21).
 
 ---
 

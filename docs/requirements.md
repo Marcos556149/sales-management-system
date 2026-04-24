@@ -118,7 +118,7 @@ For each recorded sale, the system must be able to generate a purchase receipt t
 - Receipt issue time
 - Unique sale identifier
 - List of sold products
-- Quantity of each product
+- Quantity of each product along with its unit of measure
 - Unit price
 - Subtotal for each product
 - Total sale amount
