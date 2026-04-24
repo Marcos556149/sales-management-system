@@ -72,8 +72,9 @@ Represents the global configuration of the system.
 
 - system_configuration_id (PK)
 - business_name
+- business_address
 
-Note: This table is initialized with a single row containing the system's default configuration(system_configuration_id=1, business_name="My Business").
+Note: This table is initialized with a single row containing the system's default configuration(system_configuration_id=1, business_name="My Business", business_address = "Business Address").
 
 ## Normalization
 
