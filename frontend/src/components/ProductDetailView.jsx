@@ -260,7 +260,9 @@ const ProductDetailView = () => {
           <div className="info-grid">
             <div className="info-box">
               <h3 className="info-label">Price</h3>
-              <p className="info-value price-value">${product.productPrice?.toFixed(2) ?? '0.00'}</p>
+              <p className="info-value price-value" title={`$${product.productPrice?.toFixed(2) ?? '0.00'}`}>
+                ${product.productPrice?.toFixed(2) ?? '0.00'}
+              </p>
             </div>
             
             <div className="info-box">
@@ -270,28 +272,30 @@ const ProductDetailView = () => {
                   const stock = product.productStock ?? 0;
                   const min = product.minimumStock ?? 0;
                   if (stock === 0) {
-                    return <p className="info-value" style={{ color: 'var(--danger-color, #ef4444)' }}>{TEXTS.products.outOfStock}</p>;
+                    return <p className="info-value" title={TEXTS.products.outOfStock} style={{ color: 'var(--danger-color, #ef4444)' }}>{TEXTS.products.outOfStock}</p>;
                   }
                   if (stock <= min) {
                     return (
-                      <p className="info-value" style={{ color: 'var(--danger-color, #ef4444)' }}>
+                      <p className="info-value" title={stock} style={{ color: 'var(--danger-color, #ef4444)' }}>
                         {stock}
                       </p>
                     );
                   }
-                  return <p className="info-value">{stock}</p>;
+                  return <p className="info-value" title={stock}>{stock}</p>;
                 })()}
               </div>
             </div>
 
             <div className="info-box">
               <h3 className="info-label">Minimum Stock</h3>
-              <p className="info-value">{product.minimumStock ?? 0}</p>
+              <p className="info-value" title={product.minimumStock ?? 0}>{product.minimumStock ?? 0}</p>
             </div>
 
             <div className="info-box">
               <h3 className="info-label">Unit of Measure</h3>
-              <p className="info-value unit-only">{product.unitOfMeasure?.label || 'Unknown'}</p>
+              <p className="info-value unit-only" title={product.unitOfMeasure?.label || 'Unknown'}>
+                {product.unitOfMeasure?.label || 'Unknown'}
+              </p>
             </div>
           </div>
         </div>

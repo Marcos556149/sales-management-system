@@ -59,8 +59,8 @@ For each product, the following data must be recorded:
 - Product code (unique identifier within the system)  
 - Product price  
 - Unit of measure (e.g., unit, kilogram, liter)  
-- Available stock  
-- Minimum stock level used to identify low stock products  
+- Available stock (according to the product’s unit of measure)
+- Minimum stock level used to identify low stock products (according to the product’s unit of measure)
 - Product status (active/inactive)
 
 The system must allow:
@@ -73,7 +73,7 @@ The system must allow:
 - Reactivate a product (mark it as active)  
 
 ## 4. Sales Management
-The system must allow recording sales made in the business.  
+The system must allow managing sales transactions made in the business, including their registration and consultation.
 
 For each sale, the following data must be stored:
 - Unique sale identifier  
@@ -84,9 +84,8 @@ For each sale, the following data must be stored:
 
 The system must allow:
 - Register a new sale  
-- View existing sales  
-- Update sale data  
-- Delete a sale  
+- View the list of existing sales
+- View detailed information of a specific sale
 
 ## 5. Sale Detail
 For each product included in a sale, the following data must be stored:
@@ -98,9 +97,8 @@ For each product included in a sale, the following data must be stored:
 - Line subtotal  
 
 The system must allow:
-- Add a product to a sale  
-- Remove a product from a sale  
-- Update sale detail data  
+- Add a product to a sale while the sale is being registered
+- Remove a product from a sale while the sale is being registered
 
 ## 6. Barcode Scanning
 The system must allow barcode scanning using a barcode reader.
@@ -111,15 +109,19 @@ This functionality will allow:
 - Speeding up product selection in sales processes through barcode scanning  
 
 ## 7. Sales Receipt Generation
+
 For each recorded sale, the system must be able to generate a purchase receipt that includes:
-- Business name  
-- Receipt issue date  
-- Receipt issue time  
-- List of sold products  
-- Quantity of each product  
-- Unit price  
-- Subtotal for each product  
-- Total sale amount  
+
+- Business name
+- Business address
+- Receipt issue date
+- Receipt issue time
+- Unique sale identifier
+- List of sold products
+- Quantity of each product
+- Unit price
+- Subtotal for each product
+- Total sale amount
 
 The receipt must represent proof of the completed transaction.
 
@@ -128,39 +130,37 @@ The system must have two predefined access types (roles):
 
 **Administrator**
 - Has full access to all system functionalities  
+- Can access the system through authentication
 - Can manage products, including registration, updates, activation, and deactivation  
 - Can register and search products by barcode  
 - Can view product lists, product details, and stock information
-- Can view and manage sales, including sale details  
-- Can register, update, and delete sales  
-- Can add and remove products from sales  
-- Can generate sales receipts  
-- Can view detailed product and sales information  
+- Can register new sales
+- Can view sales lists and detailed sale information, including associated sale details
+- Can add and remove products from a sale while the sale is being registered
+- Can generate sales receipts for recorded sales
 - Can view sales statistics  
-- Can update the business name
+- Can update business information, including the business name and address
 - Can change their interface language
 - Can register, view, and update users (operators)
 - Can change user status (active, suspended, deleted)
 - Can log out from the system
 
 **Operator (cashier)**
-- Can search products by barcode  
-- Can view product lists, product details, and stock information  
-- Can access the system through authentication  
-- Can register sales  
-- Can add products to sales  
-- Can remove products from sales only during sale registration  
-- Can generate sales receipts    
-- Can view sales  
-- Can view sales statistics  
+- Can access the system through authentication
+- Can search products by barcode
+- Can view product lists, product details, and stock information
+- Can register new sales
+- Can add and remove products from a sale while the sale is being registered
+- Can generate sales receipts for recorded sales
+- Can view sales lists and detailed sale information
+- Can view sales statistics
 - Can change their interface language
 - Can log out from the system
 - Cannot register products  
 - Cannot update product information  
 - Cannot deactivate or reactivate products  
 - Cannot register products by barcode
-- Cannot modify or delete sales or their details once registered  
-- Cannot modify the business name
+- Cannot modify business information, including the business name and address
 - Cannot register, view, and update users (operators)
 - Cannot change user status (active, suspended, deleted)
 
@@ -215,6 +215,7 @@ The system must provide a user interface for managing configuration settings at 
 The system must allow storing and updating the following global configuration data:
 
 - Business name (required; used in sales receipt generation)
+- Business address (required; used in sales receipt generation)
 
 This configuration is shared across all users of the system.
 
@@ -229,7 +230,7 @@ The system must allow each user to manage their own interface preferences:
 The system must allow:
 
 - Viewing current global configuration settings  
-- Updating the business name (administrator only)  
+- Updating business information, including the business name and address (administrator only)
 - Changing the interface language (all authenticated users)  
 
 The selected interface language must persist for each user and be applied automatically upon login.

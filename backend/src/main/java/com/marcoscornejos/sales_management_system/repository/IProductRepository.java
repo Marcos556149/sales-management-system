@@ -17,7 +17,6 @@ package com.marcoscornejos.sales_management_system.repository;
 
 import com.marcoscornejos.sales_management_system.model.Product;
 import com.marcoscornejos.sales_management_system.model.ProductStatus;
-import com.marcoscornejos.sales_management_system.model.StockLevelFilter;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
