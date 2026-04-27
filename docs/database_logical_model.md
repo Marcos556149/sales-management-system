@@ -64,6 +64,7 @@ Represents the details of each sale, linking products to sales.
 - sale_detail_id (PK)
 - sale_price
 - product_quantity
+- unit_of_measure_at_sale
 - sale_id (FK → sale.sale_id)
 - product_code (FK → product.product_code)
 

@@ -330,11 +330,12 @@ public class SaleService implements ISaleService{
 
 
 
-            // Create sale detail using current product price
+            // Create sale detail using current product price and unit of measure snapshot
             SaleDetail saleDetail = new SaleDetail();
             saleDetail.setProduct(product);
             saleDetail.setProductQuantity(quantity);
             saleDetail.setSalePrice(product.getProductPrice());
+            saleDetail.setUnitOfMeasureAtSale(product.getUnitOfMeasure());
 
             saleDetails.add(saleDetail);
         }

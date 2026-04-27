@@ -228,7 +228,7 @@ const SaleDetailView = () => {
                       <td className="font-mono text-sm">{item.productCode}</td>
                       <td className="font-medium">{item.productName}</td>
                       <td className="stock-cell">
-                        {item.productQuantity} <span className="unit-text">{item.unitOfMeasure?.label || ''}</span>
+                        {item.productQuantity} <span className="unit-text">{item.unitOfMeasureAtSale?.label || ''}</span>
                       </td>
                       <td>${item.salePrice?.toFixed(2) ?? '0.00'}</td>
                       <td className="subtotal-cell">${item.subtotal?.toFixed(2) ?? '0.00'}</td>

@@ -32,9 +32,9 @@ public class SaleDetailResponseDTO {
     private BigDecimal productQuantity;
 
     /**
-     * Unit of measure of the product(abbreviation).(e.g., u, kg, lt).
+     * Unit of measure of the product at the time of the sale.
      */
-    private EnumDTO unitOfMeasure;
+    private EnumDTO unitOfMeasureAtSale;
 
     /**
      * Price of the product at the time of sale.

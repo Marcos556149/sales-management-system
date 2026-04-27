@@ -307,6 +307,7 @@ The system must allow the user to register sales made in the business, storing t
    - Associated sale  
    - Quantity sold  
    - Unit price at the time of the sale  
+   - Unit of measure at the time of the sale
    - Subtotal (calculated as quantity × unit price, not stored) 
 20. The system displays a confirmation message: "Sale successfully registered. Do you want to print the receipt?"  
 21. The user confirms receipt printing, invoking the Generate Receipt operation (RF-10).  
@@ -360,6 +361,8 @@ The system must allow the user to register sales made in the business, storing t
 - The product selection interface must only display active products with available stock greater than 0.
 - The system must exclude inactive products and products with zero stock from the product selection list.
 - The product selection interface must visually indicate products with low stock to assist the user during the sale process.
+- The unit of measure used for each product must be stored in the sale detail at the time the sale is confirmed.
+- Later changes to the product unit of measure must not affect previously registered sales.
 
 ---
 
@@ -587,7 +590,7 @@ The system must allow the user to view detailed information of a specific sale r
    - Sale time  
    - Seller username (user_name)  
    - Total sale amount  
-   - Details of each sold product: code, name, quantity along with its unit of measure, price at the time of sale, and subtotal  
+   - Details of each sold product: code, name, quantity along with the unit of measure recorded at the time of the sale, price at the time of sale, and subtotal
 
 ### Alternative Flows
 
@@ -598,7 +601,8 @@ The system must allow the user to view detailed information of a specific sale r
 ### Business Rules
 - The system must allow querying a specific sale using its identifier.  
 - The displayed information must accurately reflect the stored data of the sale and its details.  
-- The quantity of each product must be displayed together with its unit of measure to correctly represent the sale.
+- The quantity of each product must be displayed together with the unit of measure stored in the sale detail.
+- Changes made later to the product unit of measure must not affect previously registered sales.
 
 ---
 

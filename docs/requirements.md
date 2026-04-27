@@ -93,8 +93,11 @@ For each product included in a sale, the following data must be stored:
 - Associated sale  
 - Sold product  
 - Price at the time of the sale  
-- Quantity sold (according to the product’s unit of measure)  
+- Quantity sold (according to the product’s unit of measure at the time of the sale)
+- Unit of measure at the time of the sale
 - Line subtotal  
+
+The unit of measure stored in the sale detail must preserve the value used during the transaction, even if the product unit of measure is modified later.
 
 The system must allow:
 - Add a product to a sale while the sale is being registered
@@ -118,7 +121,7 @@ For each recorded sale, the system must be able to generate a purchase receipt t
 - Receipt issue time
 - Unique sale identifier
 - List of sold products
-- Quantity of each product along with its unit of measure
+- Quantity of each product along with the unit of measure recorded at the time of the sale
 - Unit price
 - Subtotal for each product
 - Total sale amount
