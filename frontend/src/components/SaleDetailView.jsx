@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Edit2, Printer, Receipt, Trash2 } from 'lucide-react';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
+import { ArrowLeft, Printer, Receipt } from 'lucide-react';
+import { useKeyboardShortcuts } from '../hooks/useKeyboardShortcuts';
 import { useToast } from './ToastContext';
 import './ProductDetailView.css'; // Inheriting structural SaaS standard like .view-container, .detail-toolbar, .detail-card
 import './SaleDetailView.css';
 
 // --- Custom hook to handle data fetching ---
-const useSaleDetail = (saleId) => {
-  const [sale, setSale] = useState(null);
-  const [loading, setLoading] = useState(true);
+const useSaleDetail = (saleId, initialSale = null) => {
+  const [sale, setSale] = useState(initialSale && String(initialSale.saleId) === String(saleId) ? initialSale : null);
+  const [loading, setLoading] = useState(!sale);
   const [error, setError] = useState(null);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
 
@@ -16,6 +17,11 @@ const useSaleDetail = (saleId) => {
 
   useEffect(() => {
     let isMounted = true;
+    
+    // If we already have the sale from navigation state, don't fetch on mount
+    if (sale && refreshTrigger === 0) {
+      return;
+    }
 
     const fetchSale = async () => {
       const controller = new AbortController();
@@ -81,14 +87,25 @@ const useSaleDetail = (saleId) => {
 const SaleDetailView = () => {
   const { id: saleId } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
   const { addToast } = useToast();
   
-  const { sale, loading, error } = useSaleDetail(saleId);
+  const { sale, loading, error } = useSaleDetail(saleId, location.state?.sale);
   const [actionLoading, setActionLoading] = useState(false);
 
   const handleBack = () => {
     navigate('/dashboard/sales');
   };
+
+  // Register contextual shortcuts
+  useKeyboardShortcuts(React.useMemo(() => ({
+    'ctrl+b': () => handleBack(),
+    't': () => {
+      if (!actionLoading) {
+         addToast("Printing coming soon", "info");
+      }
+    }
+  }), [navigate, actionLoading, addToast]));
 
   const formatDateTimeFull = (dateStr, timeStr) => {
     if (!dateStr || !timeStr) return '';
@@ -99,8 +116,12 @@ const SaleDetailView = () => {
       const dateOpts = { year: 'numeric', month: 'long', day: 'numeric' };
       const formattedDate = dateObj.toLocaleDateString('en-US', dateOpts);
       
-      const [hours, minutes] = timeStr.split(':');
-      return `${formattedDate} • ${hours}:${minutes}`;
+      const parts = timeStr.split(':');
+      let seconds = '00';
+      if (parts.length >= 3) {
+        seconds = parts[2].split('.')[0];
+      }
+      return `${formattedDate} • ${parts[0]}:${parts[1]}:${seconds}`;
     } catch(e) {
       return `${dateStr} at ${timeStr}`;
     }
@@ -149,18 +170,10 @@ const SaleDetailView = () => {
         <button className="btn-secondary" onClick={handleBack}>
           <ArrowLeft size={16} />
           <span>Back to Sales</span>
+          <span className="btn-shortcut">Ctrl+B</span>
         </button>
         
         <div className="detail-actions">
-          <button 
-            className="btn-outline-primary whitespace-nowrap"
-            disabled={actionLoading}
-            onClick={() => addToast("Edit sale coming soon", "info")}
-          >
-            <Edit2 size={16} />
-            <span>Edit Sale</span>
-          </button>
-          
           <button 
             className="btn-outline-success whitespace-nowrap"
             disabled={actionLoading}
@@ -168,15 +181,7 @@ const SaleDetailView = () => {
           >
             <Printer size={16} />
             <span>Print Ticket</span>
-          </button>
-          
-          <button 
-            className="btn-outline-danger whitespace-nowrap"
-            disabled={actionLoading}
-            onClick={() => addToast("Delete sale coming soon", "error")}
-          >
-            <Trash2 size={16} />
-            <span>Delete Sale</span>
+            <span className="btn-shortcut">T</span>
           </button>
         </div>
       </div>
@@ -189,7 +194,7 @@ const SaleDetailView = () => {
           <div className="sale-info-group">
             <Receipt size={36} className="sale-main-icon" strokeWidth={1.5} />
             <div className="sale-header-text">
-              <h2 className="sale-title">Sale #{sale.saleId}</h2>
+              <h2 className="sale-title">Sale {sale.saleId}</h2>
               <div className="sale-meta-row">
                 <span className="sale-meta-item seller-badge">Seller: {sale.userName || 'Unknown'}</span>
                 <span className="sale-meta-dot">•</span>

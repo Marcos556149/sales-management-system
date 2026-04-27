@@ -113,6 +113,7 @@
   color: var(--text-primary);
   outline: none;
   cursor: pointer;
+  padding-right: 12px;
 }
 
 .btn-primary {

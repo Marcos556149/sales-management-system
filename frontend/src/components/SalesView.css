@@ -64,6 +64,11 @@
   color: var(--text-secondary);
 }
 
+/* Adjust drop-down arrow spacing specifically for Sales */
+.sales-view-container .sort-dropdown {
+  padding-right: 8px;
+}
+
 /* React Datepicker Custom Theme for SalesView */
 .react-datepicker {
   font-family: inherit !important;

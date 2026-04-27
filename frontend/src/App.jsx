@@ -39,11 +39,12 @@ function App() {
   // Register global keyboard shortcuts
   useKeyboardShortcuts(React.useMemo(() => ({
     'ctrl+shift+p': () => {
-      if (isAuthenticated) {
-        navigate('/dashboard/products');
-      }
+      navigate('/dashboard/products');
+    },
+    'ctrl+shift+v': () => {
+      navigate('/dashboard/sales');
     }
-  }), [isAuthenticated, navigate]));
+  }), [navigate]));
 
   // The context object to be shared with all routes
   const authContext = {

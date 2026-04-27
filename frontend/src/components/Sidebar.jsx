@@ -41,6 +41,7 @@ const Sidebar = () => {
             >
               <ShoppingCart className="nav-icon" size={20} />
               <span>Sales</span>
+              <span className="nav-shortcut">Ctrl+Shift+V</span>
             </NavLink>
           </li>
           

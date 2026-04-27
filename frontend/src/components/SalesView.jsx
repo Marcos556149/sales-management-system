@@ -9,6 +9,8 @@ import 'react-datepicker/dist/react-datepicker.css';
 import './ProductsView.css';
 import './SalesView.css';
 import { useSalesContext } from './SalesContext';
+import { useKeyboardShortcuts } from '../hooks/useKeyboardShortcuts';
+import { apiClient } from '../api/client';
 
 const CustomDateInput = React.forwardRef(({ value, onClick }, ref) => (
   <button 
@@ -27,12 +29,15 @@ const SalesView = () => {
   const { addToast } = useToast();
   
   const {
+      searchSaleId, setSearchSaleId,
+      appliedSearchSaleId, setAppliedSearchSaleId,
       dateFilter, setDateFilter,
       sortOrder, setSortOrder,
       pageFrontend, setPageFrontend,
       salesData: sales, setSalesData: setSales,
       totalPages, setTotalPages,
       totalElements, setTotalElements,
+      totalGlobalElements, setTotalGlobalElements,
       scrollPositionRef,
       isCached, setIsCached,
       getTodayFormatted
@@ -46,16 +51,68 @@ const SalesView = () => {
   const [loading, setLoading] = useState(!isCached);
   const [error, setError] = useState(null);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
+  const [actionLoading, setActionLoading] = useState(false);
 
   const abortControllerRef = useRef(null);
+  const searchInputRef = useRef(null);
+
+  // Debounce for search input
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setAppliedSearchSaleId((prev) => {
+        if (prev !== searchSaleId) {
+          setPageFrontend(1);
+          return searchSaleId;
+        }
+        return prev;
+      });
+    }, 400);
+
+    return () => clearTimeout(handler);
+  }, [searchSaleId, setAppliedSearchSaleId, setPageFrontend]);
+
+  // Handle immediate search on Enter key
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      if (appliedSearchSaleId !== searchSaleId) {
+        setPageFrontend(1);
+        setAppliedSearchSaleId(searchSaleId);
+      }
+    }
+  };
+
+  const handleClearSearch = () => {
+    setSearchSaleId('');
+    setPageFrontend(1);
+    setAppliedSearchSaleId('');
+  };
+
+  const handleSearchChange = (e) => {
+    const val = e.target.value;
+    // Allow empty string to clear the input
+    if (val === '') {
+      setSearchSaleId('');
+      return;
+    }
+    // Remove all non-numeric characters
+    const numericVal = val.replace(/[^0-9]/g, '');
+    // Prevent 0 as first character or standalone "0"
+    if (numericVal.length > 0 && parseInt(numericVal, 10) >= 1) {
+      // Remove leading zeros by parsing and re-stringifying
+      setSearchSaleId(parseInt(numericVal, 10).toString());
+    }
+  };
 
   // Format Helpers
   const formatTime = (timeStr) => {
     if (!timeStr) return '';
     // timeStr could be "HH:mm:ss" or "HH:mm:ss.SSS"
     const parts = timeStr.split(':');
-    if (parts.length >= 2) {
-      return `${parts[0]}:${parts[1]}`;
+    if (parts.length >= 3) {
+      const seconds = parts[2].split('.')[0];
+      return `${parts[0]}:${parts[1]}:${seconds}`;
+    } else if (parts.length === 2) {
+      return `${parts[0]}:${parts[1]}:00`;
     }
     return timeStr;
   };
@@ -71,8 +128,24 @@ const SalesView = () => {
   };
 
   // Handle row click
-  const handleRowClick = (id) => {
-    navigate(`/dashboard/sales/${id}`);
+  const handleRowClick = async (id) => {
+    if (actionLoading) return;
+    
+    setActionLoading(true);
+    try {
+      const response = await apiClient.get(`/api/sales/${id}`);
+      navigate(`/dashboard/sales/${id}`, { state: { sale: response.data } });
+    } catch (err) {
+      if (err.status === 400 || err.status === 404) {
+        addToast(err.message || `Sale with ID '${id}' not found`, 'error');
+        // Refresh the list to remove the missing sale
+        setRefreshTrigger(prev => prev + 1);
+      } else {
+        addToast(err.message || 'Error checking sale', 'error');
+      }
+    } finally {
+      setActionLoading(false);
+    }
   };
 
   // 0. Fetch Filter Options on Mount
@@ -81,12 +154,10 @@ const SalesView = () => {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 8000);
       try {
-        const response = await fetch('/api/sales/filters', { signal: controller.signal });
+        const response = await apiClient.get('/api/sales/filters', { signal: controller.signal });
         clearTimeout(timeoutId);
-        if (!response.ok) throw new Error('Failed to fetch filters');
-        const data = await response.json();
         
-        setSortOptions(data.sortOptions || []);
+        setSortOptions(response.data.timeSortOptions || []);
       } catch (err) {
         clearTimeout(timeoutId);
         console.error("Error loading filters:", err);
@@ -101,7 +172,7 @@ const SalesView = () => {
     fetchFilters();
   }, [addToast]);
 
-  const prevParams = useRef({ dateFilter, sortOrder, pageFrontend, refreshTrigger });
+  const prevParams = useRef({ dateFilter, sortOrder, pageFrontend, refreshTrigger, appliedSearchSaleId });
 
   // Scroll Position Management
   useEffect(() => {
@@ -139,9 +210,10 @@ const SalesView = () => {
       prevParams.current.dateFilter !== dateFilter ||
       prevParams.current.sortOrder !== sortOrder ||
       prevParams.current.pageFrontend !== pageFrontend ||
-      prevParams.current.refreshTrigger !== refreshTrigger;
+      prevParams.current.refreshTrigger !== refreshTrigger ||
+      prevParams.current.appliedSearchSaleId !== appliedSearchSaleId;
 
-    prevParams.current = { dateFilter, sortOrder, pageFrontend, refreshTrigger };
+    prevParams.current = { dateFilter, sortOrder, pageFrontend, refreshTrigger, appliedSearchSaleId };
 
     // Skip fetch entirely if we are cached and this is just a mount/remount
     if (!paramsChanged && isCached) {
@@ -165,48 +237,37 @@ const SalesView = () => {
       try {
         const params = new URLSearchParams();
         
-        params.append('date', dateFilter);
+        if (dateFilter) {
+          params.append('date', dateFilter);
+        }
+        if (appliedSearchSaleId) {
+          params.append('searchSaleId', appliedSearchSaleId);
+        }
         params.append('timeSort', sortOrder);
         // Frontend uses 1-based index, backend uses 0-based
         params.append('page', pageFrontend - 1);
         params.append('size', 50);
 
-        const response = await fetch(`/api/sales?${params.toString()}`, {
+        const queryString = params.toString();
+        const response = await apiClient.get(`/api/sales?${queryString}`, {
           signal: abortController.signal
         });
 
         clearTimeout(timeoutId);
 
-        if (!response.ok) {
-          const errorData = await response.json().catch(() => ({}));
-          
-          let errorMessage = errorData.error || errorData.message;
-          if (!errorMessage && Object.keys(errorData).length > 0) {
-            // Mapping MethodArgumentTypeMismatchException or Field validations
-            const firstKey = Object.keys(errorData)[0];
-            if (typeof errorData[firstKey] === 'string') {
-              errorMessage = errorData[firstKey];
-            }
-          }
-
-          // Using standard HTTP status responses matching Product's style
-          if (response.status === 404) {
-             throw new Error(errorMessage || "No sales found for this date.");
-          }
-          throw new Error(errorMessage || `Error: ${response.status}`);
-        }
-
-        const data = await response.json();
+        const data = response.data;
         
         if (abortControllerRef.current === abortController) {
           if (data.content !== undefined) {
             setSales(data.content);
             setTotalPages(data.totalPages || 1);
             setTotalElements(data.totalElements || 0);
+            setTotalGlobalElements(data.totalGlobalElements !== undefined ? data.totalGlobalElements : null);
           } else {
             setSales(Array.isArray(data) ? data : []);
             setTotalPages(1);
             setTotalElements(0);
+            setTotalGlobalElements(null);
           }
           setIsCached(true); // Mark that we successfully fetched and cached data
         }
@@ -226,6 +287,7 @@ const SalesView = () => {
             setSales([]);
             setTotalPages(1);
             setTotalElements(0);
+            setTotalGlobalElements(null);
             setIsCached(true); // Empty list is still a valid cache
             // Don't show the red error box for empty lists, just empty state
           } else {
@@ -252,7 +314,7 @@ const SalesView = () => {
         abortControllerRef.current.abort();
       }
     };
-  }, [dateFilter, sortOrder, pageFrontend, refreshTrigger]);
+  }, [dateFilter, sortOrder, pageFrontend, refreshTrigger, appliedSearchSaleId]);
 
 
   // Actions
@@ -261,7 +323,24 @@ const SalesView = () => {
     setRefreshTrigger(prev => prev + 1);
   };
 
-  const hasActiveFilters = dateFilter !== getTodayFormatted() || sortOrder !== 'DESCENDING';
+  const hasActiveFilters = dateFilter !== '' || sortOrder !== 'NEWEST_FIRST' || appliedSearchSaleId !== '';
+
+  // Register contextual shortcuts
+  useKeyboardShortcuts(React.useMemo(() => ({
+    'shift+n': () => navigate('/dashboard/sales/new'),
+    'ctrl+shift+r': () => handleManualRefresh(),
+    '/': () => searchInputRef.current?.focus(),
+    'arrowright': () => {
+      if (pageFrontend < totalPages) {
+        setPageFrontend(prev => prev + 1);
+      }
+    },
+    'arrowleft': () => {
+      if (pageFrontend > 1) {
+        setPageFrontend(prev => prev - 1);
+      }
+    }
+  }), [navigate, handleManualRefresh, pageFrontend, totalPages, setPageFrontend]));
 
   return (
     <div className="view-container sales-view-container">
@@ -269,6 +348,30 @@ const SalesView = () => {
       <div className="view-toolbar">
         <div className="toolbar-left">
           
+          <div className="search-bar">
+            <Search className="search-icon" size={18} />
+            <input 
+              ref={searchInputRef}
+              type="text" 
+              placeholder="Search by Sale ID..." 
+              value={searchSaleId}
+              onChange={handleSearchChange}
+              onKeyDown={handleKeyDown}
+            />
+            <div className="search-actions">
+              {searchSaleId && (
+                <button 
+                  className="clear-search-btn" 
+                  onClick={handleClearSearch}
+                  title="Clear Search"
+                >
+                  <X size={16} />
+                </button>
+              )}
+              <span className="search-hint">/</span>
+            </div>
+          </div>
+
           <div className="filter-group">
             {/* Date Filter */}
             <div className="filter-item">
@@ -313,12 +416,9 @@ const SalesView = () => {
                 disabled={filtersLoading || sortOptions.length === 0}
               >
                 {filtersLoading ? (
-                  <option value="DESCENDING">Loading...</option>
+                  <option value="NEWEST_FIRST">Loading...</option>
                 ) : sortOptions.length === 0 ? (
-                  <>
-                    <option value="DESCENDING">Descending</option>
-                    <option value="ASCENDING">Ascending</option>
-                  </>
+                  <option value="NEWEST_FIRST">Newest First</option>
                 ) : (
                   sortOptions.map(opt => (
                     <option key={opt.code} value={opt.code}>
@@ -339,6 +439,7 @@ const SalesView = () => {
           >
             <RefreshCw size={18} className={loading ? "spin-animation" : ""} />
             <span>{loading ? 'Refreshing...' : 'Refresh'}</span>
+            <span className="btn-shortcut">Ctrl+Shift+R</span>
           </button>
           
           <button 
@@ -347,6 +448,7 @@ const SalesView = () => {
           >
             <Plus size={18} />
             <span>New Sale</span>
+            <span className="btn-shortcut" style={{ backgroundColor: 'rgba(255, 255, 255, 0.2)', color: 'white', borderColor: 'rgba(255, 255, 255, 0.3)' }}>Shift+N</span>
           </button>
         </div>
       </div>
@@ -363,9 +465,9 @@ const SalesView = () => {
           </div>
         ) : sales.length === 0 ? (
           <div className="empty-state">
-            {hasActiveFilters 
-              ? <p>No sales match the search criteria</p>
-              : <p>No sales found</p>
+            {totalGlobalElements === 0 
+              ? <p>No sales available</p>
+              : <p>No sales match the search criteria</p>
             }
           </div>
         ) : (
@@ -389,22 +491,12 @@ const SalesView = () => {
                     style={{ cursor: 'pointer' }}
                     className="interactive-row"
                   >
-                    <td className="font-mono text-sm">#{sale.saleId}</td>
+                    <td className="font-mono text-sm">{sale.saleId}</td>
                     <td className="font-medium">{formatDate(sale.saleDate)}</td>
                     <td>{formatTime(sale.saleTime)}</td>
                     <td>{sale.userName || 'Unknown'}</td>
                     <td className="total-amount-cell">${sale.totalAmount?.toFixed(2) ?? '0.00'}</td>
                     <td className="actions-cell text-right" onClick={(e) => e.stopPropagation()}>
-                        <button 
-                          className="action-btn edit-btn" 
-                          title="Edit Sale"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            addToast("Edit sale coming soon", "info");
-                          }}
-                        >
-                          <Edit2 size={16} />
-                        </button>
                         <button 
                           className="action-btn print-btn" 
                           title="Print Ticket"
@@ -414,16 +506,6 @@ const SalesView = () => {
                           }}
                         >
                           <Printer size={16} />
-                        </button>
-                        <button 
-                          className="action-btn deactivate-btn" 
-                          title="Delete Sale"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            addToast("Delete sale coming soon", "info");
-                          }}
-                        >
-                          <Trash2 size={16} />
                         </button>
                     </td>
                   </tr>

@@ -21,8 +21,10 @@ export const SalesLayout = () => {
   };
 
   // State
-  const [dateFilter, setDateFilter] = useState(getTodayFormatted());
-  const [sortOrder, setSortOrder] = useState('DESCENDING');
+  const [dateFilter, setDateFilter] = useState('');
+  const [searchSaleId, setSearchSaleId] = useState('');
+  const [appliedSearchSaleId, setAppliedSearchSaleId] = useState('');
+  const [sortOrder, setSortOrder] = useState('NEWEST_FIRST');
   const [pageFrontend, setPageFrontend] = useState(1);
   const [isCached, setIsCached] = useState(false);
   
@@ -30,18 +32,22 @@ export const SalesLayout = () => {
   const [salesData, setSalesData] = useState([]);
   const [totalPages, setTotalPages] = useState(1);
   const [totalElements, setTotalElements] = useState(0);
+  const [totalGlobalElements, setTotalGlobalElements] = useState(null);
   
   // Scroll Ref
   const scrollPositionRef = useRef(0);
 
   return (
     <SalesContext.Provider value={{
+      searchSaleId, setSearchSaleId,
+      appliedSearchSaleId, setAppliedSearchSaleId,
       dateFilter, setDateFilter,
       sortOrder, setSortOrder,
       pageFrontend, setPageFrontend,
       salesData, setSalesData,
       totalPages, setTotalPages,
       totalElements, setTotalElements,
+      totalGlobalElements, setTotalGlobalElements,
       scrollPositionRef,
       isCached, setIsCached,
       getTodayFormatted

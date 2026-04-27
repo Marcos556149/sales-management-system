@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation, useBlocker } from 'react-router-dom';
 import { useToast } from './ToastContext';
 import { useProductsContext } from './ProductsContext';
-import { ArrowLeft, Save, Box, X } from 'lucide-react';
+import { ArrowLeft, Save, Box, X, Info } from 'lucide-react';
 import { productService } from '../services/productService';
 import { TEXTS } from '../constants/texts';
 import { useKeyboardShortcuts } from '../hooks/useKeyboardShortcuts';
@@ -327,7 +327,15 @@ const ProductCreateView = () => {
             </div>
 
             <div className="form-group">
-              <label htmlFor="productName">Product Name <span className="required">*</span></label>
+              <label htmlFor="productName" className="label-with-tooltip">
+                <span>Product Name <span className="required">*</span></span>
+                <div className="tooltip-container" tabIndex="0" aria-label="Use a clear and specific name to distinguish this product from similar products.">
+                  <Info size={14} className="info-icon" />
+                  <span className="tooltip-text" aria-hidden="true">
+                    Use a clear and specific name to distinguish this product from similar products.
+                  </span>
+                </div>
+              </label>
               <input 
                 ref={productNameRef}
                 type="text" 
