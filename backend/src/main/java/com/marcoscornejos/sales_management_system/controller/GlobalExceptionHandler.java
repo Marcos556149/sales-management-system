@@ -4,10 +4,13 @@ import com.marcoscornejos.sales_management_system.exception.AuthException;
 import com.marcoscornejos.sales_management_system.exception.ProductException;
 import com.marcoscornejos.sales_management_system.exception.SaleException;
 import com.marcoscornejos.sales_management_system.exception.UserException;
+import jakarta.persistence.PersistenceException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.orm.jpa.JpaSystemException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
@@ -253,19 +256,48 @@ public class GlobalExceptionHandler {
      * or validations fail within the Sale domain.
      *
      * <p>
-     * Returns a 400 Bad Request response with a descriptive error message.
+     * This handler centralizes all exceptions that extend {@code SaleException},
+     * ensuring a consistent error response format across the application.
      * </p>
      *
-     * @param ex the exception containing error details
-     * @return a 400 Bad Request response with the error message
+     * <p>
+     * The response follows the standardized structure:
+     * </p>
+     *
+     * <pre>
+     * {
+     *   "error": {
+     *     "code": "ERROR_CODE",
+     *     "message": "Human readable message",
+     *     "field": "Optional field related to the error"
+     *   }
+     * }
+     * </pre>
+     *
+     * <p>
+     * The frontend should use:
+     * <ul>
+     *   <li><b>code</b>: to determine error type and UI behavior</li>
+     *   <li><b>message</b>: to display or log human-readable information</li>
+     *   <li><b>field</b>: to associate validation errors with specific inputs</li>
+     * </ul>
+     * </p>
+     *
+     * @param ex the sale-related exception containing error details
+     * @return a 400 Bad Request response with a standardized error body
      */
     @ExceptionHandler(SaleException.class)
-    public ResponseEntity<Map<String, String>> handleSaleException(SaleException ex) {
+    public ResponseEntity<Map<String, Object>> handleSaleException(SaleException ex) {
 
-        Map<String, String> error = new HashMap<>();
-        error.put("error", ex.getMessage());
+        Map<String, Object> errorBody = new HashMap<>();
+        errorBody.put("code", ex.getCode());
+        errorBody.put("message", ex.getMessage());
+        errorBody.put("field", ex.getField());
 
-        return ResponseEntity.badRequest().body(error);
+        Map<String, Object> response = new HashMap<>();
+        response.put("error", errorBody);
+
+        return ResponseEntity.badRequest().body(response);
     }
 
     /**
@@ -273,19 +305,31 @@ public class GlobalExceptionHandler {
      *
      * <p>
      * Triggered when a required query parameter is not provided in the request.
-     * Returns a 400 Bad Request response indicating which parameter is missing.
+     * Returns a standardized 400 Bad Request response indicating which parameter
+     * is missing.
      * </p>
      *
      * @param ex the exception containing details about the missing parameter
-     * @return a 400 Bad Request response with an error message
+     * @return a 400 Bad Request response with structured error details
      */
     @ExceptionHandler(MissingServletRequestParameterException.class)
-    public ResponseEntity<Map<String, String>> handleMissingParams(MissingServletRequestParameterException ex) {
+    public ResponseEntity<Map<String, Object>> handleMissingParams(
+            MissingServletRequestParameterException ex
+    ) {
 
-        Map<String, String> error = new HashMap<>();
-        error.put("error", "Missing required parameter: " + ex.getParameterName());
+        Map<String, Object> errorBody = new HashMap<>();
 
-        return ResponseEntity.badRequest().body(error);
+        errorBody.put("code", "MISSING_REQUEST_PARAMETER");
+        errorBody.put("field", ex.getParameterName());
+        errorBody.put(
+                "message",
+                "Missing required parameter: " + ex.getParameterName()
+        );
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("error", errorBody);
+
+        return ResponseEntity.badRequest().body(response);
     }
 
     /**
@@ -293,18 +337,162 @@ public class GlobalExceptionHandler {
      * or validations fail within the User domain.
      *
      * <p>
-     * Returns a 400 Bad Request response with a descriptive error message.
+     * This handler centralizes all exceptions that extend {@code UserException},
+     * ensuring a consistent error response format across the application.
      * </p>
      *
-     * @param ex the exception containing error details
-     * @return a 400 Bad Request response with the error message
+     * <p>
+     * The response follows the standardized structure:
+     * </p>
+     *
+     * <pre>
+     * {
+     *   "error": {
+     *     "code": "ERROR_CODE",
+     *     "message": "Human readable message",
+     *     "field": "Optional field related to the error"
+     *   }
+     * }
+     * </pre>
+     *
+     * <p>
+     * The frontend should use:
+     * <ul>
+     *   <li><b>code</b>: to determine error type and UI behavior</li>
+     *   <li><b>message</b>: to display or log human-readable information</li>
+     *   <li><b>field</b>: to associate validation errors with specific inputs</li>
+     * </ul>
+     * </p>
+     *
+     * @param ex the user-related exception containing error details
+     * @return a 400 Bad Request response with a standardized error body
      */
     @ExceptionHandler(UserException.class)
-    public ResponseEntity<Map<String, String>> handleUserException(UserException ex) {
+    public ResponseEntity<Map<String, Object>> handleUserException(UserException ex) {
 
-        Map<String, String> error = new HashMap<>();
-        error.put("error", ex.getMessage());
+        Map<String, Object> errorBody = new HashMap<>();
+        errorBody.put("code", ex.getCode());
+        errorBody.put("message", ex.getMessage());
+        errorBody.put("field", ex.getField());
 
-        return ResponseEntity.badRequest().body(error);
+        Map<String, Object> response = new HashMap<>();
+        response.put("error", errorBody);
+
+        return ResponseEntity.badRequest().body(response);
+    }
+
+    /**
+     * Handles exceptions thrown by the persistence layer when database-level
+     * business rules (PostgreSQL triggers or constraints) are violated.
+     *
+     * <p>
+     * This includes errors raised via {@code RAISE EXCEPTION} in database triggers,
+     * such as stock validation failures or sale total limit violations.
+     * </p>
+     *
+     * <p>
+     * The handler extracts and normalizes database error messages, removing
+     * technical noise added by PostgreSQL, Hibernate, or JDBC (e.g. "ERROR:",
+     * "Where:"), keeping only business-relevant information for the frontend.
+     * </p>
+     *
+     * <p>
+     * Supported business errors:
+     * <ul>
+     *   <li>Insufficient stock validation (product-level constraint)</li>
+     *   <li>Sale total maximum amount validation (financial constraint)</li>
+     * </ul>
+     * </p>
+     *
+     * <p>
+     * If the error does not match a known business rule, a generic database
+     * error response is returned.
+     * </p>
+     *
+     * <p>
+     * Final response structure:
+     * </p>
+     *
+     * <pre>
+     * {
+     *   "error": {
+     *     "code": "ERROR_CODE",
+     *     "message": "Business-friendly message",
+     *     "field": "Optional related field"
+     *   }
+     * }
+     * </pre>
+     *
+     * @param ex exception propagated from the persistence layer
+     * @return standardized error response containing code, message, and optional field
+     */
+    @ExceptionHandler({
+            DataIntegrityViolationException.class,
+            JpaSystemException.class,
+            PersistenceException.class
+    })
+    public ResponseEntity<Map<String, Object>> handleDatabaseTriggerException(Exception ex) {
+
+        Throwable root = org.springframework.core.NestedExceptionUtils.getMostSpecificCause(ex);
+
+        String rawMessage = (root != null ? root.getMessage() : ex.getMessage());
+
+        // =========================
+        // CLEAN DATABASE MESSAGE
+        // =========================
+        String message = rawMessage;
+
+        if (rawMessage != null) {
+
+            // remove PostgreSQL stack context
+            if (rawMessage.contains("Where:")) {
+                message = rawMessage.split("Where:")[0].trim();
+            }
+
+            // remove JDBC/Hibernate prefix noise
+            if (message.startsWith("ERROR:")) {
+                message = message.substring("ERROR:".length()).trim();
+            }
+        }
+
+        String code = "DATABASE_ERROR";
+        String field = null;
+        String userMessage = "Database operation failed";
+
+        Map<String, Object> errorBody = new HashMap<>();
+
+        if (message != null) {
+
+            // =========================
+            // STOCK ERROR
+            // =========================
+            if (message.contains("Insufficient stock for product")) {
+
+                code = "INSUFFICIENT_STOCK";
+                field = "productQuantity";
+
+                userMessage = message;
+            }
+
+            // =========================
+            // TOTAL AMOUNT ERROR
+            // =========================
+            else if (message.contains("Sale total exceeds maximum allowed amount")) {
+
+                code = "SALE_TOTAL_EXCEEDED";
+                field = "totalAmount";
+
+                userMessage = message;
+            }
+        }
+
+        errorBody.put("code", code);
+        errorBody.put("message", userMessage);
+        errorBody.put("field", field);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("error", errorBody);
+
+        return ResponseEntity.badRequest().body(response);
     }
 }

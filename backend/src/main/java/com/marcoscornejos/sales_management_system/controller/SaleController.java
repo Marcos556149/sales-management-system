@@ -1,11 +1,12 @@
 package com.marcoscornejos.sales_management_system.controller;
 
 import com.marcoscornejos.sales_management_system.dto.*;
-import com.marcoscornejos.sales_management_system.model.SortOrder;
-import com.marcoscornejos.sales_management_system.service.SaleService;
+import com.marcoscornejos.sales_management_system.model.SortDirection;
+import com.marcoscornejos.sales_management_system.service.ISaleService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,34 +25,37 @@ import java.time.LocalDate;
 @RequiredArgsConstructor
 public class SaleController {
 
-    private final SaleService saleService;
+    private final ISaleService iSaleService;
 
     /**
      * Retrieves a paginated list of sales registered in the system.
      *
      * <p>
-     * Each sale includes general information such as identifier, date and time,
+     * Each sale includes general information such as identifier, sale date and time,
      * seller username, and total amount.
      * </p>
      *
      * <p>
-     * Supports server-side pagination and allows sorting by sale time.
+     * Supports server-side pagination, filtering by date, and chronological sorting.
      * </p>
-     *
-     * @param date Sale date filter (day, month, and year)
-     * @param timeSort Sorting order by sale time (ASCENDING or DESCENDING)
+     * @param searchSaleId Optional sale identifier search
+     * @param date Sale date filter (defaults to current date if not provided)
+     * @param timeSort Sorting direction by sale time
+     *                 (NEWEST_FIRST or OLDEST_FIRST, default: NEWEST_FIRST)
      * @param page Page number (default: 0)
      * @param size Number of sales per page (default: 50)
      * @return A paginated response containing sales and pagination metadata
      */
     @GetMapping
-    public PageResponseDTO<SaleListResponseDTO> getSales(
-            @RequestParam
+    public ResponseEntity<PageResponseDTO<SaleListResponseDTO>> getSales(
+            @RequestParam(required = false) Long searchSaleId,
+
+            @RequestParam(required = false)
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
             LocalDate date,
 
-            @RequestParam(defaultValue = "DESCENDING")
-            SortOrder timeSort,
+            @RequestParam(defaultValue = "NEWEST_FIRST")
+            SortDirection timeSort,
 
             @RequestParam(defaultValue = "0")
             int page,
@@ -59,7 +63,15 @@ public class SaleController {
             @RequestParam(defaultValue = "50")
             int size
     ) {
-        return saleService.getSales(date, timeSort, page, size);
+        PageResponseDTO<SaleListResponseDTO> response = iSaleService.getSales(
+                searchSaleId,
+                date,
+                timeSort,
+                page,
+                size
+        );
+
+        return ResponseEntity.ok(response);
     }
 
     /**
@@ -79,7 +91,7 @@ public class SaleController {
             @PathVariable Long saleId
     ) {
 
-        SaleWithDetailsResponseDTO sale = saleService.getSaleById(saleId);
+        SaleWithDetailsResponseDTO sale = iSaleService.getSaleById(saleId);
 
         return ResponseEntity.ok(sale);
     }
@@ -93,37 +105,42 @@ public class SaleController {
      * It avoids hardcoded values in the client application.
      * </p>
      *
-     * @return SaleFiltersResponseDTO containing sort options
+     * @return ResponseEntity containing SaleFiltersResponseDTO
      */
     @GetMapping("/filters")
-    public SaleFiltersResponseDTO getFilters() {
-        return saleService.getFilters();
+    public ResponseEntity<SaleFiltersResponseDTO> getFilters() {
+
+        SaleFiltersResponseDTO response = iSaleService.getFilters();
+
+        return ResponseEntity.ok(response);
     }
 
     /**
      * Registers a new sale in the system.
      *
      * <p>
-     * This endpoint allows the creation of a new sale by providing
-     * the required information, including the associated products
-     * and their quantities. The system automatically assigns the
-     * sale identifier, current date, time, total amount, and user.
+     * Creates a sale with its details, automatically assigning date, time,
+     * total amount, and the authenticated user. The sale must contain at least
+     * one product, and all business rules (stock, product status, quantity)
+     * are validated during processing.
      * </p>
      *
-     * <p>
-     * A sale must contain at least one valid product detail.
-     * If any product is invalid, inactive, or has insufficient stock,
-     * an error is returned.
-     * </p>
-     *
-     * @param request the sale data required to register a new sale
-     * @return confirmation message indicating successful registration
+     * @param request the sale data including products and quantities
+     * @return a standardized success response confirming the sale registration
      */
     @PostMapping
-    public ResponseEntity<String> registerSale(@RequestBody @Valid SaleCreateRequestDTO request) {
+    public ResponseEntity<SuccessResponseDTO<Void>> registerSale(
+            @RequestBody @Valid SaleCreateRequestDTO request
+    ) {
 
-        saleService.registerSale(request);
+        iSaleService.registerSale(request);
 
-        return ResponseEntity.ok("Sale successfully registered");
+        SuccessResponseDTO<Void> response = new SuccessResponseDTO<>(
+                "SALE_CREATED",
+                "Sale successfully registered",
+                null
+        );
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 }

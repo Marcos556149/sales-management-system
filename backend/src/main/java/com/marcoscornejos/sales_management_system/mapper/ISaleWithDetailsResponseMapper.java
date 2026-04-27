@@ -2,7 +2,7 @@ package com.marcoscornejos.sales_management_system.mapper;
 
 import com.marcoscornejos.sales_management_system.dto.EnumDTO;
 import com.marcoscornejos.sales_management_system.dto.SaleWithDetailsResponseDTO;
-import com.marcoscornejos.sales_management_system.dto.SaleItemDTO;
+import com.marcoscornejos.sales_management_system.dto.SaleDetailResponseDTO;
 import com.marcoscornejos.sales_management_system.model.Sale;
 import com.marcoscornejos.sales_management_system.model.SaleDetail;
 import com.marcoscornejos.sales_management_system.model.UnitOfMeasure;
@@ -32,16 +32,16 @@ public interface ISaleWithDetailsResponseMapper {
 
 
     /**
-     * Maps a {@link SaleDetail} entity to a SaleItemDTO.
+     * Maps a {@link SaleDetail} entity to a SaleDetailResponseDTO.
      *
      * @param detail the SaleDetail entity
-     * @return SaleItemDTO with mapped fields
+     * @return SaleDetailResponseDTO with mapped fields
      */
     @Mapping(source = "product.productCode", target = "productCode")
     @Mapping(source = "product.productName", target = "productName")
     @Mapping(source = "product.unitOfMeasure", target = "unitOfMeasure")
     @Mapping(target = "subtotal", expression = "java(calculateSubtotal(detail))")
-    SaleItemDTO toItemDto(SaleDetail detail);
+    SaleDetailResponseDTO toSaleDetailResponseDTO(SaleDetail detail);
 
     /**
      * Maps {@link UnitOfMeasure} to {@link EnumDTO}.

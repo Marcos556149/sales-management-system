@@ -2,7 +2,7 @@ package com.marcoscornejos.sales_management_system.controller;
 
 import com.marcoscornejos.sales_management_system.dto.*;
 import com.marcoscornejos.sales_management_system.model.StockLevelFilter;
-import com.marcoscornejos.sales_management_system.service.ProductService;
+import com.marcoscornejos.sales_management_system.service.IProductService;
 import com.marcoscornejos.sales_management_system.model.ProductStatus;
 import com.marcoscornejos.sales_management_system.model.SortOrder;
 import jakarta.validation.Valid;
@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class ProductController {
 
-    private final ProductService productService;
+    private final IProductService iProductService;
 
     /**
      * Retrieves a paginated list of products with optional filtering,
@@ -53,7 +53,7 @@ public class ProductController {
             @RequestParam(defaultValue = "50") int size
     ) {
 
-        PageResponseDTO<ProductListResponseDTO> response = productService.getProducts(
+        PageResponseDTO<ProductListResponseDTO> response = iProductService.getProducts(
                 searchCodeOrName,
                 statusFilter,
                 stockFilter,
@@ -77,7 +77,7 @@ public class ProductController {
     @GetMapping("/filters")
     public ResponseEntity<ProductFiltersResponseDTO> getFilters() {
 
-        ProductFiltersResponseDTO response = productService.getFilters();
+        ProductFiltersResponseDTO response = iProductService.getFilters();
 
         return ResponseEntity.ok(response);
     }
@@ -105,7 +105,7 @@ public class ProductController {
             @PathVariable String productCode
     ) {
 
-        ProductDetailResponseDTO product = productService.getProductByCode(productCode);
+        ProductDetailResponseDTO product = iProductService.getProductByCode(productCode);
 
         return ResponseEntity.ok(product);
     }
@@ -132,7 +132,7 @@ public class ProductController {
             @PathVariable String productCode
     ) {
 
-        ProductDetailResponseDTO product = productService.deactivateProduct(productCode);
+        ProductDetailResponseDTO product = iProductService.deactivateProduct(productCode);
 
         SuccessResponseDTO<ProductDetailResponseDTO> response = new SuccessResponseDTO<>(
                 "PRODUCT_DEACTIVATED",
@@ -160,7 +160,7 @@ public class ProductController {
             @PathVariable String productCode
     ) {
 
-        ProductDetailResponseDTO product = productService.activateProduct(productCode);
+        ProductDetailResponseDTO product = iProductService.activateProduct(productCode);
 
         SuccessResponseDTO<ProductDetailResponseDTO> response = new SuccessResponseDTO<>(
                 "PRODUCT_ACTIVATED",
@@ -192,7 +192,7 @@ public class ProductController {
             @RequestBody @Valid ProductCreateRequestDTO request
     ) {
 
-        ProductDetailResponseDTO createdProduct = productService.registerProduct(request);
+        ProductDetailResponseDTO createdProduct = iProductService.registerProduct(request);
 
         SuccessResponseDTO<ProductDetailResponseDTO> response = new SuccessResponseDTO<>(
                 "PRODUCT_CREATED",
@@ -216,7 +216,7 @@ public class ProductController {
     @GetMapping("/metadata")
     public ResponseEntity<ProductMetadataResponseDTO> getProductMetadata() {
 
-        ProductMetadataResponseDTO response=productService.getProductMetadata();
+        ProductMetadataResponseDTO response=iProductService.getProductMetadata();
 
         return ResponseEntity.ok(response);
     }
@@ -239,7 +239,7 @@ public class ProductController {
             @RequestBody @Valid ProductUpdateRequestDTO request
     ) {
 
-        ProductDetailResponseDTO updatedProduct=productService.updateProduct(productCode, request);
+        ProductDetailResponseDTO updatedProduct=iProductService.updateProduct(productCode, request);
 
         SuccessResponseDTO<ProductDetailResponseDTO> response = new SuccessResponseDTO<>(
                 "PRODUCT_UPDATED",

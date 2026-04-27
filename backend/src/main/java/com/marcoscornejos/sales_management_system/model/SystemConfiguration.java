@@ -1,7 +1,7 @@
 /**
  * Represents the global system configuration.
  *
- * <p>Stores system-wide settings such as the business name.</p>
+ * <p>Stores system-wide settings such as the business name and address.</p>
  *
  */
 
@@ -28,4 +28,8 @@ public class SystemConfiguration {
     /** Name of the business, used in receipts and displayed across the system. */
     @Column(name = "business_name")
     private String businessName;
+
+    /** Business address, used in receipts and displayed across the system. */
+    @Column(name = "business_address")
+    private String businessAddress;
 }

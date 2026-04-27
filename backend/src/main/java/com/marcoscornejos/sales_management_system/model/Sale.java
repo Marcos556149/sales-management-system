@@ -74,27 +74,26 @@ public class Sale {
      * List of sale details associated with this sale.
      * Represents all products included in the sale and their quantities.
      *
-     * <p>The configuration ensures the following behaviors:</p>
+     * <p>The configuration ensures the following behavior:</p>
      * <ul>
-     *   <li><b>Persisting or merging the sale:</b> Any new or updated SaleDetail objects
-     *       in this list are automatically persisted or merged in the database.</li>
-     *   <li><b>Removing a SaleDetail from the list:</b> If a detail is removed from this
-     *       list and the sale is persisted, the removed detail is also deleted from the database
-     *       (orphanRemoval = true).</li>
-     *   <li><b>Deleting the sale:</b> When a Sale is deleted, the database automatically deletes
-     *       all associated SaleDetail rows thanks to the @OnDelete annotation, avoiding extra
-     *       queries from JPA.</li>
-     *   <li><b>No CascadeType.REMOVE:</b> Hibernate does not issue explicit delete queries for
-     *       children when the parent is removed; deletion is delegated to the database cascade.</li>
+     *   <li><b>Persisting the sale:</b> Any new {@code SaleDetail} objects
+     *       contained in this list are automatically persisted together with
+     *       the parent sale.</li>
+     *   <li><b>No automatic updates or removals:</b> Existing details are not
+     *       merged or deleted through cascade operations, since sales are treated
+     *       as historical records after registration.</li>
+     *   <li><b>Relationship ownership:</b> The foreign key is managed by the
+     *       {@code SaleDetail.sale} side, while this collection allows
+     *       navigation from the sale to its details.</li>
+     *   <li><b>Safe initialization:</b> The collection is initialized by default
+     *       to avoid null references when adding details to a new sale.</li>
      * </ul>
      */
     @OneToMany(
             mappedBy = "sale",
-            cascade = { CascadeType.PERSIST, CascadeType.MERGE }, // <- NO REMOVE
-            orphanRemoval = true
+            cascade = CascadeType.PERSIST
     )
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    private List<SaleDetail> saleDetails=new ArrayList<>();
+    private List<SaleDetail> saleDetails = new ArrayList<>();
 
     public Sale(LocalDate saleDate, LocalTime saleTime, BigDecimal totalAmount, User user) {
         this.saleDate = saleDate;

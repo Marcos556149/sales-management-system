@@ -32,11 +32,20 @@ import java.util.Optional;
 public interface ISaleRepository extends JpaRepository<Sale, Long> {
 
     /**
-     * Retrieves sales filtered by sale date,
-     * applying pagination and sorting at the database level.
+     * Retrieves sales with optional search by sale identifier,
+     * filtered by sale date, applying pagination and sorting
+     * at the database level.
      *
      * <p>
-     * The query filters sales by exact match on sale date.
+     * Search is applied on exact match of sale identifier.
+     * If {@code searchSaleId} is null, search is ignored.
+     * </p>
+     *
+     * <p>
+     * Sales are always filtered by exact match on sale date.
+     * </p>
+     *
+     * <p>
      * Pagination and sorting are handled using {@link Pageable},
      * ensuring efficient server-side data retrieval.
      * </p>
@@ -46,16 +55,25 @@ public interface ISaleRepository extends JpaRepository<Sale, Long> {
      * to avoid N+1 query problems.
      * </p>
      *
+     * @param searchSaleId optional sale identifier
      * @param date sale date filter
      * @param pageable pagination and sorting configuration
      * @return paginated result of matching sales
      */
     @EntityGraph(attributePaths = "user")
     @Query("""
-        SELECT s FROM Sale s
-        WHERE s.saleDate = :date
+    SELECT s FROM Sale s
+    WHERE
+        (
+            :searchSaleId IS NULL OR
+            s.saleId = :searchSaleId
+        )
+    AND
+        s.saleDate = :date
     """)
-    Page<Sale> findSales(LocalDate date, Pageable pageable);
+    Page<Sale> findSales(Long searchSaleId,
+                         LocalDate date,
+                         Pageable pageable);
 
     /**
      * Retrieves a sale with its details, products, and user.
@@ -65,7 +83,7 @@ public interface ISaleRepository extends JpaRepository<Sale, Long> {
      * caused by lazy loading.
      * </p>
      *
-     * @param idSale the unique identifier of the sale
+     * @param saleId the unique identifier of the sale
      * @return an Optional containing the sale with its details, products, and user
      */
     @Query("""
@@ -73,7 +91,7 @@ public interface ISaleRepository extends JpaRepository<Sale, Long> {
         JOIN FETCH s.saleDetails sd
         JOIN FETCH sd.product
         JOIN FETCH s.user
-        WHERE s.saleId = :idSale
+        WHERE s.saleId = :saleId
     """)
-    Optional<Sale> findByIdWithDetailsAndProducts(Long idSale);
+    Optional<Sale> findByIdWithDetailsAndProducts(Long saleId);
 }

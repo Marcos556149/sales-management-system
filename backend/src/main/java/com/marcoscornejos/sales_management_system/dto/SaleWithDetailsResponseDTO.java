@@ -51,6 +51,6 @@ public class SaleWithDetailsResponseDTO {
     /**
      * List of products included in the sale.
      */
-    private List<SaleItemDTO> saleDetails;
+    private List<SaleDetailResponseDTO> saleDetails;
 
 }

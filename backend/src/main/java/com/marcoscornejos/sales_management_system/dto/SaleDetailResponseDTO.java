@@ -14,7 +14,7 @@ import java.math.BigDecimal;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class SaleItemDTO {
+public class SaleDetailResponseDTO {
 
     /**
      * Product code.

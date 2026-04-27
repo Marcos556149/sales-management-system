@@ -2,7 +2,6 @@ package com.marcoscornejos.sales_management_system.dto;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -33,8 +32,7 @@ public class SaleCreateRequestDTO {
      * Each detail is individually validated.
      * </p>
      */
-    @NotNull(message = "Sale details are required")
-    @NotEmpty(message = "Sale must contain at least one product")
+    @NotEmpty(message = "The sale must contain at least one product")
     @Valid
     private List<SaleDetailCreateRequestDTO> saleDetails;
 

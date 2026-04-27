@@ -47,7 +47,7 @@
 .form-grid {
   display: grid;
   grid-template-columns: 1fr;
-  row-gap: 48px;
+  row-gap: 60px;
   column-gap: 24px;
   margin-bottom: 56px;
 }

@@ -324,7 +324,7 @@ The system must allow the user to register sales made in the business, storing t
 
 **10.b Inactive product**  
 10.b.1 The system detects that the selected product has inactive status.  
-10.b.2 The system displays a message: "Product '{productCode}' is inactive and cannot be added to the sale".
+10.b.2 The system displays a message: "Product '{productCode} - {productName}' is inactive and cannot be added to the sale".
 
 **16.a Sale canceled**  
 16.a.1 The user decides to cancel the sale before confirmation.  
@@ -386,9 +386,9 @@ The system must allow the user to view sales registered in the system, displayin
 
 **3.b Sale search**
 
-**3.b.1 By sale code**  
-3.b.1.1 The user enters a sale code or part of the sale code.  
-3.b.1.2 The system filters sales that match the entered code.
+**3.b.1 By sale ID**  
+3.b.1.1 The user enters the sale ID.  
+3.b.1.2 The system filters the sales list to show the matching sale.
 
 **3.c Sale pagination**  
 3.c.1 The system allows navigation between pages of sales (e.g., next page, previous page, or direct page selection).  
@@ -405,9 +405,15 @@ The system must allow the user to view sales registered in the system, displayin
 3.e.1.1 The user selects a specific date.  
 3.e.1.2 The system filters sales according to the selected date.
 
-**3.f Sales not found**  
-3.f.1 The system detects that no sales match the applied criteria.  
-3.f.2 The system displays a message: "No sales match the search criteria". 
+**3.f Sales not found**
+
+**3.f.1 By sale ID**  
+3.f.1.1 The system detects that no sale matches the entered sale ID.  
+3.f.1.2 The system displays a message: "Sale with ID '{saleId}' not found".
+
+**3.f.2 By filters**  
+3.f.2.1 The system detects that no sales match the applied criteria.  
+3.f.2.2 The system displays a message: "No sales match the search criteria".
 
 ### Business Rules
 - The system must allow viewing all registered sales using pagination.

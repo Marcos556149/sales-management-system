@@ -21,6 +21,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.math.RoundingMode;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.*;
@@ -35,45 +39,64 @@ public class SaleService implements ISaleService{
     private final ISaleWithDetailsResponseMapper iSaleWithDetailsResponseMapper;
     private final IUserRepository iUserRepository;
     private final IProductRepository iProductRepository;
-    private final ISaleCreateRequestMapper iSaleCreateRequestMapper;
 
     /**
      * Retrieves a paginated list of sales applying:
      * <ul>
-     *     <li>Filter by sale date (required business filter)</li>
-     *     <li>Sorting by sale time</li>
+     *     <li>Optional search by sale identifier</li>
+     *     <li>Filter by sale date</li>
+     *     <li>Chronological sorting by sale time</li>
      *     <li>Pagination (page number and size)</li>
      * </ul>
      *
      * <p>
-     * The filter by date is mandatory at business level. If no date is provided,
-     * the system uses the current date as default.
-     * Pagination and sorting are executed at database level (server-side pagination).
+     * Search by sale identifier is optional and ignored if null.
+     * If no date is provided, the current date is used by default.
+     * Pagination and sorting are executed at database level.
      * </p>
      *
-     * @param date     Sale date filter (if null, current date is used)
-     * @param timeSort Sorting order by sale time (ASCENDING / DESCENDING)
-     * @param page     Page number (0-based)
-     * @param size     Number of elements per page
+     * @param searchSaleId Optional sale identifier
+     * @param date Sale date filter (if null, current date is used)
+     * @param timeSort Sorting direction (NEWEST_FIRST / OLDEST_FIRST)
+     * @param page Page number (0-based)
+     * @param size Number of elements per page
      * @return Paginated list of sales mapped to DTO
      */
     @Override
-    public PageResponseDTO<SaleListResponseDTO> getSales(LocalDate date,
-                                                         SortOrder timeSort,
+    public PageResponseDTO<SaleListResponseDTO> getSales(Long searchSaleId,
+                                                         LocalDate date,
+                                                         SortDirection timeSort,
                                                          int page,
                                                          int size) {
 
         // Validate pagination parameters
         if (page < 0) {
-            throw new InvalidSaleDataException("Page index must not be negative");
+            throw new InvalidSaleDataException(
+                    "Page index must not be negative",
+                    "page"
+            );
         }
 
         if (size <= 0) {
-            throw new InvalidSaleDataException("Page size must be greater than zero");
+            throw new InvalidSaleDataException(
+                    "Page size must be greater than zero",
+                    "size"
+            );
         }
 
         if (size > 50) {
-            throw new InvalidSaleDataException("Page size must not exceed 50");
+            throw new InvalidSaleDataException(
+                    "Page size must not exceed 50",
+                    "size"
+            );
+        }
+
+        // Validate optional search parameter
+        if (searchSaleId != null && searchSaleId <= 0) {
+            throw new InvalidSaleDataException(
+                    "Sale ID must be greater than zero",
+                    "searchSaleId"
+            );
         }
 
         // Business rule: default date = current date
@@ -84,7 +107,7 @@ public class SaleService implements ISaleService{
         // Build sorting configuration (by sale time)
         Sort sort = Sort.by("saleTime");
 
-        if (timeSort == SortOrder.DESCENDING) {
+        if (timeSort == SortDirection.NEWEST_FIRST) {
             sort = sort.descending();
         } else {
             sort = sort.ascending();
@@ -93,15 +116,28 @@ public class SaleService implements ISaleService{
         // Pagination configuration (server-side)
         Pageable pageable = PageRequest.of(page, size, sort);
 
-        // Execute query with filtering and pageable
+        // Execute query with search, filtering and pageable
         Page<Sale> salePage = iSaleRepository.findSales(
+                searchSaleId,
                 date,
                 pageable
         );
 
 
-        // Total records in database without filters
-        long totalGlobalElements = iProductRepository.count();
+        // Total number of sales in database without filters.
+        // This value is only calculated when the filtered query returns no results,
+        // allowing the frontend to distinguish between:
+        //
+        // 1) No sales exist in the database
+        // 2) Sales exist, but none match the selected date filter
+        //
+        // When filtered results exist, this value remains null to avoid an
+        // unnecessary extra COUNT(*) query and improve performance.
+        Long totalGlobalElements = null;
+
+        if (salePage.getTotalElements() == 0) {
+            totalGlobalElements = iSaleRepository.count();
+        }
 
         // Map entities to DTOs using MapStruct
         return iPageResponseMapper.toPageResponseDTO(
@@ -134,7 +170,9 @@ public class SaleService implements ISaleService{
     public SaleWithDetailsResponseDTO getSaleById(Long saleId) {
 
         Sale sale = iSaleRepository.findByIdWithDetailsAndProducts(saleId)
-                .orElseThrow(() -> new SaleNotFoundException("Sale not found"));
+                .orElseThrow(() -> new SaleNotFoundException(
+                        String.format("Sale with ID '%s' not found", saleId)
+                ));
 
         return iSaleWithDetailsResponseMapper.toDto(sale);
     }
@@ -157,45 +195,41 @@ public class SaleService implements ISaleService{
     @Override
     public SaleFiltersResponseDTO getFilters() {
 
-        List<EnumDTO> sortOptions = Arrays.stream(SortOrder.values())
+        List<EnumDTO> timeSortOptions = Arrays.stream(SortDirection.values())
                 .map(sort -> new EnumDTO(
                         sort.name(),
                         sort.getDisplayName()
                 ))
                 .toList();
 
-        SaleFiltersResponseDTO dto = new SaleFiltersResponseDTO();
-        dto.setSortOptions(sortOptions);
-
-        return dto;
+        return new SaleFiltersResponseDTO(timeSortOptions);
     }
 
     /**
      * Registers a new sale in the system.
      *
      * <p>
-     * This operation validates that all requested products exist, are active,
-     * and have sufficient stock available. If the same product is repeated
-     * multiple times in the request, quantities are consolidated into a single
-     * sale detail before persistence.
+     * Validates that all requested products exist, are active, and have sufficient
+     * stock before creating the sale. If the same product appears multiple times
+     * in the request, quantities are consolidated into a single line item.
      * </p>
      *
      * <p>
-     * The sale is associated with the user who performs the operation.
-     * Sale date, sale time, and total amount are automatically initialized
-     * by the entity configuration. Stock updates and total recalculation are
-     * managed by database triggers.
+     * Each sale is associated with the user performing the operation, and the
+     * total sale amount is calculated based on product prices at the time of sale.
      * </p>
      *
      * <p>
-     * Executes the operation within a transactional context to ensure that
-     * the sale and all its details are stored atomically.
+     * The operation is executed within a transactional context to ensure atomic
+     * persistence of the sale and its details.
      * </p>
      *
      * @param request the sale creation request containing products and quantities
-     * @throws UserNotFoundException if the assigned user does not exist
+     *
+     * @throws UserNotFoundException if the user performing the sale does not exist
      * @throws ProductNotFoundException if any product does not exist
-     * @throws InvalidSaleDataException if any product is inactive or stock is insufficient
+     * @throws InvalidSaleDataException if a product is inactive, has invalid quantity,
+     *                                  or insufficient stock is available
      */
     @Override
     @Transactional
@@ -219,7 +253,7 @@ public class SaleService implements ISaleService{
             );
     */
 
-        // Consolidate repeated products by summing quantities
+        // Consolidate repeated product codes into a single line item
         Map<String, BigDecimal> groupedDetails = new LinkedHashMap<>();
 
         for (SaleDetailCreateRequestDTO detail : request.getSaleDetails()) {
@@ -233,60 +267,81 @@ public class SaleService implements ISaleService{
         // Build normalized and validated sale details list
         List<SaleDetail> saleDetails = new ArrayList<>();
 
+        // Load all requested products in a single query
+        List<String> productCodes = new ArrayList<>(groupedDetails.keySet());
+
+        Map<String, Product> productsByCode = iProductRepository
+                .findAllById(productCodes)
+                .stream()
+                .collect(Collectors.toMap(
+                        Product::getProductCode,
+                        Function.identity()
+                ));
+
+        // Validate each requested product and build normalized sale details
         for (Map.Entry<String, BigDecimal> entry : groupedDetails.entrySet()) {
 
             String productCode = entry.getKey();
             BigDecimal quantity = entry.getValue();
 
-            Product product = iProductRepository.findById(productCode)
-                    .orElseThrow(() ->
-                            new ProductNotFoundException(
-                                    "Product not found: " + productCode
-                            )
-                    );
+            Product product = productsByCode.get(productCode);
 
+            if (product == null) {
+                throw new ProductNotFoundException(
+                        "Product with code '" + productCode + "' not found"
+                );
+            }
+
+            String productLabel = product.getProductCode()
+                    + " - "
+                    + product.getProductName();
+
+            // Only active products can be sold
             if (product.getProductStatus() != ProductStatus.ACTIVE) {
                 throw new InvalidSaleDataException(
-                        "Product is inactive: " +
-                                product.getProductCode() +
-                                " - " +
-                                product.getProductName()
+                        "Product '" + productLabel + "' is inactive and cannot be added to the sale",
+                        "productCode"
                 );
             }
 
-            if (product.getUnitOfMeasure() == UnitOfMeasure.UNITS) {
-                if (quantity.stripTrailingZeros().scale() > 0) {
-                    throw new InvalidSaleDataException(
-                            "The product " +
-                                    product.getProductName() +
-                                    " only accepts whole numbers because it is sold by unit."
-                    );
-                }
+            // Products sold by units do not allow decimal quantities
+            if (product.getUnitOfMeasure() == UnitOfMeasure.UNITS
+                    && quantity.stripTrailingZeros().scale() > 0) {
+
+                throw new InvalidSaleDataException(
+                        "Product '" + productLabel + "' only accepts whole numbers because it is sold by units",
+                        "productQuantity"
+                );
             }
 
+
+
+            // Requested quantity must not exceed available stock
             if (product.getProductStock().compareTo(quantity) < 0) {
                 throw new InvalidSaleDataException(
-                        "Insufficient stock for product: " +
-                                product.getProductCode() +
-                                " - " +
-                                product.getProductName()
+                        "Insufficient stock for product " + productLabel,
+                        "productQuantity"
                 );
             }
+            
 
-            // Create sale detail with validated data and resolved product price
-            // This ensures sale_price is never null (database NOT NULL constraint)
-            SaleDetail detail = new SaleDetail();
-            detail.setProduct(product);
-            detail.setProductQuantity(quantity);
-            detail.setSalePrice(product.getProductPrice());
 
-            saleDetails.add(detail);
+
+
+
+
+            // Create sale detail using current product price
+            SaleDetail saleDetail = new SaleDetail();
+            saleDetail.setProduct(product);
+            saleDetail.setProductQuantity(quantity);
+            saleDetail.setSalePrice(product.getProductPrice());
+
+            saleDetails.add(saleDetail);
         }
 
         // Create sale entity and associate user
         Sale sale = new Sale();
         sale.setUser(user);
-        sale.setSaleDetails(new ArrayList<>());
 
         // Synchronize bidirectional relationship between Sale and SaleDetail
         for (SaleDetail detail : saleDetails) {
@@ -295,7 +350,8 @@ public class SaleService implements ISaleService{
         }
 
         // Persist sale and sale details (handled via CascadeType.PERSIST)
-        // Stock updates and total recalculation are managed by database triggers
+        // Stock updates and final total recalculation are managed by database triggers,
+        // ensuring consistency at persistence level.
         iSaleRepository.save(sale);
     }
 }
