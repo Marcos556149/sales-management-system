@@ -394,7 +394,7 @@ const ProductsView = () => {
   
   // Register contextual shortcuts
   useKeyboardShortcuts(React.useMemo(() => ({
-    'shift+n': () => navigate('/dashboard/products/new'),
+    'alt+n': () => navigate('/dashboard/products/new'),
     'ctrl+shift+k': () => handleManualRefresh(),
     '/': () => searchInputRef.current?.focus(),
     'arrowright': () => {
@@ -550,7 +550,7 @@ const ProductsView = () => {
           >
             <Plus size={18} />
             <span>New Product</span>
-            <span className="btn-shortcut" style={{ backgroundColor: 'rgba(255, 255, 255, 0.2)', color: 'white', borderColor: 'rgba(255, 255, 255, 0.3)' }}>Shift+N</span>
+            <span className="btn-shortcut" style={{ backgroundColor: 'rgba(255, 255, 255, 0.2)', color: 'white', borderColor: 'rgba(255, 255, 255, 0.3)' }}>Alt+N</span>
           </button>
         </div>
       </div>

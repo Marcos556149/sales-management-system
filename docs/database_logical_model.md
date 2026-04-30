@@ -63,10 +63,13 @@ Represents the details of each sale, linking products to sales.
 
 - sale_detail_id (PK)
 - sale_price
+- product_name_at_sale
 - product_quantity
 - unit_of_measure_at_sale
 - sale_id (FK → sale.sale_id)
 - product_code (FK → product.product_code)
+
+sale_price represents the unit price of the product at the time of the sale.
 
 ### system_configuration
 Represents the global configuration of the system.

@@ -14,11 +14,13 @@ const BarcodeScanner = () => {
 
   useEffect(() => {
     const handleKeyDown = (e) => {
-      // Ignore keystrokes if the user has an input, textarea or anything editable focused
+      // Global scanner navigation ONLY allowed in Products or Sales catalog screens
+      const allowedPaths = ['/dashboard/products', '/dashboard/sales'];
       if (
         e.target.tagName === 'INPUT' || 
         e.target.tagName === 'TEXTAREA' || 
-        e.target.isContentEditable
+        e.target.isContentEditable ||
+        !allowedPaths.includes(location.pathname)
       ) {
         return;
       }
@@ -56,7 +58,13 @@ const BarcodeScanner = () => {
       window.removeEventListener('keydown', handleKeyDown, true);
       if (timeoutRef.current) clearTimeout(timeoutRef.current);
     };
-  }, [navigate, addToast]);
+  }, [navigate, addToast, location.pathname]);
+
+  // Clear buffer on location change to prevent garbage from previous screens
+  useEffect(() => {
+    bufferRef.current = '';
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
+  }, [location.pathname]);
 
   const validateCode = (code) => {
     // Alphanumeric and hyphens, strictly 8 to 30 characters
@@ -66,7 +74,11 @@ const BarcodeScanner = () => {
 
   const processBarcode = async (code) => {
     if (!validateCode(code)) {
-      addToast('Barcode not recognized, please try again', 'error');
+      // Only show error if it looks like a failed scan (more than 2 chars)
+      // Small buffers are usually accidental keystrokes or shortcuts
+      if (code.length > 2) {
+        addToast('Barcode not recognized, please try again', 'error');
+      }
       return; 
     }
 
@@ -78,9 +90,14 @@ const BarcodeScanner = () => {
       const response = await productService.getProduct(code, { signal: controller.signal });
       clearTimeout(timeoutId);
       
-      // If we are here, the product exists (the service throws for non-2xx)
-      // Pass the product in the state so ProductDetailView doesn't have to fetch again
-      navigate(`/dashboard/products/${code}`, { state: { product: response.data } });
+      // Handle navigation based on context
+      if (location.pathname === '/dashboard/sales') {
+        // From Sales: go to Register Sale and open add modal
+        navigate('/dashboard/sales/new', { state: { initialProduct: response.data } });
+      } else {
+        // From Products: go to Product Detail
+        navigate(`/dashboard/products/${code}`, { state: { product: response.data } });
+      }
       
     } catch (err) {
       clearTimeout(timeoutId);
@@ -88,8 +105,13 @@ const BarcodeScanner = () => {
       if (err.name === 'AbortError') {
         addToast('Product search timed out', 'error');
       } else if (err.status === 404 || err.status === 400) {
-        // Product doesn't exist, navigate to create
-        navigate(`/dashboard/products/new?productCode=${code}`);
+        if (location.pathname === '/dashboard/sales') {
+          // From Sales: just show error toast, don't navigate to register product
+          addToast(err.message || 'Product not found in system', 'error');
+        } else {
+          // From Products: navigate to create
+          navigate(`/dashboard/products/new?productCode=${code}`);
+        }
       } else {
         // Network or other error
         addToast(err.message || 'Error searching for product', 'error');

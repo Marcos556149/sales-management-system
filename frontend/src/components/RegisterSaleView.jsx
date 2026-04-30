@@ -117,6 +117,7 @@ const AddProductModal = ({ isOpen, product, onClose, onAdd }) => {
     const value = e.target.value;
     if (value.includes(',') || value.includes('-')) return;
     const parts = value.split('.');
+    if (parts.length > 2) return; // Prevent more than one decimal point
     if (parts[0].length > 10) return;
     if (parts.length > 1 && parts[1].length > 2) return;
     setQty(value);
@@ -416,10 +417,10 @@ const RegisterSaleView = () => {
       input.focus();
       input.select();
 
-      // Ensure the cart item card is visible
-      const cartItem = input.closest('.pos-cart-item');
-      if (cartItem) {
-        cartItem.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+      // Ensure the cart item row is visible
+      const cartRow = input.closest('.pos-cart-row');
+      if (cartRow) {
+        cartRow.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
       }
     }
   }, [focusedCartIndex, activeSection]);
@@ -523,6 +524,15 @@ const RegisterSaleView = () => {
     setSelectedProduct(null);
     lastCloseTimeRef.current = Date.now();
   }, []);
+  
+  // Handle initial product from state (e.g., scanned from Sales catalog)
+  useEffect(() => {
+    if (location.state?.initialProduct) {
+      handleOpenAddModal(location.state.initialProduct);
+      // Clear state to avoid reopening on refresh
+      window.history.replaceState({}, document.title);
+    }
+  }, [location.state, handleOpenAddModal]);
 
   const handleSearchKeyDown = (e) => {
     if (e.key === 'ArrowDown') {
@@ -559,7 +569,9 @@ const RegisterSaleView = () => {
       let cartQuantityToVerify = quantity;
 
       if (existingItemIndex >= 0) {
-        cartQuantityToVerify += prev[existingItemIndex].quantity;
+        // Ensure we add numbers, not strings
+        const existingQty = Number(prev[existingItemIndex].quantity) || 0;
+        cartQuantityToVerify = Math.round((quantity + existingQty) * 100) / 100;
       }
 
       // Allow adding beyond local stock; backend will ultimately validate.
@@ -568,7 +580,7 @@ const RegisterSaleView = () => {
         // Update existing row
         newCart[existingItemIndex] = {
           ...newCart[existingItemIndex],
-          quantity: cartQuantityToVerify,
+          quantity: String(cartQuantityToVerify),
           subtotal: cartQuantityToVerify * product.productPrice
         };
       } else {
@@ -589,6 +601,7 @@ const RegisterSaleView = () => {
   const handleUpdateCartItemQty = (index, valueStr) => {
     if (valueStr.includes(',') || valueStr.includes('-')) return;
     const parts = valueStr.split('.');
+    if (parts.length > 2) return; // Prevent more than one decimal point
     if (parts[0].length > 10) return;
     if (parts.length > 1 && parts[1].length > 2) return;
 
@@ -804,10 +817,10 @@ const RegisterSaleView = () => {
               <table className="pos-product-list">
                 <thead>
                   <tr>
-                    <th>Code</th>
-                    <th>Product</th>
-                    <th>Price</th>
-                    <th>Stock</th>
+                    <th style={{ width: '15%' }}>Code</th>
+                    <th style={{ width: '45%' }}>Product</th>
+                    <th style={{ width: '25%' }}>Price</th>
+                    <th style={{ width: '15%' }}>Stock</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -902,100 +915,112 @@ const RegisterSaleView = () => {
                 <span style={{ fontSize: '0.85rem' }}>Select products from the catalog to add them here</span>
               </div>
             ) : (
-              cartItems.map((item, index) => (
-                <div
-                  className={`pos-cart-item ${activeSection === 'cart' && focusedCartIndex === index ? 'focused' : ''}`}
-                  key={item.product.productCode}
-                  onClick={() => {
-                    setActiveSection('cart');
-                    setFocusedCartIndex(index);
-                    setFocusedIndex(-1);
-                  }}
-                >
-                  <div className="pos-cart-item-header">
-                    <div className="pos-item-details">
-                      <div className="pos-item-name">{item.product.productName}</div>
-                      <div className="pos-item-code">Code: {item.product.productCode}</div>
-                      <div className="pos-item-price-unit">
-                        ${item.product.productPrice.toFixed(2)} / {item.product.unitOfMeasure?.code === 'UNITS' ? 'u' : item.product.unitOfMeasure?.label}
-                      </div>
-                    </div>
-                    <button
-                      className="pos-remove-btn"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleRemoveFromCart(index);
-                        if (focusedCartIndex === index) setFocusedCartIndex(-1);
+              <table className="pos-cart-table">
+                <thead>
+                  <tr>
+                    <th>Product</th>
+                    <th style={{ width: '100px', textAlign: 'center' }}>Quantity</th>
+                    <th style={{ width: '90px', textAlign: 'left' }}>Price</th>
+                    <th style={{ width: '110px', textAlign: 'left' }}>Subtotal</th>
+                    <th style={{ width: '40px' }}></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {cartItems.map((item, index) => (
+                    <tr
+                      key={item.product.productCode}
+                      className={`pos-cart-row ${activeSection === 'cart' && focusedCartIndex === index ? 'focused' : ''}`}
+                      onClick={() => {
+                        setActiveSection('cart');
+                        setFocusedCartIndex(index);
+                        setFocusedIndex(-1);
                       }}
-                      title="Remove Item"
                     >
-                      <Trash2 size={18} />
-                    </button>
-                  </div>
-
-                  <div className="pos-cart-item-fields">
-                    <div className="pos-field-row">
-                      <span className="pos-field-label">QUANTITY</span>
-                      <input
-                        ref={el => cartInputRefs.current[index] = el}
-                        type="text"
-                        className={`pos-qty-input ${item.error ? 'error' : ''}`}
-                        style={item.error ? { borderColor: '#ef4444', boxShadow: '0 0 0 3px rgba(239, 68, 68, 0.2)' } : {}}
-                        value={item.quantity}
-                        onFocus={() => {
-                          setActiveSection('cart');
-                          setFocusedCartIndex(index);
-                          setFocusedIndex(-1);
-                        }}
-                        onChange={(e) => handleUpdateCartItemQty(index, e.target.value)}
-                        onBlur={() => handleVerifyQtyBlur(index)}
-                        onKeyDown={(e) => {
-                          if (e.key === 'Enter') {
-                            e.preventDefault();
-                            e.target.blur();
-                            return;
-                          }
-                          if (e.key === 'ArrowDown') {
-                            e.preventDefault();
-                            setFocusedCartIndex(prev => Math.min(prev + 1, cartItems.length - 1));
-                            return;
-                          }
-                          if (e.key === 'ArrowUp') {
-                            e.preventDefault();
-                            setFocusedCartIndex(prev => Math.max(prev - 1, 0));
-                            return;
-                          }
-                          if (e.key === 'ArrowLeft' && e.ctrlKey) {
-                            e.preventDefault();
-                            e.target.blur();
-                            setActiveSection('catalog');
-                            setFocusedCartIndex(-1);
-                            setFocusedIndex(0);
-                            return;
-                          }
-                          if (e.key === 'Delete') {
-                            e.preventDefault();
-                            handleRemoveFromCart(index);
-                            setFocusedCartIndex(-1);
-                            return;
-                          }
-                          restrictNumericInput(e);
-                        }}
-                      />
-                    </div>
-                    <div className="pos-field-row">
-                      <span className="pos-field-label">SUBTOTAL</span>
-                      <span className="pos-item-subtotal">
+                      <td>
+                        <div className="pos-cart-product-info">
+                          <div className="pos-cart-product-name" title={item.product.productName}>
+                            {item.product.productName}
+                          </div>
+                          <div className="pos-cart-product-code">{item.product.productCode}</div>
+                        </div>
+                      </td>
+                      <td>
+                        <div className="pos-cart-qty-wrapper">
+                          <input
+                            ref={el => cartInputRefs.current[index] = el}
+                            type="text"
+                            className={`pos-cart-qty-input ${item.error ? 'error' : ''}`}
+                            value={item.quantity}
+                            onFocus={() => {
+                              setActiveSection('cart');
+                              setFocusedCartIndex(index);
+                              setFocusedIndex(-1);
+                            }}
+                            onChange={(e) => handleUpdateCartItemQty(index, e.target.value)}
+                            onBlur={() => handleVerifyQtyBlur(index)}
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter') {
+                                e.preventDefault();
+                                e.target.blur();
+                                return;
+                              }
+                              if (e.key === 'ArrowDown') {
+                                e.preventDefault();
+                                setFocusedCartIndex(prev => Math.min(prev + 1, cartItems.length - 1));
+                                return;
+                              }
+                              if (e.key === 'ArrowUp') {
+                                e.preventDefault();
+                                setFocusedCartIndex(prev => Math.max(prev - 1, 0));
+                                return;
+                              }
+                              if (e.key === 'ArrowLeft' && e.ctrlKey) {
+                                e.preventDefault();
+                                e.target.blur();
+                                setActiveSection('catalog');
+                                setFocusedCartIndex(-1);
+                                setFocusedIndex(0);
+                                return;
+                              }
+                              if (e.key === 'Delete') {
+                                e.preventDefault();
+                                handleRemoveFromCart(index);
+                                setFocusedCartIndex(-1);
+                                return;
+                              }
+                              restrictNumericInput(e);
+                            }}
+                          />
+                          {item.error && (
+                            <div className="pos-cart-error-tooltip">
+                              {item.error}
+                            </div>
+                          )}
+                        </div>
+                      </td>
+                      <td style={{ textAlign: 'left', fontSize: '0.9rem', color: '#6b7280' }}>
+                        ${item.product.productPrice.toFixed(2)} / {item.product.unitOfMeasure?.code === 'UNITS' ? 'u' : item.product.unitOfMeasure?.label}
+                      </td>
+                      <td style={{ textAlign: 'left', fontWeight: 600, color: '#111827' }}>
                         ${Number(item.subtotal || 0).toFixed(2)}
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="pos-item-error-msg">
-                    {item.error || '\u00A0'}
-                  </div>
-                </div>
-              ))
+                      </td>
+                      <td style={{ textAlign: 'center' }}>
+                        <button
+                          className="pos-cart-del-btn"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleRemoveFromCart(index);
+                            if (focusedCartIndex === index) setFocusedCartIndex(-1);
+                          }}
+                          title="Remove Item"
+                        >
+                          <Trash2 size={16} />
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             )}
           </div>
 

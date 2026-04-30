@@ -14,4 +14,6 @@ public interface ISaleService{
     SaleFiltersResponseDTO getFilters();
 
     void registerSale(SaleCreateRequestDTO request);
+
+    // String generateSaleTicket(Long saleId);
 }

@@ -39,7 +39,7 @@ public interface IProductDetailResponseMapper {
 
     /**
      * Maps {@link UnitOfMeasure} to {@link EnumDTO}.
-     * Uses abbreviation instead of display value.
+     * Uses display name for user-friendly representation.
      */
     default EnumDTO map(UnitOfMeasure unit) {
         if (unit == null) return null;

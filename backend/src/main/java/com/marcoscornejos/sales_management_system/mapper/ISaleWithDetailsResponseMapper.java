@@ -38,7 +38,6 @@ public interface ISaleWithDetailsResponseMapper {
      * @return SaleDetailResponseDTO with mapped fields
      */
     @Mapping(source = "product.productCode", target = "productCode")
-    @Mapping(source = "product.productName", target = "productName")
     @Mapping(target = "subtotal", expression = "java(calculateSubtotal(detail))")
     SaleDetailResponseDTO toSaleDetailResponseDTO(SaleDetail detail);
 

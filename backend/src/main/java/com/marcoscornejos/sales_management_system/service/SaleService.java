@@ -11,6 +11,7 @@ import com.marcoscornejos.sales_management_system.mapper.ISaleWithDetailsRespons
 import com.marcoscornejos.sales_management_system.model.*;
 import com.marcoscornejos.sales_management_system.repository.IProductRepository;
 import com.marcoscornejos.sales_management_system.repository.ISaleRepository;
+import com.marcoscornejos.sales_management_system.repository.ISystemConfigurationRepository;
 import com.marcoscornejos.sales_management_system.repository.IUserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +22,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.math.RoundingMode;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -38,6 +41,7 @@ public class SaleService implements ISaleService{
     private final ISaleWithDetailsResponseMapper iSaleWithDetailsResponseMapper;
     private final IUserRepository iUserRepository;
     private final IProductRepository iProductRepository;
+    private final ISystemConfigurationRepository iSystemConfigurationRepository;
 
     /**
      * Retrieves a paginated list of sales applying:
@@ -333,6 +337,7 @@ public class SaleService implements ISaleService{
             saleDetail.setProductQuantity(quantity);
             saleDetail.setSalePrice(product.getProductPrice());
             saleDetail.setUnitOfMeasureAtSale(product.getUnitOfMeasure());
+            saleDetail.setProductNameAtSale(product.getProductName());
 
             saleDetails.add(saleDetail);
         }
@@ -352,4 +357,83 @@ public class SaleService implements ISaleService{
         // ensuring consistency at persistence level.
         iSaleRepository.save(sale);
     }
+
+
+
+    /**
+     * Generates a formatted sale ticket for a given sale ID.
+     *
+     * <p>
+     * Retrieves the sale along with its details and products, as well as
+     * the system configuration containing business information.
+     * Then builds a plain text ticket formatted for thermal printing.
+     * </p>
+     *
+     * @param saleId the unique identifier of the sale
+     * @return the formatted sale ticket as plain text
+     * @throws SaleNotFoundException if the sale is not found
+
+    @Override
+    @Transactional
+    public String generateSaleTicket(Long saleId) {
+
+        // 1. Retrieve sale with details and products (1 query bien optimizada)
+        Sale sale = iSaleRepository.findByIdWithDetailsAndProducts(saleId)
+                .orElseThrow(() -> new SaleNotFoundException(
+                        String.format("Sale with ID '%s' not found", saleId)
+                ));
+
+        // 2. Retrieve system configuration (business info)
+        SystemConfiguration config = iSystemConfigurationRepository.findById(1L)
+                .orElseThrow(() -> new RuntimeException("System configuration not found"));
+
+        // 3. Current date and time
+        LocalDateTime now = LocalDateTime.now();
+
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss");
+
+        // 4. Build ticket
+        StringBuilder ticket = new StringBuilder();
+
+        // --- Header ---
+        ticket.append(center(config.getBusinessName())).append("\n");
+        ticket.append(center(config.getBusinessAddress())).append("\n");
+        ticket.append("--------------------------------\n");
+
+        ticket.append("Date: ").append(now.format(dateFormatter)).append("\n");
+        ticket.append("Time: ").append(now.format(timeFormatter)).append("\n");
+        ticket.append("--------------------------------\n");
+
+        // --- Details ---
+        for (SaleDetail detail : sale.getSaleDetails()) {
+
+            String productName = detail.getProductNameAtSale();
+            String quantity = detail.getProductQuantity().stripTrailingZeros().toPlainString();
+            String unit = detail.getUnitOfMeasureAtSale().getAbbreviation();
+            String unitPrice = detail.getSalePrice().toPlainString();
+            String subtotal = detail.getSubtotal().toPlainString();
+
+            ticket.append(productName).append("\n");
+
+            ticket.append(String.format(
+                    "%s %s x %s    %s\n",
+                    quantity,
+                    unit,
+                    unitPrice,
+                    subtotal
+            ));
+        }
+
+        ticket.append("--------------------------------\n");
+
+        // --- Total ---
+        ticket.append(String.format("TOTAL: %s\n", sale.getTotalAmount().toPlainString()));
+
+        ticket.append("\n");
+        ticket.append(center("Thank you for your purchase!")).append("\n");
+
+        return ticket.toString();
+    }
+    */
 }

@@ -22,9 +22,9 @@ public class SaleDetailResponseDTO {
     private String productCode;
 
     /**
-     * Product name.
+     * Product name at the time of the sale (snapshot).
      */
-    private String productName;
+    private String productNameAtSale;
 
     /**
      * Quantity sold.

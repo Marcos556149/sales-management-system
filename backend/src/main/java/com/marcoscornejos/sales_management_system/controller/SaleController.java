@@ -143,4 +143,31 @@ public class SaleController {
 
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
+
+    /**
+     * Generates a printable ticket for a specific sale.
+     *
+     * <p>
+     * This endpoint retrieves the sale and its associated details,
+     * and returns a formatted ticket ready to be printed on a thermal printer.
+     * The ticket includes business information, date and time,
+     * sold products, quantities, unit prices, subtotals, and total amount.
+     * </p>
+     *
+     * @param saleId the unique identifier of the sale
+     * @return the formatted sale ticket as plain text
+
+    @GetMapping("/{saleId}/ticket")
+    public ResponseEntity<String> generateSaleTicket(
+            @PathVariable Long saleId
+    ) {
+
+        String ticket = iSaleService.generateSaleTicket(saleId);
+
+        return ResponseEntity.ok()
+                .header("Content-Type", "text/plain; charset=UTF-8")
+                .body(ticket);
+    }
+
+            */
 }

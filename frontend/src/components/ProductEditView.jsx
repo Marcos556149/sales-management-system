@@ -98,6 +98,7 @@ const ProductEditView = () => {
     if (['productPrice', 'productStock', 'minimumStock'].includes(name)) {
       if (value.includes(',')) return;
       const parts = value.split('.');
+      if (parts.length > 2) return; // Prevent more than one decimal point
       if (parts[0].length > 10) return;
       if (parts.length > 1 && parts[1].length > 2) return;
     }

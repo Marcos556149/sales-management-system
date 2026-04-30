@@ -226,7 +226,7 @@ const SaleDetailView = () => {
                   {sale.saleDetails.map((item, index) => (
                     <tr key={`${item.productCode}-${index}`} className="interactive-row">
                       <td className="font-mono text-sm">{item.productCode}</td>
-                      <td className="font-medium">{item.productName}</td>
+                      <td className="font-medium">{item.productNameAtSale}</td>
                       <td className="stock-cell">
                         {item.productQuantity} <span className="unit-text">{item.unitOfMeasureAtSale?.label || ''}</span>
                       </td>

@@ -3,11 +3,14 @@
  *
  * <p>Each sale detail links a product to a sale, including
  * the quantity sold, the unit of measure at the time of the sale,
- * the price at the moment of the sale, and the calculated subtotal.</p>
+ * the sale price at the moment of the transaction, and the calculated subtotal.</p>
  *
- * <p>This entity preserves historical transactional data, ensuring that
- * changes in product information (such as price or unit of measure)
- * do not affect past sales records.</p>
+ * <p>This entity preserves historical transactional data by storing
+ * a snapshot of product information at the time of the sale, including:
+ * product name, sale price, and unit of measure.</p>
+ *
+ * <p>This ensures that changes in product information (such as name,
+ * price, or unit of measure) do not affect past sales records.</p>
  */
 
 package com.marcoscornejos.sales_management_system.model;
@@ -68,18 +71,27 @@ public class SaleDetail {
 
 
     /**
+     * Product name at the time of the sale.
+     * This value is stored as an immutable snapshot to preserve historical accuracy
+     * even if the product name changes later in the product catalog.
+     */
+    @Column(name = "product_name_at_sale")
+    private String productNameAtSale;
+
+    /**
      * Unit price of the product at the time of the sale.
      * Stored to preserve historical pricing.
      */
     @Column(name = "sale_price")
     private BigDecimal salePrice;
 
-    public SaleDetail(Product product, Sale sale, BigDecimal productQuantity, BigDecimal salePrice, UnitOfMeasure unitOfMeasureAtSale) {
+    public SaleDetail(Product product, Sale sale, BigDecimal productQuantity, BigDecimal salePrice, UnitOfMeasure unitOfMeasureAtSale, String productNameAtSale) {
         this.product = product;
         this.sale = sale;
         this.productQuantity = productQuantity;
         this.salePrice = salePrice;
         this.unitOfMeasureAtSale = unitOfMeasureAtSale;
+        this.productNameAtSale = productNameAtSale;
     }
 
 
