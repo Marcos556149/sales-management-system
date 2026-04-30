@@ -27,4 +27,11 @@ public interface IProductService {
     ProductMetadataResponseDTO getProductMetadata();
 
     ProductDetailResponseDTO updateProduct(String productCode, ProductUpdateRequestDTO request);
+
+    PageResponseDTO<ProductSaleListResponseDTO> getProductsForSale(
+            String searchCodeOrName,
+            SortOrder nameSort,
+            int page,
+            int size
+    );
 }

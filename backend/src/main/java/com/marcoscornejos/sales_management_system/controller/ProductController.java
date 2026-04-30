@@ -66,6 +66,39 @@ public class ProductController {
     }
 
     /**
+     * Retrieves a paginated list of products available for sale.
+     *
+     * <p>
+     * Returns only active products intended for use in the sale registration
+     * interface. Supports searching by product code or name and sorting by name.
+     * </p>
+     *
+     * @param searchCodeOrName Optional product code or name (or part of it)
+     * @param nameSort Sorting order by name (default: ASCENDING)
+     * @param page Page number (default: 0)
+     * @param size Number of products per page (default: 10)
+     * @return A paginated response containing products available for sale
+     */
+    @GetMapping("/sales")
+    public ResponseEntity<PageResponseDTO<ProductSaleListResponseDTO>> getProductsForSale(
+            @RequestParam(required = false) String searchCodeOrName,
+            @RequestParam(defaultValue = "ASCENDING") SortOrder nameSort,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+
+        PageResponseDTO<ProductSaleListResponseDTO> response =
+                iProductService.getProductsForSale(
+                        searchCodeOrName,
+                        nameSort,
+                        page,
+                        size
+                );
+
+        return ResponseEntity.ok(response);
+    }
+
+    /**
      * Retrieves available filter and sorting options for products.
      *
      * <p>This endpoint provides dynamic configuration data for the frontend,

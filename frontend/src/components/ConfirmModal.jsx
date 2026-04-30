@@ -14,22 +14,32 @@ const ConfirmModal = ({
   React.useEffect(() => {
     if (!isOpen) return;
 
+    // Block interactions with the rest of the app
+    document.body.classList.add('modal-open-blocking');
+
     const handleKeyDown = (e) => {
-      if (isConfirming) return;
+      // Prevent event from reaching other listeners (like global shortcuts)
+      e.stopPropagation();
+
+      if (isConfirming) {
+        e.preventDefault();
+        return;
+      }
       
       if (e.key === 'Enter') {
         e.preventDefault();
-        e.stopImmediatePropagation();
         onConfirm();
       } else if (e.key === 'Escape') {
         e.preventDefault();
-        e.stopImmediatePropagation();
         onCancel();
       }
     };
 
     window.addEventListener('keydown', handleKeyDown, true);
-    return () => window.removeEventListener('keydown', handleKeyDown, true);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown, true);
+      document.body.classList.remove('modal-open-blocking');
+    };
   }, [isOpen, onConfirm, onCancel, isConfirming]);
 
   if (!isOpen) return null;

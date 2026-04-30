@@ -175,10 +175,17 @@
 
 .data-table tbody tr {
   transition: background-color 0.15s ease;
+  scroll-margin-top: 45px;
 }
 
 .data-table tbody tr:hover {
   background-color: rgba(244, 246, 248, 0.8);
+}
+
+.data-table tbody tr.interactive-row.focused {
+  background-color: #e5e7eb;
+  outline: 2px solid #2563eb;
+  outline-offset: -2px;
 }
 
 .font-mono {
@@ -447,5 +454,3 @@
   background-color: rgba(0, 0, 0, 0.08);
   opacity: 0.8;
 }
-
-

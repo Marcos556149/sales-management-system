@@ -274,7 +274,7 @@ The system must allow the user to register sales made in the business, storing t
 1. The user accesses the sales section.  
 2. The user requests to register a new sale.  
 3. The system creates a sale in progress.  
-4. The system displays an empty sale detail and the product selection interface. 
+4. The system initializes a new sale in progress and displays an empty sale detail.
 5. The system displays the product selection interface, which includes:
    - Product search by name or code  
    - Product list with pagination  
@@ -309,23 +309,16 @@ The system must allow the user to register sales made in the business, storing t
    - Unit price at the time of the sale  
    - Unit of measure at the time of the sale
    - Subtotal (calculated as quantity × unit price, not stored) 
-20. The system displays a confirmation message: "Sale successfully registered. Do you want to print the receipt?"  
+20. The system displays a confirmation prompt: "Do you want to print the receipt?"
 21. The user confirms receipt printing, invoking the Generate Receipt operation (RF-10).  
-22. The system returns to the sales section.
+22. The system completes the sale registration process and returns to the sales section.
+23. The system displays the message: "Sale successfully registered".
 
 ### Alternative Flows
 
-**3.a Product Not Found**  
-3.a.1 The system detects that the product does not exist.  
-3.a.2 The system displays a message: "Product with code '{productCode}' not found".
-
 **10.a Invalid quantity**  
-10.a.1 The system detects that the entered quantity is less than or equal to 0, greater than available stock, or incompatible with the product's unit of measure.  
+10.a.1 The system detects that the entered quantity is less than or equal to 0 or incompatible with the product's unit of measure.  
 10.a.2 The system displays an error message indicating the required correction.
-
-**10.b Inactive product**  
-10.b.1 The system detects that the selected product has inactive status.  
-10.b.2 The system displays a message: "Product '{productCode} - {productName}' is inactive and cannot be added to the sale".
 
 **16.a Sale canceled**  
 16.a.1 The user decides to cancel the sale before confirmation.  
@@ -334,6 +327,18 @@ The system must allow the user to register sales made in the business, storing t
 **16.b Sale without products**  
 16.b.1 The system detects that the sale has no associated products.  
 16.b.2 The system displays a message: "The sale must contain at least one product".
+
+**16.c Product Not Found**  
+16.c.1 The system detects that one or more products included in the sale do not exist. 
+16.c.2 The system displays a message: "Product with code '{productCode}' not found".
+
+**16.d Inactive product**  
+16.d.1 The system detects that one or more products included in the sale have inactive status. 
+16.d.2 The system displays a message: "Product '{productCode} - {productName}' is inactive and cannot be added to the sale".
+
+**16.e Insufficient stock**  
+16.e.1 The system detects that one or more products included in the sale have a requested quantity greater than the available stock.  
+16.e.2 The system displays a message: "Insufficient stock for product {productCode} - {productName}"  
 
 **21.a Receipt printing canceled**  
 21.a.1 The user cancels receipt printing.  

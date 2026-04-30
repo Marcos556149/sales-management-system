@@ -52,6 +52,7 @@ const SalesView = () => {
   const [error, setError] = useState(null);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
   const [actionLoading, setActionLoading] = useState(false);
+  const [focusedIndex, setFocusedIndex] = useState(-1);
 
   const abortControllerRef = useRef(null);
   const searchInputRef = useRef(null);
@@ -71,12 +72,38 @@ const SalesView = () => {
     return () => clearTimeout(handler);
   }, [searchSaleId, setAppliedSearchSaleId, setPageFrontend]);
 
-  // Handle immediate search on Enter key
-  const handleKeyDown = (e) => {
-    if (e.key === 'Enter') {
-      if (appliedSearchSaleId !== searchSaleId) {
+  // Reset focus when sales change
+  useEffect(() => {
+    setFocusedIndex(-1);
+  }, [sales]);
+
+  // Scroll focused row into view
+  useEffect(() => {
+    if (focusedIndex >= 0) {
+      const row = document.getElementById(`sale-row-${focusedIndex}`);
+      if (row) {
+        row.scrollIntoView({ block: 'nearest' });
+      }
+    }
+  }, [focusedIndex]);
+
+  // Handle immediate search on Enter key and Arrow Navigation
+  const handleSearchKeyDown = (e) => {
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      setFocusedIndex(prev => Math.min(prev + 1, sales.length - 1));
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      setFocusedIndex(prev => Math.max(prev - 1, 0));
+    } else if (e.key === 'Enter') {
+      e.preventDefault();
+      if (focusedIndex >= 0 && focusedIndex < sales.length) {
+        handleRowClick(sales[focusedIndex].saleId);
+      } else if (appliedSearchSaleId !== searchSaleId) {
         setPageFrontend(1);
         setAppliedSearchSaleId(searchSaleId);
+      } else if (sales.length === 1) {
+        handleRowClick(sales[0].saleId);
       }
     }
   };
@@ -328,7 +355,7 @@ const SalesView = () => {
   // Register contextual shortcuts
   useKeyboardShortcuts(React.useMemo(() => ({
     'shift+n': () => navigate('/dashboard/sales/new'),
-    'ctrl+shift+r': () => handleManualRefresh(),
+    'ctrl+shift+k': () => handleManualRefresh(),
     '/': () => searchInputRef.current?.focus(),
     'arrowright': () => {
       if (pageFrontend < totalPages) {
@@ -339,8 +366,24 @@ const SalesView = () => {
       if (pageFrontend > 1) {
         setPageFrontend(prev => prev - 1);
       }
+    },
+    'arrowdown': () => {
+      if (sales.length > 0) {
+        setFocusedIndex(prev => Math.min(prev + 1, sales.length - 1));
+      }
+    },
+    'arrowup': () => {
+      if (sales.length > 0) {
+        setFocusedIndex(prev => Math.max(prev - 1, 0));
+      }
+    },
+    'enter': () => {
+      if (document.activeElement && document.activeElement.tagName === 'BUTTON') return;
+      if (focusedIndex >= 0 && focusedIndex < sales.length) {
+        handleRowClick(sales[focusedIndex].saleId);
+      }
     }
-  }), [navigate, handleManualRefresh, pageFrontend, totalPages, setPageFrontend]));
+  }), [navigate, handleManualRefresh, pageFrontend, totalPages, setPageFrontend, sales, focusedIndex]));
 
   return (
     <div className="view-container sales-view-container">
@@ -356,7 +399,7 @@ const SalesView = () => {
               placeholder="Search by Sale ID..." 
               value={searchSaleId}
               onChange={handleSearchChange}
-              onKeyDown={handleKeyDown}
+              onKeyDown={handleSearchKeyDown}
             />
             <div className="search-actions">
               {searchSaleId && (
@@ -439,7 +482,7 @@ const SalesView = () => {
           >
             <RefreshCw size={18} className={loading ? "spin-animation" : ""} />
             <span>{loading ? 'Refreshing...' : 'Refresh'}</span>
-            <span className="btn-shortcut">Ctrl+Shift+R</span>
+            <span className="btn-shortcut">Ctrl+Shift+K</span>
           </button>
           
           <button 
@@ -484,12 +527,13 @@ const SalesView = () => {
                 </tr>
               </thead>
               <tbody>
-                {sales.map(sale => (
+                {sales.map((sale, index) => (
                   <tr 
                     key={sale.saleId} 
+                    id={`sale-row-${index}`}
                     onClick={() => handleRowClick(sale.saleId)}
                     style={{ cursor: 'pointer' }}
-                    className="interactive-row"
+                    className={`interactive-row ${focusedIndex === index ? 'focused' : ''}`}
                   >
                     <td className="font-mono text-sm">{sale.saleId}</td>
                     <td className="font-medium">{formatDate(sale.saleDate)}</td>

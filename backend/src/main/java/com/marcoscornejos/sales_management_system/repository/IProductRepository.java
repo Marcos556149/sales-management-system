@@ -23,6 +23,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Repository
@@ -83,4 +84,62 @@ public interface IProductRepository extends JpaRepository<Product, String> {
                                ProductStatus statusFilter,
                                String stockFilter,
                                Pageable pageable);
+
+    /**
+     * Retrieves products available for sale with optional search,
+     * applying pagination and sorting at the database level.
+     *
+     * <p>
+     * Only products with ACTIVE status and stock greater than zero
+     * are included.
+     * </p>
+     *
+     * <p>
+     * Search is applied on product name or code
+     * (case-insensitive, partial match).
+     * If {@code searchCodeOrName} is null, search is ignored.
+     * </p>
+     *
+     * <p>
+     * Pagination and sorting are handled using {@link Pageable},
+     * ensuring efficient data retrieval directly from the database
+     * (server-side pagination).
+     * </p>
+     *
+     * @param searchCodeOrName optional search term (name or code)
+     * @param pageable pagination and sorting configuration
+     * @return paginated result of products available for sale
+     */
+    @Query("""
+    SELECT p FROM Product p
+    WHERE
+        (
+            :searchCodeOrName IS NULL OR
+            LOWER(p.productName) LIKE LOWER(CONCAT('%', CAST(:searchCodeOrName AS string), '%')) OR
+            LOWER(p.productCode) LIKE LOWER(CONCAT('%', CAST(:searchCodeOrName AS string), '%'))
+        )
+    AND
+        p.productStatus = 'ACTIVE'
+    AND
+        p.productStock > 0
+    """)
+    Page<Product> findProductsForSale(String searchCodeOrName,
+                                      Pageable pageable);
+
+    /**
+     * Counts the total number of products available for sale.
+     *
+     * <p>
+     * Only products with ACTIVE status and stock greater than
+     * the provided value are included.
+     * </p>
+     *
+     * @param productStatus required product status
+     * @param productStock minimum exclusive stock threshold
+     * @return total number of matching products
+     */
+    Long countByProductStatusAndProductStockGreaterThan(
+            ProductStatus productStatus,
+            BigDecimal productStock
+    );
 }

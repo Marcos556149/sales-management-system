@@ -15,6 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 
@@ -33,6 +34,7 @@ public class ProductService implements IProductService {
     private final IProductDetailResponseMapper iProductDetailResponseMapper;
     private final IProductCreateRequestMapper iProductCreateRequestMapper;
     private final IProductUpdateRequestMapper iProductUpdateRequestMapper;
+    private final IProductSaleListResponseMapper iProductSaleListResponseMapper;
 
     /**
      * Retrieves a paginated list of products applying:
@@ -144,6 +146,111 @@ public class ProductService implements IProductService {
                 totalGlobalElements
         );
     }
+
+    /**
+     * Retrieves a paginated list of products available for sale applying:
+     * <ul>
+     * <li>Search by product name or code</li>
+     * <li>Only ACTIVE products are included</li>
+     * <li>Only products with stock greater than zero are included</li>
+     * <li>Sorting by product name</li>
+     * <li>Pagination (page number and size)</li>
+     * </ul>
+     *
+     * <p>
+     * Search is optional and ignored if null or blank.
+     * Pagination and sorting are executed at database level
+     * (server-side pagination).
+     * </p>
+     *
+     * @param searchCodeOrName Optional search term
+     * @param nameSort Sorting order (ASCENDING / DESCENDING)
+     * @param page Page number (0-based)
+     * @param size Number of elements per page
+     * @return Paginated list of products available for sale mapped to DTO
+     */
+    @Override
+    public PageResponseDTO<ProductSaleListResponseDTO> getProductsForSale(
+            String searchCodeOrName,
+            SortOrder nameSort,
+            int page,
+            int size
+    ) {
+
+        // Validate pagination parameters
+        if (page < 0) {
+            throw new InvalidProductDataException(
+                    "Page index must not be negative",
+                    "page"
+            );
+        }
+
+        if (size <= 0) {
+            throw new InvalidProductDataException(
+                    "Page size must be greater than zero",
+                    "size"
+            );
+        }
+
+        if (size > 50) {
+            throw new InvalidProductDataException(
+                    "Page size must not exceed 50",
+                    "size"
+            );
+        }
+
+        // Build sorting configuration (applied at database level)
+        Sort sort = Sort.by("productName");
+
+        if (nameSort == SortOrder.DESCENDING) {
+            sort = sort.descending();
+        } else {
+            sort = sort.ascending();
+        }
+
+        // Normalize search input:
+        // Convert empty or blank strings into null so the query ignores the search filter
+        if (searchCodeOrName != null && searchCodeOrName.trim().isEmpty()) {
+            searchCodeOrName = null;
+        }
+
+        // Creates pagination configuration including page number,
+        // page size, and sorting criteria.
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        // Execute query:
+        // only ACTIVE products with stock > 0
+        Page<Product> productPage = iProductRepository.findProductsForSale(
+                searchCodeOrName,
+                pageable
+        );
+
+        // Total number of products available for sale.
+        // Only calculated when filtered query returns no results.
+        Long totalGlobalElements = null;
+
+        if (productPage.getTotalElements() == 0) {
+            totalGlobalElements =
+                    iProductRepository.countByProductStatusAndProductStockGreaterThan(
+                            ProductStatus.ACTIVE,
+                            BigDecimal.ZERO
+                    );
+        }
+
+        // Map entities to DTOs
+        return iPageResponseMapper.toPageResponseDTO(
+                productPage.getContent()
+                        .stream()
+                        .map(iProductSaleListResponseMapper::toDto)
+                        .toList(),
+                productPage.getNumber(),
+                productPage.getSize(),
+                productPage.getTotalPages(),
+                productPage.getTotalElements(),
+                totalGlobalElements
+        );
+    }
+
 
     /**
      * Builds and returns available filter and sorting options for products.

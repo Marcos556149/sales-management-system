@@ -12,15 +12,7 @@ const BarcodeScanner = () => {
   const bufferRef = useRef('');
   const timeoutRef = useRef(null);
 
-  // Exact match required: active ONLY on the general products view
-  const isProductsGeneralView = location.pathname === '/dashboard/products';
-
   useEffect(() => {
-    if (!isProductsGeneralView) {
-      bufferRef.current = '';
-      return;
-    }
-
     const handleKeyDown = (e) => {
       // Ignore keystrokes if the user has an input, textarea or anything editable focused
       if (
@@ -32,22 +24,25 @@ const BarcodeScanner = () => {
       }
 
       if (e.key === 'Enter') {
-        e.preventDefault();
         const code = bufferRef.current.trim();
         if (code) {
-          processBarcode(code);
+          e.preventDefault();
+          e.stopImmediatePropagation(); // Neutralize Enter for modals
+
+          // Only process the code if NO blocking modal is open
+          if (!document.body.classList.contains('modal-open-blocking')) {
+            processBarcode(code);
+          }
         }
         bufferRef.current = '';
         if (timeoutRef.current) clearTimeout(timeoutRef.current);
         return;
       }
 
-      // Only buffer alphanumeric keys and hyphens (this matches the regex logic)
+      // Only buffer alphanumeric keys and hyphens
       if (/^[a-zA-Z0-9-]$/.test(e.key)) {
         bufferRef.current += e.key;
 
-        // Scanners press keys extremely fast (usually < 50ms interval)
-        // If there's a pause of > 150ms, assume it was accidental typing and reset
         if (timeoutRef.current) clearTimeout(timeoutRef.current);
         timeoutRef.current = setTimeout(() => {
           bufferRef.current = '';
@@ -55,15 +50,13 @@ const BarcodeScanner = () => {
       }
     };
 
-    window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('keydown', handleKeyDown, true); // Use capture phase for global priority
     
     return () => {
-      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('keydown', handleKeyDown, true);
       if (timeoutRef.current) clearTimeout(timeoutRef.current);
     };
-    // processBarcode is hoisted basically or bound to latest closure, but safe to omit from deps
-    // to avoid remounting keydown listener every render, since addToast/navigate are stable.
-  }, [isProductsGeneralView, navigate, addToast]);
+  }, [navigate, addToast]);
 
   const validateCode = (code) => {
     // Alphanumeric and hyphens, strictly 8 to 30 characters

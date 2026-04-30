@@ -11,14 +11,17 @@ import { useEffect } from 'react';
 export const useKeyboardShortcuts = (shortcutMap) => {
   useEffect(() => {
     const handleKeyDown = (event) => {
+      // Don't trigger if a blocking modal is open
+      if (document.body.classList.contains('modal-open-blocking')) {
+        return;
+      }
+
       // Don't trigger if user is typing in an input field
       const activeElement = document.activeElement;
       const isTyping = 
         activeElement.tagName === 'INPUT' || 
         activeElement.tagName === 'TEXTAREA' || 
         activeElement.isContentEditable;
-
-      if (isTyping) return;
 
       const key = event.key.toLowerCase();
       const isCtrl = event.ctrlKey || event.metaKey;
@@ -31,6 +34,11 @@ export const useKeyboardShortcuts = (shortcutMap) => {
       if (isShift) shortcutStr += 'shift+';
       if (isAlt) shortcutStr += 'alt+';
       shortcutStr += key;
+
+      // Allow specific shortcuts to bypass the isTyping check (like Refresh or Form Submit)
+      if (isTyping && shortcutStr !== 'ctrl+shift+k' && shortcutStr !== 'ctrl+enter' && shortcutStr !== 'f9') {
+        return;
+      }
 
       // Also check for the key alone (e.g., 'escape')
       if (shortcutMap[shortcutStr]) {

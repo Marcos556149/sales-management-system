@@ -207,7 +207,7 @@ const SaleDetailView = () => {
         {/* DETAILS: Productos Vendidos */}
         <div className="sale-items-section">
           <div className="sale-items-header">
-            <h3 className="sale-items-title">Item Details</h3>
+            <h3 className="sale-items-title">Products Sold</h3>
           </div>
           
           {sale.saleDetails && sale.saleDetails.length > 0 ? (

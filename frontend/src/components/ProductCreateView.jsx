@@ -90,10 +90,11 @@ const ProductCreateView = () => {
   const handleChange = (e) => {
     const { name, value } = e.target;
 
-    // Strict numeric formatting: No commas, max 2 decimals
+    // Strict numeric formatting: No commas, max 2 decimals, max 10 integer digits
     if (['productPrice', 'productStock', 'minimumStock'].includes(name)) {
       if (value.includes(',')) return;
       const parts = value.split('.');
+      if (parts[0].length > 10) return;
       if (parts.length > 1 && parts[1].length > 2) return;
     }
 

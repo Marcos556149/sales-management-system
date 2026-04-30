@@ -48,6 +48,8 @@ const ProductsView = () => {
   const [isActivateModalOpen, setIsActivateModalOpen] = useState(false);
   const [productToActivate, setProductToActivate] = useState(null);
 
+  const [focusedIndex, setFocusedIndex] = useState(-1);
+
   const abortControllerRef = useRef(null);
   const searchInputRef = useRef(null);
 
@@ -279,15 +281,40 @@ const ProductsView = () => {
     };
   }, [appliedSearch, statusFilter, stockLevelFilter, sortOrder, pageFrontend, refreshTrigger]); // Prevent double-fetching on mount
 
-  // Handle immediate search on Enter key
-  const handleKeyDown = (e) => {
-    if (e.key === 'Enter') {
-      if (searchTerm.length > 0 && searchTerm.trim().length === 0) {
-        return;
+  // Reset focus when products change
+  useEffect(() => {
+    setFocusedIndex(-1);
+  }, [products]);
+
+  // Scroll focused row into view
+  useEffect(() => {
+    if (focusedIndex >= 0) {
+      const row = document.getElementById(`product-row-${focusedIndex}`);
+      if (row) {
+        row.scrollIntoView({ block: 'nearest' });
       }
-      if (appliedSearch !== searchTerm) {
+    }
+  }, [focusedIndex]);
+
+  // Handle immediate search on Enter key and Arrow Navigation
+  const handleSearchKeyDown = (e) => {
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      setFocusedIndex(prev => Math.min(prev + 1, products.length - 1));
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      setFocusedIndex(prev => Math.max(prev - 1, 0));
+    } else if (e.key === 'Enter') {
+      e.preventDefault();
+      if (focusedIndex >= 0 && focusedIndex < products.length) {
+        handleRowClick(products[focusedIndex].productCode);
+      } else if (searchTerm.length > 0 && searchTerm.trim().length === 0) {
+        return;
+      } else if (appliedSearch !== searchTerm) {
         setPageFrontend(1);
         setAppliedSearch(searchTerm);
+      } else if (products.length === 1) {
+        handleRowClick(products[0].productCode);
       }
     }
   };
@@ -368,7 +395,7 @@ const ProductsView = () => {
   // Register contextual shortcuts
   useKeyboardShortcuts(React.useMemo(() => ({
     'shift+n': () => navigate('/dashboard/products/new'),
-    'ctrl+shift+r': () => handleManualRefresh(),
+    'ctrl+shift+k': () => handleManualRefresh(),
     '/': () => searchInputRef.current?.focus(),
     'arrowright': () => {
       if (pageFrontend < totalPages) {
@@ -379,8 +406,24 @@ const ProductsView = () => {
       if (pageFrontend > 1) {
         setPageFrontend(prev => prev - 1);
       }
+    },
+    'arrowdown': () => {
+      if (!isModalOpen && !isActivateModalOpen && products.length > 0) {
+        setFocusedIndex(prev => Math.min(prev + 1, products.length - 1));
+      }
+    },
+    'arrowup': () => {
+      if (!isModalOpen && !isActivateModalOpen && products.length > 0) {
+        setFocusedIndex(prev => Math.max(prev - 1, 0));
+      }
+    },
+    'enter': () => {
+      if (document.activeElement && document.activeElement.tagName === 'BUTTON') return;
+      if (!isModalOpen && !isActivateModalOpen && focusedIndex >= 0 && focusedIndex < products.length) {
+        handleRowClick(products[focusedIndex].productCode);
+      }
     }
-  }), [navigate, handleManualRefresh, pageFrontend, totalPages, setPageFrontend]));
+  }), [navigate, handleManualRefresh, pageFrontend, totalPages, setPageFrontend, isModalOpen, isActivateModalOpen, products, focusedIndex]));
 
   return (
     <div className="view-container">
@@ -395,7 +438,7 @@ const ProductsView = () => {
               placeholder="Search by name or code..." 
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              onKeyDown={handleKeyDown}
+              onKeyDown={handleSearchKeyDown}
             />
             <div className="search-actions">
               {searchTerm && (
@@ -499,7 +542,7 @@ const ProductsView = () => {
           >
             <RefreshCw size={18} className={loading ? "spin-animation" : ""} />
             <span>{loading ? 'Refreshing...' : 'Refresh'}</span>
-            <span className="btn-shortcut">Ctrl+Shift+R</span>
+            <span className="btn-shortcut">Ctrl+Shift+K</span>
           </button>
           <button 
             className="btn-primary"
@@ -543,16 +586,17 @@ const ProductsView = () => {
                 </tr>
               </thead>
               <tbody>
-                {products.map(product => (
+                {products.map((product, index) => (
                   <tr 
                     key={product.productCode} 
+                    id={`product-row-${index}`}
                     onClick={() => handleRowClick(product.productCode)}
                     style={{ cursor: 'pointer' }}
-                    className="interactive-row"
+                    className={`interactive-row ${focusedIndex === index ? 'focused' : ''}`}
                   >
                     <td className="font-mono text-sm">{product.productCode}</td>
                     <td className="font-medium">{product.productName}</td>
-                    <td>${product.productPrice?.toFixed(2) ?? '0.00'}</td>
+                    <td style={{ fontWeight: 500, color: '#059669' }}>${product.productPrice?.toFixed(2) ?? '0.00'}</td>
                     <td className="stock-cell">
                       {(() => {
                         const stock = product.productStock ?? 0;
@@ -563,7 +607,7 @@ const ProductsView = () => {
                         if (stock <= min) {
                           return (
                             <span style={{ color: 'var(--danger-color, #ef4444)', fontWeight: 'bold' }}>
-                              {stock} <span className="unit-text">{product.unitOfMeasure?.code === 'UNITS' ? 'u' : (product.unitOfMeasure?.label || '')}</span>
+                              {stock} <span className="unit-text" style={{ color: 'var(--danger-color, #ef4444)' }}>{product.unitOfMeasure?.code === 'UNITS' ? 'u' : (product.unitOfMeasure?.label || '')}</span>
                             </span>
                           );
                         }

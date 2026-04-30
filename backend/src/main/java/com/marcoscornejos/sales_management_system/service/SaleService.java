@@ -6,7 +6,6 @@ import com.marcoscornejos.sales_management_system.exception.ProductNotFoundExcep
 import com.marcoscornejos.sales_management_system.exception.SaleNotFoundException;
 import com.marcoscornejos.sales_management_system.exception.UserNotFoundException;
 import com.marcoscornejos.sales_management_system.mapper.IPageResponseMapper;
-import com.marcoscornejos.sales_management_system.mapper.ISaleCreateRequestMapper;
 import com.marcoscornejos.sales_management_system.mapper.ISaleListResponseMapper;
 import com.marcoscornejos.sales_management_system.mapper.ISaleWithDetailsResponseMapper;
 import com.marcoscornejos.sales_management_system.model.*;
@@ -316,6 +315,7 @@ public class SaleService implements ISaleService{
 
 
 
+
             // Requested quantity must not exceed available stock
             if (product.getProductStock().compareTo(quantity) < 0) {
                 throw new InvalidSaleDataException(
@@ -323,9 +323,6 @@ public class SaleService implements ISaleService{
                         "productQuantity"
                 );
             }
-
-
-
 
 
 

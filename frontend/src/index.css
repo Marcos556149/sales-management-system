@@ -46,24 +46,29 @@ body {
 /* Form Card - Increased size and font-sizes for better readability */
 .login-card {
   background-color: var(--card-bg);
-  padding: 48px 40px; /* Increased padding */
-  border-radius: 16px; /* Slightly rounder */
+  padding: 48px 40px;
+  /* Increased padding */
+  border-radius: 16px;
+  /* Slightly rounder */
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
   width: 100%;
-  max-width: 600px; /* Made the card wider */
+  max-width: 600px;
+  /* Made the card wider */
   text-align: center;
   border: 1px solid var(--border-color);
 }
 
 .login-card h2 {
-  font-size: 2rem; /* Larger title */
+  font-size: 2rem;
+  /* Larger title */
   margin-bottom: 8px;
   font-weight: 600;
   color: var(--text-primary);
 }
 
 .login-subtitle {
-  font-size: 1rem; /* Larger subtitle */
+  font-size: 1rem;
+  /* Larger subtitle */
   color: var(--text-secondary);
   margin-bottom: 32px;
 }
@@ -72,7 +77,8 @@ body {
 .login-form {
   display: flex;
   flex-direction: column;
-  gap: 20px; /* More space between fields */
+  gap: 20px;
+  /* More space between fields */
   text-align: left;
 }
 
@@ -83,24 +89,29 @@ body {
 }
 
 .form-group label {
-  font-size: 1rem; /* Larger label */
+  font-size: 1rem;
+  /* Larger label */
   font-weight: 500;
   color: var(--text-primary);
 }
 
 .form-group input {
-  padding: 14px 16px; /* Bigger inputs */
+  padding: 14px 16px;
+  /* Bigger inputs */
   border-radius: 10px;
   border: 1px solid var(--border-color);
-  font-size: 1rem; /* Larger text inside input */
+  font-size: 1rem;
+  /* Larger text inside input */
   outline: none;
   transition: border-color 0.2s, box-shadow 0.2s;
-  width: 100%; /* Ensure it takes full width of container */
+  width: 100%;
+  /* Ensure it takes full width of container */
 }
 
 .form-group input:focus {
   border-color: var(--primary-color);
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1); /* Slightly stronger shadow */
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+  /* Slightly stronger shadow */
 }
 
 /* Submit Button */
@@ -109,13 +120,16 @@ body {
   color: white;
   border: none;
   border-radius: 10px;
-  padding: 16px; /* Bigger button */
+  padding: 16px;
+  /* Bigger button */
   font-weight: 600;
-  font-size: 1.125rem; /* Larger text */
+  font-size: 1.125rem;
+  /* Larger text */
   cursor: pointer;
   transition: background-color 0.2s, transform 0.1s;
   margin-top: 10px;
-  width: 100%; /* Responsive button */
+  width: 100%;
+  /* Responsive button */
 }
 
 .login-button:hover {
@@ -150,10 +164,12 @@ body {
 /* Media Query for smaller screens (Mobile Responsiveness) */
 @media (max-width: 600px) {
   .login-card {
-    padding: 30px 20px; /* Less padding on small screens */
-    max-width: 100%; /* Take full width minus the container padding */
+    padding: 30px 20px;
+    /* Less padding on small screens */
+    max-width: 100%;
+    /* Take full width minus the container padding */
   }
-  
+
   .login-card h2 {
     font-size: 1.75rem;
   }
@@ -174,7 +190,8 @@ body {
 
 /* Containers to reserve exact vertical space and prevent layout jumping */
 .status-container {
-  height: 95px; /* Fixed height tall enough for the 3-line success message */
+  height: 95px;
+  /* Fixed height tall enough for the 3-line success message */
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -182,22 +199,106 @@ body {
 }
 
 .field-error-container {
-  height: 24px; /* Fixed height for 1 line of error text */
+  height: 24px;
+  /* Fixed height for 1 line of error text */
   display: flex;
   align-items: flex-start;
   overflow: hidden;
 }
 
 /* Keyboard Shortcut Visibility Fix */
-.btn-shortcut, .nav-shortcut {
+.btn-shortcut,
+.nav-shortcut {
   display: inline-block !important;
   visibility: visible !important;
 }
 
+/* Global modal blocking styles */
+body.modal-open-blocking .dashboard-layout {
+  pointer-events: none;
+  user-select: none;
+}
+
+/* Ensure modals themselves remain interactive */
+.confirm-modal-overlay,
+.pos-modal-overlay {
+  pointer-events: auto !important;
+}
+
 @media (max-width: 768px) {
-  .btn-shortcut, .nav-shortcut {
+
+  .btn-shortcut,
+  .nav-shortcut {
     display: inline-block !important;
     visibility: visible !important;
     opacity: 0.7 !important;
   }
+}
+
+/* --- Global Tooltip System --- */
+.label-with-tooltip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.tooltip-container {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: help;
+  outline: none;
+}
+
+.info-icon {
+  color: var(--text-secondary, #9ca3af);
+  transition: color 0.2s;
+}
+
+.tooltip-container:hover .info-icon,
+.tooltip-container:focus .info-icon {
+  color: var(--primary-color, #2563eb);
+}
+
+.tooltip-text {
+  visibility: hidden;
+  opacity: 0;
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%) translateY(-8px);
+  width: max-content;
+  max-width: 220px;
+  background-color: #1f2937;
+  color: #ffffff;
+  text-align: center;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  line-height: 1.4;
+  z-index: 1000; /* High z-index for global tooltips */
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  transition: opacity 0.2s, transform 0.2s, visibility 0.2s;
+  pointer-events: none;
+  white-space: normal;
+}
+
+.tooltip-text::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: #1f2937 transparent transparent transparent;
+}
+
+.tooltip-container:hover .tooltip-text,
+.tooltip-container:focus .tooltip-text {
+  visibility: visible;
+  opacity: 1;
+  transform: translateX(-50%) translateY(-4px);
 }
