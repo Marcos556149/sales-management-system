@@ -11,6 +11,8 @@ import './SalesView.css';
 import { useSalesContext } from './SalesContext';
 import { useKeyboardShortcuts } from '../hooks/useKeyboardShortcuts';
 import { apiClient } from '../api/client';
+import ConfirmModal from './ConfirmModal';
+import { printTicket } from '../utils/printUtils';
 
 const CustomDateInput = React.forwardRef(({ value, onClick }, ref) => (
   <button 
@@ -53,6 +55,8 @@ const SalesView = () => {
   const [refreshTrigger, setRefreshTrigger] = useState(0);
   const [actionLoading, setActionLoading] = useState(false);
   const [focusedIndex, setFocusedIndex] = useState(-1);
+  const [showPrintModal, setShowPrintModal] = useState(false);
+  const [selectedSaleId, setSelectedSaleId] = useState(null);
 
   const abortControllerRef = useRef(null);
   const searchInputRef = useRef(null);
@@ -546,7 +550,8 @@ const SalesView = () => {
                           title="Print Ticket"
                           onClick={(e) => {
                             e.stopPropagation();
-                            addToast("Printing coming soon", "info");
+                            setSelectedSaleId(sale.saleId);
+                            setShowPrintModal(true);
                           }}
                         >
                           <Printer size={16} />
@@ -570,6 +575,39 @@ const SalesView = () => {
           />
         )}
       </div>
+
+      <ConfirmModal
+        isOpen={showPrintModal}
+        title="Print Receipt"
+        message="Do you want to print the receipt?"
+        onConfirm={async () => {
+          setShowPrintModal(false);
+          if (!selectedSaleId) return;
+          
+          setActionLoading(true);
+          try {
+            await printTicket(selectedSaleId);
+          } catch (err) {
+            if (err.status === 400 || err.status === 404) {
+              addToast(err.message || `Sale with ID '${selectedSaleId}' not found`, 'error');
+              // Refresh the list to remove the missing sale
+              setRefreshTrigger(prev => prev + 1);
+            } else {
+              addToast(err.message || "Could not print ticket", "error");
+            }
+          } finally {
+            setActionLoading(false);
+            setSelectedSaleId(null);
+          }
+        }}
+        onCancel={() => {
+          setShowPrintModal(false);
+          setSelectedSaleId(null);
+        }}
+        confirmText="Yes, Print"
+        cancelText="No"
+        confirmButtonTheme="success"
+      />
     </div>
   );
 };

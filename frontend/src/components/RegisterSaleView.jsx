@@ -7,6 +7,7 @@ import Pagination from './Pagination';
 import { useKeyboardShortcuts } from '../hooks/useKeyboardShortcuts';
 import { useSalesContext } from './SalesContext';
 import ConfirmModal from './ConfirmModal';
+import { printTicket } from '../utils/printUtils';
 import './RegisterSaleView.css';
 
 const restrictNumericInput = (e) => {
@@ -248,8 +249,8 @@ const RegisterSaleView = () => {
     const handleKeyDown = (e) => {
       // Ignore if user is typing in an input field
       if (
-        e.target.tagName === 'INPUT' || 
-        e.target.tagName === 'TEXTAREA' || 
+        e.target.tagName === 'INPUT' ||
+        e.target.tagName === 'TEXTAREA' ||
         e.target.isContentEditable
       ) {
         return;
@@ -524,7 +525,7 @@ const RegisterSaleView = () => {
     setSelectedProduct(null);
     lastCloseTimeRef.current = Date.now();
   }, []);
-  
+
   // Handle initial product from state (e.g., scanned from Sales catalog)
   useEffect(() => {
     if (location.state?.initialProduct) {
@@ -919,8 +920,8 @@ const RegisterSaleView = () => {
                 <thead>
                   <tr>
                     <th>Product</th>
-                    <th style={{ width: '100px', textAlign: 'center' }}>Quantity</th>
-                    <th style={{ width: '90px', textAlign: 'left' }}>Price</th>
+                    <th style={{ width: '80px', textAlign: 'center' }}>Quantity</th>
+                    <th style={{ width: '110px', textAlign: 'left' }}>Price</th>
                     <th style={{ width: '110px', textAlign: 'left' }}>Subtotal</th>
                     <th style={{ width: '40px' }}></th>
                   </tr>
@@ -1064,11 +1065,21 @@ const RegisterSaleView = () => {
           isOpen={showPrintModal}
           title="Print Receipt"
           message="Sale registered successfully. Do you want to print the receipt?"
-          onConfirm={() => {
-            // Future print logic goes here
-            console.log("Printing receipt...");
+          onConfirm={async () => {
             setShowPrintModal(false);
-            finishSaleFlow(lastSaleResponse);
+            try {
+              // The sale ID is now returned in the 'data' field of the response
+              const saleId = lastSaleResponse?.data;
+              if (saleId) {
+                await printTicket(saleId);
+              } else {
+                console.warn("No sale ID found in response, skipping print");
+              }
+            } catch (err) {
+              addToast(err.message || "Could not print ticket, but sale was registered", "error");
+            } finally {
+              finishSaleFlow(lastSaleResponse);
+            }
           }}
           onCancel={() => {
             setShowPrintModal(false);

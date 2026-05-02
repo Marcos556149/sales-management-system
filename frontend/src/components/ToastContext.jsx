@@ -2,9 +2,21 @@ import React, { createContext, useContext, useState, useCallback } from 'react';
 import { CheckCircle, XCircle, X } from 'lucide-react';
 import './Toast.css';
 
-const ToastContext = createContext();
+const ToastContext = createContext({
+  addToast: () => console.warn('addToast called outside of ToastProvider')
+});
 
-export const useToast = () => useContext(ToastContext);
+export const useToast = () => {
+  const context = useContext(ToastContext);
+  if (!context) {
+    // This should theoretically not happen if ToastProvider is at the root,
+    // but we'll return a safe object just in case.
+    return {
+      addToast: (msg, type) => console.warn(`Toast attempted: [${type}] ${msg}`)
+    };
+  }
+  return context;
+};
 
 export const ToastProvider = ({ children }) => {
   const [toasts, setToasts] = useState([]);

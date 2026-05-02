@@ -94,4 +94,24 @@ public interface ISaleRepository extends JpaRepository<Sale, Long> {
         WHERE s.saleId = :saleId
     """)
     Optional<Sale> findByIdWithDetailsAndProducts(Long saleId);
+
+
+    /**
+     * Retrieves a sale with its details for ticket generation.
+     *
+     * <p>
+     * Loads the sale and its associated sale details in a single query.
+     * Product and user entities are not fetched because the ticket uses
+     * historical snapshot data stored in SaleDetail.
+     * </p>
+     *
+     * @param saleId the unique identifier of the sale
+     * @return an Optional containing the sale with its details
+     */
+    @Query("""
+    SELECT DISTINCT s FROM Sale s
+    JOIN FETCH s.saleDetails sd
+    WHERE s.saleId = :saleId
+    """)
+    Optional<Sale> findByIdWithDetails(Long saleId);
 }

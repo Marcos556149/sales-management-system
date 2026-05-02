@@ -11,7 +11,7 @@
 
 .toast-item {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 12px;
   padding: 14px 16px;
   border-radius: 8px;
@@ -30,6 +30,7 @@
 
 .toast-success .toast-icon {
   color: var(--success-text, #15803d);
+  padding-top: 2px;
 }
 
 .toast-error {
@@ -38,6 +39,7 @@
 
 .toast-error .toast-icon {
   color: var(--error-text, #b91c1c);
+  padding-top: 2px;
 }
 
 .toast-message {
@@ -45,6 +47,8 @@
   font-size: 0.95rem;
   color: var(--text-primary, #1f2937);
   font-weight: 500;
+  word-break: break-word;
+  overflow-wrap: break-word;
 }
 
 .toast-close {
@@ -53,6 +57,7 @@
   color: var(--text-secondary, #6b7280);
   cursor: pointer;
   padding: 4px;
+  padding-top: 2px;
   display: flex;
   align-items: center;
   justify-content: center;

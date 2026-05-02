@@ -9,8 +9,8 @@ import {
   useOutletContext
 } from 'react-router-dom';
 
-import App, { LoginPage } from './App.jsx';
-import { ToastProvider } from './components/ToastContext.jsx';
+import App, { LoginPage } from './App';
+import { ToastProvider } from './components/ToastContext';
 import DashboardLayout from './components/DashboardLayout';
 import ProductsView from './components/ProductsView';
 import ProductCreateView from './components/ProductCreateView';

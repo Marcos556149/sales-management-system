@@ -474,7 +474,7 @@ The system must allow products to be added to the current sale using barcode sca
 ## RF-10: Generate Sale Ticket
 
 ### Description
-The system must allow generating a purchase ticket for each registered sale, representing the proof of the transaction and including the relevant information of the sale and its associated products.
+The system must allow generating a purchase ticket for each registered sale, representing the proof of the transaction and allowing its unique identification, including the relevant information of the sale and its associated products.
 
 ### Main Flow
 1. The user accesses the sales section.  
@@ -485,6 +485,7 @@ The system must allow generating a purchase ticket for each registered sale, rep
 6. The system generates the sale ticket with the following information:  
    - Business name  
    - Business address
+   - Unique sale identifier
    - Ticket issue date  
    - Ticket issue time  
    - For each product included in the sale, the following information is displayed:
@@ -512,6 +513,7 @@ The system must allow generating a purchase ticket for each registered sale, rep
 - The subtotal of each sale detail is automatically calculated by the system.  
 - The ticket must include all products associated with the sale.  
 - The ticket constitutes proof of the completed transaction.
+- Each ticket must include a unique identifier that allows the sale to be traced and audited.
 
 ---
 

@@ -3,6 +3,8 @@ import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { ArrowLeft, Printer, Receipt } from 'lucide-react';
 import { useKeyboardShortcuts } from '../hooks/useKeyboardShortcuts';
 import { useToast } from './ToastContext';
+import ConfirmModal from './ConfirmModal';
+import { printTicket } from '../utils/printUtils';
 import './ProductDetailView.css'; // Inheriting structural SaaS standard like .view-container, .detail-toolbar, .detail-card
 import './SaleDetailView.css';
 
@@ -92,6 +94,7 @@ const SaleDetailView = () => {
   
   const { sale, loading, error } = useSaleDetail(saleId, location.state?.sale);
   const [actionLoading, setActionLoading] = useState(false);
+  const [showPrintModal, setShowPrintModal] = useState(false);
 
   const handleBack = () => {
     navigate('/dashboard/sales');
@@ -101,8 +104,8 @@ const SaleDetailView = () => {
   useKeyboardShortcuts(React.useMemo(() => ({
     'ctrl+b': () => handleBack(),
     't': () => {
-      if (!actionLoading) {
-         addToast("Printing coming soon", "info");
+      if (!actionLoading && sale) {
+         setShowPrintModal(true);
       }
     }
   }), [navigate, actionLoading, addToast]));
@@ -177,7 +180,7 @@ const SaleDetailView = () => {
           <button 
             className="btn-outline-success whitespace-nowrap"
             disabled={actionLoading}
-            onClick={() => addToast("Printing coming soon", "info")}
+            onClick={() => setShowPrintModal(true)}
           >
             <Printer size={16} />
             <span>Print Ticket</span>
@@ -253,6 +256,27 @@ const SaleDetailView = () => {
         </div>
         
       </div>
+
+      <ConfirmModal
+        isOpen={showPrintModal}
+        title="Print Receipt"
+        message="Do you want to print the receipt?"
+        onConfirm={async () => {
+          setShowPrintModal(false);
+          setActionLoading(true);
+          try {
+            await printTicket(saleId);
+          } catch (err) {
+            addToast(err.message || "Could not print ticket", "error");
+          } finally {
+            setActionLoading(false);
+          }
+        }}
+        onCancel={() => setShowPrintModal(false)}
+        confirmText="Yes, Print"
+        cancelText="No"
+        confirmButtonTheme="success"
+      />
     </div>
   );
 };

@@ -5,15 +5,16 @@ import com.marcoscornejos.sales_management_system.model.SortDirection;
 
 import java.time.LocalDate;
 
-public interface ISaleService{
+public interface ISaleService {
 
-    PageResponseDTO<SaleListResponseDTO> getSales(Long searchSaleId, LocalDate date, SortDirection timeSort, int page, int size);
+    PageResponseDTO<SaleListResponseDTO> getSales(Long searchSaleId, LocalDate date, SortDirection timeSort, int page,
+            int size);
 
     SaleWithDetailsResponseDTO getSaleById(Long saleId);
 
     SaleFiltersResponseDTO getFilters();
 
-    void registerSale(SaleCreateRequestDTO request);
+    Long registerSale(SaleCreateRequestDTO request);
 
-    // String generateSaleTicket(Long saleId);
+    String generateSaleTicket(Long saleId);
 }

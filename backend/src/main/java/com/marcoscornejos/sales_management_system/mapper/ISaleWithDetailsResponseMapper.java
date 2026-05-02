@@ -10,6 +10,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 /**
  * Mapper for converting {@link Sale} entity to {@link SaleWithDetailsResponseDTO}.
@@ -68,6 +69,8 @@ public interface ISaleWithDetailsResponseMapper {
         if (detail == null || detail.getSalePrice() == null || detail.getProductQuantity() == null) {
             return null;
         }
-        return detail.getSalePrice().multiply(detail.getProductQuantity());
+        return detail.getSalePrice()
+                .multiply(detail.getProductQuantity())
+                .setScale(2, RoundingMode.HALF_UP);
     }
 }
