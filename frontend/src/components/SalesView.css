@@ -46,22 +46,74 @@
   border: 0;
 }
 
-/* Custom Input Button (Replaces typical text input) */
-.custom-date-button {
+/* Smart Date Input Styling */
+.smart-date-container {
   display: inline-flex;
   align-items: center;
-  gap: 8px; /* Tightly packs text and icon with no empty gap */
-  padding: 0;
-  font-family: inherit;
-  color: var(--text-primary);
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  outline: none;
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 3px 12px; /* Increased horizontal padding */
+  transition: border-color 0.2s, box-shadow 0.2s;
 }
 
-.datepicker-inline-icon {
+.smart-date-container:focus-within {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.smart-date-inputs {
+  display: flex;
+  align-items: center;
+  gap: 2px; /* Small gap between fields and separators */
+}
+
+.smart-date-field {
+  border: none;
+  background: transparent;
+  padding: 4px 0; /* Removed horizontal padding to let text-align: center work better */
+  font-family: inherit;
+  font-size: 0.95rem;
+  color: var(--text-primary);
+  text-align: center;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.day-field, .month-field {
+  width: 4ch; /* Increased to ensure no cutoff */
+  min-width: 32px;
+}
+
+.year-field {
+  width: 6ch; /* Increased to ensure no cutoff */
+  min-width: 55px;
+}
+
+.date-separator {
   color: var(--text-secondary);
+  font-size: 0.9rem;
+  user-select: none;
+  opacity: 0.6;
+}
+
+.smart-date-picker-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  margin-left: 4px;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.smart-date-picker-btn:hover {
+  background-color: var(--sidebar-hover-bg);
+  color: var(--primary-color);
 }
 
 /* Adjust drop-down arrow spacing specifically for Sales */

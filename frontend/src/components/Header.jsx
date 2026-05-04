@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Settings, LogOut } from 'lucide-react';
 import BarcodeScanner from './BarcodeScanner';
+import SystemConfigurationModal from './SystemConfigurationModal';
 import './Header.css';
 
 const Header = ({ userName = "Admin User" }) => {
   const [currentDate, setCurrentDate] = useState(new Date());
+  const [isConfigOpen, setIsConfigOpen] = useState(false);
 
   useEffect(() => {
     const timer = setInterval(() => setCurrentDate(new Date()), 1000);
@@ -19,24 +21,35 @@ const Header = ({ userName = "Admin User" }) => {
   });
 
   return (
-    <header className="dashboard-header">
-      <div className="header-greeting">
-        <h1>Welcome, <span className="highlight-name">{userName}</span></h1>
-        <p className="header-subtitle">{formattedDate} | {formattedTime}</p>
-      </div>
-      
-      <BarcodeScanner />
-      
-      <div className="header-actions">
-        <button className="icon-button settings-button" aria-label="Settings">
-          <Settings size={22} />
-        </button>
-        {/* Placeholder for future logout */}
-        <button className="icon-button logout-button" aria-label="Logout" style={{ display: 'none' }}>
-           <LogOut size={22} />
-        </button>
-      </div>
-    </header>
+    <>
+      <header className="dashboard-header">
+        <div className="header-greeting">
+          <h1>Welcome, <span className="highlight-name">{userName}</span></h1>
+          <p className="header-subtitle">{formattedDate} | {formattedTime}</p>
+        </div>
+        
+        <BarcodeScanner />
+        
+        <div className="header-actions">
+          <button 
+            className="icon-button settings-button" 
+            aria-label="Settings"
+            onClick={() => setIsConfigOpen(true)}
+          >
+            <Settings size={22} />
+          </button>
+          {/* Placeholder for future logout */}
+          <button className="icon-button logout-button" aria-label="Logout" style={{ display: 'none' }}>
+             <LogOut size={22} />
+          </button>
+        </div>
+      </header>
+
+      <SystemConfigurationModal 
+        isOpen={isConfigOpen} 
+        onClose={() => setIsConfigOpen(false)} 
+      />
+    </>
   );
 };
 

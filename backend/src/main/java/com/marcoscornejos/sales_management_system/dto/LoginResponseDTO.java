@@ -25,7 +25,4 @@ public class LoginResponseDTO {
     /** Role assigned to the user (code + label). */
     private EnumDTO userRole;
 
-    /** Preferred interface language (code + label). */
-    private EnumDTO language;
-
 }

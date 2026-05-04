@@ -144,7 +144,6 @@ The system must have two predefined access types (roles):
 - Can generate sales receipts for recorded sales
 - Can view sales statistics  
 - Can update business information, including the business name and address
-- Can change their interface language
 - Can register, view, and update users (operators)
 - Can change user status (active, suspended, deleted)
 - Can log out from the system
@@ -158,7 +157,6 @@ The system must have two predefined access types (roles):
 - Can generate sales receipts for recorded sales
 - Can view sales lists and detailed sale information
 - Can view sales statistics
-- Can change their interface language
 - Can log out from the system
 - Cannot register products  
 - Cannot update product information  
@@ -173,7 +171,6 @@ The system must store information about each user to manage access and permissio
 - Username: unique name used to log into the system  
 - Role: user type that determines system permissions  
 - Password: password associated with the user account, used for authentication  
-- Preferred language: interface language selected by the user (Spanish or English)
 - Status: indicates whether the user is active, suspended, or logically deleted
 
 User status can be:
@@ -212,22 +209,16 @@ To access the system, the user must enter:
 
 ## 10. System Configuration
 
-The system must provide a user interface for managing configuration settings at both global and user levels.
+The system must provide a user interface for managing global configuration settings.
 
 ### Global Configuration
 
 The system must allow storing and updating the following global configuration data:
 
-- Business name (required; used in sales receipt generation)
-- Business address (required; used in sales receipt generation)
+- Business name
+- Business address
 
 This configuration is shared across all users of the system.
-
-### User Configuration
-
-The system must allow each user to manage their own interface preferences:
-
-- Interface language (Spanish or English)
 
 ### Functionalities
 
@@ -235,11 +226,7 @@ The system must allow:
 
 - Viewing current global configuration settings  
 - Updating business information, including the business name and address (administrator only)
-- Changing the interface language (all authenticated users)  
 
-The selected interface language must persist for each user and be applied automatically upon login.
-
-The interface must support multiple languages according to the configuration defined in the system.
 
 ## 11. Sales Statistics
 The system must allow the user to obtain statistical information about sales within a selected time range (day, month, year).

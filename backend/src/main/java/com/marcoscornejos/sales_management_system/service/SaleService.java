@@ -1,10 +1,7 @@
 package com.marcoscornejos.sales_management_system.service;
 
 import com.marcoscornejos.sales_management_system.dto.*;
-import com.marcoscornejos.sales_management_system.exception.InvalidSaleDataException;
-import com.marcoscornejos.sales_management_system.exception.ProductNotFoundException;
-import com.marcoscornejos.sales_management_system.exception.SaleNotFoundException;
-import com.marcoscornejos.sales_management_system.exception.UserNotFoundException;
+import com.marcoscornejos.sales_management_system.exception.*;
 import com.marcoscornejos.sales_management_system.mapper.IPageResponseMapper;
 import com.marcoscornejos.sales_management_system.mapper.ISaleListResponseMapper;
 import com.marcoscornejos.sales_management_system.mapper.ISaleWithDetailsResponseMapper;
@@ -369,7 +366,9 @@ public class SaleService implements ISaleService {
 
                 // 2. Retrieve system configuration (business info)
                 SystemConfiguration config = iSystemConfigurationRepository.findById(1L)
-                                .orElseThrow(() -> new RuntimeException("System configuration not found"));
+                        .orElseThrow(() -> new SystemConfigurationNotFoundException(
+                                "System configuration not found"
+                        ));
 
                 // 3. Current date and time
                 LocalDateTime now = LocalDateTime.now();

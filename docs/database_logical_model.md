@@ -42,7 +42,6 @@ Represents the system users.
 - user_name
 - user_role
 - user_password
-- language
 - user_status
 
 ---

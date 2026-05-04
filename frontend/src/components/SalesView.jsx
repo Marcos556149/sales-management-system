@@ -14,17 +14,126 @@ import { apiClient } from '../api/client';
 import ConfirmModal from './ConfirmModal';
 import { printTicket } from '../utils/printUtils';
 
-const CustomDateInput = React.forwardRef(({ value, onClick }, ref) => (
-  <button 
-    type="button"
-    className="select-dropdown custom-date-button" 
-    onClick={onClick} 
-    ref={ref}
-  >
-    <span>{value}</span>
-    <Calendar size={16} className="datepicker-inline-icon" />
-  </button>
-));
+const SmartDateInput = React.forwardRef(({ value, onClick, onManualChange }, ref) => {
+  const [day, setDay] = useState('');
+  const [month, setMonth] = useState('');
+  const [year, setYear] = useState('');
+
+  // Sync internal state with external value (YYYY-MM-DD)
+  useEffect(() => {
+    if (value && value.includes('-')) {
+      const [y, m, d] = value.split('-');
+      setYear(y);
+      setMonth(m);
+      setDay(d);
+    }
+  }, [value]);
+
+  const validateAndNotify = (d, m, y, triggerSearch = false) => {
+    let dInt = parseInt(d, 10);
+    let mInt = parseInt(m, 10);
+    let yInt = parseInt(y, 10);
+
+    // If something is not a number, sync back to last valid
+    if (isNaN(dInt) || isNaN(mInt) || isNaN(yInt)) {
+      const [oldY, oldM, oldD] = value.split('-');
+      setDay(oldD);
+      setMonth(oldM);
+      setYear(oldY);
+      return;
+    }
+
+    const normalizedYear = Math.max(yInt, 1);
+    const normalizedMonth = Math.min(Math.max(mInt, 1), 12);
+    
+    const getDaysInMonth = (year, month) => {
+      if (month === 2) {
+        const isLeap = (year % 4 === 0 && (year % 100 !== 0 || year % 400 === 0));
+        return isLeap ? 29 : 28;
+      }
+      return [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][month - 1];
+    };
+
+    const maxDays = getDaysInMonth(normalizedYear, normalizedMonth);
+    const normalizedDay = Math.min(Math.max(dInt, 1), maxDays);
+
+    const newDateStr = `${String(normalizedYear).padStart(4, '0')}-${String(normalizedMonth).padStart(2, '0')}-${String(normalizedDay).padStart(2, '0')}`;
+    
+    // Update local state for visual consistency
+    setDay(String(normalizedDay).padStart(2, '0'));
+    setMonth(String(normalizedMonth).padStart(2, '0'));
+    setYear(String(normalizedYear).padStart(4, '0'));
+
+    // Only notify parent if triggerSearch is true
+    if (triggerSearch && newDateStr !== value) {
+      onManualChange(newDateStr);
+    }
+  };
+
+  const handleInputChange = (e, setter, maxLen) => {
+    const val = e.target.value.replace(/[^0-9]/g, '').slice(0, maxLen);
+    setter(val);
+  };
+
+  const handleBlur = () => {
+    // Correct visual formatting but don't trigger search
+    validateAndNotify(day, month, year, false);
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      // Validate and trigger search
+      validateAndNotify(day, month, year, true);
+      // Remove focus
+      e.target.blur();
+    }
+  };
+
+  return (
+    <div className="smart-date-container" ref={ref}>
+      <div className="smart-date-inputs">
+        <input
+          type="text"
+          className="smart-date-field day-field"
+          value={day}
+          onChange={(e) => handleInputChange(e, setDay, 2)}
+          onBlur={handleBlur}
+          onKeyDown={handleKeyDown}
+          placeholder="DD"
+        />
+        <span className="date-separator">/</span>
+        <input
+          type="text"
+          className="smart-date-field month-field"
+          value={month}
+          onChange={(e) => handleInputChange(e, setMonth, 2)}
+          onBlur={handleBlur}
+          onKeyDown={handleKeyDown}
+          placeholder="MM"
+        />
+        <span className="date-separator">/</span>
+        <input
+          type="text"
+          className="smart-date-field year-field"
+          value={year}
+          onChange={(e) => handleInputChange(e, setYear, 4)}
+          onBlur={handleBlur}
+          onKeyDown={handleKeyDown}
+          placeholder="YYYY"
+        />
+      </div>
+      <button 
+        type="button"
+        className="smart-date-picker-btn" 
+        onClick={onClick}
+        title="Open Calendar"
+      >
+        <Calendar size={16} />
+      </button>
+    </div>
+  );
+});
 
 const SalesView = () => {
   const navigate = useNavigate();
@@ -442,7 +551,10 @@ const SalesView = () => {
                   dateFormat="yyyy-MM-dd"
                   locale={enUS}
                   todayButton="Today"
-                  customInput={<CustomDateInput />}
+                  customInput={<SmartDateInput onManualChange={(dateStr) => {
+                    setDateFilter(dateStr);
+                    setPageFrontend(1);
+                  }} />}
                   wrapperClassName="date-picker-wrapper"
                   popperPlacement="bottom-start"
                   showPopperArrow={false}

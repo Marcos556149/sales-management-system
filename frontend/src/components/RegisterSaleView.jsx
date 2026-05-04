@@ -748,7 +748,7 @@ const RegisterSaleView = () => {
                     setFocusedCartIndex(0);
                     setFocusedIndex(-1);
                   } else {
-                    addToast("Add products to the cart first", "info");
+                    addToast("Add products to the cart first", "error");
                   }
                 }}
               >

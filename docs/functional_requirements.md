@@ -624,22 +624,19 @@ The system must allow the user to view detailed information of a specific sale r
 ## RF-14: Change System Configuration
 
 ### Description
-The system must allow managing configuration settings at both global and user levels, including the business name, business address, and the interface language.
+The system must allow managing global configuration settings
 
 ### Main Flow
 1. The user accesses the system configuration section.  
 2. The system displays the current configuration values:
    - Business name  
-   - Business address  
-   - Interface language  
-3. The user modifies configuration values depending on their role:
-   - Interface language (all users)  
+   - Business address   
+3. The user modifies the configuration values.
    - Business name and business address (administrator only)  
 4. The system validates the entered data.  
 5. The system applies the changes:
    - The business name and business address are updated globally (if modified by an administrator)  
-   - The interface language is updated for the current user   
-6. The system confirms the changes by updating the interface and displayed business name.
+6. The system confirms that the configuration has been successfully updated.
 
 ### Alternate Flow
 **4.a Invalid data**  
@@ -654,12 +651,6 @@ The system must allow managing configuration settings at both global and user le
 - The system must initialize the business name with a default value ("My Business").
 - The system must initialize the business address with a default value ("Business Address").
 - Only administrators can modify the business name and business address.
-- The interface language is specific to each user.
-- The interface language is mandatory for each user.
-- The selected language must persist for each user and be applied automatically on login.
-- The language change must not affect the data stored in the system.  
-- All interface elements (menus, buttons, messages, notifications) must be displayed in the selected language.
-- The system must assign a default interface language (English) when a user is created.
 
 ---
 
@@ -746,10 +737,9 @@ The system must allow administrators to register new users with the Operator rol
 5. The system verifies that the username is unique.  
 6. The system assigns the role "Operator" to the new user.  
 7. The system assigns the status "Active" to the new user.  
-8. The system assigns the default language "EN" to the new user.  
-9. The system assigns a unique identifier (User ID) to the new user.  
-10. The system stores the user in the database.  
-11. The system confirms that the user has been successfully registered.
+8. The system assigns a unique identifier (User ID) to the new user.  
+9. The system stores the user in the database.  
+10. The system confirms that the user has been successfully registered.
 
 ### Alternative Flows
 
@@ -766,7 +756,6 @@ The system must allow administrators to register new users with the Operator rol
 - The username must be unique within the system.  
 - The system must assign the "Operator" role by default.  
 - The system must assign the "Active" status by default.  
-- The system must assign "EN" as the default language.
 - The system assigns a unique identifier to the user upon creation.
 
 ---
@@ -792,7 +781,7 @@ The system must allow administrators to view the list of registered users.
 
 ### Business Rules
 - Only users with the Administrator role can perform this action.  
-- The system must display all users regardless of their status.
+The system must display all users with the role "Operator", including those with any status ("Active", "Suspended", "Deleted").
 
 ---
 
@@ -812,14 +801,14 @@ The system must allow administrators to view detailed information of a specific 
 
 ### Alternative Flows
 
-**3.a User not found**  
+**3.a User Not Found**  
 3.a.1 The system detects that the selected user does not exist.  
-3.a.2 The system displays an error message: "User not found".
+3.a.2 The system displays a message: "User with username '{username}' not found".
 
 ### Business Rules
 - Only users with the Administrator role can perform this action.  
 - The system must not display the user's password.  
-- The system must display the user information regardless of their status.
+- The system must display only non-sensitive user information.
 
 ---
 
@@ -848,7 +837,7 @@ The system must allow administrators to update user information.
 
 **6.a Username already exists**  
 6.a.1 The system detects that the new username is already in use.  
-6.a.2 The system displays an error message: "Username already exists".
+6.a.2 The system displays a message: "Username '{username}' already exists".
 
 ### Business Rules
 - Only users with the Administrator role can perform this action.  
@@ -871,19 +860,12 @@ The system must allow administrators to change the status of a user.
    - Active  
    - Suspended  
    - Deleted  
-5. The system validates the selected status.  
-6. The system updates the user status in the database.  
-7. The system confirms that the user status has been successfully updated.
-
-### Alternative Flows
-
-**5.a Invalid status selection**  
-5.a.1 The system detects an invalid status value.  
-5.a.2 The system displays an error message: "Invalid user status".
+5. The system updates the user status in the database.  
+6. The system confirms that the user status has been successfully updated.
 
 ### Business Rules
 - Only users with the Administrator role can perform this action.  
-- The system must allow only the following status values: Active, Suspended, Deleted.  
+- The system must allow only the following status values: "Active", "Suspended", "Deleted".  
 - Users with "Deleted" status must not be physically removed from the database.  
 - Users with "Suspended" or "Deleted" status must not be able to access the system.
 
@@ -947,7 +929,7 @@ The system must allow the user to activate an inactive product by marking it as 
 - Can generate sale tickets (RF-10).  
 - Can view a specific sale (RF-13).  
 - Can authenticate in the system (RF-11).  
-- Can change system configuration settings, including business name, business address, and interface language (RF-14).
+- Can change system configuration settings, including business name and business address (RF-14).
 - Can view sales statistics (RF-15).
 - Can log out of the system (RF-16).
 - Can register users (RF-17).  
@@ -966,7 +948,6 @@ The system must allow the user to activate an inactive product by marking it as 
 - Can add products to a sale via barcode (RF-9).  
 - Can generate sale tickets (RF-10).  
 - Can view a specific sale (RF-13).  
-- Can change the interface language (RF-14).  
 - Can log out of the system (RF-16). 
 - Cannot register products (RF-1).  
 - Cannot update products (RF-3).  

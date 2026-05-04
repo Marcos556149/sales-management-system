@@ -75,7 +75,7 @@ const LoginForm = ({ onLoginSuccess }) => {
       }
 
       if (response.ok) { // HTTP Status 200-299
-        setUserData(data); // Expecting userName, userRole, language
+        setUserData(data); // Expecting userName, userRole
         if (onLoginSuccess) {
           onLoginSuccess(data); // Immediately redirect using parent handler
         }

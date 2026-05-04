@@ -49,15 +49,6 @@ public class User {
     private String userPassword;
 
     /**
-     * Interface language preference for the user.
-     *
-     * <p>Stored as a string to ensure consistency with supported system languages.</p>
-     */
-    @Column(name = "language")
-    @Enumerated(EnumType.STRING)
-    private Language language=Language.EN;
-
-    /**
      * Logical status of the user (e.g., ACTIVE, SUSPENDED, DELETED).
      *
      * <p>Determines whether the user can access or interact with the system.</p>
@@ -66,11 +57,10 @@ public class User {
     @Enumerated(EnumType.STRING)
     private UserStatus userStatus=UserStatus.ACTIVE;
 
-    public User(String userName, UserRole userRole, String userPassword, Language language, UserStatus userStatus) {
+    public User(String userName, UserRole userRole, String userPassword, UserStatus userStatus) {
         this.userName = userName;
         this.userRole = userRole;
         this.userPassword = userPassword;
-        this.language = language;
         this.userStatus=userStatus;
     }
 

@@ -1,9 +1,6 @@
 package com.marcoscornejos.sales_management_system.controller;
 
-import com.marcoscornejos.sales_management_system.exception.AuthException;
-import com.marcoscornejos.sales_management_system.exception.ProductException;
-import com.marcoscornejos.sales_management_system.exception.SaleException;
-import com.marcoscornejos.sales_management_system.exception.UserException;
+import com.marcoscornejos.sales_management_system.exception.*;
 import jakarta.persistence.PersistenceException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -489,6 +486,56 @@ public class GlobalExceptionHandler {
         errorBody.put("code", code);
         errorBody.put("message", userMessage);
         errorBody.put("field", field);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("error", errorBody);
+
+        return ResponseEntity.badRequest().body(response);
+    }
+
+    /**
+     * Handles system configuration-related exceptions thrown when
+     * business rules or validations fail within the System Configuration domain.
+     *
+     * <p>
+     * This handler centralizes all exceptions that extend {@code SystemConfigurationException},
+     * ensuring a consistent error response format across the application.
+     * </p>
+     *
+     * <p>
+     * The response follows the standardized structure:
+     * </p>
+     *
+     * <pre>
+     * {
+     *   "error": {
+     *     "code": "ERROR_CODE",
+     *     "message": "Human readable message",
+     *     "field": "Optional field related to the error"
+     *   }
+     * }
+     * </pre>
+     *
+     * <p>
+     * The frontend should use:
+     * <ul>
+     *   <li><b>code</b>: to determine error type and UI behavior</li>
+     *   <li><b>message</b>: to display or log human-readable information</li>
+     *   <li><b>field</b>: to associate validation errors with specific inputs</li>
+     * </ul>
+     * </p>
+     *
+     * @param ex the system configuration-related exception containing error details
+     * @return a 400 Bad Request response with a standardized error body
+     */
+    @ExceptionHandler(SystemConfigurationException.class)
+    public ResponseEntity<Map<String, Object>> handleSystemConfigurationException(
+            SystemConfigurationException ex) {
+
+        Map<String, Object> errorBody = new HashMap<>();
+        errorBody.put("code", ex.getCode());
+        errorBody.put("message", ex.getMessage());
+        errorBody.put("field", ex.getField());
 
         Map<String, Object> response = new HashMap<>();
         response.put("error", errorBody);
