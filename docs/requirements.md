@@ -23,10 +23,15 @@ Web-based sales and inventory management system for retail businesses
 ### System Configuration
 - [10. System Configuration](#10-system-configuration)
   - [Global Configuration](#global-configuration)
-  - [User Configuration](#user-configuration)
+  - [Functionalities](#functionalities)
 
 ### Additional Functionalities
 - [11. Sales Statistics](#11-sales-statistics)
+  - [11.1 Sales Information](#111-sales-information)
+  - [11.2 Product Information](#112-product-information)
+    - [11.2.1 Sold Products](#1121-sold-products)
+    - [11.2.2 Unsold Products](#1122-unsold-products)
+  - [11.3 Report Generation](#113-report-generation)
 - [12. Logout](#12-logout)
 
 ---
@@ -156,7 +161,6 @@ The system must have two predefined access types (roles):
 - Can add and remove products from a sale while the sale is being registered
 - Can generate sales receipts for recorded sales
 - Can view sales lists and detailed sale information
-- Can view sales statistics
 - Can log out from the system
 - Cannot register products  
 - Cannot update product information  
@@ -229,16 +233,103 @@ The system must allow:
 
 
 ## 11. Sales Statistics
-The system must allow the user to obtain statistical information about sales within a selected time range (day, month, year).
+The system must provide a statistics section that allows users to analyze sales and product performance through aggregated data, key indicators, and visual representations.
 
-For each selected period, the following data must be displayed:
+The system must allow the user to obtain statistical information based on selected filters:
+- User (all users or a specific user)  
+- Date range (start date and end date)  
+
+### 11.1 Sales Information
+
+For the selected filters, the system must display:
+
 - Total revenue from sales  
-- List of sold products with their quantities  
+- Total number of sales  
+- Average ticket value (total revenue divided by number of sales)  
+- Hour with the highest revenue  
+- Hour with the highest number of sales  
 
-The system must allow:
-- Selecting a specific day of the year (e.g., August 15, 2026) and displaying the corresponding information  
-- Selecting a specific month of a year (e.g., July 2025) and displaying the corresponding information  
-- Selecting a specific year (e.g., 2024) and displaying the corresponding information  
+The system must display time-based charts showing:
+
+- Total revenue over time  
+- Number of sales over time  
+
+The charts must adapt their time granularity (e.g., hour, day, month, year) according to the selected date range.
+
+### 11.2 Product Information
+
+The system must provide insights into product performance based on the selected filters.
+
+#### 11.2.1 Sold Products
+
+For products with sales activity, the system must provide:
+
+- Top 10 products based on quantity sold  
+- Top 10 products based on revenue generated  
+
+These values must be presented as visual charts in the main statistics view.
+
+- A product ranking list that allows:
+  - Selecting the metric:
+    - Quantity sold  
+    - Revenue generated  
+  - Selecting the order:
+    - Highest to lowest (most sold → least sold)  
+    - Lowest to highest (least sold → most sold)  
+
+The system must allow accessing a detailed view of the ranking list, where:
+
+- All sold products matching the selected filters are displayed 
+- Pagination is applied for navigation between results
+
+#### 11.2.2 Unsold Products
+
+For products with no sales, the system must provide:
+
+- A complete list of unsold products  
+
+The system must allow accessing a detailed view where:
+
+- All unsold products matching the selected filters are displayed
+- Pagination is applied for navigation between results
+
+### 11.3 Report Generation
+
+The system must allow generating a report in PDF format based on the selected filters.
+
+The report must always include:
+
+- Report title
+- Selected user  
+- Selected date range  
+- Report generation date and time
+
+The system must allow the user to select which sections to include in the report.
+
+Each section must be included in its entirety, without partial selection.
+
+The available sections are:
+
+- Sales information
+- Product information
+
+Each selected section must include all corresponding information defined in the statistics section.
+
+For product-related sections, the system must allow the user to select the number of products to include in the report.
+
+The available options must be:
+
+- 10 products  
+- 20 products  
+- 50 products  
+- 100 products 
+
+For the product ranking list included in the report, the system must allow selecting:
+
+- Quantity sold or revenue generated as ranking metric
+- Highest to lowest or lowest to highest ordering
+
+The system must generate the report as a downloadable PDF file.
 
 ## 12. Logout
 

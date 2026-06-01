@@ -23,6 +23,7 @@
 - [RF-20: Update User](#rf-20-update-user)
 - [RF-21: Change User Status](#rf-21-change-user-status)
 - [RF-22: Activate Product](#rf-22-activate-product)
+- [RF-23: Generate Sales Statistics Report (PDF)](#rf-23-generate-sales-statistics-report-pdf)
 
 
 ### General Rules
@@ -317,6 +318,19 @@ The system must allow the user to register sales made in the business, storing t
 
 ### Alternative Flows
 
+**5.a No available products**
+5.a.1 The system detects that there are no active products with available stock.
+5.a.2 The system displays a message: "No active products with available stock found".
+
+**5.b Product pagination**  
+5.b.1 The user navigates between product pages (e.g., next page or previous page).  
+5.b.2 The system retrieves the corresponding page of available products.  
+5.b.3 The system displays the products belonging to the selected page.
+
+**6.b Products not found**
+6.b.1 The system detects that no products match the search criteria.
+6.b.2 The system displays a message: "No products match the search criteria".
+
 **10.a Invalid quantity**  
 10.a.1 The system detects that the entered quantity is less than or equal to 0 or incompatible with the product's unit of measure.  
 10.a.2 The system displays an error message indicating the required correction.
@@ -361,8 +375,10 @@ The system must allow the user to register sales made in the business, storing t
 - Product stock must be updated after the sale is confirmed, according to the final quantities of the sale.
 - Receipt generation is performed using the operation defined in RF-10. 
 - The product selection interface must allow searching products by name or product code.
-- The product selection interface must support pagination of 10 items per page.
+- The product selection interface must support pagination of 10 items per page by default.
 - The system must allow navigation between product pages (next and previous).
+- If no page is specified, the system must return the first product page by default.
+- The system must ensure that only the products belonging to the requested page are retrieved from the database (server-side pagination).
 - The system must allow refreshing the product list to retrieve updated data.
 - The product selection interface must only display active products with available stock greater than 0.
 - The system must exclude inactive products and products with zero stock from the product selection list.
@@ -657,52 +673,123 @@ The system must allow managing global configuration settings
 ## RF-15: View Sales Statistics
 
 ### Description
-The system must allow the user to view sales statistics within a selected time range, showing the total revenue and the list of products sold during that period.
+The system must allow the user to view statistical information about sales and products based on selected filters.
 
 ### Main Flow
-1. The user accesses the sales statistics section.  
-2. The user selects the period to query:  
-   - Specific day of the year (e.g., August 15, 2026)  
-   - Specific month of a year (e.g., July 2025)  
-   - Specific year (e.g., 2024)  
-3. The system retrieves the statistical data from the database.  
-4. The system displays:  
-   - Total revenue for the selected period  
-   - List of products (code and name) sold with their corresponding quantities  
+1. The user accesses the statistics section.  
+2. The user selects the desired filters:
+   - User ("All Users" or a specific user)  
+   - Date range (start date and end date)  
+3. The user requests the statistics generation.
+4. The system retrieves aggregated statistical data from the database based on the selected filters.
+5. The system displays the statistics divided into the following sections:
+
+   **Sales Information:**
+   - Total revenue  
+   - Total number of sales  
+   - Average ticket value  
+   - Hour with the highest revenue  
+   - Hour with the highest number of sales  
+   - The system must display time-based charts for:
+     - Total revenue over time
+     - Number of sales over time 
+
+   **Product Information:**
+
+   **Sold Products:**
+   - Top 10 products based on quantity sold (chart), including for each product:
+     - Product code
+     - Product name
+     - Quantity sold
+
+   - Top 10 products based on revenue generated (chart), including for each product:
+     - Product code
+     - Product name
+     - Revenue generated
+     
+   - Product ranking list based on the selected filters, including for each product:
+     - Product code  
+     - Product name  
+     - Quantity sold  
+     - Revenue generated  
+
+   **Unsold Products:**
+   - A list of products with no sales based on the selected filters, including for each product:
+     - Product code  
+     - Product name  
 
 ### Alternative Flows
 
-**2.a No Sales in Selected Period**  
-2.a.1 The system detects that there are no sales in the database for the selected period.  
-2.a.2 The system displays a message: "No sales found for the selected period".
+**4.a No data available**  
+4.a.1 The system detects that no data matches the selected filters.  
+4.a.2 The system displays a message: "No data available for the selected criteria".  
 
-**2.b Product Sorting**
+**5.a No unsold products**  
+5.a.1 The system detects that no products match the unsold products criteria based on the selected filters.  
+5.a.2 The system displays a message in the Unsold Products section: "No unsold products for the selected filters".  
 
-**2.b.1 By Quantity**  
-2.b.1.1 The user selects to sort sold products by quantity:  
-- Most sold → least sold  
-- Least sold → most sold 
-2.b.1.2 The system sorts the product list according to the selected criteria.
+**5.b Filter sold products ranking list**  
+5.b.1 The user selects the desired filters:
+   - Metric ("Quantity Sold" or "Revenue Generated")
+   - Order ("Most sold → least sold" or "Least sold → most sold")
+5.b.2 The system retrieves the corresponding products based on the selected filters.  
 
-**2.c Product Filters**
-
-**2.c.1 Product Sales**  
-2.c.1.1 The user selects "Sold products", "Unsold products", or "All".  
-2.c.1.2 The system filters the products according to the selected criteria.
-
-**2.d No Products Found**  
-2.d.1 The system detects that no products match the applied criteria.  
-2.d.2 The system displays a message: "No products found".
+**5.c Product pagination**  
+5.c.1 The system allows navigation between pages of product lists (e.g., next page, previous page, or direct page selection).  
+5.c.2 This applies to both sold products ranking list and unsold products list. 
 
 ### Business Rules
-- The system must allow viewing sales statistics by day, month, or year.  
-- The displayed information must include total revenue and the list of sold products with their quantities.  
-- The system must allow sorting products by quantity: "Most sold → least sold" or "Least sold → most sold".  
-- The system must allow filtering products by "Sold products", "Unsold products", or "All".  
-   - "Sold products" displays only products with a quantity sold greater than 0.  
-   - "Unsold products" displays only products with a quantity sold equal to 0.  
-- If the user does not select a product sales filter, the system uses "Sold products" by default.  
-- If the user does not select a sorting criterion, the system sorts products by default using "Most sold → least sold".
+
+- The system must allow filtering statistics by user ("All Users" or a specific user).  
+- The system must allow filtering statistics by date range (start date and end date).  
+- The system must calculate all statistical values based only on the selected filters.  
+
+- The system must calculate:
+  - Total revenue as the sum of all sales amounts  
+  - Total number of sales as the count of sales records  
+  - Average ticket value as total revenue divided by total number of sales  
+
+- The system must determine:
+  - Hour with the highest revenue  
+  - Hour with the highest number of sales  
+
+- The system must display time-based charts for:
+  - Total revenue over time  
+  - Number of sales over time  
+
+- The charts must adapt their time granularity according to the selected date range:
+  - Hour → when the selected range is a single day
+  - Day → for ranges up to 31 days
+  - Month → for ranges up to 365 days
+  - Year → for ranges greater than 365 days
+
+- The system must display only the top 10 products in each sold products chart:
+  - Top 10 products based on quantity sold  
+  - Top 10 products based on revenue generated
+
+- The system must allow viewing detailed lists in the statistics section using pagination for both sold products ranking list and unsold products list:
+  - The system must retrieve these lists in pages of 20 items by default.
+  - The system must ensure server-side pagination.
+  - If no page is specified, the system must return the first page by default for both paginated product lists.
+  - The system must allow navigation between pages for both sold products ranking list and unsold products list.
+
+- The system must allow sorting the product ranking list by:
+  - Quantity sold  
+  - Revenue generated  
+
+- The system must allow ordering the product ranking list:
+  - Most sold → least sold  
+  - Least sold → most sold
+
+- The system must identify unsold products as those with zero sales within the selected date range.  
+
+- For the statistics global filters:
+  - If no user filter is selected, the system defaults to "All Users".
+  - If no date range is selected, the system defaults to the current date.
+
+- For the sold products ranking list:
+  - If no metric is selected, the system defaults to "Revenue Generated".
+  - If no ordering criterion is selected, the system defaults to "Most sold → least sold".
 
 ---
 
@@ -907,6 +994,164 @@ The system must allow the user to activate an inactive product by marking it as 
 
 ---
 
+## RF-23: Generate Sales Statistics Report (PDF)
+
+### Description
+The system must allow the user to generate a downloadable PDF report based on sales statistics and product performance, using the same filters and data as the statistics module.
+
+### Main Flow
+1. The user accesses the statistics section.
+2. The user selects the desired filters:
+   - User ("All Users" or a specific user)
+   - Date range (start date and end date)
+3. The user requests to generate a PDF report.
+4. The user selects which sections to include in the report:
+   - Sales Information
+   - Product Information
+5. The system generates a PDF report containing only the selected sections.
+6. The system provides the PDF file for download.
+
+### Report Content Rules
+
+The report must always include:
+
+- Report title
+- Report generation date and time
+- Selected user
+- Selected date range
+
+Each selected section must include all its corresponding information.
+
+**Sales Information:**
+- Total revenue
+- Total number of sales
+- Average ticket value
+- Hour with the highest revenue
+- Hour with the highest number of sales
+
+- Revenue over time table, including:
+  - Time period
+  - Revenue generated
+
+- Sales over time table, including:
+  - Time period
+  - Number of sales
+
+**Product Information:**
+
+**Sold Products:**
+
+- Top 10 products by quantity sold, including:
+  - Product code
+  - Product name
+  - Quantity sold
+
+- Top 10 products by revenue generated, including:
+  - Product code
+  - Product name
+  - Revenue generated
+
+- Product ranking list based on selected filters, including:
+  - Selected ranking metric
+  - Selected ranking order
+  - Total products matching the selected filters
+  - Number of products included in the report
+
+  For each product:
+  - Product code
+  - Product name
+  - Quantity sold
+  - Revenue generated
+
+**Unsold Products:**
+
+- List of products with no sales based on selected filters, including:
+  - Total products matching the selected filters
+  - Number of products included in the report
+
+  For each product:
+  - Product code
+  - Product name
+
+- If no products match the criteria, the system must display the message:
+  "No unsold products for the selected filters"
+
+
+### Alternative Flows
+
+**4.a Report generation canceled**
+4.a.1 The user cancels the report generation process.
+4.a.2 The system returns to the statistics view without generating the PDF.
+
+**4.b No sections selected**
+4.b.1 The user does not select any report section.
+4.b.2 The system displays a message:
+       "At least one section must be selected".
+4.b.3 The system does not generate the report.
+
+**5.a No data available**
+5.a.1 The system detects that no data matches the selected filters.
+5.a.2 The system displays a message:
+       "No data available for the selected criteria".
+5.a.3 The system does not generate the report. 
+
+### Business Rules
+
+- The report title must be "Sales Statistics Report".
+- If the available products are fewer than the selected report limit, the system must include all available products.
+- The user must select at least one report section before generating the PDF report.
+- The detailed product lists included in the report must indicate:
+  - Total products matching the selected filters
+  - Number of products included in the report
+- The report must be generated using the filters currently selected in the statistics section.
+- The system must generate the report on demand and must not store it in the system.  
+- The user must be able to select which full sections are included in the report:
+  - Sales Information
+  - Product Information
+
+- The system must include the report generation date and time in the PDF.
+
+- The system must ensure that each section is included in its entirety (no partial sections).  
+
+- The system must allow configuring the number of products included in the detailed product lists:
+  - 10 items  
+  - 20 items  
+  - 50 items  
+  - 100 items  
+
+  This configuration is applied independently to each list:
+  - Product ranking list
+  - List of products with no sales
+
+- The system must apply default selections when the report generation process is opened:
+  - All report sections are selected by default:
+    - Sales Information
+    - Product Information
+
+- The system must apply default values for detailed product lists:
+  - 20 items for Product ranking list
+  - 20 items for List of products with no sales
+
+- The system must allow configuring the Product Ranking List included in the report by:
+  - Quantity Sold
+  - Revenue Generated
+
+- The system must allow ordering the Product Ranking List included in the report:
+  - Most sold → least sold
+  - Least sold → most sold
+
+- If no metric is selected for the Product Ranking List, the system defaults to "Revenue Generated".
+
+- If no ordering criterion is selected for the Product Ranking List, the system defaults to "Most sold → least sold".
+
+- The system must ensure that the PDF reflects exactly the selected filters at the moment of generation.
+
+- Revenue over time and number of sales over time statistics included in the report must be presented as tabular data.
+
+
+
+---
+
 ## General Rules
 
 ### System Access Rules
@@ -937,6 +1182,7 @@ The system must allow the user to activate an inactive product by marking it as 
 - Can view a specific user (RF-19).  
 - Can update users (RF-20).  
 - Can change user status (RF-21). 
+- Can generate sales statistics reports in PDF format (RF-23).
 
 **Operator (Cashier)**
 - Can authenticate in the system (RF-11).  
@@ -961,6 +1207,7 @@ The system must allow the user to activate an inactive product by marking it as 
 - Cannot view a specific user (RF-19).  
 - Cannot update users (RF-20).  
 - Cannot change user status (RF-21).
+- Cannot generate sales statistics reports in PDF format (RF-23).
 
 ---
 

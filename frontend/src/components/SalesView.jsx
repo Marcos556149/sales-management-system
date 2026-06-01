@@ -14,7 +14,7 @@ import { apiClient } from '../api/client';
 import ConfirmModal from './ConfirmModal';
 import { printTicket } from '../utils/printUtils';
 
-const SmartDateInput = React.forwardRef(({ value, onClick, onManualChange }, ref) => {
+const SmartDateInput = React.forwardRef(({ value, onClick, onManualChange, onTyping, onClearFocus, forceSync }, ref) => {
   const [day, setDay] = useState('');
   const [month, setMonth] = useState('');
   const [year, setYear] = useState('');
@@ -26,8 +26,13 @@ const SmartDateInput = React.forwardRef(({ value, onClick, onManualChange }, ref
       setYear(y);
       setMonth(m);
       setDay(d);
+    } else {
+      // Clear if empty
+      setYear('');
+      setMonth('');
+      setDay('');
     }
-  }, [value]);
+  }, [value, forceSync]);
 
   const validateAndNotify = (d, m, y, triggerSearch = false) => {
     let dInt = parseInt(d, 10);
@@ -36,10 +41,12 @@ const SmartDateInput = React.forwardRef(({ value, onClick, onManualChange }, ref
 
     // If something is not a number, sync back to last valid
     if (isNaN(dInt) || isNaN(mInt) || isNaN(yInt)) {
-      const [oldY, oldM, oldD] = value.split('-');
-      setDay(oldD);
-      setMonth(oldM);
-      setYear(oldY);
+      if (value && value.includes('-')) {
+        const [oldY, oldM, oldD] = value.split('-');
+        setDay(oldD);
+        setMonth(oldM);
+        setYear(oldY);
+      }
       return;
     }
 
@@ -73,6 +80,7 @@ const SmartDateInput = React.forwardRef(({ value, onClick, onManualChange }, ref
   const handleInputChange = (e, setter, maxLen) => {
     const val = e.target.value.replace(/[^0-9]/g, '').slice(0, maxLen);
     setter(val);
+    if (onTyping) onTyping();
   };
 
   const handleBlur = () => {
@@ -99,6 +107,7 @@ const SmartDateInput = React.forwardRef(({ value, onClick, onManualChange }, ref
           value={day}
           onChange={(e) => handleInputChange(e, setDay, 2)}
           onBlur={handleBlur}
+          onFocus={onClearFocus}
           onKeyDown={handleKeyDown}
           placeholder="DD"
         />
@@ -109,6 +118,7 @@ const SmartDateInput = React.forwardRef(({ value, onClick, onManualChange }, ref
           value={month}
           onChange={(e) => handleInputChange(e, setMonth, 2)}
           onBlur={handleBlur}
+          onFocus={onClearFocus}
           onKeyDown={handleKeyDown}
           placeholder="MM"
         />
@@ -119,6 +129,7 @@ const SmartDateInput = React.forwardRef(({ value, onClick, onManualChange }, ref
           value={year}
           onChange={(e) => handleInputChange(e, setYear, 4)}
           onBlur={handleBlur}
+          onFocus={onClearFocus}
           onKeyDown={handleKeyDown}
           placeholder="YYYY"
         />
@@ -126,7 +137,10 @@ const SmartDateInput = React.forwardRef(({ value, onClick, onManualChange }, ref
       <button 
         type="button"
         className="smart-date-picker-btn" 
-        onClick={onClick}
+        onClick={(e) => {
+          if (onClearFocus) onClearFocus();
+          if (onClick) onClick(e);
+        }}
         title="Open Calendar"
       >
         <Calendar size={16} />
@@ -166,6 +180,7 @@ const SalesView = () => {
   const [focusedIndex, setFocusedIndex] = useState(-1);
   const [showPrintModal, setShowPrintModal] = useState(false);
   const [selectedSaleId, setSelectedSaleId] = useState(null);
+  const [dateResetCounter, setDateResetCounter] = useState(0);
 
   const abortControllerRef = useRef(null);
   const searchInputRef = useRef(null);
@@ -232,6 +247,7 @@ const SalesView = () => {
     // Allow empty string to clear the input
     if (val === '') {
       setSearchSaleId('');
+      setFocusedIndex(-1);
       return;
     }
     // Remove all non-numeric characters
@@ -240,6 +256,7 @@ const SalesView = () => {
     if (numericVal.length > 0 && parseInt(numericVal, 10) >= 1) {
       // Remove leading zeros by parsing and re-stringifying
       setSearchSaleId(parseInt(numericVal, 10).toString());
+      setFocusedIndex(-1);
     }
   };
 
@@ -512,6 +529,7 @@ const SalesView = () => {
               placeholder="Search by Sale ID..." 
               value={searchSaleId}
               onChange={handleSearchChange}
+              onFocus={() => setFocusedIndex(-1)}
               onKeyDown={handleSearchKeyDown}
             />
             <div className="search-actions">
@@ -535,7 +553,7 @@ const SalesView = () => {
               <div className="custom-datepicker-wrapper">
                 <DatePicker
                   selected={(() => {
-                    if (!dateFilter) return new Date();
+                    if (!dateFilter) return null;
                     const [y, m, d] = dateFilter.split('-');
                     return new Date(parseInt(y), parseInt(m) - 1, parseInt(d));
                   })()}
@@ -544,17 +562,42 @@ const SalesView = () => {
                       const year = date.getFullYear();
                       const month = String(date.getMonth() + 1).padStart(2, '0');
                       const day = String(date.getDate()).padStart(2, '0');
-                      setDateFilter(`${year}-${month}-${day}`);
+                      const newDateStr = `${year}-${month}-${day}`;
+                      
+                      // If the date is the same as current filter, onChange might not be triggered 
+                      // by some interactions, but when it is, we still update.
+                      setDateFilter(newDateStr);
                       setPageFrontend(1);
+                    }
+                  }}
+                  onSelect={(date) => {
+                    if (date) {
+                      const year = date.getFullYear();
+                      const month = String(date.getMonth() + 1).padStart(2, '0');
+                      const day = String(date.getDate()).padStart(2, '0');
+                      const selectedDateStr = `${year}-${month}-${day}`;
+                      
+                      // If user selects the SAME date that is already in context, 
+                      // we force the SmartDateInput to sync its internal state.
+                      if (selectedDateStr === dateFilter) {
+                        setDateResetCounter(prev => prev + 1);
+                      }
                     }
                   }}
                   dateFormat="yyyy-MM-dd"
                   locale={enUS}
                   todayButton="Today"
-                  customInput={<SmartDateInput onManualChange={(dateStr) => {
-                    setDateFilter(dateStr);
-                    setPageFrontend(1);
-                  }} />}
+                  customInput={
+                    <SmartDateInput 
+                      onClearFocus={() => setFocusedIndex(-1)} 
+                      onTyping={() => setFocusedIndex(-1)} 
+                      forceSync={dateResetCounter}
+                      onManualChange={(dateStr) => {
+                        setDateFilter(dateStr);
+                        setPageFrontend(1);
+                      }} 
+                    />
+                  }
                   wrapperClassName="date-picker-wrapper"
                   popperPlacement="bottom-start"
                   showPopperArrow={false}

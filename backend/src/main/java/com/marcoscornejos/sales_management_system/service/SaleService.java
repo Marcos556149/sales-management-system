@@ -233,7 +233,7 @@ public class SaleService implements ISaleService {
         public Long registerSale(SaleCreateRequestDTO request) {
 
                 // Temporary default user until Spring Security is implemented
-                User user = iUserRepository.findById(1L)
+                User user = iUserRepository.findById(2L)
                                 .orElseThrow(() -> new UserNotFoundException("Authenticated user not found"));
 
                 /*

@@ -43,6 +43,9 @@ function App() {
     },
     'ctrl+shift+v': () => {
       navigate('/dashboard/sales');
+    },
+    'ctrl+shift+a': () => {
+      navigate('/dashboard/statistics');
     }
   }), [navigate]));
 

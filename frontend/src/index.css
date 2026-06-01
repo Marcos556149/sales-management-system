@@ -41,6 +41,7 @@ body {
   justify-content: center;
   align-items: center;
   padding: 20px;
+  width: 100%;
 }
 
 /* Form Card - Increased size and font-sizes for better readability */
@@ -52,8 +53,8 @@ body {
   /* Slightly rounder */
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
   width: 100%;
-  max-width: 600px;
-  /* Made the card wider */
+  max-width: 420px;
+  /* Max width keeps it narrow and prevents layout jumps, 100% width makes it responsive */
   text-align: center;
   border: 1px solid var(--border-color);
 }
@@ -181,6 +182,7 @@ body {
   font-size: 0.8rem;
   margin-top: -4px;
   font-weight: 500;
+  line-height: 1.4;
 }
 
 .input-error {
@@ -199,11 +201,11 @@ body {
 }
 
 .field-error-container {
-  height: 24px;
-  /* Fixed height for 1 line of error text */
+  height: 42px;
+  /* Fixed height to accommodate up to 2 lines of error text safely */
   display: flex;
   align-items: flex-start;
-  overflow: hidden;
+  /* Removed overflow: hidden so text can wrap freely */
 }
 
 /* Keyboard Shortcut Visibility Fix */

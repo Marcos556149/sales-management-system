@@ -21,7 +21,7 @@ export const SalesLayout = () => {
   };
 
   // State
-  const [dateFilter, setDateFilter] = useState('');
+  const [dateFilter, setDateFilter] = useState(getTodayFormatted());
   const [searchSaleId, setSearchSaleId] = useState('');
   const [appliedSearchSaleId, setAppliedSearchSaleId] = useState('');
   const [sortOrder, setSortOrder] = useState('NEWEST_FIRST');

@@ -774,7 +774,11 @@ const RegisterSaleView = () => {
                     type="text"
                     placeholder="Search by name or code..."
                     value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
+                    onChange={(e) => {
+                      setSearchTerm(e.target.value);
+                      setFocusedIndex(-1);
+                    }}
+                    onFocus={() => setFocusedIndex(-1)}
                     onKeyDown={handleSearchKeyDown}
                   />
                   <div className="pos-search-actions">
@@ -1064,7 +1068,7 @@ const RegisterSaleView = () => {
         <ConfirmModal
           isOpen={showPrintModal}
           title="Print Receipt"
-          message="Sale registered successfully. Do you want to print the receipt?"
+          message="Do you want to print the receipt?"
           onConfirm={async () => {
             setShowPrintModal(false);
             try {

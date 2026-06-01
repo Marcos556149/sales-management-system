@@ -7,9 +7,6 @@ const normalizeError = (errorData, status) => {
   // New standard error format
   if (errorData?.error && typeof errorData.error === 'object') {
     const errObj = errorData.error;
-    if (errObj.field) {
-      return `${errObj.code || 'Validation Error'} in ${errObj.field}: ${errObj.message}`;
-    }
     return errObj.message || `Error: ${errObj.code}`;
   }
   
@@ -25,9 +22,18 @@ const normalizeError = (errorData, status) => {
 };
 
 const handleResponse = async (response) => {
-  let responseData;
   const contentType = response.headers.get('content-type');
   
+  if (response.ok && contentType && contentType.includes('application/pdf')) {
+    const blob = await response.blob().catch(() => new Blob());
+    return {
+      data: blob,
+      headers: response.headers,
+      isWrapped: false
+    };
+  }
+
+  let responseData;
   if (contentType && contentType.includes('application/json')) {
     responseData = await response.json().catch(() => ({}));
   } else {
@@ -69,7 +75,22 @@ const handleResponse = async (response) => {
 
 export const apiClient = {
   get: async (url, options = {}) => {
-    const response = await fetch(url, {
+    let finalUrl = url;
+    if (options.params) {
+      // Filter out null or undefined values
+      const cleanParams = Object.fromEntries(
+        Object.entries(options.params).filter(([_, v]) => v != null)
+      );
+      const queryString = new URLSearchParams(cleanParams).toString();
+      if (queryString) {
+        finalUrl += (url.includes('?') ? '&' : '?') + queryString;
+      }
+      // Remove params from options so it's not passed to fetch
+      const { params, ...fetchOptions } = options;
+      options = fetchOptions;
+    }
+    
+    const response = await fetch(finalUrl, {
       ...options,
       method: 'GET',
     });

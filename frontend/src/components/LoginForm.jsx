@@ -35,12 +35,12 @@ const LoginForm = ({ onLoginSuccess }) => {
     let newFieldErrors = {};
     
     if (!username) {
-      newFieldErrors.userName = 'Username cannot be blank';
+      newFieldErrors.userName = 'Username is required';
       hasFrontendError = true;
     }
     
     if (!password) {
-      newFieldErrors.userPassword = 'Password cannot be blank';
+      newFieldErrors.userPassword = 'Password is required';
       hasFrontendError = true;
     }
 
@@ -81,17 +81,17 @@ const LoginForm = ({ onLoginSuccess }) => {
         }
       } else {
         // Handle non-200 responses based on our GlobalExceptionHandler
+        const errorDetail = data?.error;
         
-        if (response.status === 400) {
-          // Validation Error (from MethodArgumentNotValidException)
-          // `data` will be a map like { userName: "...", userPassword: "..." }
-          setFieldErrors(data);
-        } else if (response.status === 401) {
-          // Authentication Error (from AuthException)
-          // `data` will be { error: "Message" }
-          setGlobalError(data.error || data.message || 'Invalid credentials');
+        if (response.status === 401) {
+          // All authentication errors (401) should be shown as global errors at the top
+          setGlobalError(errorDetail?.message || 'Invalid credentials');
+        } else if (response.status === 400 && errorDetail?.field && ['userName', 'userPassword'].includes(errorDetail.field)) {
+          // Form validation errors (400) should be shown on specific fields
+          setFieldErrors({ [errorDetail.field]: errorDetail.message });
         } else {
-          setGlobalError(data.error || data.message || 'An unexpected error occurred while connecting to the server.');
+          // Fallback for any other unexpected error
+          setGlobalError(errorDetail?.message || data?.message || 'An unexpected error occurred while connecting to the server.');
         }
       }
     } catch (err) {

@@ -24,37 +24,39 @@ public class AuthService implements IAuthService{
     private final ILoginRequestMapper iLoginRequestMapper;
     private final ILoginResponseMapper iLoginResponseMapper;
 
-    /**
-     * Validates login credentials for a user.
-     *
-     * <p>If credentials are valid and the user status is ACTIVE, returns
-     * a {@link LoginResponseDTO} containing user information for the front-end.</p>
-     *
-     * @param request the login request containing username and password
-     * @return LoginResponseDTO with userName, userRole, and language
-     * @throws IllegalArgumentException if credentials are invalid or user is not active
-     */
     @Override
     public LoginResponseDTO login(LoginRequestDTO request) {
+
         // Convert DTO to User
         User loginUser = iLoginRequestMapper.toUser(request);
 
-        // Look up user by username, throw exception if not found
+        // Find user
         User user = iUserRepository.findByUserName(loginUser.getUserName())
-                .orElseThrow(() -> new AuthException("Invalid credentials"));
+                .orElseThrow(() -> new AuthException(
+                        "USER_NOT_FOUND",
+                        "User not found",
+                        "userName"
+                ));
 
-        // Check password (plaintext for now)
+        // Validate password
         if (!user.getUserPassword().equals(loginUser.getUserPassword())) {
-            throw new AuthException("Invalid credentials");
+            throw new AuthException(
+                    "INVALID_CREDENTIALS",
+                    "Invalid username or password",
+                    "userPassword"
+            );
         }
 
-        // Check user status
+        // Validate status
         if (user.getUserStatus() != UserStatus.ACTIVE) {
-            throw new AuthException("User account is not active");
+            throw new AuthException(
+                    "USER_INACTIVE",
+                    "User account is not active",
+                    "userStatus"
+            );
         }
 
-        // Return LoginResponseDTO for the front-end
+        // Success
         return iLoginResponseMapper.toDto(user);
-
     }
 }

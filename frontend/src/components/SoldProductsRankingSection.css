@@ -1,0 +1,349 @@
+/*
+ * Sold Products Ranking Styles
+ * Glassmorphism theme matching the premium dashboard aesthetic
+ */
+
+.sold-products-ranking-card {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: 24px;
+  padding: 32px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.04), 
+              0 2px 10px rgba(0, 0, 0, 0.02);
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  margin-top: 32px;
+  animation: rankingFadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.sold-products-ranking-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.06);
+}
+
+/* Header */
+.ranking-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 24px;
+  border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+  padding-bottom: 20px;
+}
+
+.ranking-title {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.title-icon-wrapper.ranking {
+  background: rgba(49, 130, 206, 0.1);
+  color: #3182ce;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  flex-shrink: 0;
+  transition: all 0.3s ease;
+}
+
+.sold-products-ranking-card:hover .title-icon-wrapper.ranking {
+  transform: scale(1.05);
+}
+
+.ranking-title h2 {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #1a202c;
+  margin: 0;
+  letter-spacing: -0.02em;
+}
+
+.ranking-title p {
+  color: #718096;
+  font-size: 0.825rem;
+  margin: 2px 0 0 0;
+}
+
+/* Filters */
+.ranking-filters {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.ranking-filter-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 180px;
+}
+
+.ranking-filter-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #4a5568;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.ranking-select {
+  height: 40px;
+  padding: 0 16px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  font-size: 0.875rem;
+  color: #2d3748;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%234A5568'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 14px;
+  padding-right: 36px;
+}
+
+.ranking-select:hover:not(:disabled) {
+  border-color: #cbd5e0;
+}
+
+.ranking-select:focus:not(:disabled) {
+  outline: none;
+  border-color: #3182ce;
+  box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.15);
+}
+
+.ranking-select:disabled {
+  background: #f7fafc;
+  color: #a0aec0;
+  cursor: not-allowed;
+}
+
+/* Table */
+.ranking-table-wrapper {
+  overflow-x: auto;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  background: #ffffff;
+}
+
+.ranking-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.ranking-table th {
+  background-color: rgba(247, 250, 252, 0.8);
+  padding: 16px;
+  font-weight: 700;
+  color: #4a5568;
+  font-size: 0.775rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.ranking-table td {
+  padding: 16px;
+  border-bottom: 1px solid #e2e8f0;
+  color: #2d3748;
+  font-size: 0.925rem;
+  vertical-align: middle;
+}
+
+.ranking-row {
+  transition: background-color 0.15s ease;
+}
+
+.ranking-row:hover {
+  background-color: rgba(49, 130, 206, 0.02);
+}
+
+.ranking-row:last-child td {
+  border-bottom: none;
+}
+
+/* Cell specifics */
+.code-cell {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-weight: 500;
+  color: #4a5568;
+}
+
+.name-cell {
+  font-weight: 600;
+  color: #1a202c;
+}
+
+.quantity-cell, .revenue-cell {
+  font-weight: 600;
+}
+
+.quantity-cell {
+  color: #3182ce;
+}
+
+.revenue-cell {
+  color: #10b981;
+}
+
+.ranking-cell-content {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ranking-cell-content .cell-icon {
+  flex-shrink: 0;
+}
+
+.ranking-cell-content.qty {
+  color: #3182ce;
+}
+
+.ranking-cell-content.qty .cell-icon {
+  color: rgba(49, 130, 206, 0.6);
+}
+
+.ranking-cell-content.rev {
+  color: #10b981;
+}
+
+.ranking-cell-content.rev .cell-icon {
+  color: rgba(16, 185, 129, 0.6);
+}
+
+/* Pagination Wrapper */
+.ranking-pagination-wrapper {
+  margin-top: 16px;
+}
+
+.ranking-pagination-wrapper .pagination-bar {
+  border-top: none;
+  padding: 8px 0 0 0;
+}
+
+/* Empty, Error, Loading States */
+.ranking-empty-state, .ranking-error-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 24px;
+  text-align: center;
+  background: #ffffff;
+  border: 1px dashed #cbd5e0;
+  border-radius: 16px;
+}
+
+.ranking-empty-state .empty-icon {
+  color: #a0aec0;
+  margin-bottom: 16px;
+}
+
+.ranking-empty-state h3 {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #2d3748;
+  margin: 0 0 4px 0;
+}
+
+.ranking-empty-state p {
+  font-size: 0.875rem;
+  color: #718096;
+  margin: 0;
+}
+
+.ranking-error-state .error-icon {
+  color: #e53e3e;
+  margin-bottom: 16px;
+}
+
+.ranking-error-state h3 {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #2d3748;
+  margin: 0 0 4px 0;
+}
+
+.ranking-error-state p {
+  font-size: 0.875rem;
+  color: #e53e3e;
+  margin: 0;
+}
+
+/* Skeletons */
+.ranking-table.skeleton {
+  pointer-events: none;
+}
+
+.skeleton-row td {
+  padding: 20px 16px;
+}
+
+.skeleton-bar {
+  height: 14px;
+  border-radius: 4px;
+  background: linear-gradient(90deg, #f1f5f9 25%, #f8fafc 50%, #f1f5f9 75%);
+  background-size: 200% 100%;
+  animation: rankingSkeleton 1.5s infinite;
+}
+
+.skeleton-bar.short {
+  width: 70px;
+}
+
+.skeleton-bar.medium {
+  width: 150px;
+}
+
+@keyframes rankingSkeleton {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+@keyframes rankingFadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Responsive Breakpoints */
+@media (max-width: 768px) {
+  .sold-products-ranking-card {
+    padding: 20px;
+  }
+
+  .ranking-header {
+    flex-direction: column;
+    align-items: flex-start;
+    text-align: left;
+  }
+
+  .ranking-title {
+    align-items: flex-start;
+    text-align: left;
+  }
+
+  .ranking-filters {
+    flex-direction: column;
+  }
+
+  .ranking-filter-item {
+    width: 100%;
+  }
+
+  .ranking-select {
+    width: 100%;
+  }
+}

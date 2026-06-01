@@ -6,7 +6,8 @@ const Pagination = ({
   totalPages, 
   totalElements, 
   onPageChange,
-  itemName = "items"
+  itemName = "items",
+  showShortcuts = true
 }) => {
   return (
     <div className="pagination-bar">
@@ -20,7 +21,7 @@ const Pagination = ({
           disabled={currentPage === 1}
         >
           <ChevronLeft size={16} />
-          <span className="btn-shortcut">←</span>
+          {showShortcuts && <span className="btn-shortcut">←</span>}
           <span>Previous</span>
         </button>
         <button 
@@ -29,7 +30,7 @@ const Pagination = ({
           disabled={currentPage >= totalPages || totalPages === 0}
         >
           <span>Next</span>
-          <span className="btn-shortcut">→</span>
+          {showShortcuts && <span className="btn-shortcut">→</span>}
           <ChevronRight size={16} />
         </button>
       </div>

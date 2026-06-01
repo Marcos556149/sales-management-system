@@ -196,6 +196,7 @@
   background-color: #ffffff;
   border: 1px solid #e5e7eb;
   border-radius: 8px;
+  scroll-padding-top: 45px;
 }
 
 .pos-empty-cart {

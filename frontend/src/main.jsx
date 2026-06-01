@@ -21,15 +21,8 @@ import SalesView from './components/SalesView';
 import SaleDetailView from './components/SaleDetailView';
 import { SalesLayout } from './components/SalesContext';
 import RegisterSaleView from './components/RegisterSaleView';
+import StatisticsView from './components/StatisticsView';
 import './index.css';
-
-// Placeholder Pages for Statistics
-const StatisticsPlaceholder = () => (
-  <div className="coming-soon">
-    <h2>Statistics Module</h2>
-    <p>This functional area is currently under development.</p>
-  </div>
-);
 
 /**
  * Protected Route Wrapper
@@ -75,7 +68,7 @@ const router = createBrowserRouter(
           <Route path=":id" element={<SaleDetailView />} />
         </Route>
         
-        <Route path="statistics" element={<StatisticsPlaceholder />} />
+        <Route path="statistics" element={<StatisticsView />} />
       </Route>
       
       <Route path="*" element={<Navigate to="/login" replace />} />

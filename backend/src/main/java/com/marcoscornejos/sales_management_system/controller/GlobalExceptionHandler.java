@@ -32,16 +32,28 @@ import java.util.Map;
 public class GlobalExceptionHandler {
 
     /**
-     * Handles authentication exceptions thrown by AuthService.
+     * Handles authentication-related exceptions.
      *
-     * @param ex the {@link AuthException} thrown during authentication
-     * @return ResponseEntity with HTTP 401 Unauthorized and the exception message
+     * <p>
+     * Returns a standardized error response compatible with the frontend error handler,
+     * including error code, message, and optional field reference.
+     * </p>
+     *
+     * @param ex authentication exception
+     * @return standardized error response with HTTP 401 status
      */
     @ExceptionHandler(AuthException.class)
-    public ResponseEntity<Map<String, String>> handleAuthException(AuthException ex) {
-        Map<String, String> error = new HashMap<>();
-        error.put("error", ex.getMessage());
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);
+    public ResponseEntity<Map<String, Object>> handleAuthException(AuthException ex) {
+
+        Map<String, Object> errorBody = new HashMap<>();
+        errorBody.put("code", ex.getCode());
+        errorBody.put("message", ex.getMessage());
+        errorBody.put("field", ex.getField());
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("error", errorBody);
+
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
     }
 
     /**
@@ -531,6 +543,57 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(SystemConfigurationException.class)
     public ResponseEntity<Map<String, Object>> handleSystemConfigurationException(
             SystemConfigurationException ex) {
+
+        Map<String, Object> errorBody = new HashMap<>();
+        errorBody.put("code", ex.getCode());
+        errorBody.put("message", ex.getMessage());
+        errorBody.put("field", ex.getField());
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("error", errorBody);
+
+        return ResponseEntity.badRequest().body(response);
+    }
+
+    /**
+     * Handles statistics-related exceptions thrown when business rules
+     * or validations fail within the Statistics domain.
+     *
+     * <p>
+     * This handler centralizes all exceptions that extend {@code StatisticsException},
+     * ensuring a consistent error response format across the application.
+     * </p>
+     *
+     * <p>
+     * The response follows the standardized structure:
+     * </p>
+     *
+     * <pre>
+     * {
+     *   "error": {
+     *     "code": "ERROR_CODE",
+     *     "message": "Human readable message",
+     *     "field": "Optional field related to the error"
+     *   }
+     * }
+     * </pre>
+     *
+     * <p>
+     * The frontend should use:
+     * <ul>
+     *   <li><b>code</b>: to determine error type and UI behavior</li>
+     *   <li><b>message</b>: to display or log human-readable information</li>
+     *   <li><b>field</b>: to associate validation errors with specific inputs</li>
+     * </ul>
+     * </p>
+     *
+     * @param ex the statistics-related exception containing error details
+     * @return a 400 Bad Request response with a standardized error body
+     */
+    @ExceptionHandler(StatisticsException.class)
+    public ResponseEntity<Map<String, Object>> handleStatisticsException(
+            StatisticsException ex
+    ) {
 
         Map<String, Object> errorBody = new HashMap<>();
         errorBody.put("code", ex.getCode());

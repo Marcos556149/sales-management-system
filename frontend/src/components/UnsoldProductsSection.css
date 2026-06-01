@@ -1,0 +1,243 @@
+/*
+ * Unsold Products Styles
+ * Glassmorphism theme matching the premium dashboard aesthetic
+ */
+
+.unsold-products-card {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: 24px;
+  padding: 32px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.04), 
+              0 2px 10px rgba(0, 0, 0, 0.02);
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  margin-top: 32px;
+  animation: unsoldFadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.unsold-products-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.06);
+}
+
+/* Header */
+.unsold-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 24px;
+  border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+  padding-bottom: 20px;
+}
+
+.unsold-title {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.title-icon-wrapper.unsold {
+  background: rgba(245, 158, 11, 0.1); /* Amber/Orange Accent */
+  color: #d97706;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  flex-shrink: 0;
+  transition: all 0.3s ease;
+}
+
+.unsold-products-card:hover .title-icon-wrapper.unsold {
+  transform: scale(1.05);
+}
+
+.unsold-title h2 {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #1a202c;
+  margin: 0;
+  letter-spacing: -0.02em;
+}
+
+.unsold-title p {
+  color: #718096;
+  font-size: 0.825rem;
+  margin: 2px 0 0 0;
+}
+
+/* Table */
+.unsold-table-wrapper {
+  overflow-x: auto;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  background: #ffffff;
+}
+
+.unsold-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.unsold-table th {
+  background-color: rgba(247, 250, 252, 0.8);
+  padding: 16px;
+  font-weight: 700;
+  color: #4a5568;
+  font-size: 0.775rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.unsold-table td {
+  padding: 16px;
+  border-bottom: 1px solid #e2e8f0;
+  color: #2d3748;
+  font-size: 0.925rem;
+  vertical-align: middle;
+}
+
+.unsold-row {
+  transition: background-color 0.15s ease;
+}
+
+.unsold-row:hover {
+  background-color: rgba(245, 158, 11, 0.02); /* Amber tint on hover */
+}
+
+.unsold-row:last-child td {
+  border-bottom: none;
+}
+
+/* Cell specifics */
+.code-cell {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-weight: 500;
+  color: #4a5568;
+}
+
+.name-cell {
+  font-weight: 600;
+  color: #1a202c;
+}
+
+/* Pagination Wrapper */
+.unsold-pagination-wrapper {
+  margin-top: 16px;
+}
+
+.unsold-pagination-wrapper .pagination-bar {
+  border-top: none;
+  padding: 8px 0 0 0;
+}
+
+/* Empty, Error, Loading States */
+.unsold-empty-state, .unsold-error-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 24px;
+  text-align: center;
+  background: #ffffff;
+  border: 1px dashed #cbd5e0;
+  border-radius: 16px;
+}
+
+.unsold-empty-state .empty-icon {
+  color: #a0aec0;
+  margin-bottom: 16px;
+}
+
+.unsold-empty-state h3 {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #2d3748;
+  margin: 0 0 4px 0;
+}
+
+.unsold-empty-state p {
+  font-size: 0.875rem;
+  color: #718096;
+  margin: 0;
+}
+
+.unsold-error-state .error-icon {
+  color: #e53e3e;
+  margin-bottom: 16px;
+}
+
+.unsold-error-state h3 {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #2d3748;
+  margin: 0 0 4px 0;
+}
+
+.unsold-error-state p {
+  font-size: 0.875rem;
+  color: #e53e3e;
+  margin: 0;
+}
+
+/* Skeletons */
+.unsold-table.skeleton {
+  pointer-events: none;
+}
+
+.skeleton-row td {
+  padding: 20px 16px;
+}
+
+.skeleton-bar {
+  height: 14px;
+  border-radius: 4px;
+  background: linear-gradient(90deg, #f1f5f9 25%, #f8fafc 50%, #f1f5f9 75%);
+  background-size: 200% 100%;
+  animation: unsoldSkeleton 1.5s infinite;
+}
+
+.skeleton-bar.short {
+  width: 70px;
+}
+
+.skeleton-bar.medium {
+  width: 150px;
+}
+
+@keyframes unsoldSkeleton {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+@keyframes unsoldFadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Responsive Breakpoints */
+@media (max-width: 768px) {
+  .unsold-products-card {
+    padding: 20px;
+  }
+
+  .unsold-header {
+    flex-direction: column;
+    align-items: flex-start;
+    text-align: left;
+  }
+
+  .unsold-title {
+    align-items: flex-start;
+    text-align: left;
+  }
+}

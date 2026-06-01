@@ -21,10 +21,10 @@ import lombok.Setter;
 public class LoginRequestDTO {
 
     /** Username entered by the user. Must not be blank. */
-    @NotBlank(message = "Username cannot be blank")
+    @NotBlank(message = "Username is required")
     private String userName;
 
     /** Password entered by the user. Must not be blank. */
-    @NotBlank(message = "Password cannot be blank")
+    @NotBlank(message = "Password is required")
     private String userPassword;
 }

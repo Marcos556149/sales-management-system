@@ -53,6 +53,7 @@ const Sidebar = () => {
             >
               <BarChart3 className="nav-icon" size={20} />
               <span>Statistics</span>
+              <span className="nav-shortcut">Ctrl+Shift+A</span>
             </NavLink>
           </li>
           
