@@ -1,15 +1,15 @@
 package com.marcoscornejos.sales_management_system.exception;
 
 /**
- * Exception thrown when product input data is invalid or violates
- * business validation rules.
+ * Excepción lanzada cuando los datos de entrada de un producto son inválidos
+ * o incumplen las reglas de validación de negocio.
  *
  * <p>
- * Example cases:
+ * Ejemplos de casos:
  * <ul>
- *   <li>Invalid pagination parameters</li>
- *   <li>Negative prices or stock</li>
- *   <li>Invalid field values</li>
+ *   <li>Parámetros de paginación inválidos</li>
+ *   <li>Precios o stock negativos</li>
+ *   <li>Valores de campos inválidos</li>
  * </ul>
  * </p>
  */
@@ -18,19 +18,19 @@ public class InvalidProductDataException extends ProductException {
     private static final String CODE = "INVALID_PRODUCT_DATA";
 
     /**
-     * Creates a validation exception for a product field.
+     * Crea una excepción de validación para un campo de producto.
      *
-     * @param message human-readable error message
-     * @param field field that caused the validation error
+     * @param message mensaje de error legible por el usuario
+     * @param field campo que provocó el error de validación
      */
     public InvalidProductDataException(String message, String field) {
         super(CODE, message, field);
     }
 
     /**
-     * Creates a validation exception without a specific field.
+     * Crea una excepción de validación sin asociarla a un campo específico.
      *
-     * @param message human-readable error message
+     * @param message mensaje de error legible por el usuario
      */
     public InvalidProductDataException(String message) {
         super(CODE, message, null);

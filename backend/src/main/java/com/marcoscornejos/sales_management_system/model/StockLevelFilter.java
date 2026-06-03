@@ -1,19 +1,20 @@
 /**
- * Enumeration that defines the stock level filter options for products.
+ * Enumeración que define las opciones de filtrado por nivel de stock de los productos.
  *
  * <p>
- * Used to classify and filter products according to their current stock
- * condition in relation to the configured minimum stock level.
+ * Se utiliza para clasificar y filtrar productos según su condición
+ * actual de stock en relación con el nivel mínimo de stock configurado.
  * </p>
  *
  * <p>
- * This enum is especially useful in product listing and inventory views,
- * allowing users to quickly identify products with normal stock levels,
- * low stock, or no stock available.
+ * Esta enumeración resulta especialmente útil en las vistas de productos
+ * e inventario, permitiendo a los usuarios identificar rápidamente
+ * productos con stock normal, bajo stock o sin stock disponible.
  * </p>
  *
  * <p>
- * Each enum value includes a human-readable display name intended for UI representation.
+ * Cada valor de la enumeración incluye un nombre descriptivo destinado
+ * a su representación en la interfaz de usuario.
  * </p>
  */
 
@@ -24,10 +25,10 @@ import lombok.Getter;
 @Getter
 public enum StockLevelFilter {
 
-    ALL("All Stock"),
-    NORMAL("Normal Stock"),
-    LOW("Low Stock"),
-    OUT_OF_STOCK("Out of Stock");
+    ALL("Todos los niveles de stock"),
+    NORMAL("Stock normal"),
+    LOW("Bajo stock"),
+    OUT_OF_STOCK("Sin stock");
 
     private final String displayName;
 

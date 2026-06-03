@@ -1,21 +1,21 @@
 package com.marcoscornejos.sales_management_system.exception;
 
 /**
- * Exception thrown when a product cannot be found.
+ * Excepción lanzada cuando no se puede encontrar un producto.
  *
  * <p>
- * Typically used when a product lookup by ID or code
- * does not return any result.
+ * Se utiliza normalmente cuando una búsqueda de producto por código
+ * no devuelve ningún resultado.
  * </p>
  *
  * <p>
- * This exception uses the standardized error format:
+ * Esta excepción utiliza el formato de error estandarizado:
  * </p>
  *
  * <pre>
  * {
  *   "code": "PRODUCT_NOT_FOUND",
- *   "message": "Human readable message",
+ *   "message": "Mensaje legible por el usuario",
  *   "field": null
  * }
  * </pre>
@@ -25,9 +25,9 @@ public class ProductNotFoundException extends ProductException {
     private static final String CODE = "PRODUCT_NOT_FOUND";
 
     /**
-     * Creates an exception when a product is not found.
+     * Crea una excepción cuando no se encuentra un producto.
      *
-     * @param message human-readable error message
+     * @param message mensaje de error legible por el usuario
      */
     public ProductNotFoundException(String message) {
         super(CODE, message, null);

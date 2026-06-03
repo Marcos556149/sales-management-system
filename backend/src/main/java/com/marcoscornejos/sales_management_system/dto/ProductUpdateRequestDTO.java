@@ -8,11 +8,11 @@ import lombok.Setter;
 import java.math.BigDecimal;
 
 /**
- * DTO used to update an existing product in the system.
+ * DTO utilizado para actualizar un producto existente en el sistema.
  *
  * <p>
- * Contains all editable product fields. The product code and status
- * cannot be modified.
+ * Contiene todos los campos editables del producto.
+ * El código y el estado del producto no pueden modificarse.
  * </p>
  */
 @Getter
@@ -20,58 +20,58 @@ import java.math.BigDecimal;
 public class ProductUpdateRequestDTO {
 
     /**
-     * Updated name of the product.
+     * Nombre actualizado del producto.
      *
      * <p>
-     * Must not be blank and must not exceed 100 characters.
+     * No debe estar vacío y no puede superar los 100 caracteres.
      * </p>
      */
-    @NotBlank(message = "Product name is required")
-    @Size(max = 100, message = "Product name must not exceed 100 characters")
+    @NotBlank(message = "El nombre del producto es obligatorio")
+    @Size(max = 100, message = "El nombre del producto no puede superar los 100 caracteres")
     private String productName;
 
     /**
-     * Updated unit price of the product.
+     * Precio unitario actualizado del producto.
      *
      * <p>
-     * Must be greater than or equal to 0 and respect the database constraint
-     * NUMERIC(12,2), allowing up to 10 integer digits and 2 decimal places.
+     * Debe ser mayor o igual a 0 y respetar la restricción de base de datos
+     * NUMERIC(12,2), permitiendo hasta 10 dígitos enteros y 2 decimales.
      * </p>
      */
-    @NotNull(message = "Product price is required")
-    @DecimalMin(value = "0.0", inclusive = true, message = "Product price must be greater than or equal to 0")
-    @Digits(integer = 10, fraction = 2, message = "Product price must have up to 10 digits and 2 decimals")
+    @NotNull(message = "El precio del producto es obligatorio")
+    @DecimalMin(value = "0.0", inclusive = true, message = "El precio del producto debe ser mayor o igual a 0")
+    @Digits(integer = 10, fraction = 2, message = "El precio del producto debe tener hasta 10 dígitos enteros y 2 decimales")
     private BigDecimal productPrice;
 
     /**
-     * Updated available stock quantity.
+     * Cantidad de stock disponible actualizada.
      *
      * <p>
-     * Must be greater than or equal to 0 and respect the database constraint
-     * NUMERIC(12,2), allowing up to 10 integer digits and 2 decimal places.
+     * Debe ser mayor o igual a 0 y respetar la restricción de base de datos
+     * NUMERIC(12,2), permitiendo hasta 10 dígitos enteros y 2 decimales.
      * </p>
      */
-    @NotNull(message = "Product stock is required")
-    @DecimalMin(value = "0.0", inclusive = true, message = "Product stock must be greater than or equal to 0")
-    @Digits(integer = 10, fraction = 2, message = "Product stock must have up to 10 digits and 2 decimals")
+    @NotNull(message = "El stock del producto es obligatorio")
+    @DecimalMin(value = "0.0", inclusive = true, message = "El stock del producto debe ser mayor o igual a 0")
+    @Digits(integer = 10, fraction = 2, message = "El stock del producto debe tener hasta 10 dígitos enteros y 2 decimales")
     private BigDecimal productStock;
 
     /**
-     * Updated unit of measure of the product.
+     * Unidad de medida actualizada del producto.
      *
      * <p>
-     * Must not be null and must be a valid enum value.
+     * No debe ser nula y debe corresponder a un valor válido del enum.
      * </p>
      */
-    @NotNull(message = "Unit of measure is required")
+    @NotNull(message = "La unidad de medida es obligatoria")
     private UnitOfMeasure unitOfMeasure;
 
     /**
-     * Updated minimum stock threshold.
+     * Nivel mínimo de stock actualizado.
      */
-    @NotNull(message = "Minimum stock is required")
-    @DecimalMin(value = "0.0", inclusive = true, message = "Minimum stock must be greater than or equal to 0")
-    @Digits(integer = 10, fraction = 2, message = "Minimum stock must have up to 10 digits and 2 decimals")
+    @NotNull(message = "El stock mínimo es obligatorio")
+    @DecimalMin(value = "0.0", inclusive = true, message = "El stock mínimo debe ser mayor o igual a 0")
+    @Digits(integer = 10, fraction = 2, message = "El stock mínimo debe tener hasta 10 dígitos enteros y 2 decimales")
     private BigDecimal minimumStock;
 
 }

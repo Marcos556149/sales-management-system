@@ -5,15 +5,15 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- * Generic DTO to represent enum values with a code and a label.
+ * DTO genérico para representar valores de enumeraciones mediante un código y una etiqueta.
  */
 @Getter @Setter
 @AllArgsConstructor
 public class EnumDTO {
 
-    /** Internal code of the enum (e.g., ADMIN, ACTIVE). */
+    /** Código interno de la enumeración (por ejemplo, ADMIN, ACTIVE). */
     private String code;
 
-    /** Human-readable label (e.g., Administrator, Active). */
+    /** Etiqueta legible para el usuario (por ejemplo, Administrador, Activo). */
     private String label;
 }

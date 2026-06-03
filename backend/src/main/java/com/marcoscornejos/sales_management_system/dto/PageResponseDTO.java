@@ -6,46 +6,46 @@ import lombok.Getter;
 import java.util.List;
 
 /**
- * Generic DTO for paginated responses.
+ * DTO genérico para respuestas paginadas.
  *
  * <p>
- * Provides a stable and controlled structure for pagination data,
- * avoiding direct exposure of Spring's internal Page implementation.
+ * Proporciona una estructura estable y controlada para los datos de paginación,
+ * evitando exponer directamente la implementación interna de Page de Spring.
  * </p>
  *
- * @param <T> Type of content inside the page
+ * @param <T> tipo de contenido en la página
  */
 @Getter
 @AllArgsConstructor
 public class PageResponseDTO<T> {
 
     /**
-     * List of elements in the current page.
+     * Lista de elementos de la página actual.
      */
     private List<T> content;
 
     /**
-     * Current page number (0-based).
+     * Número de la página actual (basado en índice 0).
      */
     private int page;
 
     /**
-     * Number of elements per page.
+     * Cantidad de elementos por página.
      */
     private int size;
 
     /**
-     * Total number of pages.
+     * Número total de páginas.
      */
     private int totalPages;
 
     /**
-     * Total number of elements across all pages.
+     * Cantidad total de elementos considerando todas las páginas.
      */
     private long totalElements;
 
     /**
-     * Total number of records in the table without filters.
+     * Cantidad total de registros en la tabla sin aplicar filtros.
      */
     private Long totalGlobalElements;
 }

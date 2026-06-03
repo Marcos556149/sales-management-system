@@ -1,340 +1,362 @@
-# PrimeSale - System Requirements
+# PrimeSale - Requerimientos del Sistema
 
-Web-based sales and inventory management system for retail businesses
+Sistema web de gestión de ventas e inventario para negocios minoristas.
 
-## Index
+## Índice
 
-### System Overview
-- [1. General Description](#1-general-description)
-- [2. System Objective](#2-system-objective)
+### Descripción General del Sistema
+- [1. Descripción General](#1-descripción-general)
+- [2. Objetivo del Sistema](#2-objetivo-del-sistema)
 
-### Core Functional Areas
-- [3. Product Management](#3-product-management)
-- [4. Sales Management](#4-sales-management)
-- [5. Sale Detail](#5-sale-detail)
-- [6. Barcode Scanning](#6-barcode-scanning)
-- [7. Sales Receipt Generation](#7-sales-receipt-generation)
+### Áreas Funcionales Principales
+- [3. Gestión de Productos](#3-gestión-de-productos)
+- [4. Gestión de Ventas](#4-gestión-de-ventas)
+- [5. Detalle de Venta](#5-detalle-de-venta)
+- [6. Escaneo de Códigos de Barras](#6-escaneo-de-códigos-de-barras)
+- [7. Generación de Comprobantes de Venta](#7-generación-de-comprobantes-de-venta)
 
-### User and Access Management
-- [8. Users](#8-users)
-  - [User Management](#user-management)
-- [9. System Access](#9-system-access)
+### Gestión de Usuarios y Acceso
+- [8. Usuarios](#8-usuarios)
+  - [Gestión de Usuarios](#gestión-de-usuarios)
+- [9. Acceso al Sistema](#9-acceso-al-sistema)
 
-### System Configuration
-- [10. System Configuration](#10-system-configuration)
-  - [Global Configuration](#global-configuration)
-  - [Functionalities](#functionalities)
+### Configuración del Sistema
+- [10. Configuración del Sistema](#10-configuración-del-sistema)
+  - [Configuración General](#configuración-general)
+  - [Funcionalidades](#funcionalidades)
 
-### Additional Functionalities
-- [11. Sales Statistics](#11-sales-statistics)
-  - [11.1 Sales Information](#111-sales-information)
-  - [11.2 Product Information](#112-product-information)
-    - [11.2.1 Sold Products](#1121-sold-products)
-    - [11.2.2 Unsold Products](#1122-unsold-products)
-  - [11.3 Report Generation](#113-report-generation)
-- [12. Logout](#12-logout)
+### Funcionalidades Adicionales
+- [11. Estadísticas de Ventas](#11-estadísticas-de-ventas)
+  - [11.1 Información de Ventas](#111-información-de-ventas)
+  - [11.2 Información de Productos](#112-información-de-productos)
+    - [11.2.1 Productos Vendidos](#1121-productos-vendidos)
+    - [11.2.2 Productos No Vendidos](#1122-productos-no-vendidos)
+  - [11.3 Generación de Reportes](#113-generación-de-reportes)
+- [12. Cierre de Sesión](#12-cierre-de-sesión)
 
 ---
 
-## 1. General Description
-
-PrimeSale is a web-based business management system designed to help retail businesses manage their daily commercial operations.
-
-The system provides tools for product administration, inventory control, sales registration, receipt generation, user management and access control, configuration settings, and business reporting and analytics through an intuitive and efficient interface.
-
-## 2. System Objective
-
-The objective of PrimeSale is to allow a business to:
-
-- Manage and maintain product information  
-- Control available inventory and stock levels  
-- Register and track completed sales transactions  
-- Generate detailed receipts for each transaction  
-- Manage system users and access permissions  
-- Obtain reports and statistical insights about sales and products  
-- Centralize daily commercial operations in an efficient web-based platform
-
-## 3. Product Management
-
-The system must allow managing the products available in the business, including their registration, maintenance, availability control, and consultation.
-
-For each product, the following data must be recorded:
-
-- Product name  
-- Product code (unique identifier within the system)  
-- Product price  
-- Unit of measure (e.g., unit, kilogram, liter)  
-- Available stock (according to the product’s unit of measure)
-- Minimum stock level used to identify low stock products (according to the product’s unit of measure)
-- Product status (active/inactive)
-
-The system must allow:
-
-- Register a new product  
-- View the list of existing products  
-- View detailed information of a specific product  
-- Update product information  
-- Logically deactivate a product (mark it as inactive)  
-- Reactivate a product (mark it as active)  
-
-## 4. Sales Management
-The system must allow managing sales transactions made in the business, including their registration and consultation.
-
-For each sale, the following data must be stored:
-- Unique sale identifier  
-- Sale date  
-- Sale time  
-- Total amount  
-- User who performed the sale (must be an active user at the time of the transaction)
-
-The system must allow:
-- Register a new sale  
-- View the list of existing sales
-- View detailed information of a specific sale
-
-## 5. Sale Detail
-For each product included in a sale, the following data must be stored:
-- Unique sale detail identifier  
-- Associated sale  
-- Sold product  
-- Product name at the time of the sale  
-- Price at the time of the sale  
-- Quantity sold (according to the product’s unit of measure at the time of the sale)
-- Unit of measure at the time of the sale
-- Line subtotal  
-
-The product name, sale price, and unit of measure stored in the sale detail must preserve the values used during the transaction, even if the corresponding product information is modified later.
-
-The system must allow:
-- Add a product to a sale while the sale is being registered
-- Remove a product from a sale while the sale is being registered
-
-## 6. Barcode Scanning
-The system must allow barcode scanning using a barcode reader.
-
-This functionality will allow:
-- Identifying existing products in the system through the scanned code  
-- Facilitating the registration of new products using the barcode  
-- Speeding up product selection in sales processes through barcode scanning  
-
-## 7. Sales Receipt Generation
-
-For each recorded sale, the system must be able to generate a purchase receipt that includes:
-
-- Business name
-- Business address
-- Receipt issue date
-- Receipt issue time
-- Unique sale identifier
-- List of sold products, including the product name as recorded at the time of the sale
-- Quantity of each product along with the unit of measure recorded at the time of the sale
-- Price of each product at the time of the sale
-- Subtotal for each product
-- Total sale amount
-
-The receipt must represent proof of the completed transaction.
-
-## 8. Users
-The system must have two predefined access types (roles):
+## 1. Descripción General
 
-**Administrator**
-- Has full access to all system functionalities  
-- Can access the system through authentication
-- Can manage products, including registration, updates, activation, and deactivation  
-- Can register and search products by barcode  
-- Can view product lists, product details, and stock information
-- Can register new sales
-- Can view sales lists and detailed sale information, including associated sale details
-- Can add and remove products from a sale while the sale is being registered
-- Can generate sales receipts for recorded sales
-- Can view sales statistics  
-- Can update business information, including the business name and address
-- Can register, view, and update users (operators)
-- Can change user status (active, suspended, deleted)
-- Can log out from the system
+PrimeSale es un sistema web de gestión comercial diseñado para ayudar a los negocios minoristas a administrar sus operaciones comerciales diarias.
 
-**Operator (cashier)**
-- Can access the system through authentication
-- Can search products by barcode
-- Can view product lists, product details, and stock information
-- Can register new sales
-- Can add and remove products from a sale while the sale is being registered
-- Can generate sales receipts for recorded sales
-- Can view sales lists and detailed sale information
-- Can log out from the system
-- Cannot register products  
-- Cannot update product information  
-- Cannot deactivate or reactivate products  
-- Cannot register products by barcode
-- Cannot modify business information, including the business name and address
-- Cannot register, view, and update users (operators)
-- Cannot change user status (active, suspended, deleted)
+El sistema proporciona herramientas para la gestión de productos, el control de inventario, el registro de ventas, la generación de comprobantes, la administración de usuarios y el control de acceso, la configuración del sistema y la obtención de reportes y estadísticas del negocio a través de una interfaz intuitiva y eficiente.
 
-The system must store information about each user to manage access and permissions. Each user will have the following data:
-- User ID: unique internal identifier  
-- Username: unique name used to log into the system  
-- Role: user type that determines system permissions  
-- Password: password associated with the user account, used for authentication  
-- Status: indicates whether the user is active, suspended, or logically deleted
+## 2. Objetivo del Sistema
 
-User status can be:
-- Active: the user can access and operate in the system
-- Suspended: the user cannot access the system temporarily
-- Deleted: the user is logically removed and cannot access the system, but remains stored for historical data integrity
+El objetivo de PrimeSale es permitir a un negocio:
 
-**Note:** This information is stored in the database to authenticate users and control access to system functionalities.
+- Gestionar y mantener la información de los productos
+- Controlar el inventario disponible y los niveles de stock
+- Registrar y realizar el seguimiento de las ventas efectuadas
+- Generar comprobantes detallados para cada transacción
+- Gestionar los usuarios del sistema y sus permisos de acceso
+- Obtener reportes e información estadística sobre ventas y productos
+- Centralizar las operaciones comerciales diarias en una plataforma web eficiente
 
-The system must validate the user's status during authentication:
+## 3. Gestión de Productos
 
-- Only users with "Active" status can access the system  
-- Users with "Suspended" or "Deleted" status must be denied access
+El sistema debe permitir gestionar los productos disponibles en el negocio, incluyendo su registro, mantenimiento, control de disponibilidad y consulta.
 
-### User Management
+Para cada producto, se deberá registrar la siguiente información:
 
-The system must allow administrators to manage system users.
+- Nombre del producto
+- Código del producto (identificador único dentro del sistema)
+- Precio del producto
+- Unidad de medida (por ejemplo: unidad, kilogramo, litro)
+- Stock disponible (de acuerdo con la unidad de medida del producto)
+Stock mínimo utilizado para identificar productos con bajo stock (de acuerdo con la unidad de medida del producto)
+- Estado del producto (activo/inactivo)
 
-The system must allow:
-- Register a new user (operator role only)
-- View existing users
-- Update user data
-- Change user status (active, suspended, deleted)
+El sistema debe permitir:
 
-Only users with the Administrator role can perform these actions.
+- Registrar un nuevo producto
+- Visualizar la lista de productos existentes
+- Consultar la información detallada de un producto específico
+- Actualizar la información de un producto
+- Desactivar lógicamente un producto (marcarlo como inactivo)
+- Reactivar un producto (marcarlo como activo)
 
-**Initial Setup:**
-The system must include a predefined administrator account created during system initialization. This account will be used to manage users within the system.
+## 4. Gestión de Ventas
+
+El sistema debe permitir gestionar las transacciones de venta realizadas en el negocio, incluyendo su registro y consulta.
+
+Para cada venta, se deberá almacenar la siguiente información:
+
+- Identificador único de la venta
+- Fecha de la venta
+- Hora de la venta
+- Importe total
+- Usuario que realizó la venta (debe ser un usuario activo al momento de la transacción)
+
+El sistema debe permitir:
+
+- Registrar una nueva venta
+- Visualizar la lista de ventas existentes
+- Consultar la información detallada de una venta específica
+
+## 5. Detalle de Venta
 
-## 9. System Access
-The system must require authentication to allow access to its functionalities.
+Para cada producto incluido en una venta, se deberá almacenar la siguiente información:
 
-To access the system, the user must enter:
-- Username (unique identifier assigned to the user)  
-- Corresponding password  
+- Identificador único del detalle de venta
+- Venta asociada
+- Producto vendido
+- Nombre del producto al momento de la venta
+- Precio del producto al momento de la venta
+- Cantidad vendida (de acuerdo con la unidad de medida del producto al momento de la venta)
+- Unidad de medida al momento de la venta
+- Subtotal de la línea
 
-## 10. System Configuration
+El nombre del producto, el precio de venta y la unidad de medida almacenados en el detalle de venta deberán conservar los valores utilizados durante la transacción, incluso si la información correspondiente del producto es modificada posteriormente.
 
-The system must provide a user interface for managing global configuration settings.
+El sistema debe permitir:
 
-### Global Configuration
+- Agregar un producto a una venta mientras la venta está siendo registrada
+- Quitar un producto de una venta mientras la venta está siendo registrada
 
-The system must allow storing and updating the following global configuration data:
+## 6. Escaneo de Códigos de Barras
 
-- Business name
-- Business address
+El sistema debe permitir el escaneo de códigos de barras mediante un lector de códigos de barras.
 
-This configuration is shared across all users of the system.
+Esta funcionalidad permitirá:
 
-### Functionalities
+- Identificar productos existentes en el sistema a través del código escaneado
+- Facilitar el registro de nuevos productos utilizando el código de barras
+- Agilizar la selección de productos en los procesos de venta mediante el escaneo de códigos de barras
 
-The system must allow:
+## 7. Generación de Comprobantes de Venta
 
-- Viewing current global configuration settings  
-- Updating business information, including the business name and address (administrator only)
+Para cada venta registrada, el sistema deberá ser capaz de generar un comprobante de venta que incluya:
 
+- Nombre del negocio
+- Dirección del negocio
+- Fecha de emisión del comprobante
+- Hora de emisión del comprobante
+- Identificador único de la venta
+- Lista de productos vendidos, incluyendo el nombre del producto registrado al momento de la venta
+- Cantidad de cada producto junto con la unidad de medida registrada al momento de la venta
+- Precio de cada producto al momento de la venta
+- Subtotal de cada producto
+- Importe total de la venta
 
-## 11. Sales Statistics
-The system must provide a statistics section that allows users to analyze sales and product performance through aggregated data, key indicators, and visual representations.
+El comprobante deberá representar una constancia de la venta realizada.
 
-The system must allow the user to obtain statistical information based on selected filters:
-- User (all users or a specific user)  
-- Date range (start date and end date)  
+## 8. Usuarios
 
-### 11.1 Sales Information
+El sistema debe contar con dos tipos de acceso (roles) predefinidos:
 
-For the selected filters, the system must display:
+**Administrador**
+- Tiene acceso completo a todas las funcionalidades del sistema
+- Puede acceder al sistema mediante autenticación
+- Puede gestionar productos, incluyendo su registro, actualización, reactivación y desactivación
+- Puede registrar productos mediante código de barras y buscarlos utilizando dicho código
+- Puede visualizar listados de productos, información detallada de productos e información de stock
+- Puede registrar nuevas ventas
+- Puede visualizar listados de ventas e información detallada de cada venta, incluyendo sus detalles asociados
+- Puede agregar y quitar productos de una venta mientras esta se encuentra en proceso de registro
+- Puede generar comprobantes de venta para las ventas registradas
+- Puede visualizar estadísticas de ventas
+- Puede generar reportes estadísticos en formato PDF
+- Puede actualizar la información del negocio, incluyendo su nombre y dirección
+- Puede registrar, visualizar y actualizar usuarios (operadores)
+- Puede modificar el estado de los usuarios (activo, suspendido o eliminado)
+- Puede cerrar sesión en el sistema
 
-- Total revenue from sales  
-- Total number of sales  
-- Average ticket value (total revenue divided by number of sales)  
-- Hour with the highest revenue  
-- Hour with the highest number of sales  
+**Operador (cajero)**
+- Puede acceder al sistema mediante autenticación
+- Puede buscar productos mediante código de barras
+- Puede visualizar listados de productos, información detallada de productos e información de stock
+- Puede registrar nuevas ventas
+- Puede agregar y quitar productos de una venta mientras esta se encuentra en proceso de registro
+- Puede generar comprobantes de venta para las ventas registradas
+- Puede visualizar listados de ventas e información detallada de cada venta
+- Puede cerrar sesión en el sistema
+- No puede registrar productos
+- No puede actualizar información de productos
+- No puede desactivar ni reactivar productos
+- No puede registrar productos mediante código de barras
+- No puede visualizar estadísticas de ventas
+- No puede generar reportes estadísticos en formato PDF
+- No puede modificar la información del negocio, incluyendo su nombre y dirección
+- No puede registrar, visualizar ni actualizar usuarios (operadores)
+- No puede modificar el estado de los usuarios (activo, suspendido o eliminado)
 
-The system must display time-based charts showing:
+El sistema debe almacenar información sobre cada usuario para gestionar el acceso y los permisos. Cada usuario deberá contar con los siguientes datos:
 
-- Total revenue over time  
-- Number of sales over time  
+- ID de usuario: identificador interno único
+- Nombre de usuario: nombre único utilizado para acceder al sistema
+- Rol: tipo de usuario que determina los permisos dentro del sistema
+- Contraseña: contraseña asociada a la cuenta del usuario, utilizada para la autenticación
+- Estado: indica si el usuario se encuentra activo, suspendido o eliminado lógicamente
 
-The charts must adapt their time granularity (e.g., hour, day, month, year) according to the selected date range.
+El estado de un usuario puede ser:
 
-### 11.2 Product Information
+- Activo: el usuario puede acceder y operar en el sistema
+- Suspendido: el usuario no puede acceder temporalmente al sistema
+- Eliminado: el usuario es eliminado de forma lógica y no puede acceder al sistema, pero permanece almacenado para preservar la integridad de los datos históricos
 
-The system must provide insights into product performance based on the selected filters.
+**Nota:** Esta información se almacena en la base de datos para autenticar a los usuarios y controlar el acceso a las funcionalidades del sistema.
 
-#### 11.2.1 Sold Products
+El sistema debe validar el estado del usuario durante el proceso de autenticación:
 
-For products with sales activity, the system must provide:
+- Solo los usuarios con estado "Activo" pueden acceder al sistema
+- Los usuarios con estado "Suspendido" o "Eliminado" deben tener el acceso denegado
 
-- Top 10 products based on quantity sold  
-- Top 10 products based on revenue generated  
+### Gestión de Usuarios
 
-These values must be presented as visual charts in the main statistics view.
+El sistema debe permitir a los administradores gestionar los usuarios del sistema.
 
-- A product ranking list that allows:
-  - Selecting the metric:
-    - Quantity sold  
-    - Revenue generated  
-  - Selecting the order:
-    - Highest to lowest (most sold → least sold)  
-    - Lowest to highest (least sold → most sold)  
+El sistema debe permitir:
 
-The system must allow accessing a detailed view of the ranking list, where:
+- Registrar un nuevo usuario (únicamente con el rol Operador)
+- Visualizar los usuarios existentes
+- Actualizar la información de un usuario
+- Modificar el estado de un usuario (activo, suspendido o eliminado)
 
-- All sold products matching the selected filters are displayed 
-- Pagination is applied for navigation between results
+Solo los usuarios con el rol Administrador pueden realizar estas acciones.
 
-#### 11.2.2 Unsold Products
+**Configuración Inicial:**
 
-For products with no sales, the system must provide:
+El sistema debe incluir una cuenta de administrador predefinida, creada durante la inicialización del sistema. Esta cuenta será utilizada para administrar los usuarios del sistema.
 
-- A complete list of unsold products  
+## 9. Acceso al Sistema
 
-The system must allow accessing a detailed view where:
+El sistema debe requerir autenticación para permitir el acceso a sus funcionalidades.
 
-- All unsold products matching the selected filters are displayed
-- Pagination is applied for navigation between results
+Para acceder al sistema, el usuario deberá ingresar:
 
-### 11.3 Report Generation
+- Nombre de usuario (identificador único asignado al usuario)
+- Contraseña correspondiente
 
-The system must allow generating a report in PDF format based on the selected filters.
+## 10. Configuración del Sistema
 
-The report must always include:
+El sistema debe proporcionar una interfaz de usuario para la administración de la configuración general del sistema.
 
-- Report title
-- Selected user  
-- Selected date range  
-- Report generation date and time
+### Configuración General
 
-The system must allow the user to select which sections to include in the report.
+El sistema debe permitir almacenar y actualizar la siguiente información de configuración general:
 
-Each section must be included in its entirety, without partial selection.
+- Nombre del negocio
+- Dirección del negocio
 
-The available sections are:
+Esta configuración es compartida por todos los usuarios del sistema.
 
-- Sales information
-- Product information
+### Funcionalidades
 
-Each selected section must include all corresponding information defined in the statistics section.
+El sistema debe permitir:
 
-For product-related sections, the system must allow the user to select the number of products to include in the report.
+- Visualizar la configuración general actual
+- Actualizar la información del negocio, incluyendo el nombre y la dirección (solo administradores)
 
-The available options must be:
+## 11. Estadísticas de Ventas
 
-- 10 products  
-- 20 products  
-- 50 products  
-- 100 products 
+El sistema debe proporcionar una sección de estadísticas que permita a los usuarios analizar el rendimiento de las ventas y de los productos mediante datos agregados, indicadores clave y representaciones visuales.
 
-For the product ranking list included in the report, the system must allow selecting:
+El sistema debe permitir al usuario obtener información estadística en función de los filtros seleccionados:
 
-- Quantity sold or revenue generated as ranking metric
-- Highest to lowest or lowest to highest ordering
+- Usuario (todos los usuarios o un usuario específico)
+- Rango de fechas (fecha de inicio y fecha de fin)
 
-The system must generate the report as a downloadable PDF file.
+### 11.1 Información de Ventas
 
-## 12. Logout
+Para los filtros seleccionados, el sistema deberá mostrar:
 
-The system must allow the user to log out from the current session.
+- Ingresos totales por ventas
+- Cantidad total de ventas
+- Ticket promedio (ingresos totales divididos por la cantidad de ventas)
+- Hora con mayores ingresos por ventas
+- Hora con mayor cantidad de ventas
 
-The system must allow:
-- Terminating the user's session upon confirmation  
-- Redirecting the user to the login screen
+El sistema deberá mostrar gráficos temporales que representen:
+
+- Ingresos por ventas a lo largo del tiempo
+- Cantidad de ventas a lo largo del tiempo
+
+Los gráficos deberán adaptar su nivel de granularidad temporal (por ejemplo: hora, día, mes o año) de acuerdo con el rango de fechas seleccionado.
+
+### 11.2 Información de Productos
+
+El sistema debe proporcionar información sobre el rendimiento de los productos en función de los filtros seleccionados.
+
+#### 11.2.1 Productos Vendidos
+
+Para los productos que registren ventas, el sistema deberá proporcionar:
+
+- Top 10 productos según la cantidad vendida
+- Top 10 productos según los ingresos generados
+
+Estos valores deberán presentarse mediante gráficos en la vista principal de estadísticas.
+
+- Un listado de ranking de productos que permita:
+  - Seleccionar la métrica:
+    - Cantidad vendida
+    - Ingresos generados
+  - Seleccionar el orden:
+    - De mayor a menor (Más vendido → menos vendido)
+    - De menor a mayor (Menos vendido → más vendido)
+
+El sistema debe permitir acceder a una vista detallada del ranking, donde:
+
+- Se muestren todos los productos vendidos que coincidan con los filtros seleccionados
+- Se aplique paginación para la navegación entre resultados
+
+#### 11.2.2 Productos No Vendidos
+
+Para los productos que no registren ventas, el sistema deberá proporcionar:
+
+- Un listado completo de productos no vendidos
+
+El sistema debe permitir acceder a una vista detallada donde:
+
+- Se muestren todos los productos no vendidos que coincidan con los filtros seleccionados
+- Se aplique paginación para la navegación entre resultados
+
+### 11.3 Generación de Reportes
+
+El sistema debe permitir generar un reporte en formato PDF basado en los filtros seleccionados.
+
+El reporte deberá incluir siempre:
+
+- Título del reporte
+- Usuario seleccionado
+- Rango de fechas seleccionado
+- Fecha y hora de generación del reporte
+
+El sistema debe permitir al usuario seleccionar qué secciones incluir en el reporte.
+
+Cada sección deberá incluirse de forma completa, sin permitir selecciones parciales.
+
+Las secciones disponibles son:
+
+- Información de ventas
+- Información de productos
+
+Cada sección seleccionada deberá incluir toda la información correspondiente definida en la sección de estadísticas.
+
+Para las secciones relacionadas con productos, el sistema debe permitir al usuario seleccionar la cantidad de productos que se incluirán en el reporte.
+
+Las opciones disponibles deberán ser:
+
+- 10 productos
+- 20 productos
+- 50 productos
+- 100 productos
+
+Para el listado de ranking de productos incluido en el reporte, el sistema debe permitir seleccionar:
+
+- Cantidad vendida o ingresos generados como métrica de clasificación
+- Orden de clasificación:
+  - De mayor a menor (Más vendido → menos vendido)
+  - De menor a mayor (Menos vendido → más vendido)
+
+El sistema deberá generar el reporte como un archivo PDF descargable.
+
+## 12. Cierre de Sesión
+
+El sistema debe permitir al usuario cerrar la sesión actual.
+
+El sistema debe permitir:
+
+- Finalizar la sesión del usuario previa confirmación
+- Redirigir al usuario a la pantalla de inicio de sesión

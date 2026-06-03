@@ -8,12 +8,14 @@ import lombok.Setter;
 import java.util.List;
 
 /**
- * Response DTO that contains available filter and sorting options
- * for the Product module.
+ * DTO de respuesta que contiene las opciones disponibles de filtrado
+ * y ordenamiento para el módulo de productos.
  *
- * <p>This DTO is used to dynamically provide the frontend with
- * all valid values for filtering and sorting products,
- * avoiding hardcoded values on the client side.</p>
+ * <p>
+ * Este DTO se utiliza para proporcionar dinámicamente al frontend
+ * todos los valores válidos para filtrar y ordenar productos,
+ * evitando valores hardcodeados en el cliente.
+ * </p>
  */
 
 @Getter @Setter
@@ -22,26 +24,36 @@ import java.util.List;
 public class ProductFiltersResponseDTO {
 
     /**
-     * List of available product status options.
+     * Lista de opciones disponibles para el estado del producto.
      *
-     * <p>Each option is represented as an {@link EnumDTO},
-     * containing the enum code and its display label.</p>
+     * <p>
+     * Cada opción se representa mediante un {@link EnumDTO},
+     * que contiene el código del enum y su etiqueta de visualización.
+     * </p>
      */
     private List<EnumDTO> statusOptions;
 
     /**
-     * List of available sorting options for products.
+     * Lista de opciones disponibles para el ordenamiento de productos.
      *
-     * <p>Each option is represented as an {@link EnumDTO},
-     * containing the sort code and its display label.</p>
+     * <p>
+     * Cada opción se representa mediante un {@link EnumDTO},
+     * que contiene el código de ordenamiento y su etiqueta de visualización.
+     * </p>
      */
     private List<EnumDTO> nameSortOptions;
 
     /**
-     * List of available stock level filter options.
-     * * <p>Each option is represented as an {@link EnumDTO}
+     * Lista de opciones disponibles para filtrar productos según su nivel de stock.
      *
-     * <p>Represents predefined stock filtering states
+     * <p>
+     * Cada opción se representa mediante un {@link EnumDTO},
+     * que contiene el código del filtro y su etiqueta de visualización.
+     * </p>
+     *
+     * <p>
+     * Representa los estados predefinidos de filtrado de stock.
+     * </p>
      */
     private List<EnumDTO> stockLevelOptions;
 

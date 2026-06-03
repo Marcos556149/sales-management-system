@@ -1,12 +1,12 @@
-# Logical Database Model
+# Modelo Lógico de Base de Datos
 
-## Index
+## Índice
 
 ### General
-- [Description](#description)
-- [Normalization](#normalization)
+- [Descripción](#descripción)
+- [Normalización](#normalización)
 
-### Entities
+### Entidades
 - [product](#product)
 - [user](#user)
 - [sale](#sale)
@@ -15,15 +15,17 @@
 
 ---
 
-## Description
-This document describes the logical structure of the database for the sales management system, including tables, primary keys (PK), and foreign keys (FK).
+## Descripción
+
+Este documento describe la estructura lógica de la base de datos del sistema de gestión de ventas, incluyendo tablas, claves primarias (PK) y claves foráneas (FK).
 
 ---
 
-## Entities
+## Entidades
 
 ### product
-Represents the products available in the system.
+
+Representa los productos disponibles en el sistema.
 
 - product_code (PK)
 - product_name
@@ -36,7 +38,8 @@ Represents the products available in the system.
 ---
 
 ### user
-Represents the system users.
+
+Representa los usuarios del sistema.
 
 - user_id (PK)
 - user_name
@@ -47,7 +50,8 @@ Represents the system users.
 ---
 
 ### sale
-Represents the sales transactions.
+
+Representa las transacciones de venta.
 
 - sale_id (PK)
 - sale_date
@@ -58,7 +62,8 @@ Represents the sales transactions.
 ---
 
 ### sale_detail
-Represents the details of each sale, linking products to sales.
+
+Representa los detalles de cada venta, vinculando productos con ventas.
 
 - sale_detail_id (PK)
 - sale_price
@@ -68,18 +73,24 @@ Represents the details of each sale, linking products to sales.
 - sale_id (FK → sale.sale_id)
 - product_code (FK → product.product_code)
 
-sale_price represents the unit price of the product at the time of the sale.
+sale_price representa el precio unitario del producto al momento de la venta.
+
+---
 
 ### system_configuration
-Represents the global configuration of the system.
+
+Representa la configuración general del sistema.
 
 - system_configuration_id (PK)
 - business_name
 - business_address
 
-Note: This table is initialized with a single row containing the system's default configuration(system_configuration_id=1, business_name="My Business", business_address = "Business Address").
+Nota: Esta tabla se inicializa con un único registro que contiene la configuración predeterminada del sistema (system_configuration_id=1, business_name="My Business", business_address="Business Address").
 
-## Normalization
+---
 
-The database model has been normalized up to the Fourth Normal Form (4NF).
-This design ensures data integrity and prevents insertion, update, and deletion anomalies.
+## Normalización
+
+El modelo de base de datos ha sido normalizado hasta la Cuarta Forma Normal (4FN).
+
+Este diseño garantiza la integridad de los datos y previene anomalías de inserción, actualización y eliminación.

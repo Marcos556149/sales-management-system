@@ -6,14 +6,14 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /**
- * Generic response DTO for successful operations.
+ * DTO genérico de respuesta para operaciones exitosas.
  *
  * <p>
- * Used to standardize all success responses across the API,
- * providing a consistent structure for frontend consumption.
+ * Se utiliza para estandarizar todas las respuestas exitosas de la API,
+ * proporcionando una estructura consistente para su consumo desde el frontend.
  * </p>
  *
- * @param <T> type of data returned in the response
+ * @param <T> tipo de dato devuelto en la respuesta
  */
 @Getter
 @Setter
@@ -22,18 +22,18 @@ import lombok.Setter;
 public class SuccessResponseDTO<T> {
 
     /**
-     * Machine-readable success code used by the frontend
-     * to determine the type of operation executed.
+     * Código de éxito legible por máquina utilizado por el frontend
+     * para identificar el tipo de operación ejecutada.
      */
     private String code;
 
     /**
-     * Human-readable message describing the result of the operation.
+     * Mensaje legible para el usuario que describe el resultado de la operación.
      */
     private String message;
 
     /**
-     * Optional payload returned by the operation.
+     * Datos opcionales devueltos por la operación.
      */
     private T data;
 }

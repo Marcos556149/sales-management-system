@@ -1,15 +1,14 @@
 /**
- * Repository interface for managing {@link Product} entities.
+ * Interfaz de repositorio para la gestión de entidades {@link Product}.
  *
  * <p>
- * Extends {@link JpaRepository}, providing standard CRUD operations
- * such as save, delete, findById, and findAll without requiring
- * explicit implementation.
+ * Extiende {@link JpaRepository}, proporcionando operaciones CRUD estándar
+ * como save, delete, findById y findAll sin requerir una implementación explícita.
  * </p>
  *
  * <p>
- * This repository is responsible for data access related to products.
- * Custom query methods can be defined here when needed.
+ * Este repositorio es responsable del acceso a datos relacionado con los productos.
+ * Aquí pueden definirse métodos de consulta personalizados cuando sea necesario.
  * </p>
  */
 
@@ -34,35 +33,35 @@ import java.util.List;
 @Repository
 public interface IProductRepository extends JpaRepository<Product, String> {
     /**
-     * Retrieves products with optional search, status filtering,
-     * and stock level filtering, applying pagination and sorting
-     * at the database level.
+     * Recupera productos aplicando opcionalmente búsqueda, filtrado por estado
+     * y filtrado por nivel de stock, utilizando paginación y ordenamiento
+     * a nivel de base de datos.
      *
      * <p>
-     * Search is applied on product name or code
-     * (case-insensitive, partial match).
-     * If {@code searchCodeOrName} is null, search is ignored.
+     * La búsqueda se realiza sobre el nombre o código del producto
+     * (sin distinguir mayúsculas de minúsculas y permitiendo coincidencias parciales).
+     * Si {@code searchCodeOrName} es null, la búsqueda se ignora.
      * </p>
      *
      * <p>
-     * If {@code statusFilter} is ALL, no status filtering is applied.
+     * Si {@code statusFilter} es ALL, no se aplica ningún filtro por estado.
      * </p>
      *
      * <p>
-     * If {@code stockFilter} is ALL, no stock filtering is applied.
+     * Si {@code stockFilter} es ALL, no se aplica ningún filtro por nivel de stock.
      * </p>
      *
      * <p>
-     * Pagination and sorting are handled using {@link Pageable},
-     * ensuring efficient data retrieval directly from the database
-     * (server-side pagination).
+     * La paginación y el ordenamiento se gestionan mediante {@link Pageable},
+     * garantizando una recuperación eficiente de los datos directamente desde la base de datos
+     * (paginación del lado del servidor).
      * </p>
      *
-     * @param searchCodeOrName optional search term (name or code)
-     * @param statusFilter product status filter (ALL, ACTIVE, INACTIVE)
-     * @param stockFilter stock level filter (ALL, NORMAL, LOW, OUT_OF_STOCK)
-     * @param pageable pagination and sorting configuration
-     * @return paginated result of matching products
+     * @param searchCodeOrName término de búsqueda opcional (nombre o código)
+     * @param statusFilter filtro de estado del producto (ALL, ACTIVE, INACTIVE)
+     * @param stockFilter filtro por nivel de stock (ALL, NORMAL, LOW, OUT_OF_STOCK)
+     * @param pageable configuración de paginación y ordenamiento
+     * @return resultado paginado de los productos que coinciden con los criterios
      */
     @Query("""
     SELECT p FROM Product p
@@ -91,29 +90,28 @@ public interface IProductRepository extends JpaRepository<Product, String> {
                                Pageable pageable);
 
     /**
-     * Retrieves products available for sale with optional search,
-     * applying pagination and sorting at the database level.
+     * Recupera los productos disponibles para la venta aplicando opcionalmente
+     * una búsqueda, utilizando paginación y ordenamiento a nivel de base de datos.
      *
      * <p>
-     * Only products with ACTIVE status and stock greater than zero
-     * are included.
+     * Solo se incluyen productos con estado ACTIVE y stock mayor que cero.
      * </p>
      *
      * <p>
-     * Search is applied on product name or code
-     * (case-insensitive, partial match).
-     * If {@code searchCodeOrName} is null, search is ignored.
+     * La búsqueda se realiza sobre el nombre o código del producto
+     * (sin distinguir mayúsculas de minúsculas y permitiendo coincidencias parciales).
+     * Si {@code searchCodeOrName} es null, la búsqueda se ignora.
      * </p>
      *
      * <p>
-     * Pagination and sorting are handled using {@link Pageable},
-     * ensuring efficient data retrieval directly from the database
-     * (server-side pagination).
+     * La paginación y el ordenamiento se gestionan mediante {@link Pageable},
+     * garantizando una recuperación eficiente de los datos directamente desde la base de datos
+     * (paginación del lado del servidor).
      * </p>
      *
-     * @param searchCodeOrName optional search term (name or code)
-     * @param pageable pagination and sorting configuration
-     * @return paginated result of products available for sale
+     * @param searchCodeOrName término de búsqueda opcional (nombre o código)
+     * @param pageable configuración de paginación y ordenamiento
+     * @return resultado paginado de los productos disponibles para la venta
      */
     @Query("""
     SELECT p FROM Product p
@@ -132,16 +130,16 @@ public interface IProductRepository extends JpaRepository<Product, String> {
                                       Pageable pageable);
 
     /**
-     * Counts the total number of products available for sale.
+     * Cuenta la cantidad total de productos disponibles para la venta.
      *
      * <p>
-     * Only products with ACTIVE status and stock greater than
-     * the provided value are included.
+     * Solo se incluyen productos con estado ACTIVE y stock mayor
+     * que el valor proporcionado.
      * </p>
      *
-     * @param productStatus required product status
-     * @param productStock minimum exclusive stock threshold
-     * @return total number of matching products
+     * @param productStatus estado requerido del producto
+     * @param productStock umbral mínimo exclusivo de stock
+     * @return cantidad total de productos que cumplen los criterios
      */
     Long countByProductStatusAndProductStockGreaterThan(
             ProductStatus productStatus,
@@ -149,34 +147,34 @@ public interface IProductRepository extends JpaRepository<Product, String> {
     );
 
     /**
-     * Retrieves the top 10 products ranked by quantity sold
-     * within the selected filters.
+     * Recupera los 10 productos con mayor cantidad vendida
+     * dentro de los filtros seleccionados.
      *
      * <p>
-     * Results are calculated using data from {@code SaleDetail},
-     * aggregating product quantities across all sales
-     * in the specified date range.
+     * Los resultados se calculan utilizando datos de {@code SaleDetail},
+     * agregando las cantidades de productos a través de todas las ventas
+     * comprendidas en el rango de fechas especificado.
      * </p>
      *
      * <p>
-     * The quantity represents the total aggregated amount sold
-     * and may include fractional values depending on the product unit type
-     * (e.g., kilograms, liters, or other measurable units).
+     * La cantidad representa el total acumulado vendido y puede incluir
+     * valores fraccionarios dependiendo del tipo de unidad de medida del producto
+     * (por ejemplo, kilogramos, litros u otras unidades cuantificables).
      * </p>
      *
      * <p>
-     * If {@code userId} is null, sales from all users are included.
+     * Si {@code userId} es null, se incluyen las ventas de todos los usuarios.
      * </p>
      *
      * <p>
-     * Results are grouped by product and ordered by total quantity sold
-     * in descending order, returning only the top 10 products.
+     * Los resultados se agrupan por producto y se ordenan por cantidad total vendida
+     * de forma descendente, devolviendo únicamente los 10 primeros productos.
      * </p>
      *
-     * @param userId optional user filter (null = all users)
-     * @param startDate start date filter (inclusive)
-     * @param endDate end date filter (inclusive)
-     * @return top 10 products ranked by quantity sold
+     * @param userId filtro opcional por usuario (null = todos los usuarios)
+     * @param startDate fecha de inicio del filtro (incluida)
+     * @param endDate fecha de fin del filtro (incluida)
+     * @return los 10 productos con mayor cantidad vendida
      */
     @Query(value = """
     SELECT
@@ -201,28 +199,29 @@ public interface IProductRepository extends JpaRepository<Product, String> {
     );
 
     /**
-     * Retrieves the top 10 products ranked by revenue generated
-     * within the selected filters.
+     * Recupera los 10 productos con mayores ingresos generados
+     * dentro de los filtros seleccionados.
      *
      * <p>
-     * Revenue is calculated as the sum of:
+     * Los ingresos se calculan como la suma de:
      * {@code product_quantity * sale_price}
-     * across all matching sale details within the specified date range.
+     * para todos los detalles de venta que coinciden con los criterios
+     * dentro del rango de fechas especificado.
      * </p>
      *
      * <p>
-     * If {@code userId} is null, sales from all users are included.
+     * Si {@code userId} es null, se incluyen las ventas de todos los usuarios.
      * </p>
      *
      * <p>
-     * Results are grouped by product and ordered by total revenue generated
-     * in descending order, returning only the top 10 products.
+     * Los resultados se agrupan por producto y se ordenan por ingresos totales generados
+     * de forma descendente, devolviendo únicamente los 10 primeros productos.
      * </p>
      *
-     * @param userId optional user filter (null = all users)
-     * @param startDate start date filter (inclusive)
-     * @param endDate end date filter (inclusive)
-     * @return top 10 products ranked by revenue generated
+     * @param userId filtro opcional por usuario (null = todos los usuarios)
+     * @param startDate fecha de inicio del filtro (incluida)
+     * @param endDate fecha de fin del filtro (incluida)
+     * @return los 10 productos con mayores ingresos generados
      */
     @Query(value = """
     SELECT
@@ -256,27 +255,27 @@ public interface IProductRepository extends JpaRepository<Product, String> {
     );
 
     /**
-     * Retrieves a paginated ranking of sold products
-     * ordered from highest to lowest values.
+     * Recupera un ranking paginado de productos vendidos
+     * ordenado de mayor a menor según los valores obtenidos.
      *
      * <p>
-     * Ranking can be calculated using:
+     * El ranking puede calcularse utilizando:
      * <ul>
-     *   <li>Quantity sold</li>
-     *   <li>Revenue generated</li>
+     *   <li>Cantidad vendida</li>
+     *   <li>Ingresos generados</li>
      * </ul>
      * </p>
      *
      * <p>
-     * Pagination is executed directly at database level.
+     * La paginación se realiza directamente a nivel de base de datos.
      * </p>
      *
-     * @param userId optional user filter
-     * @param startDate start date filter
-     * @param endDate end date filter
-     * @param metric ranking metric
-     * @param pageable pagination configuration
-     * @return paginated sold products ranking
+     * @param userId filtro opcional por usuario
+     * @param startDate fecha de inicio del filtro
+     * @param endDate fecha de fin del filtro
+     * @param metric métrica utilizada para el ranking
+     * @param pageable configuración de paginación
+     * @return ranking paginado de productos vendidos
      */
     @Query(
             value = """
@@ -363,15 +362,15 @@ public interface IProductRepository extends JpaRepository<Product, String> {
     );
 
     /**
-     * Retrieves a paginated ranking of sold products
-     * ordered from lowest to highest values.
+     * Recupera un ranking paginado de productos vendidos
+     * ordenado de menor a mayor según los valores obtenidos.
      *
-     * @param userId optional user filter
-     * @param startDate start date filter
-     * @param endDate end date filter
-     * @param metric ranking metric
-     * @param pageable pagination configuration
-     * @return paginated sold products ranking
+     * @param userId filtro opcional por usuario
+     * @param startDate fecha de inicio del filtro
+     * @param endDate fecha de fin del filtro
+     * @param metric métrica utilizada para el ranking
+     * @param pageable configuración de paginación
+     * @return ranking paginado de productos vendidos
      */
     @Query(
             value = """
@@ -458,37 +457,38 @@ public interface IProductRepository extends JpaRepository<Product, String> {
     );
 
     /**
-     * Retrieves a paginated list of products that have not
-     * registered any sales within the selected filter range.
+     * Recupera una lista paginada de productos que no han
+     * registrado ventas dentro del rango de filtros seleccionado.
      *
      * <p>
-     * A product is considered "unsold" when no matching
-     * sale records exist for the selected filters.
+     * Un producto se considera "no vendido" cuando no existen
+     * registros de venta que coincidan con los filtros seleccionados.
      * </p>
      *
      * <p>
-     * Supported filters:
+     * Filtros soportados:
      * <ul>
-     *     <li>User filter (optional)</li>
-     *     <li>Date range filter</li>
+     *     <li>Filtro por usuario (opcional)</li>
+     *     <li>Filtro por rango de fechas</li>
      * </ul>
      * </p>
      *
      * <p>
-     * The query uses a NOT EXISTS clause to ensure
-     * only products without matching sales are returned.
+     * La consulta utiliza una cláusula NOT EXISTS para garantizar
+     * que solo se devuelvan productos sin ventas asociadas que
+     * coincidan con los criterios seleccionados.
      * </p>
      *
      * <p>
-     * Results are ordered alphabetically by product name
-     * and paginated at database level.
+     * Los resultados se ordenan alfabéticamente por nombre de producto
+     * y se paginan a nivel de base de datos.
      * </p>
      *
-     * @param userId optional user filter
-     * @param startDate start date filter
-     * @param endDate end date filter
-     * @param pageable pagination configuration
-     * @return paginated list of unsold products
+     * @param userId filtro opcional por usuario
+     * @param startDate fecha de inicio del filtro
+     * @param endDate fecha de fin del filtro
+     * @param pageable configuración de paginación
+     * @return lista paginada de productos no vendidos
      */
     @Query(
             value = """

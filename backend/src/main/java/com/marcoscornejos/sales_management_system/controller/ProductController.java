@@ -13,10 +13,13 @@ import org.springframework.web.bind.annotation.*;
 
 
 /**
- * REST controller responsible for handling product queries.
+ * Controlador REST responsable de gestionar las consultas relacionadas
+ * con productos.
  *
- * <p>Provides endpoints to retrieve products with optional filtering,
- * searching, and sorting capabilities.</p>
+ * <p>
+ * Proporciona endpoints para recuperar productos con capacidades opcionales
+ * de filtrado, búsqueda y ordenamiento.
+ * </p>
  */
 @RestController
 @RequestMapping("/api/products")
@@ -26,22 +29,22 @@ public class ProductController {
     private final IProductService iProductService;
 
     /**
-     * Retrieves a paginated list of products with optional filtering,
-     * searching, and sorting capabilities.
+     * Recupera una lista paginada de productos con capacidades opcionales
+     * de filtrado, búsqueda y ordenamiento.
      *
      * <p>
-     * Supports server-side pagination to efficiently handle large datasets.
-     * Allows filtering by product status and stock level,
-     * searching by code or name, and sorting by product name.
+     * Soporta paginación del lado del servidor para gestionar eficientemente
+     * grandes volúmenes de datos. Permite filtrar por estado del producto y
+     * nivel de stock, buscar por código o nombre y ordenar por nombre del producto.
      * </p>
      *
-     * @param searchCodeOrName Optional product code or name (or part of it)
-     * @param statusFilter Product status filter (default: ALL)
-     * @param stockFilter Product stock level filter (default: ALL)
-     * @param nameSort Sorting order by name (default: ASCENDING)
-     * @param page Page number (default: 0)
-     * @param size Number of products per page (default: 50)
-     * @return A paginated response containing products and pagination metadata
+     * @param searchCodeOrName código o nombre del producto (o parte de ellos)
+     * @param statusFilter filtro por estado del producto (por defecto: ALL)
+     * @param stockFilter filtro por nivel de stock (por defecto: ALL)
+     * @param nameSort ordenamiento por nombre (por defecto: ASCENDING)
+     * @param page número de página (por defecto: 0)
+     * @param size cantidad de productos por página (por defecto: 50)
+     * @return respuesta paginada que contiene los productos y los metadatos de paginación
      */
     @GetMapping
     public ResponseEntity<PageResponseDTO<ProductListResponseDTO>> getProducts(
@@ -66,18 +69,19 @@ public class ProductController {
     }
 
     /**
-     * Retrieves a paginated list of products available for sale.
+     * Recupera una lista paginada de productos disponibles para la venta.
      *
      * <p>
-     * Returns only active products intended for use in the sale registration
-     * interface. Supports searching by product code or name and sorting by name.
+     * Devuelve únicamente productos activos destinados a utilizarse en la
+     * interfaz de registro de ventas. Permite buscar por código o nombre
+     * del producto y ordenar por nombre.
      * </p>
      *
-     * @param searchCodeOrName Optional product code or name (or part of it)
-     * @param nameSort Sorting order by name (default: ASCENDING)
-     * @param page Page number (default: 0)
-     * @param size Number of products per page (default: 10)
-     * @return A paginated response containing products available for sale
+     * @param searchCodeOrName código o nombre del producto (o parte de ellos)
+     * @param nameSort ordenamiento por nombre (por defecto: ASCENDING)
+     * @param page número de página (por defecto: 0)
+     * @param size cantidad de productos por página (por defecto: 10)
+     * @return respuesta paginada que contiene los productos disponibles para la venta
      */
     @GetMapping("/sales")
     public ResponseEntity<PageResponseDTO<ProductSaleListResponseDTO>> getProductsForSale(
@@ -99,13 +103,15 @@ public class ProductController {
     }
 
     /**
-     * Retrieves available filter and sorting options for products.
+     * Recupera las opciones disponibles de filtrado y ordenamiento para productos.
      *
-     * <p>This endpoint provides dynamic configuration data for the frontend,
-     * including product status filters and sorting options.
-     * It avoids hardcoded values in the client application.</p>
+     * <p>
+     * Este endpoint proporciona datos de configuración dinámicos para el frontend,
+     * incluyendo filtros por estado del producto y opciones de ordenamiento.
+     * De esta forma se evita utilizar valores codificados de forma fija en la aplicación cliente.
+     * </p>
      *
-     * @return ProductFiltersResponseDTO containing filter and sort options
+     * @return ProductFiltersResponseDTO que contiene las opciones de filtrado y ordenamiento
      */
     @GetMapping("/filters")
     public ResponseEntity<ProductFiltersResponseDTO> getFilters() {
@@ -116,22 +122,22 @@ public class ProductController {
     }
 
     /**
-     * Retrieves detailed information of a specific product by its code.
+     * Recupera la información detallada de un producto específico mediante su código.
      *
      * <p>
-     * This endpoint allows clients to fetch a single product's data,
-     * including its code, name, price, unit of measure, status, and stock.
+     * Este endpoint permite obtener los datos de un producto,
+     * incluyendo su código, nombre, precio, unidad de medida, estado y stock.
      * </p>
      *
      * <p>
-     * Possible errors:
+     * Posibles errores:
      * <ul>
-     *   <li><b>PRODUCT_NOT_FOUND</b>: when the product does not exist</li>
+     *   <li><b>PRODUCT_NOT_FOUND</b>: cuando el producto no existe</li>
      * </ul>
      * </p>
      *
-     * @param productCode the unique identifier of the product
-     * @return the product details as a response DTO
+     * @param productCode código único del producto
+     * @return detalles del producto como DTO de respuesta
      */
     @GetMapping("/{productCode}")
     public ResponseEntity<ProductDetailResponseDTO> getProductByCode(
@@ -144,21 +150,22 @@ public class ProductController {
     }
 
     /**
-     * Deactivates a product (soft delete).
+     * Desactiva un producto (eliminación lógica).
      *
      * <p>
-     * This operation updates the product status to {@code INACTIVE} without
-     * physically removing it from the database. After updating, the method
-     * returns the updated product information as a {@link ProductDetailResponseDTO}.
+     * Esta operación actualiza el estado del producto a {@code INACTIVE} sin
+     * eliminarlo físicamente de la base de datos. Tras la actualización, el método
+     * devuelve la información actualizada del producto como un
+     * {@link ProductDetailResponseDTO}.
      * </p>
      *
      * <p>
-     * This avoids an additional client request to fetch the updated state,
-     * ensuring the response reflects the latest database state.
+     * Esto evita una solicitud adicional del cliente para obtener el estado actualizado,
+     * garantizando que la respuesta refleje el estado más reciente almacenado en la base de datos.
      * </p>
      *
-     * @param productCode the unique code of the product
-     * @return a standardized success response containing the updated product details
+     * @param productCode código único del producto
+     * @return respuesta de éxito estandarizada que contiene los detalles actualizados del producto
      */
     @PatchMapping("/{productCode}/deactivate")
     public ResponseEntity<SuccessResponseDTO<ProductDetailResponseDTO>> deactivateProduct(
@@ -169,7 +176,7 @@ public class ProductController {
 
         SuccessResponseDTO<ProductDetailResponseDTO> response = new SuccessResponseDTO<>(
                 "PRODUCT_DEACTIVATED",
-                "Product successfully deactivated",
+                "Producto desactivado correctamente",
                 product
         );
 
@@ -177,16 +184,16 @@ public class ProductController {
     }
 
     /**
-     * Activates a product.
+     * Reactiva un producto.
      *
      * <p>
-     * This operation updates the product status to {@code ACTIVE},
-     * making it available again in the system. The method returns the
-     * updated product information after the state change.
+     * Esta operación actualiza el estado del producto a {@code ACTIVE},
+     * dejándolo nuevamente disponible en el sistema. El método devuelve la
+     * información actualizada del producto después del cambio de estado.
      * </p>
      *
-     * @param productCode the unique code of the product
-     * @return standardized success response containing the updated product details
+     * @param productCode código único del producto
+     * @return respuesta de éxito estandarizada que contiene los detalles actualizados del producto
      */
     @PatchMapping("/{productCode}/activate")
     public ResponseEntity<SuccessResponseDTO<ProductDetailResponseDTO>> activateProduct(
@@ -197,7 +204,7 @@ public class ProductController {
 
         SuccessResponseDTO<ProductDetailResponseDTO> response = new SuccessResponseDTO<>(
                 "PRODUCT_ACTIVATED",
-                "Product successfully activated",
+                "Producto reactivado correctamente",
                 product
         );
 
@@ -205,20 +212,20 @@ public class ProductController {
     }
 
     /**
-     * Registers a new product in the system.
+     * Registra un nuevo producto en el sistema.
      *
      * <p>
-     * This endpoint allows the creation of a new product by providing
-     * the required information such as code, name, price, unit of measure,
-     * and stock. The product status is automatically set to ACTIVE.
+     * Este endpoint permite la creación de un nuevo producto proporcionando
+     * la información requerida, como código, nombre, precio, unidad de medida
+     * y stock. El estado del producto se establece automáticamente como ACTIVE.
      * </p>
      *
      * <p>
-     * If the product code already exists, an error is returned.
+     * Si el código del producto ya existe, se devuelve un error.
      * </p>
      *
-     * @param request the product data required to create a new product
-     * @return standardized success response with created product
+     * @param request datos del producto necesarios para crear un nuevo producto
+     * @return respuesta de éxito estandarizada con el producto creado
      */
     @PostMapping
     public ResponseEntity<SuccessResponseDTO<ProductDetailResponseDTO>> registerProduct(
@@ -229,7 +236,7 @@ public class ProductController {
 
         SuccessResponseDTO<ProductDetailResponseDTO> response = new SuccessResponseDTO<>(
                 "PRODUCT_CREATED",
-                "Product successfully registered",
+                "Producto registrado correctamente",
                 createdProduct
         );
 
@@ -237,14 +244,14 @@ public class ProductController {
     }
 
     /**
-     * Retrieves metadata required for product-related operations.
+     * Recupera los metadatos necesarios para las operaciones relacionadas con productos.
      *
      * <p>
-     * Includes dynamic data such as available unit of measure options
-     * used in product forms.
+     * Incluye datos dinámicos, como las opciones de unidad de medida disponibles
+     * utilizadas en los formularios de productos.
      * </p>
      *
-     * @return product metadata
+     * @return metadatos de productos
      */
     @GetMapping("/metadata")
     public ResponseEntity<ProductMetadataResponseDTO> getProductMetadata() {
@@ -255,16 +262,16 @@ public class ProductController {
     }
 
     /**
-     * Updates an existing product.
+     * Actualiza un producto existente.
      *
      * <p>
-     * Updates product data if the product exists and the provided
-     * information is valid.
+     * Actualiza los datos del producto si este existe y la información
+     * proporcionada es válida.
      * </p>
      *
-     * @param productCode the unique code of the product to update
-     * @param request the updated product data
-     * @return standardized success response confirming the update
+     * @param productCode código único del producto a actualizar
+     * @param request datos actualizados del producto
+     * @return respuesta de éxito estandarizada que confirma la actualización
      */
     @PutMapping("/{productCode}")
     public ResponseEntity<SuccessResponseDTO<ProductDetailResponseDTO>> updateProduct(
@@ -276,7 +283,7 @@ public class ProductController {
 
         SuccessResponseDTO<ProductDetailResponseDTO> response = new SuccessResponseDTO<>(
                 "PRODUCT_UPDATED",
-                "Product successfully updated",
+                "Producto actualizado correctamente",
                 updatedProduct
         );
 

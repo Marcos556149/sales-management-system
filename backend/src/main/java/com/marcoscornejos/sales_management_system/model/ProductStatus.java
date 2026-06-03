@@ -1,19 +1,20 @@
 /**
- * Enumeration that represents the status of a product.
+ * Enumeración que representa el estado de un producto.
  *
  * <p>
- * Used to indicate whether a product is active (available for operations)
- * or inactive (logically disabled). The ALL option is typically used for
- * filtering purposes when retrieving products regardless of their status.
+ * Se utiliza para indicar si un producto está activo (disponible para operaciones)
+ * o inactivo (deshabilitado lógicamente). La opción ALL se utiliza
+ * generalmente con fines de filtrado al consultar productos sin importar su estado.
  * </p>
  *
  * <p>
- * This enum is commonly used in conjunction with logical deletion mechanisms
- * and filtering operations in queries.
+ * Esta enumeración se utiliza comúnmente junto con mecanismos de eliminación lógica
+ * y operaciones de filtrado en consultas.
  * </p>
  *
  * <p>
- * Each enum value includes a human-readable display name intended for UI representation.
+ * Cada valor de la enumeración incluye un nombre descriptivo destinado a su
+ * representación en la interfaz de usuario.
  * </p>
  */
 
@@ -23,9 +24,9 @@ import lombok.Getter;
 
 @Getter
 public enum ProductStatus {
-    ACTIVE("Active"),
-    INACTIVE("Inactive"),
-    ALL("All Status");
+    ACTIVE("Activo"),
+    INACTIVE("Inactivo"),
+    ALL("Todos los estados");
 
     private final String displayName;
 

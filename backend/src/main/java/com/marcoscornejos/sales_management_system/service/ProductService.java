@@ -21,8 +21,8 @@ import java.util.List;
 
 
 /**
- * Service responsible for retrieving products with search,
- * filtering, and sorting applied at database level.
+ * Servicio responsable de recuperar productos aplicando búsqueda,
+ * filtrado y ordenamiento a nivel de base de datos.
  */
 @Service
 @RequiredArgsConstructor
@@ -37,27 +37,28 @@ public class ProductService implements IProductService {
     private final IProductSaleListResponseMapper iProductSaleListResponseMapper;
 
     /**
-     * Retrieves a paginated list of products applying:
+     * Recupera una lista paginada de productos aplicando:
      * <ul>
-     * <li>Search by name or code</li>
-     * <li>Filter by status (ALL = no filter)</li>
-     * <li>Filter by stock level (ALL = no filter)</li>
-     * <li>Sorting by name</li>
-     * <li>Pagination (page number and size)</li>
+     * <li>Búsqueda por nombre o código</li>
+     * <li>Filtrado por estado (ALL = sin filtro)</li>
+     * <li>Filtrado por nivel de stock (ALL = sin filtro)</li>
+     * <li>Ordenamiento por nombre</li>
+     * <li>Paginación (número de página y tamaño de página)</li>
      * </ul>
      *
      * <p>
-     * Search is optional and ignored if null or blank.
-     * Pagination and sorting are executed at database level (server-side pagination).
+     * La búsqueda es opcional y se ignora si es null o está vacía.
+     * La paginación y el ordenamiento se ejecutan a nivel de base de datos
+     * (paginación del lado del servidor).
      * </p>
      *
-     * @param searchCodeOrName Optional search term
-     * @param statusFilter     Product status filter
-     * @param stockFilter      Product stock level filter
-     * @param nameSort         Sorting order (ASCENDING / DESCENDING)
-     * @param page             Page number (0-based)
-     * @param size             Number of elements per page
-     * @return Paginated list of products mapped to DTO
+     * @param searchCodeOrName término de búsqueda opcional
+     * @param statusFilter filtro por estado del producto
+     * @param stockFilter filtro por nivel de stock del producto
+     * @param nameSort orden de clasificación (ASCENDING / DESCENDING)
+     * @param page número de página (base 0)
+     * @param size cantidad de elementos por página
+     * @return lista paginada de productos mapeada a DTO
      */
     @Override
     public PageResponseDTO<ProductListResponseDTO> getProducts(String searchCodeOrName,
@@ -67,29 +68,29 @@ public class ProductService implements IProductService {
                                                                int page,
                                                                int size) {
 
-        // Validate pagination parameters
+        // Validar parámetros de paginación
         if (page < 0) {
             throw new InvalidProductDataException(
-                    "Page index must not be negative",
+                    "La página no puede ser negativa",
                     "page"
             );
         }
 
         if (size <= 0) {
             throw new InvalidProductDataException(
-                    "Page size must be greater than zero",
+                    "El tamaño de página debe ser mayor que cero",
                     "size"
             );
         }
 
         if (size > 50) {
             throw new InvalidProductDataException(
-                    "Page size must not exceed 50",
+                    "El tamaño de página no puede ser mayor que 50",
                     "size"
             );
         }
 
-        // Build sorting configuration (applied at database level)
+        // Construir la configuración de ordenamiento (aplicada a nivel de base de datos)
         Sort sort = Sort.by("productName");
 
         if (nameSort == SortOrder.DESCENDING) {
@@ -98,19 +99,21 @@ public class ProductService implements IProductService {
             sort = sort.ascending();
         }
 
-        // Normalize search input:
-        // Convert empty or blank strings into null so the query ignores the search
-        // filter
+        // Normalizar la entrada de búsqueda:
+        // Convertir cadenas vacías o compuestas únicamente por espacios en null
+        // para que la consulta ignore el filtro de búsqueda
         if (searchCodeOrName != null && searchCodeOrName.trim().isEmpty()) {
             searchCodeOrName = null;
         }
 
 
-        // Creates a pagination configuration including page number,
-        // page size, and sorting criteria to be applied at database level.
+        // Crear la configuración de paginación incluyendo el número de página,
+        // el tamaño de página y los criterios de ordenamiento que se aplicarán
+        // a nivel de base de datos
         Pageable pageable = PageRequest.of(page, size, sort);
 
-        // Execute query with search, status filter, stock filter and pageable
+        // Ejecutar la consulta aplicando búsqueda, filtro por estado,
+        // filtro por nivel de stock y configuración de paginación
         Page<Product> productPage = iProductRepository.findProducts(
                 searchCodeOrName,
                 statusFilter,
@@ -118,22 +121,23 @@ public class ProductService implements IProductService {
                 pageable
         );
 
-        // Total number of products in database without filters.
-        // This value is only calculated when the filtered query returns no results,
-        // allowing the frontend to distinguish between:
+        // Cantidad total de productos en la base de datos sin aplicar filtros.
+        // Este valor solo se calcula cuando la consulta filtrada no devuelve resultados,
+        // permitiendo al frontend distinguir entre:
         //
-        // 1) No products exist in the database
-        // 2) Products exist, but none match the current search/filter criteria
+        // 1) No existen productos en la base de datos
+        // 2) Existen productos, pero ninguno coincide con los criterios actuales
+        //    de búsqueda o filtrado
         //
-        // When filtered results exist, this value remains null to avoid an
-        // unnecessary extra COUNT(*) query and improve performance.
+        // Cuando la consulta filtrada devuelve resultados, este valor permanece en null
+        // para evitar una consulta COUNT(*) adicional innecesaria y mejorar el rendimiento.
         Long totalGlobalElements = null;
 
         if (productPage.getTotalElements() == 0) {
             totalGlobalElements = iProductRepository.count();
         }
 
-        // Map entities to DTOs
+        // Mapear entidades a DTOs
         return iPageResponseMapper.toPageResponseDTO(
                 productPage.getContent()
                         .stream()
@@ -148,26 +152,26 @@ public class ProductService implements IProductService {
     }
 
     /**
-     * Retrieves a paginated list of products available for sale applying:
+     * Recupera una lista paginada de productos disponibles para la venta aplicando:
      * <ul>
-     * <li>Search by product name or code</li>
-     * <li>Only ACTIVE products are included</li>
-     * <li>Only products with stock greater than zero are included</li>
-     * <li>Sorting by product name</li>
-     * <li>Pagination (page number and size)</li>
+     * <li>Búsqueda por nombre o código del producto</li>
+     * <li>Solo se incluyen productos con estado ACTIVE</li>
+     * <li>Solo se incluyen productos con stock mayor que cero</li>
+     * <li>Ordenamiento por nombre del producto</li>
+     * <li>Paginación (número de página y tamaño de página)</li>
      * </ul>
      *
      * <p>
-     * Search is optional and ignored if null or blank.
-     * Pagination and sorting are executed at database level
-     * (server-side pagination).
+     * La búsqueda es opcional y se ignora si es null o está vacía.
+     * La paginación y el ordenamiento se ejecutan a nivel de base de datos
+     * (paginación del lado del servidor).
      * </p>
      *
-     * @param searchCodeOrName Optional search term
-     * @param nameSort Sorting order (ASCENDING / DESCENDING)
-     * @param page Page number (0-based)
-     * @param size Number of elements per page
-     * @return Paginated list of products available for sale mapped to DTO
+     * @param searchCodeOrName término de búsqueda opcional
+     * @param nameSort orden de clasificación (ASCENDING / DESCENDING)
+     * @param page número de página (base 0)
+     * @param size cantidad de elementos por página
+     * @return lista paginada de productos disponibles para la venta mapeada a DTO
      */
     @Override
     public PageResponseDTO<ProductSaleListResponseDTO> getProductsForSale(
@@ -177,7 +181,7 @@ public class ProductService implements IProductService {
             int size
     ) {
 
-        // Validate pagination parameters
+        // Validar parámetros de paginación
         if (page < 0) {
             throw new InvalidProductDataException(
                     "Page index must not be negative",
@@ -199,7 +203,7 @@ public class ProductService implements IProductService {
             );
         }
 
-        // Build sorting configuration (applied at database level)
+        // Construir la configuración de ordenamiento (aplicada a nivel de base de datos)
         Sort sort = Sort.by("productName");
 
         if (nameSort == SortOrder.DESCENDING) {
@@ -208,25 +212,26 @@ public class ProductService implements IProductService {
             sort = sort.ascending();
         }
 
-        // Normalize search input:
-        // Convert empty or blank strings into null so the query ignores the search filter
+        // Normalizar la entrada de búsqueda:
+        // Convertir cadenas vacías o compuestas únicamente por espacios en null
+        // para que la consulta ignore el filtro de búsqueda
         if (searchCodeOrName != null && searchCodeOrName.trim().isEmpty()) {
             searchCodeOrName = null;
         }
 
-        // Creates pagination configuration including page number,
-        // page size, and sorting criteria.
+        // Crear la configuración de paginación incluyendo el número de página,
+        // el tamaño de página y los criterios de ordenamiento
         Pageable pageable = PageRequest.of(page, size, sort);
 
-        // Execute query:
-        // only ACTIVE products with stock > 0
+        // Ejecutar la consulta:
+        // solo productos con estado ACTIVE y stock mayor que cero
         Page<Product> productPage = iProductRepository.findProductsForSale(
                 searchCodeOrName,
                 pageable
         );
 
-        // Total number of products available for sale.
-        // Only calculated when filtered query returns no results.
+        // Cantidad total de productos disponibles para la venta.
+        // Solo se calcula cuando la consulta filtrada no devuelve resultados.
         Long totalGlobalElements = null;
 
         if (productPage.getTotalElements() == 0) {
@@ -237,7 +242,7 @@ public class ProductService implements IProductService {
                     );
         }
 
-        // Map entities to DTOs
+        // Mapear entidades a DTOs
         return iPageResponseMapper.toPageResponseDTO(
                 productPage.getContent()
                         .stream()
@@ -253,17 +258,22 @@ public class ProductService implements IProductService {
 
 
     /**
-     * Builds and returns available filter and sorting options for products.
+     * Construye y devuelve las opciones de filtrado y ordenamiento disponibles para productos.
      *
-     * <p>This method extracts values from {@link ProductStatus},
-     * {@link SortOrder} and {@link StockLevelFilter} enums and converts them
-     * into a frontend-friendly {@link EnumDTO} format.</p>
+     * <p>
+     * Este método obtiene los valores de las enumeraciones {@link ProductStatus},
+     * {@link SortOrder} y {@link StockLevelFilter}, y los convierte al formato
+     * {@link EnumDTO}, adecuado para su consumo por el frontend.
+     * </p>
      *
-     * <p>It ensures that the frontend always receives up-to-date options
-     * without requiring code changes on the client side, acting as the single
-     * source of truth for product filtering capabilities.</p>
+     * <p>
+     * Garantiza que el frontend reciba siempre las opciones más actualizadas
+     * sin requerir cambios en el código del cliente, actuando como una única
+     * fuente de verdad para las capacidades de filtrado de productos.
+     * </p>
      *
-     * @return ProductFiltersResponseDTO containing status, sort and stock filter options
+     * @return ProductFiltersResponseDTO que contiene las opciones de estado,
+     *         ordenamiento y filtrado por stock
      */
     @Override
     public ProductFiltersResponseDTO getFilters() {
@@ -297,44 +307,44 @@ public class ProductService implements IProductService {
     }
 
     /**
-     * Retrieves a product by its unique code.
+     * Recupera un producto mediante su código único.
      *
      * <p>
-     * Searches for a product in the database using the provided code.
-     * Throws an exception if the product does not exist.
+     * Busca un producto en la base de datos utilizando el código proporcionado.
+     * Lanza una excepción si el producto no existe.
      * </p>
      *
-     * @param productCode the unique identifier of the product
-     * @return the product details as a DTO
-     * @throws ProductNotFoundException if the product is not found
+     * @param productCode identificador único del producto
+     * @return los datos del producto como DTO
+     * @throws ProductNotFoundException si el producto no es encontrado
      */
     @Override
     public ProductDetailResponseDTO getProductByCode(String productCode) {
 
         Product product = iProductRepository.findById(productCode)
                 .orElseThrow(() -> new ProductNotFoundException(
-                        String.format("Product with code '%s' not found", productCode)
+                        String.format("No se encontró el producto con código '%s'", productCode)
                 ));
 
         return iProductDetailResponseMapper.toDto(product);
     }
 
     /**
-     * Deactivates a product by setting its status to INACTIVE.
+     * Desactiva un producto estableciendo su estado en INACTIVE.
      *
      * <p>
-     * This operation performs a logical deletion. If the product does not exist
-     * or is already inactive, a business exception is thrown.
+     * Esta operación realiza una eliminación lógica. Si el producto no existe
+     * o ya se encuentra inactivo, se lanza una excepción de negocio.
      * </p>
      *
      * <p>
-     * The operation is executed within a transactional context to ensure
-     * atomicity of the status update.
+     * La operación se ejecuta dentro de un contexto transaccional para garantizar
+     * la atomicidad de la actualización del estado.
      * </p>
      *
-     * @param productCode the unique identifier of the product
-     * @throws ProductNotFoundException if the product does not exist
-     * @throws InvalidProductDataException if the product is already inactive
+     * @param productCode identificador único del producto
+     * @throws ProductNotFoundException si el producto no existe
+     * @throws InvalidProductDataException si el producto ya se encuentra inactivo
      */
     @Override
     @Transactional
@@ -342,40 +352,40 @@ public class ProductService implements IProductService {
 
         Product product = iProductRepository.findById(productCode)
                 .orElseThrow(() -> new ProductNotFoundException(
-                        String.format("Product with code '%s' not found", productCode)
+                        String.format("No se encontró el producto con código '%s'", productCode)
                 ));
 
         if (product.getProductStatus() == ProductStatus.INACTIVE) {
             throw new InvalidProductDataException(
-                    String.format("Product with code '%s is already inactive", productCode)
+                    String.format("El producto con código '%s' ya se encuentra inactivo", productCode)
             );
         }
 
         product.setProductStatus(ProductStatus.INACTIVE);
 
-        // Persist change
+        // Persistir cambios
         iProductRepository.save(product);
 
-        // Map directly from managed entity (no re-fetch needed)
+        // Mapear directamente desde la entidad gestionada (no es necesario volver a consultarla)
         return iProductDetailResponseMapper.toDto(product);
     }
 
     /**
-     * Activates a product by setting its status to ACTIVE.
+     * Reactiva un producto estableciendo su estado en ACTIVE.
      *
      * <p>
-     * This operation restores a previously deactivated product. If the product does not exist
-     * or is already active, a business exception is thrown.
+     * Esta operación restaura un producto previamente desactivado. Si el producto no existe
+     * o ya se encuentra activo, se lanza una excepción de negocio.
      * </p>
      *
      * <p>
-     * The operation is executed within a transactional context to ensure
-     * atomicity of the status update.
+     * La operación se ejecuta dentro de un contexto transaccional para garantizar
+     * la atomicidad de la actualización del estado.
      * </p>
      *
-     * @param productCode the unique identifier of the product
-     * @throws ProductNotFoundException if the product does not exist
-     * @throws InvalidProductDataException if the product is already active
+     * @param productCode identificador único del producto
+     * @throws ProductNotFoundException si el producto no existe
+     * @throws InvalidProductDataException si el producto ya se encuentra activo
      */
     @Override
     @Transactional
@@ -383,93 +393,93 @@ public class ProductService implements IProductService {
 
         Product product = iProductRepository.findById(productCode)
                 .orElseThrow(() -> new ProductNotFoundException(
-                        String.format("Product with code '%s' not found", productCode)
+                        String.format("No se encontró el producto con código '%s'", productCode)
                 ));
 
         if (product.getProductStatus() == ProductStatus.ACTIVE) {
             throw new InvalidProductDataException(
-                    String.format("Product with code '%s' is already active", productCode)
+                    String.format("El producto con código '%s' ya se encuentra activo", productCode)
             );
         }
 
         product.setProductStatus(ProductStatus.ACTIVE);
 
-        // Persist change
+        // Persistir cambios
         iProductRepository.save(product);
 
-        // Map directly from managed entity (no re-fetch needed)
+        // Mapear directamente desde la entidad gestionada (no es necesario volver a consultarla)
         return iProductDetailResponseMapper.toDto(product);
     }
 
     /**
-     * Registers a new product in the system.
+     * Registra un nuevo producto en el sistema.
      *
      * <p>
-     * This operation validates that the product does not already exist
-     * and persists it in the database. The product status is automatically
-     * set to ACTIVE.
+     * Esta operación valida que el producto no exista previamente
+     * y lo almacena en la base de datos. El estado del producto se establece
+     * automáticamente en ACTIVE.
      * </p>
      *
      * <p>
-     * If a product with the same code already exists or validation rules
-     * are violated, a business exception is thrown.
+     * Si ya existe un producto con el mismo código o se incumplen las reglas
+     * de validación de negocio, se lanza una excepción de negocio.
      * </p>
      *
      * <p>
-     * The operation is executed within a transactional context to ensure
-     * atomicity of the product creation.
+     * La operación se ejecuta dentro de un contexto transaccional para garantizar
+     * la atomicidad de la creación del producto.
      * </p>
      *
-     * @param request the product creation request containing product data
-     * @throws ProductAlreadyExistsException if a product with the same code already exists
-     * @throws InvalidProductDataException if business validation rules are violated
+     * @param request solicitud de creación del producto que contiene sus datos
+     * @throws ProductAlreadyExistsException si ya existe un producto con el mismo código
+     * @throws InvalidProductDataException si se incumplen las reglas de validación de negocio
      */
     @Override
     @Transactional
     public ProductDetailResponseDTO registerProduct(ProductCreateRequestDTO request) {
 
-        // Check if product already exists
+        // Verificar si el producto ya existe
         if (iProductRepository.existsById(request.getProductCode())) {
             throw new ProductAlreadyExistsException(
-                    String.format("Product with code '%s' already exists", request.getProductCode())
+                    String.format("Ya existe un producto con el código '%s'", request.getProductCode())
             );
         }
 
-        // Validate stock format when unit is UNITS
+        // Validar el formato de stock y stock mínimo cuando la unidad de medida es UNITS
         if (request.getUnitOfMeasure() == UnitOfMeasure.UNITS) {
             if (request.getProductStock().stripTrailingZeros().scale() > 0) {
                 throw new InvalidProductDataException(
-                        "Stock must be an integer value when unit of measure is Units",
+                        "El stock debe ser un valor entero cuando la unidad de medida es 'Unidades'",
                         "productStock"
                 );
             }
 
             if (request.getMinimumStock().stripTrailingZeros().scale() > 0) {
                 throw new InvalidProductDataException(
-                        "Minimum stock must be an integer value when unit of measure is Units",
+                        "El stock mínimo debe ser un valor entero cuando la unidad de medida es 'Unidades'",
                         "minimumStock"
                 );
             }
         }
 
-        // Map DTO to entity
+        // Mapear DTO a entidad
         Product product = iProductCreateRequestMapper.toProduct(request);
 
-        // Persist product
+        // Persistir producto
         iProductRepository.save(product);
 
-        // Map directly from managed entity (no re-fetch needed)
+        // Mapear directamente desde la entidad gestionada (no es necesario volver a consultarla)
         return iProductDetailResponseMapper.toDto(product);
     }
 
     /**
-     * Retrieves metadata required for product-related operations.
+     * Recupera los metadatos necesarios para las operaciones relacionadas con productos.
      *
      * <p>
-     * Includes available unit of measure options for product creation.
+     * Incluye las opciones de unidad de medida disponibles para la creación de productos.
      * </p>
      *
-     * @return product metadata
+     * @return metadatos de productos
      */
     @Override
     public ProductMetadataResponseDTO getProductMetadata() {
@@ -485,55 +495,55 @@ public class ProductService implements IProductService {
     }
 
     /**
-     * Updates an existing product in the system.
+     * Actualiza un producto existente en el sistema.
      *
      * <p>
-     * This operation validates that the product exists and applies business rules
-     * before persisting the updated data.
-     * The product is updated atomically within a transactional context.
+     * Esta operación valida que el producto exista y aplica las reglas de negocio
+     * antes de persistir los datos actualizados.
+     * El producto se actualiza de forma atómica dentro de un contexto transaccional.
      * </p>
      *
-     * @param productCode the code of the product to update
-     * @param request the updated product data
-     * @return the updated product details
-     * @throws ProductNotFoundException if the product does not exist
-     * @throws InvalidProductDataException if business rules are violated
+     * @param productCode código del producto a actualizar
+     * @param request datos actualizados del producto
+     * @return detalles del producto actualizado
+     * @throws ProductNotFoundException si el producto no existe
+     * @throws InvalidProductDataException si se incumplen las reglas de negocio
      */
     @Override
     @Transactional
     public ProductDetailResponseDTO updateProduct(String productCode, ProductUpdateRequestDTO request) {
 
-        // 1. Check if product exists
+        // 1. Verificar que el producto exista
         Product product = iProductRepository.findById(productCode)
                 .orElseThrow(() -> new ProductNotFoundException(
-                        String.format("Product with code '%s' not found", productCode)
+                        String.format("No se encontró el producto con código '%s'", productCode)
                 ));
 
-        // 2. Validate stock rules when unit is UNITS
+        // 2. Validar las reglas de stock y stock mínimo cuando la unidad de medida es UNITS
         if (request.getUnitOfMeasure() == UnitOfMeasure.UNITS) {
 
             if (request.getProductStock().stripTrailingZeros().scale() > 0) {
                 throw new InvalidProductDataException(
-                        "Stock must be an integer value when unit of measure is Units",
+                        "El stock debe ser un valor entero cuando la unidad de medida es 'Unidades'",
                         "productStock"
                 );
             }
 
             if (request.getMinimumStock().stripTrailingZeros().scale() > 0) {
                 throw new InvalidProductDataException(
-                        "Minimum stock must be an integer value when unit of measure is Units",
+                        "El stock mínimo debe ser un valor entero cuando la unidad de medida es 'Unidades'",
                         "minimumStock"
                 );
             }
         }
 
-        // 3. Apply updates
+        // 3. Aplicar las modificaciones
         iProductUpdateRequestMapper.updateProductFromDto(request, product);
 
-        // 4. Persist changes
+        // 4. Persistir cambios
         iProductRepository.save(product);
 
-        // 5. Map directly from managed entity (no re-fetch needed)
+        // 5. Mapear directamente desde la entidad gestionada (no es necesario volver a consultarla)
         return iProductDetailResponseMapper.toDto(product);
     }
 }

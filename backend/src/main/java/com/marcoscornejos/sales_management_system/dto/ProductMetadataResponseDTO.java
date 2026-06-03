@@ -8,11 +8,12 @@ import lombok.Setter;
 import java.util.List;
 
 /**
- * DTO containing metadata required for product-related operations.
+ * DTO que contiene la información complementaria requerida
+ * para las operaciones relacionadas con productos.
  *
  * <p>
- * Provides dynamic values such as enums and defaults
- * used by the frontend.
+ * Proporciona valores dinámicos, como enumeraciones y opciones
+ * utilizadas por el frontend.
  * </p>
  */
 @Getter
@@ -22,11 +23,11 @@ import java.util.List;
 public class ProductMetadataResponseDTO {
 
     /**
-     * List of available unit of measure options.
+     * Lista de opciones disponibles de unidades de medida.
      *
      * <p>
-     * Each option is represented as an {@link EnumDTO},
-     * containing the enum code and its display label.
+     * Cada opción se representa mediante un {@link EnumDTO},
+     * que contiene el código del enum y su etiqueta de visualización.
      * </p>
      */
     private List<EnumDTO> unitOfMeasureOptions;

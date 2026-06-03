@@ -19,13 +19,18 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Global exception handler for all controllers in the system.
+ * Manejador global de excepciones para todos los controladores del sistema.
  *
- * <p>This class intercepts exceptions thrown by controllers and services,
- * providing consistent HTTP responses to the front-end.</p>
+ * <p>
+ * Esta clase intercepta las excepciones lanzadas por los controladores y servicios,
+ * proporcionando respuestas HTTP consistentes para el frontend.
+ * </p>
  *
- * <p>It handles both authentication-related exceptions and
- * validation errors from request DTOs annotated with {@link jakarta.validation.Valid}.</p>
+ * <p>
+ * Maneja tanto excepciones relacionadas con la autenticación como
+ * errores de validación provenientes de DTOs de solicitud anotados con
+ * {@link jakarta.validation.Valid}.
+ * </p>
  */
 @Slf4j
 @RestControllerAdvice
@@ -57,27 +62,31 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * Handles validation errors for request DTOs annotated with {@link jakarta.validation.Valid}.
+     * Maneja los errores de validación de los DTOs de solicitud anotados con
+     * {@link jakarta.validation.Valid}.
      *
      * <p>
-     * This exception is triggered when Bean Validation constraints fail.
-     * Only the first validation error is returned to simplify frontend handling.
+     * Esta excepción se produce cuando fallan las restricciones definidas mediante
+     * Bean Validation. Para simplificar el manejo en el frontend, solo se devuelve
+     * el primer error de validación detectado.
      * </p>
      *
-     * <p>Returns a standardized error response:</p>
+     * <p>
+     * Devuelve una respuesta de error estandarizada:
+     * </p>
      *
      * <pre>
      * {
      *   "error": {
      *     "code": "VALIDATION_ERROR",
-     *     "message": "Product code is required",
+     *     "message": "El código del producto es obligatorio",
      *     "field": "productCode"
      *   }
      * }
      * </pre>
      *
-     * @param ex the validation exception
-     * @return ResponseEntity with HTTP 400 Bad Request and structured error body
+     * @param ex excepción de validación
+     * @return ResponseEntity con HTTP 400 Bad Request y un cuerpo de error estructurado
      */
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, Object>> handleValidationExceptions(MethodArgumentNotValidException ex) {
@@ -96,44 +105,45 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * Handles all unexpected exceptions that are not explicitly managed
-     * by specific exception handlers.
+     * Maneja todas las excepciones inesperadas que no son gestionadas
+     * explícitamente por manejadores de excepciones específicos.
      *
      * <p>
-     * This is a fallback mechanism to ensure that no exception leaks
-     * unstructured responses to the client.
+     * Este es un mecanismo de respaldo que garantiza que ninguna excepción
+     * devuelva respuestas no estructuradas al cliente.
      * </p>
      *
      * <p>
-     * The response follows the standardized error format:
+     * La respuesta sigue el formato de error estandarizado:
      * </p>
      *
      * <pre>
      * {
      *   "error": {
      *     "code": "INTERNAL_SERVER_ERROR",
-     *     "message": "An unexpected error occurred",
+     *     "message": "Ocurrió un error inesperado",
      *     "field": null
      *   }
      * }
      * </pre>
      *
      * <p>
-     * Full exception details are logged internally for debugging purposes.
+     * Los detalles completos de la excepción se registran internamente
+     * con fines de depuración.
      * </p>
      *
-     * @param ex the unexpected exception
-     * @return a 500 Internal Server Error response with standardized error format
+     * @param ex excepción inesperada
+     * @return respuesta 500 Internal Server Error con formato de error estandarizado
      */
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Map<String, Object>> handleGenericException(Exception ex) {
 
         // Log full error details for debugging
-        log.error("Unexpected error occurred", ex);
+        log.error("Ocurrió un error inesperado", ex);
 
         Map<String, Object> errorBody = new HashMap<>();
         errorBody.put("code", "INTERNAL_SERVER_ERROR");
-        errorBody.put("message", "An unexpected error occurred");
+        errorBody.put("message", "Ocurrió un error inesperado");
         errorBody.put("field", null);
 
         Map<String, Object> response = new HashMap<>();
@@ -143,26 +153,32 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * Handles errors when a request parameter cannot be converted
-     * to the expected type.
+     * Maneja los errores que se producen cuando un parámetro de la solicitud
+     * no puede convertirse al tipo esperado.
      *
-     * <p>This typically happens when the client sends an invalid value
-     * (e.g., a wrong enum value, a string instead of a number, etc.).</p>
+     * <p>
+     * Esto suele ocurrir cuando el cliente envía un valor inválido
+     * (por ejemplo, un valor incorrecto para un enum, una cadena de texto
+     * en lugar de un número, etc.).
+     * </p>
      *
-     * <p>Returns a standardized error response using the global error format:</p>
+     * <p>
+     * Devuelve una respuesta de error estandarizada utilizando el formato
+     * global de errores:
+     * </p>
      *
      * <pre>
      * {
      *   "error": {
      *     "code": "INVALID_PARAMETER_TYPE",
-     *     "message": "Invalid value 'ACTVEE' for parameter 'statusFilter'",
+     *     "message": "Valor inválido 'ACTVEE' para el parámetro 'statusFilter'",
      *     "field": "statusFilter"
      *   }
      * }
      * </pre>
      *
-     * @param ex the exception thrown when type conversion fails
-     * @return a 400 Bad Request response with structured error format
+     * @param ex excepción lanzada cuando falla la conversión de tipos
+     * @return respuesta 400 Bad Request con un formato de error estructurado
      */
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public ResponseEntity<Map<String, Object>> handleTypeMismatch(MethodArgumentTypeMismatchException ex) {
@@ -176,7 +192,7 @@ public class GlobalExceptionHandler {
         errorBody.put("code", "INVALID_PARAMETER_TYPE");
         errorBody.put("field", field);
         errorBody.put("message",
-                String.format("Invalid value '%s' for parameter '%s'", value, field)
+                String.format("Valor inválido '%s' para el parámetro '%s'", value, field)
         );
 
         error.put("error", errorBody);
@@ -185,39 +201,40 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * Handles product-related exceptions thrown when business rules
-     * or validations fail within the Product domain.
+     * Maneja las excepciones relacionadas con productos que se producen cuando
+     * fallan reglas de negocio o validaciones dentro del dominio Product.
      *
      * <p>
-     * This handler centralizes all exceptions that extend {@code ProductException},
-     * ensuring a consistent error response format across the application.
+     * Este manejador centraliza todas las excepciones que extienden
+     * {@code ProductException}, garantizando un formato de respuesta de error
+     * consistente en toda la aplicación.
      * </p>
      *
      * <p>
-     * The response follows the standardized structure:
+     * La respuesta sigue la estructura estandarizada:
      * </p>
      *
      * <pre>
      * {
      *   "error": {
      *     "code": "ERROR_CODE",
-     *     "message": "Human readable message",
-     *     "field": "Optional field related to the error"
+     *     "message": "Mensaje legible para el usuario",
+     *     "field": "Campo opcional relacionado con el error"
      *   }
      * }
      * </pre>
      *
      * <p>
-     * The frontend should use:
+     * El frontend debe utilizar:
      * <ul>
-     *   <li><b>code</b>: to determine error type and UI behavior</li>
-     *   <li><b>message</b>: to display or log human-readable information</li>
-     *   <li><b>field</b>: to associate validation errors with specific inputs</li>
+     *   <li><b>code</b>: para determinar el tipo de error y el comportamiento de la interfaz</li>
+     *   <li><b>message</b>: para mostrar o registrar información legible para el usuario</li>
+     *   <li><b>field</b>: para asociar errores de validación con campos específicos</li>
      * </ul>
      * </p>
      *
-     * @param ex the product-related exception containing error details
-     * @return a 400 Bad Request response with a standardized error body
+     * @param ex excepción relacionada con productos que contiene los detalles del error
+     * @return respuesta 400 Bad Request con un cuerpo de error estandarizado
      */
     @ExceptionHandler(ProductException.class)
     public ResponseEntity<Map<String, Object>> handleProductException(ProductException ex) {
@@ -234,16 +251,18 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * Handles exceptions thrown when the request body contains invalid or
-     * unreadable data (e.g., incorrect JSON format, invalid enum values,
-     * or type mismatches in request payload).
+     * Maneja las excepciones que se producen cuando el cuerpo de la solicitud
+     * contiene datos inválidos o no puede ser interpretado correctamente
+     * (por ejemplo, formato JSON incorrecto, valores de enum inválidos
+     * o incompatibilidades de tipos en la carga útil de la solicitud).
      *
      * <p>
-     * Returns a standardized 400 Bad Request response with structured error format.
+     * Devuelve una respuesta 400 Bad Request estandarizada con un formato
+     * de error estructurado.
      * </p>
      *
-     * @param ex the exception containing parsing or deserialization errors
-     * @return a 400 Bad Request response with structured error details
+     * @param ex excepción que contiene los errores de análisis o deserialización
+     * @return respuesta 400 Bad Request con detalles de error estructurados
      */
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<Map<String, Object>> handleHttpMessageNotReadable(HttpMessageNotReadableException ex) {
@@ -252,7 +271,7 @@ public class GlobalExceptionHandler {
 
         errorBody.put("code", "INVALID_REQUEST_BODY");
         errorBody.put("field", null);
-        errorBody.put("message", "Invalid request body. Please check the provided values");
+        errorBody.put("message", "Cuerpo de la solicitud inválido. Verifique los valores proporcionados");
 
         Map<String, Object> response = new HashMap<>();
         response.put("error", errorBody);
@@ -310,16 +329,17 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * Handles missing request parameter exceptions.
+     * Maneja las excepciones producidas por la ausencia de parámetros requeridos
+     * en la solicitud.
      *
      * <p>
-     * Triggered when a required query parameter is not provided in the request.
-     * Returns a standardized 400 Bad Request response indicating which parameter
-     * is missing.
+     * Se produce cuando un parámetro de consulta obligatorio no es proporcionado
+     * en la solicitud. Devuelve una respuesta 400 Bad Request estandarizada
+     * indicando cuál es el parámetro faltante.
      * </p>
      *
-     * @param ex the exception containing details about the missing parameter
-     * @return a 400 Bad Request response with structured error details
+     * @param ex excepción que contiene los detalles del parámetro faltante
+     * @return respuesta 400 Bad Request con detalles de error estructurados
      */
     @ExceptionHandler(MissingServletRequestParameterException.class)
     public ResponseEntity<Map<String, Object>> handleMissingParams(
@@ -332,7 +352,7 @@ public class GlobalExceptionHandler {
         errorBody.put("field", ex.getParameterName());
         errorBody.put(
                 "message",
-                "Missing required parameter: " + ex.getParameterName()
+                "Falta el parámetro requerido: " + ex.getParameterName()
         );
 
         Map<String, Object> response = new HashMap<>();

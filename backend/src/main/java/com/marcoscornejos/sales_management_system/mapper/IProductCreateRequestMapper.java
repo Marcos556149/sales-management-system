@@ -5,29 +5,30 @@ import com.marcoscornejos.sales_management_system.model.Product;
 import org.mapstruct.Mapper;
 
 /**
- * Mapper for converting between {@link ProductCreateRequestDTO} and {@link Product} entities.
+ * Mapper para convertir entre entidades {@link Product} y
+ * {@link ProductCreateRequestDTO}.
  *
  * <p>
- * Handles transformations required for product creation requests and
- * persistence of Product data.
+ * Gestiona las transformaciones necesarias para las solicitudes de creación
+ * de productos y la persistencia de los datos de {@link Product}.
  * </p>
  */
 @Mapper(componentModel = "spring")
 public interface IProductCreateRequestMapper {
 
     /**
-     * Maps a {@link ProductCreateRequestDTO} to a {@link Product} entity.
+     * Mapea un {@link ProductCreateRequestDTO} a una entidad {@link Product}.
      *
-     * @param dto the product creation request DTO containing product data
-     * @return a Product entity with corresponding fields set
+     * @param dto DTO de solicitud de creación de producto que contiene los datos del producto
+     * @return una entidad Product con los campos correspondientes asignados
      */
     Product toProduct(ProductCreateRequestDTO dto);
 
     /**
-     * Maps a {@link Product} entity to a {@link ProductCreateRequestDTO}.
+     * Mapea una entidad {@link Product} a un {@link ProductCreateRequestDTO}.
      *
-     * @param product the Product entity
-     * @return a ProductCreateRequestDTO with corresponding fields set
+     * @param product entidad Product
+     * @return un ProductCreateRequestDTO con los campos correspondientes asignados
      */
     ProductCreateRequestDTO toDto(Product product);
 }

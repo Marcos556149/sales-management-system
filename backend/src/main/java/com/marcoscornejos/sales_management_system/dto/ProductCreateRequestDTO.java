@@ -8,12 +8,12 @@ import lombok.Setter;
 import java.math.BigDecimal;
 
 /**
- * DTO used to register a new product in the system.
+ * DTO utilizado para registrar un nuevo producto en el sistema.
  *
  * <p>
- * Contains all required information needed to create a product.
- * The product status is not included because it is automatically
- * set to ACTIVE by the system.
+ * Contiene toda la información necesaria para crear un producto.
+ * El estado del producto no se incluye porque el sistema lo establece
+ * automáticamente como ACTIVE.
  * </p>
  */
 @Getter
@@ -21,62 +21,65 @@ import java.math.BigDecimal;
 public class ProductCreateRequestDTO {
 
     /**
-     * Unique code of the product.
+     * Código único del producto.
      *
      * <p>
-     * Must not be blank and must not exceed 100 characters.
+     * No debe estar vacío ni superar los 100 caracteres.
      * </p>
      */
-    @NotBlank(message = "Product code is required")
-    @Size(max = 100, message = "Product code must not exceed 100 characters")
+    @NotBlank(message = "El código del producto es obligatorio")
+    @Size(max = 100, message = "El código del producto no debe superar los 100 caracteres")
     private String productCode;
 
     /**
-     * Name of the product.
+     * Nombre del producto.
      *
      * <p>
-     * Must not be blank and must not exceed 100 characters.
+     * No debe estar vacío ni superar los 100 caracteres.
      * </p>
      */
-    @NotBlank(message = "Product name is required")
-    @Size(max = 100, message = "Product name must not exceed 100 characters")
+    @NotBlank(message = "El nombre del producto es obligatorio")
+    @Size(max = 100, message = "El nombre del producto no debe superar los 100 caracteres")
     private String productName;
 
     /**
-     * Unit price of the product.
+     * Precio unitario del producto.
      *
      * <p>
-     * Must be greater than or equal to 0 and respect the database constraint
-     * NUMERIC(12,2), allowing up to 10 integer digits and 2 decimal places.
+     * Debe ser mayor o igual a 0 y respetar la restricción de base de datos
+     * NUMERIC(12,2), permitiendo hasta 10 dígitos enteros y 2 decimales.
      * </p>
      */
-    @NotNull(message = "Product price is required")
-    @DecimalMin(value = "0.0", inclusive = true, message = "Product price must be greater than or equal to 0")
-    @Digits(integer = 10, fraction = 2, message = "Product price must have up to 10 digits and 2 decimals")
+    @NotNull(message = "El precio del producto es obligatorio")
+    @DecimalMin(value = "0.0", inclusive = true, message = "El precio del producto debe ser mayor o igual a 0")
+    @Digits(integer = 10, fraction = 2, message = "El precio del producto debe tener hasta 10 dígitos y 2 decimales")
     private BigDecimal productPrice;
 
     /**
-     * Available stock quantity of the product.
+     * Cantidad de stock disponible del producto.
      *
      * <p>
-     * Must be greater than or equal to 0 and respect the database constraint
-     * NUMERIC(12,2), allowing up to 10 integer digits and 2 decimal places.
+     * Debe ser mayor o igual a 0 y respetar la restricción de base de datos
+     * NUMERIC(12,2), permitiendo hasta 10 dígitos enteros y 2 decimales.
      * </p>
      */
-    @NotNull(message = "Product stock is required")
-    @DecimalMin(value = "0.0", inclusive = true, message = "Product stock must be greater than or equal to 0")
-    @Digits(integer = 10, fraction = 2, message = "Product stock must have up to 10 digits and 2 decimals")
+    @NotNull(message = "El stock del producto es obligatorio")
+    @DecimalMin(value = "0.0", inclusive = true, message = "El stock del producto debe ser mayor o igual a 0")
+    @Digits(integer = 10, fraction = 2, message = "El stock del producto debe tener hasta 10 dígitos y 2 decimales")
     private BigDecimal productStock;
 
     /**
-     * Unit of measure of the product (e.g., UNITS, KILOGRAMS, LITERS).
+     * Unidad de medida del producto (por ejemplo, UNITS, KILOGRAMS, LITERS).
      */
-    @NotNull(message = "Unit of measure is required")
+    @NotNull(message = "La unidad de medida es obligatoria")
     private UnitOfMeasure unitOfMeasure;
 
-    @NotNull(message = "Minimum stock is required")
-    @DecimalMin(value = "0.0", inclusive = true, message = "Minimum stock must be greater than or equal to 0")
-    @Digits(integer = 10, fraction = 2, message = "Minimum stock must have up to 10 digits and 2 decimals")
+    /**
+     * Stock mínimo configurado para el producto.
+     */
+    @NotNull(message = "El stock mínimo es obligatorio")
+    @DecimalMin(value = "0.0", inclusive = true, message = "El stock mínimo debe ser mayor o igual a 0")
+    @Digits(integer = 10, fraction = 2, message = "El stock mínimo debe tener hasta 10 dígitos y 2 decimales")
     private BigDecimal minimumStock;
 
 }

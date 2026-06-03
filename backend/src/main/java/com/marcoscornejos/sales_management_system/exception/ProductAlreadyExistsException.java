@@ -1,22 +1,22 @@
 package com.marcoscornejos.sales_management_system.exception;
 
 /**
- * Exception thrown when attempting to create a product
- * that already exists.
+ * Excepción lanzada al intentar crear un producto
+ * que ya existe.
  *
  * <p>
- * Commonly used when a product with the same unique
- * identifier (e.g., code) is already present.
+ * Se utiliza comúnmente cuando ya existe un producto con el mismo
+ * identificador único (por ejemplo, el código).
  * </p>
  *
  * <p>
- * This exception follows the standardized error format:
+ * Esta excepción utiliza el formato de error estandarizado:
  * </p>
  *
  * <pre>
  * {
  *   "code": "PRODUCT_ALREADY_EXISTS",
- *   "message": "Human readable message",
+ *   "message": "Mensaje legible por el usuario",
  *   "field": null
  * }
  * </pre>
@@ -26,9 +26,9 @@ public class ProductAlreadyExistsException extends ProductException {
     private static final String CODE = "PRODUCT_ALREADY_EXISTS";
 
     /**
-     * Creates an exception when a product already exists.
+     * Crea una excepción cuando un producto ya existe.
      *
-     * @param message human-readable error message
+     * @param message mensaje de error legible por el usuario
      */
     public ProductAlreadyExistsException(String message) {
         super(CODE, message, null);

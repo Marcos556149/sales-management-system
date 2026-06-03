@@ -1,14 +1,15 @@
 /**
- * Enumeration that defines the sorting direction for ordered results.
+ * Enumeración que define el criterio de ordenamiento para resultados ordenados.
  *
  * <p>
- * Used to specify whether data should be sorted in ascending or descending order.
- * This enum is generic and can be applied across different entities and queries
- * within the system.
+ * Se utiliza para especificar si los datos deben ordenarse de forma
+ * ascendente o descendente. Esta enumeración es genérica y puede
+ * aplicarse a distintas entidades y consultas dentro del sistema.
  * </p>
  *
  * <p>
- * Each enum value includes a human-readable display name intended for UI representation.
+ * Cada valor de la enumeración incluye un nombre descriptivo destinado
+ * a su representación en la interfaz de usuario.
  * </p>
  */
 
@@ -18,8 +19,8 @@ import lombok.Getter;
 
 @Getter
 public enum SortOrder {
-    ASCENDING("Ascending"),
-    DESCENDING("Descending");
+    ASCENDING("Ascendente"),
+    DESCENDING("Descendente");
 
     private final String displayName;
 

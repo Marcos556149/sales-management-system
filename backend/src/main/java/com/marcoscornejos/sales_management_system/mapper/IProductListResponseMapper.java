@@ -8,24 +8,27 @@ import com.marcoscornejos.sales_management_system.model.UnitOfMeasure;
 import org.mapstruct.Mapper;
 
 /**
- * Mapper for converting {@link Product} entity to {@link ProductListResponseDTO}.
+ * Mapper para convertir la entidad {@link Product} en {@link ProductListResponseDTO}.
  *
- * <p>Handles mapping of enums to EnumDTO with specific representations.</p>
+ * <p>
+ * Gestiona el mapeo de enumeraciones a {@link EnumDTO} utilizando
+ * representaciones específicas.
+ * </p>
  */
 @Mapper(componentModel = "spring")
 public interface IProductListResponseMapper {
 
     /**
-     * Maps a {@link Product} entity to a {@link ProductListResponseDTO}.
+     * Mapea una entidad {@link Product} a un {@link ProductListResponseDTO}.
      *
-     * @param product the Product entity
-     * @return ProductListResponseDTO with mapped fields
+     * @param product entidad Product
+     * @return ProductListResponseDTO con los campos mapeados
      */
     ProductListResponseDTO toDto(Product product);
 
     /**
-     * Maps {@link ProductStatus} to {@link EnumDTO}.
-     * Uses label for display.
+     * Mapea {@link ProductStatus} a {@link EnumDTO}.
+     * Utiliza la etiqueta para su representación visual.
      */
     default EnumDTO map(ProductStatus status) {
         if (status == null) return null;
@@ -36,8 +39,8 @@ public interface IProductListResponseMapper {
     }
 
     /**
-     * Maps {@link UnitOfMeasure} to {@link EnumDTO}.
-     * Uses abbreviation instead of display name.
+     * Mapea {@link UnitOfMeasure} a {@link EnumDTO}.
+     * Utiliza la abreviatura en lugar del nombre para mostrar.
      */
     default EnumDTO map(UnitOfMeasure unit) {
         if (unit == null) return null;

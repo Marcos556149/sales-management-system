@@ -1,19 +1,21 @@
 /**
- * Enumeration that defines the unit of measure for products.
+ * Enumeración que define la unidad de medida de los productos.
  *
  * <p>
- * Used to represent how a product is quantified in inventory and sales,
- * such as by units, kilograms, or liters.
+ * Se utiliza para representar cómo se cuantifica un producto en el
+ * inventario y en las ventas, ya sea por unidades, kilogramos o litros.
  * </p>
  *
  * <p>
- * This enum is essential for correctly handling product quantities,
- * especially when integrating with features like weighted products
- * (e.g., scales) or bulk sales.
+ * Esta enumeración es fundamental para gestionar correctamente las
+ * cantidades de los productos, especialmente al integrarse con
+ * funcionalidades como productos vendidos por peso
+ * (por ejemplo, balanzas) o ventas a granel.
  * </p>
  *
  * <p>
- * Each enum value includes a human-readable display name intended for UI representation.
+ * Cada valor de la enumeración incluye un nombre descriptivo destinado
+ * a su representación en la interfaz de usuario.
  * </p>
  */
 
@@ -23,9 +25,9 @@ import lombok.Getter;
 
 @Getter
 public enum UnitOfMeasure {
-    UNITS("Units","u"),
-    KILOGRAMS("Kilograms","kg"),
-    LITERS("Liters","lt");
+    UNITS("Unidades","u"),
+    KILOGRAMS("Kilogramos","kg"),
+    LITERS("Litros","lt");
 
     private final String displayName;
     private final String abbreviation;

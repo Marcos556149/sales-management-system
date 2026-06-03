@@ -6,28 +6,31 @@ import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
 
 /**
- * Mapper for updating {@link Product} entities from {@link ProductUpdateRequestDTO}.
+ * Mapper para actualizar entidades {@link Product}
+ * a partir de {@link ProductUpdateRequestDTO}.
  *
  * <p>
- * Handles transformations required for updating existing product data.
+ * Gestiona las transformaciones necesarias para actualizar
+ * datos de productos existentes.
  * </p>
  */
 @Mapper(componentModel = "spring")
 public interface IProductUpdateRequestMapper {
 
     /**
-     * Updates an existing {@link Product} entity using data from the given DTO.
+     * Actualiza una entidad {@link Product} existente utilizando
+     * los datos del DTO proporcionado.
      *
-     * @param dto the product update request DTO containing updated data
-     * @param product the existing Product entity to be updated
+     * @param dto DTO de solicitud de actualización del producto que contiene los datos actualizados
+     * @param product entidad Product existente que será actualizada
      */
     void updateProductFromDto(ProductUpdateRequestDTO dto, @MappingTarget Product product);
 
     /**
-     * Maps a {@link Product} entity to a {@link ProductUpdateRequestDTO}.
+     * Mapea una entidad {@link Product} a un {@link ProductUpdateRequestDTO}.
      *
-     * @param product the Product entity
-     * @return a ProductUpdateRequestDTO with corresponding fields set
+     * @param product entidad Product
+     * @return un ProductUpdateRequestDTO con los campos correspondientes asignados
      */
     ProductUpdateRequestDTO toDto(Product product);
 }

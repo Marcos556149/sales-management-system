@@ -8,11 +8,11 @@ import lombok.Setter;
 import java.math.BigDecimal;
 
 /**
- * Data Transfer Object for returning detailed product information.
+ * DTO de transferencia de datos utilizado para devolver información detallada de un producto.
  *
  * <p>
- * This DTO represents the complete data of a single product
- * to be displayed in the product detail view.
+ * Este DTO representa los datos completos de un único producto
+ * para ser mostrados en la vista de detalle del producto.
  * </p>
  */
 @Getter @Setter
@@ -21,37 +21,37 @@ import java.math.BigDecimal;
 public class ProductDetailResponseDTO {
 
     /**
-     * Unique code that identifies the product.
+     * Código único que identifica al producto.
      */
     private String productCode;
 
     /**
-     * Name of the product.
+     * Nombre del producto.
      */
     private String productName;
 
     /**
-     * Price of the product.
+     * Precio del producto.
      */
     private BigDecimal productPrice;
 
     /**
-     * Unit of measure of the product (e.g., UNITS, KILOGRAMS, LITERS).
+     * Unidad de medida del producto (por ejemplo, UNITS, KILOGRAMS, LITERS).
      */
     private EnumDTO unitOfMeasure;
 
     /**
-     * Current status of the product (e.g., ACTIVE, INACTIVE).
+     * Estado actual del producto (por ejemplo, ACTIVE, INACTIVE).
      */
     private EnumDTO productStatus;
 
     /**
-     * Available stock quantity.
+     * Cantidad de stock disponible.
      */
     private BigDecimal productStock;
 
     /**
-     * Minimum stock threshold for the product.
+     * Stock mínimo configurado para el producto.
      */
     private BigDecimal minimumStock;
 
