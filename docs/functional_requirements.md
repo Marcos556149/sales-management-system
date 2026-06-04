@@ -204,6 +204,10 @@ El sistema debe permitir al usuario actualizar la información de un producto ex
 - La unidad de medida debe ser uno de los siguientes valores: "Unidades", "Kilogramos" o "Litros".
 - Si la unidad de medida es "Unidades", tanto el stock disponible como el stock mínimo deben expresarse mediante valores enteros.
 - Si la unidad de medida es modificada, el sistema debe validar que el stock disponible y el stock mínimo cumplan con las restricciones de la nueva unidad de medida.
+- Reposición de stock:
+  - El sistema debe permitir incrementar el stock disponible mediante una cantidad de reposición.
+  - La cantidad de reposición debe ser un número real mayor o igual a 0.
+  - Al aplicar una reposición, el stock disponible resultante debe corresponder a la suma entre el stock disponible actual y la cantidad de reposición ingresada.
 
 ---
 

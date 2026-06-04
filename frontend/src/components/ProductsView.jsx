@@ -16,21 +16,21 @@ const ProductsView = () => {
 
   // --- Context State ---
   const {
-      searchTerm, setSearchTerm,
-      appliedSearch, setAppliedSearch,
-      statusFilter, setStatusFilter,
-      stockLevelFilter, setStockLevelFilter,
-      sortOrder, setSortOrder,
-      pageFrontend, setPageFrontend,
-      productsData: products, setProductsData: setProducts,
-      totalPages, setTotalPages,
-      totalElements, setTotalElements,
-      totalGlobalElements, setTotalGlobalElements,
-      statusOptions, setStatusOptions,
-      stockLevelOptions, setStockLevelOptions,
-      sortOptions, setSortOptions,
-      scrollPositionRef,
-      isCached, setIsCached
+    searchTerm, setSearchTerm,
+    appliedSearch, setAppliedSearch,
+    statusFilter, setStatusFilter,
+    stockLevelFilter, setStockLevelFilter,
+    sortOrder, setSortOrder,
+    pageFrontend, setPageFrontend,
+    productsData: products, setProductsData: setProducts,
+    totalPages, setTotalPages,
+    totalElements, setTotalElements,
+    totalGlobalElements, setTotalGlobalElements,
+    statusOptions, setStatusOptions,
+    stockLevelOptions, setStockLevelOptions,
+    sortOptions, setSortOptions,
+    scrollPositionRef,
+    isCached, setIsCached
   } = useProductsContext();
 
   const [filtersLoading, setFiltersLoading] = useState(statusOptions.length === 0);
@@ -40,11 +40,11 @@ const ProductsView = () => {
   const [error, setError] = useState(null);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
   const [actionLoading, setActionLoading] = useState(false);
-  
+
   // --- Modal State ---
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [productToDeactivate, setProductToDeactivate] = useState(null);
-  
+
   const [isActivateModalOpen, setIsActivateModalOpen] = useState(false);
   const [productToActivate, setProductToActivate] = useState(null);
 
@@ -56,7 +56,7 @@ const ProductsView = () => {
   // Handle row click
   const handleRowClick = async (id) => {
     if (actionLoading) return;
-    
+
     setActionLoading(true);
     try {
       // Check if product exists before navigating
@@ -65,11 +65,11 @@ const ProductsView = () => {
       navigate(`/dashboard/products/${id}`, { state: { product: response.data } });
     } catch (err) {
       if (err.status === 400) {
-        addToast(err.message || `Product with code ${id} not found`, 'error');
+        addToast(err.message || `No se encontró el producto con código ${id}`, 'error');
         // Refresh the list to remove the missing product
         setRefreshTrigger(prev => prev + 1);
       } else {
-        addToast(err.message || 'Error checking product', 'error');
+        addToast(err.message || 'Error al verificar el producto', 'error');
       }
     } finally {
       setActionLoading(false);
@@ -78,7 +78,7 @@ const ProductsView = () => {
 
   const handleEditClick = async (productCode) => {
     if (actionLoading) return;
-    
+
     setActionLoading(true);
     try {
       // Check existence and get fresh data
@@ -86,10 +86,10 @@ const ProductsView = () => {
       navigate(`/dashboard/products/edit/${productCode}`, { state: { product: response.data } });
     } catch (err) {
       if (err.status === 400) {
-        addToast(err.message || `Product with code ${productCode} not found`, 'error');
+        addToast(err.message || `No se encontró el producto con código ${productCode}`, 'error');
         setRefreshTrigger(prev => prev + 1);
       } else {
-        addToast(err.message || 'Error checking product', 'error');
+        addToast(err.message || 'Error al verificar el producto', 'error');
       }
     } finally {
       setActionLoading(false);
@@ -103,24 +103,24 @@ const ProductsView = () => {
         setFiltersLoading(false);
         return;
       }
-      
+
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 8000);
       try {
         const response = await productService.getFilters({ signal: controller.signal });
         clearTimeout(timeoutId);
-        
+
         setStatusOptions(response.data.statusOptions || []);
         setSortOptions(response.data.nameSortOptions || []);
         setStockLevelOptions(response.data.stockLevelOptions || []);
       } catch (err) {
         clearTimeout(timeoutId);
-        console.error("Error loading filters:", err);
+        console.error("Error al cargar los filtros:", err);
         setStatusOptions([]);
         setSortOptions([]);
         setStockLevelOptions([]);
         if (err.name === 'AbortError') {
-           addToast("Filters request timed out", "error");
+          addToast("La solicitud de filtros excedió el tiempo de espera", "error");
         }
       } finally {
         setFiltersLoading(false);
@@ -158,13 +158,13 @@ const ProductsView = () => {
   // Scroll Position Management
   useEffect(() => {
     const container = document.querySelector('.content-area');
-    
+
     // If we came back from another view and have data, restore scroll
     if (isCached && products.length > 0) {
       if (container && scrollPositionRef.current) {
-         requestAnimationFrame(() => {
-           container.scrollTop = scrollPositionRef.current;
-         });
+        requestAnimationFrame(() => {
+          container.scrollTop = scrollPositionRef.current;
+        });
       }
     }
 
@@ -173,11 +173,11 @@ const ProductsView = () => {
         scrollPositionRef.current = container.scrollTop;
       }
     };
-    
+
     if (container) {
       container.addEventListener('scroll', handleScroll, { passive: true });
     }
-    
+
     return () => {
       if (container) {
         container.removeEventListener('scroll', handleScroll);
@@ -187,7 +187,7 @@ const ProductsView = () => {
 
   // 2. Fetch data when filters/search/page changes
   useEffect(() => {
-    const paramsChanged = 
+    const paramsChanged =
       prevParams.current.appliedSearch !== appliedSearch ||
       prevParams.current.statusFilter !== statusFilter ||
       prevParams.current.stockLevelFilter !== stockLevelFilter ||
@@ -232,7 +232,7 @@ const ProductsView = () => {
         clearTimeout(timeoutId);
 
         const data = response.data;
-        
+
         if (abortControllerRef.current === abortController) {
           if (data.content !== undefined) {
             setProducts(data.content);
@@ -251,15 +251,15 @@ const ProductsView = () => {
         clearTimeout(timeoutId);
         if (err.name === 'AbortError') {
           if (abortControllerRef.current === abortController) {
-             setError('Request timed out. Please refresh the page.');
-             addToast("Product list request timed out", "error");
+            setError('La solicitud de productos excedió el tiempo de espera');
+            addToast("La solicitud de productos excedió el tiempo de espera", "error");
           } else {
-             console.log('Previous request cancelled');
+            console.log('La solicitud previa fue cancelada');
           }
         } else if (abortControllerRef.current === abortController) {
-          console.error("Failed to fetch products:", err);
-          setError(err.message || 'Failed to load products. Please try again later.');
-          addToast(err.message || "The list could not be refreshed. Please try again.", "error");
+          console.error("Error al cargar los productos:", err);
+          setError(err.message || 'No se pudieron cargar los productos. Intente nuevamente más tarde.');
+          addToast(err.message || "No se pudo actualizar la lista. Intente nuevamente.", "error");
         }
       } finally {
         if (abortControllerRef.current === abortController) {
@@ -271,7 +271,7 @@ const ProductsView = () => {
     const mountDebounceReq = setTimeout(() => {
       fetchProducts();
     }, 15);
-    
+
     // Cleanup on unmount or re-run
     return () => {
       clearTimeout(mountDebounceReq);
@@ -349,7 +349,7 @@ const ProductsView = () => {
       addToast(res.message || TEXTS.products.deactivateSuccess, 'success');
     } catch (err) {
       clearTimeout(timeoutId);
-      const msg = err.name === 'AbortError' ? 'Deactivation request timed out' : (err.message || TEXTS.common.errorOccurred);
+      const msg = err.name === 'AbortError' ? 'La solicitud de desactivación agotó el tiempo de espera' : (err.message || TEXTS.common.errorOccurred);
       addToast(msg, 'error');
     } finally {
       setPageFrontend(1);
@@ -378,7 +378,7 @@ const ProductsView = () => {
       addToast(res.message || TEXTS.products.activateSuccess, 'success');
     } catch (err) {
       clearTimeout(timeoutId);
-      const msg = err.name === 'AbortError' ? 'Activation request timed out' : (err.message || TEXTS.common.errorOccurred);
+      const msg = err.name === 'AbortError' ? 'La solicitud de reactivación agotó el tiempo de espera' : (err.message || TEXTS.common.errorOccurred);
       addToast(msg, 'error');
     } finally {
       setPageFrontend(1);
@@ -391,7 +391,7 @@ const ProductsView = () => {
 
   // Check if we have active filters besides the defaults
   const hasActiveFilters = appliedSearch.trim().length > 0 || statusFilter !== 'ALL' || sortOrder !== 'ASCENDING';
-  
+
   // Register contextual shortcuts
   useKeyboardShortcuts(React.useMemo(() => ({
     'alt+n': () => navigate('/dashboard/products/new'),
@@ -432,10 +432,10 @@ const ProductsView = () => {
         <div className="toolbar-left">
           <div className="search-bar">
             <Search className="search-icon" size={18} />
-            <input 
+            <input
               ref={searchInputRef}
-              type="text" 
-              placeholder="Search by name or code..." 
+              type="text"
+              placeholder="Buscar por nombre o código..."
               value={searchTerm}
               onChange={(e) => {
                 setSearchTerm(e.target.value);
@@ -446,10 +446,10 @@ const ProductsView = () => {
             />
             <div className="search-actions">
               {searchTerm && (
-                <button 
-                  className="clear-search-btn" 
+                <button
+                  className="clear-search-btn"
                   onClick={handleClearSearch}
-                  title="Clear Search"
+                  title="Limpiar búsqueda"
                 >
                   <X size={16} />
                 </button>
@@ -457,13 +457,13 @@ const ProductsView = () => {
               <span className="search-hint">/</span>
             </div>
           </div>
-          
+
           <div className="filter-group">
             {/* Status Filter */}
             <div className="filter-item">
               <Filter size={16} className="filter-icon" />
-              <select 
-                value={statusFilter} 
+              <select
+                value={statusFilter}
                 onChange={(e) => {
                   setStatusFilter(e.target.value);
                   setPageFrontend(1);
@@ -472,9 +472,9 @@ const ProductsView = () => {
                 disabled={filtersLoading || statusOptions.length === 0}
               >
                 {filtersLoading ? (
-                  <option value="ALL">Loading...</option>
+                  <option value="ALL">Cargando...</option>
                 ) : statusOptions.length === 0 ? (
-                  <option value="ALL">All Status</option>
+                  <option value="ALL">Todos los estados</option>
                 ) : (
                   statusOptions.map(opt => (
                     <option key={opt.code} value={opt.code}>
@@ -484,12 +484,12 @@ const ProductsView = () => {
                 )}
               </select>
             </div>
-            
+
             {/* Sort Order Control */}
             <div className="filter-item">
-              <span style={{ fontSize: '0.9rem', color: '#6b7280', fontWeight: '500' }}>Order by Name:</span>
-              <select 
-                value={sortOrder} 
+              <span style={{ fontSize: '0.9rem', color: '#6b7280', fontWeight: '500' }}>Ordenar por nombre:</span>
+              <select
+                value={sortOrder}
                 onChange={(e) => {
                   setSortOrder(e.target.value);
                   setPageFrontend(1);
@@ -498,9 +498,9 @@ const ProductsView = () => {
                 disabled={filtersLoading || sortOptions.length === 0}
               >
                 {filtersLoading ? (
-                  <option value="ASCENDING">Loading...</option>
+                  <option value="ASCENDING">Cargando...</option>
                 ) : sortOptions.length === 0 ? (
-                  <option value="ASCENDING">Ascending</option>
+                  <option value="ASCENDING">Ascendente</option>
                 ) : (
                   sortOptions.map(opt => (
                     <option key={opt.code} value={opt.code}>
@@ -513,8 +513,8 @@ const ProductsView = () => {
             {/* Stock Level Filter */}
             <div className="filter-item">
               <span style={{ fontSize: '0.9rem', color: '#6b7280', fontWeight: '500' }}>{TEXTS.products.stockLevel}</span>
-              <select 
-                value={stockLevelFilter} 
+              <select
+                value={stockLevelFilter}
                 onChange={(e) => {
                   setStockLevelFilter(e.target.value);
                   setPageFrontend(1);
@@ -525,7 +525,7 @@ const ProductsView = () => {
                 {filtersLoading ? (
                   <option value="ALL">{TEXTS.common.loading}</option>
                 ) : stockLevelOptions.length === 0 ? (
-                  <option value="ALL">All Stock</option>
+                  <option value="ALL">Todos los niveles de stock</option>
                 ) : (
                   stockLevelOptions.map(opt => (
                     <option key={opt.code} value={opt.code}>
@@ -539,21 +539,21 @@ const ProductsView = () => {
         </div>
 
         <div className="toolbar-right">
-          <button 
-            className="btn-secondary" 
-            onClick={handleManualRefresh} 
+          <button
+            className="btn-secondary"
+            onClick={handleManualRefresh}
             disabled={loading}
           >
             <RefreshCw size={18} className={loading ? "spin-animation" : ""} />
-            <span>{loading ? 'Refreshing...' : 'Refresh'}</span>
+            <span>{loading ? 'Actualizando...' : 'Actualizar'}</span>
             <span className="btn-shortcut">Ctrl+Shift+K</span>
           </button>
-          <button 
+          <button
             className="btn-primary"
             onClick={() => navigate('/dashboard/products/new')}
           >
             <Plus size={18} />
-            <span>New Product</span>
+            <span>Nuevo Producto</span>
             <span className="btn-shortcut" style={{ backgroundColor: 'rgba(255, 255, 255, 0.2)', color: 'white', borderColor: 'rgba(255, 255, 255, 0.3)' }}>Alt+N</span>
           </button>
         </div>
@@ -563,7 +563,7 @@ const ProductsView = () => {
       <div className="table-card">
         {loading ? (
           <div className="loading-state">
-             <p>Loading products...</p>
+            <p>Cargando productos...</p>
           </div>
         ) : error ? (
           <div className="error-state">
@@ -571,9 +571,9 @@ const ProductsView = () => {
           </div>
         ) : products.length === 0 ? (
           <div className="empty-state">
-            {totalGlobalElements === 0 
-              ? <p>No products available</p>
-              : <p>No products match the search criteria</p>
+            {totalGlobalElements === 0
+              ? <p>No hay productos disponibles</p>
+              : <p>No existen productos que coincidan con los criterios de búsqueda</p>
             }
           </div>
         ) : (
@@ -581,18 +581,18 @@ const ProductsView = () => {
             <table className="data-table">
               <thead>
                 <tr>
-                  <th>Code</th>
-                  <th>Name</th>
-                  <th>Price</th>
+                  <th>Código</th>
+                  <th>Nombre</th>
+                  <th>Precio</th>
                   <th>Stock</th>
-                  <th>Status</th>
-                  <th className="text-right">Actions</th>
+                  <th>Estado</th>
+                  <th className="text-right">Acciones</th>
                 </tr>
               </thead>
               <tbody>
                 {products.map((product, index) => (
-                  <tr 
-                    key={product.productCode} 
+                  <tr
+                    key={product.productCode}
                     id={`product-row-${index}`}
                     onClick={() => handleRowClick(product.productCode)}
                     style={{ cursor: 'pointer' }}
@@ -624,13 +624,13 @@ const ProductsView = () => {
                     </td>
                     <td>
                       <span className={`status-badge ${(product.productStatus?.code || '').toLowerCase()}`}>
-                        {product.productStatus?.label || 'Unknown'}
+                        {product.productStatus?.label || 'Desconocido'}
                       </span>
                     </td>
                     <td className="actions-cell text-right" onClick={(e) => e.stopPropagation()}>
-                      <button 
-                        className="action-btn edit-btn" 
-                        title="Edit Product"
+                      <button
+                        className="action-btn edit-btn"
+                        title="Editar producto"
                         onClick={(e) => {
                           e.stopPropagation();
                           handleEditClick(product.productCode);
@@ -639,9 +639,9 @@ const ProductsView = () => {
                         <Edit2 size={16} />
                       </button>
                       {product.productStatus?.code === 'ACTIVE' ? (
-                        <button 
-                          className="action-btn deactivate-btn" 
-                          title="Deactivate Product"
+                        <button
+                          className="action-btn deactivate-btn"
+                          title="Desactivar producto"
                           disabled={actionLoading}
                           onClick={(e) => {
                             e.stopPropagation();
@@ -651,9 +651,9 @@ const ProductsView = () => {
                           <Ban size={16} />
                         </button>
                       ) : (
-                        <button 
-                          className="action-btn activate-btn" 
-                          title="Activate Product"
+                        <button
+                          className="action-btn activate-btn"
+                          title="Reactivar producto"
                           disabled={actionLoading}
                           onClick={(e) => {
                             e.stopPropagation();
@@ -670,23 +670,23 @@ const ProductsView = () => {
             </table>
           </div>
         )}
-        
+
         {/* Pagination Bar */}
         {!loading && products.length > 0 && (
-          <Pagination 
+          <Pagination
             currentPage={pageFrontend}
             totalPages={totalPages}
             totalElements={totalElements}
             onPageChange={setPageFrontend}
-            itemName="products"
+            itemName="productos"
           />
         )}
       </div>
 
       <ConfirmModal
         isOpen={isModalOpen}
-        title="Confirm Deactivation"
-        message="Are you sure you want to deactivate this product?"
+        title="Confirmar desactivación"
+        message="¿Está seguro de que desea desactivar este producto?"
         onConfirm={confirmDeactivateProduct}
         onCancel={() => {
           setIsModalOpen(false);
@@ -697,15 +697,15 @@ const ProductsView = () => {
 
       <ConfirmModal
         isOpen={isActivateModalOpen}
-        title="Confirm Activation"
-        message="Are you sure you want to activate this product?"
+        title="Confirmar reactivación"
+        message="¿Está seguro de que desea reactivar este producto?"
         onConfirm={confirmActivateProduct}
         onCancel={() => {
           setIsActivateModalOpen(false);
           setProductToActivate(null);
         }}
         isConfirming={actionLoading}
-        confirmText="Activate"
+        confirmText="Reactivar"
         confirmButtonTheme="success"
       />
     </div>

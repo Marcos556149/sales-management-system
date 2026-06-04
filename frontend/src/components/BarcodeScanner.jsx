@@ -8,7 +8,7 @@ const BarcodeScanner = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { addToast } = useToast();
-  
+
   const bufferRef = useRef('');
   const timeoutRef = useRef(null);
 
@@ -17,8 +17,8 @@ const BarcodeScanner = () => {
       // Global scanner navigation ONLY allowed in Products or Sales catalog screens
       const allowedPaths = ['/dashboard/products', '/dashboard/sales'];
       if (
-        e.target.tagName === 'INPUT' || 
-        e.target.tagName === 'TEXTAREA' || 
+        e.target.tagName === 'INPUT' ||
+        e.target.tagName === 'TEXTAREA' ||
         e.target.isContentEditable ||
         !allowedPaths.includes(location.pathname)
       ) {
@@ -53,7 +53,7 @@ const BarcodeScanner = () => {
     };
 
     window.addEventListener('keydown', handleKeyDown, true); // Use capture phase for global priority
-    
+
     return () => {
       window.removeEventListener('keydown', handleKeyDown, true);
       if (timeoutRef.current) clearTimeout(timeoutRef.current);
@@ -77,9 +77,9 @@ const BarcodeScanner = () => {
       // Only show error if it looks like a failed scan (more than 2 chars)
       // Small buffers are usually accidental keystrokes or shortcuts
       if (code.length > 2) {
-        addToast('Barcode not recognized, please try again', 'error');
+        addToast('No se pudo reconocer el código de barras. Inténtelo nuevamente.', 'error');
       }
-      return; 
+      return;
     }
 
     const controller = new AbortController();
@@ -89,7 +89,7 @@ const BarcodeScanner = () => {
       // Use the service for consistency and to get the data in one go
       const response = await productService.getProduct(code, { signal: controller.signal });
       clearTimeout(timeoutId);
-      
+
       // Handle navigation based on context
       if (location.pathname === '/dashboard/sales') {
         // From Sales: go to Register Sale and open add modal
@@ -98,23 +98,23 @@ const BarcodeScanner = () => {
         // From Products: go to Product Detail
         navigate(`/dashboard/products/${code}`, { state: { product: response.data } });
       }
-      
+
     } catch (err) {
       clearTimeout(timeoutId);
-      
+
       if (err.name === 'AbortError') {
-        addToast('Product search timed out', 'error');
+        addToast('La búsqueda del producto excedió el tiempo de espera.', 'error');
       } else if (err.status === 404 || err.status === 400) {
         if (location.pathname === '/dashboard/sales') {
           // From Sales: just show error toast, don't navigate to register product
-          addToast(err.message || 'Product not found in system', 'error');
+          addToast(err.message || 'Producto no encontrado en el sistema', 'error');
         } else {
           // From Products: navigate to create
           navigate(`/dashboard/products/new?productCode=${code}`);
         }
       } else {
         // Network or other error
-        addToast(err.message || 'Error searching for product', 'error');
+        addToast(err.message || 'Error al buscar el producto', 'error');
       }
     }
   };

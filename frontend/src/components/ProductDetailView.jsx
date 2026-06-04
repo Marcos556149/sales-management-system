@@ -20,7 +20,7 @@ const useProductDetail = (productCode, initialProduct = null) => {
 
   useEffect(() => {
     let isMounted = true;
-    
+
     // If we already have the product from navigation state, don't fetch on mount
     if (product && refreshTrigger === 0) {
       return;
@@ -34,14 +34,14 @@ const useProductDetail = (productCode, initialProduct = null) => {
       try {
         const response = await productService.getProduct(productCode, { signal: controller.signal });
         clearTimeout(timeoutId);
-        
+
         if (isMounted) {
           setProduct(response.data);
         }
       } catch (err) {
         clearTimeout(timeoutId);
         if (isMounted) {
-          const msg = err.name === 'AbortError' ? 'Product request timed out' : (err.message || TEXTS.common.errorOccurred);
+          const msg = err.name === 'AbortError' ? 'La solicitud del producto agotó el tiempo de espera' : (err.message || TEXTS.common.errorOccurred);
           setError(msg);
         }
       } finally {
@@ -67,13 +67,13 @@ const ProductDetailView = () => {
   const { id: productCode } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
-  
+
   const { product, loading, error, refetch, updateProduct } = useProductDetail(productCode, location.state?.product);
   const [actionLoading, setActionLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isActivateModalOpen, setIsActivateModalOpen] = useState(false);
   const { addToast } = useToast();
-  
+
   // Register contextual shortcuts
   useKeyboardShortcuts(React.useMemo(() => ({
     'ctrl+b': () => handleBack(),
@@ -106,7 +106,7 @@ const ProductDetailView = () => {
       updateProduct(res.data);
     } catch (err) {
       clearTimeout(timeoutId);
-      const msg = err.name === 'AbortError' ? 'Deactivation request timed out' : (err.message || TEXTS.common.errorOccurred);
+      const msg = err.name === 'AbortError' ? 'La solicitud de desactivación agotó el tiempo de espera' : (err.message || TEXTS.common.errorOccurred);
       addToast(msg, 'error');
     } finally {
       setActionLoading(false);
@@ -129,7 +129,7 @@ const ProductDetailView = () => {
       updateProduct(res.data);
     } catch (err) {
       clearTimeout(timeoutId);
-      const msg = err.name === 'AbortError' ? 'Activation request timed out' : (err.message || TEXTS.common.errorOccurred);
+      const msg = err.name === 'AbortError' ? 'La solicitud de reactivación agotó el tiempo de espera' : (err.message || TEXTS.common.errorOccurred);
       addToast(msg, 'error');
     } finally {
       setActionLoading(false);
@@ -139,7 +139,7 @@ const ProductDetailView = () => {
 
   const handleEdit = async () => {
     if (actionLoading) return;
-    
+
     setActionLoading(true);
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 8000);
@@ -151,9 +151,9 @@ const ProductDetailView = () => {
     } catch (err) {
       clearTimeout(timeoutId);
       if (err.status === 400) {
-        addToast(err.message || `Product with code ${productCode} not found`, 'error');
+        addToast(err.message || `No se encontró el producto con código ${productCode}`, 'error');
       } else {
-        const msg = err.name === 'AbortError' ? 'Product check timed out' : (err.message || TEXTS.common.errorOccurred);
+        const msg = err.name === 'AbortError' ? 'La verificación del producto agotó el tiempo de espera' : (err.message || TEXTS.common.errorOccurred);
         addToast(msg, 'error');
       }
     } finally {
@@ -167,11 +167,11 @@ const ProductDetailView = () => {
         <div className="detail-toolbar">
           <button className="btn-secondary" onClick={handleBack}>
             <ArrowLeft size={16} />
-            <span>Back to Products</span>
+            <span>Volver a Productos</span>
           </button>
         </div>
         <div className="detail-card" style={{ padding: '48px', textAlign: 'center', color: 'var(--text-secondary)' }}>
-          <p>Loading product details...</p>
+          <p>Cargando detalles del producto...</p>
         </div>
       </div>
     );
@@ -183,11 +183,11 @@ const ProductDetailView = () => {
         <div className="detail-toolbar">
           <button className="btn-secondary" onClick={handleBack}>
             <ArrowLeft size={16} />
-            <span>Back to Products</span>
+            <span>Volver a Productos</span>
           </button>
         </div>
         <div className="not-found-card">
-          <h2>{error || "Product not found"}</h2>
+          <h2>{error || "Producto no encontrado"}</h2>
         </div>
       </div>
     );
@@ -199,39 +199,39 @@ const ProductDetailView = () => {
       <div className="detail-toolbar">
         <button className="btn-secondary" onClick={handleBack}>
           <ArrowLeft size={16} />
-          <span>Back to Products</span>
+          <span>Volver a Productos</span>
           <span className="btn-shortcut">Ctrl+B</span>
         </button>
-        
+
         <div className="detail-actions">
-          <button 
+          <button
             className="btn-outline-primary whitespace-nowrap"
             disabled={actionLoading}
             onClick={handleEdit}
           >
             <Edit2 size={16} />
-            <span>Edit</span>
+            <span>Editar</span>
             <span className="btn-shortcut">E</span>
           </button>
-          
+
           {product.productStatus?.code === 'ACTIVE' ? (
-            <button 
+            <button
               className="btn-outline-danger whitespace-nowrap"
               disabled={actionLoading}
               onClick={handleDeactivate}
             >
               <Ban size={16} />
-              <span>Deactivate</span>
+              <span>Desactivar</span>
               <span className="btn-shortcut">A</span>
             </button>
           ) : (
-            <button 
+            <button
               className="btn-outline-success whitespace-nowrap"
               disabled={actionLoading}
               onClick={handleActivate}
             >
               <CheckCircle2 size={16} />
-              <span>Activate</span>
+              <span>Reactivar</span>
               <span className="btn-shortcut">A</span>
             </button>
           )}
@@ -247,24 +247,24 @@ const ProductDetailView = () => {
             </div>
             <div>
               <h2 className="detail-title">{product.productName}</h2>
-              <p className="detail-subtitle">Code: <span className="font-mono">{product.productCode}</span></p>
+              <p className="detail-subtitle">Código: <span className="font-mono">{product.productCode}</span></p>
             </div>
           </div>
           {/* dynamic status class using the status code */}
           <span className={`status-badge large-badge ${(product.productStatus?.code || '').toLowerCase()}`}>
-            {product.productStatus?.label || 'Unknown'}
+            {product.productStatus?.label || 'Desconocido'}
           </span>
         </div>
 
         <div className="detail-body">
           <div className="info-grid">
             <div className="info-box">
-              <h3 className="info-label">Price</h3>
+              <h3 className="info-label">Precio</h3>
               <p className="info-value price-value" title={`$${product.productPrice?.toFixed(2) ?? '0.00'}`}>
                 ${product.productPrice?.toFixed(2) ?? '0.00'}
               </p>
             </div>
-            
+
             <div className="info-box">
               <h3 className="info-label">{TEXTS.products.stock}</h3>
               <div className="stock-info">
@@ -287,14 +287,14 @@ const ProductDetailView = () => {
             </div>
 
             <div className="info-box">
-              <h3 className="info-label">Minimum Stock</h3>
+              <h3 className="info-label">Stock Mínimo</h3>
               <p className="info-value" title={product.minimumStock ?? 0}>{product.minimumStock ?? 0}</p>
             </div>
 
             <div className="info-box">
-              <h3 className="info-label">Unit of Measure</h3>
-              <p className="info-value unit-only" title={product.unitOfMeasure?.label || 'Unknown'}>
-                {product.unitOfMeasure?.label || 'Unknown'}
+              <h3 className="info-label">Unidad de Medida</h3>
+              <p className="info-value unit-only" title={product.unitOfMeasure?.label || 'Desconocido'}>
+                {product.unitOfMeasure?.label || 'Desconocido'}
               </p>
             </div>
           </div>
@@ -303,8 +303,8 @@ const ProductDetailView = () => {
 
       <ConfirmModal
         isOpen={isModalOpen}
-        title="Confirm Deactivation"
-        message="Are you sure you want to deactivate this product?"
+        title="Confirmar Desactivación"
+        message="¿Está seguro de que desea desactivar este producto?"
         onConfirm={confirmDeactivate}
         onCancel={() => setIsModalOpen(false)}
         isConfirming={actionLoading}
@@ -312,12 +312,12 @@ const ProductDetailView = () => {
 
       <ConfirmModal
         isOpen={isActivateModalOpen}
-        title="Confirm Activation"
-        message="Are you sure you want to activate this product?"
+        title="Confirmar Reactivación"
+        message="¿Está seguro de que desea reactivar este producto?"
         onConfirm={confirmActivate}
         onCancel={() => setIsActivateModalOpen(false)}
         isConfirming={actionLoading}
-        confirmText="Activate"
+        confirmText="Reactivar"
         confirmButtonTheme="success"
       />
     </div>

@@ -1,14 +1,14 @@
 import React from 'react';
 import './ConfirmModal.css';
 
-const ConfirmModal = ({ 
-  isOpen, 
-  title, 
-  message, 
-  onConfirm, 
-  onCancel, 
+const ConfirmModal = ({
+  isOpen,
+  title,
+  message,
+  onConfirm,
+  onCancel,
   isConfirming,
-  confirmText = 'Deactivate',
+  confirmText = 'Desactivar',
   confirmButtonTheme = 'danger'
 }) => {
   React.useEffect(() => {
@@ -25,7 +25,7 @@ const ConfirmModal = ({
         e.preventDefault();
         return;
       }
-      
+
       if (e.key === 'Enter') {
         e.preventDefault();
         onConfirm();
@@ -50,19 +50,19 @@ const ConfirmModal = ({
         <h3 className="confirm-modal-title">{title}</h3>
         <p className="confirm-modal-message">{message}</p>
         <div className="confirm-modal-actions">
-          <button 
-            className="confirm-modal-btn confirm-modal-btn-secondary" 
-            onClick={onCancel} 
+          <button
+            className="confirm-modal-btn confirm-modal-btn-secondary"
+            onClick={onCancel}
             disabled={isConfirming}
           >
-            Cancel
+            Cancelar
           </button>
-          <button 
-            className={`confirm-modal-btn confirm-modal-btn-${confirmButtonTheme}`} 
-            onClick={onConfirm} 
+          <button
+            className={`confirm-modal-btn confirm-modal-btn-${confirmButtonTheme}`}
+            onClick={onConfirm}
             disabled={isConfirming}
           >
-            {isConfirming ? 'Processing...' : confirmText}
+            {isConfirming ? 'Procesando...' : confirmText}
           </button>
         </div>
       </div>

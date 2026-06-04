@@ -14,13 +14,13 @@ const ProductCreateView = () => {
   const location = useLocation();
   const { addToast } = useToast();
   const { setIsCached } = useProductsContext();
-  
+
   const productNameRef = useRef(null);
 
   // --- Navigation Guard ---
   const [isDirty, setIsDirty] = useState(false);
   const isSubmittingRef = useRef(false);
-  
+
   // Intercept navigation if there are unsaved changes
   const blocker = useBlocker(
     ({ nextLocation }) =>
@@ -58,7 +58,7 @@ const ProductCreateView = () => {
       } catch (err) {
         clearTimeout(timeoutId);
         if (isMounted) {
-          const errMsg = err.name === 'AbortError' ? 'Request timed out' : 'Could not load unit options';
+          const errMsg = err.name === 'AbortError' ? 'La solicitud excedió el tiempo de espera' : 'No se pudieron cargar las unidades de medida';
           setGeneralError(errMsg);
         }
       } finally {
@@ -75,7 +75,7 @@ const ProductCreateView = () => {
   useEffect(() => {
     const searchParams = new URLSearchParams(location.search);
     const codeFromUrl = searchParams.get('productCode');
-    
+
     if (codeFromUrl) {
       setFormData(prev => ({ ...prev, productCode: codeFromUrl }));
       // Focus on product name if code is provided via scanner
@@ -114,18 +114,18 @@ const ProductCreateView = () => {
       e.preventDefault();
       return;
     }
-    
+
     // Allow: backspace, delete, tab, escape, enter, .
     if ([8, 46, 9, 27, 13, 110, 190].includes(e.keyCode) ||
-        // Allow: Ctrl+A, Command+A
-        (e.keyCode === 65 && (e.ctrlKey === true || e.metaKey === true)) ||
-        // Allow: home, end, left, right, down, up
-        (e.keyCode >= 35 && e.keyCode <= 40)) {
-             return;
+      // Allow: Ctrl+A, Command+A
+      (e.keyCode === 65 && (e.ctrlKey === true || e.metaKey === true)) ||
+      // Allow: home, end, left, right, down, up
+      (e.keyCode >= 35 && e.keyCode <= 40)) {
+      return;
     }
     // Ensure that it is a number and stop the keypress
     if ((e.shiftKey || (e.keyCode < 48 || e.keyCode > 57)) && (e.keyCode < 96 || e.keyCode > 105)) {
-        e.preventDefault();
+      e.preventDefault();
     }
   };
 
@@ -133,77 +133,77 @@ const ProductCreateView = () => {
     const errors = {};
     const code = formData.productCode.trim();
     if (!code) {
-      errors.productCode = "Product code is required";
+      errors.productCode = "El código de producto es obligatorio";
     } else if (code.length > 100) {
-      errors.productCode = "Product code must not exceed 100 characters";
+      errors.productCode = "El código del producto no debe superar los 100 caracteres";
     }
 
     const name = formData.productName.trim();
     if (!name) {
-      errors.productName = "Product name is required";
+      errors.productName = "El nombre del producto es obligatorio";
     } else if (name.length > 100) {
-      errors.productName = "Product name must not exceed 100 characters";
+      errors.productName = "El nombre del producto no debe superar los 100 caracteres";
     }
-    
+
     const numRegex = /^-?\d+(\.\d{1,2})?$/;
 
     const priceRaw = String(formData.productPrice).trim();
     if (priceRaw === '') {
-      errors.productPrice = "Product price is required";
+      errors.productPrice = "El precio del producto es obligatorio";
     } else if (!numRegex.test(priceRaw)) {
-      errors.productPrice = "Product price must be a valid number with up to 2 decimals (use . as separator)";
+      errors.productPrice = "El precio debe ser un número válido con hasta 2 decimales (use . como separador)";
     } else {
       const price = Number(priceRaw);
       if (price < 0) {
-        errors.productPrice = "Product price must be greater than or equal to 0";
+        errors.productPrice = "El precio del producto debe ser mayor o igual a 0";
       } else {
         const parts = price.toString().split('.');
         if (parts[0].length > 10) {
-          errors.productPrice = "Product price must have up to 10 integer digits";
+          errors.productPrice = "El precio del producto debe tener hasta 10 dígitos enteros";
         }
       }
     }
 
     const stockRaw = String(formData.productStock).trim();
     if (stockRaw === '') {
-      errors.productStock = "Product stock is required";
+      errors.productStock = "El stock del producto es obligatorio";
     } else if (!numRegex.test(stockRaw)) {
-      errors.productStock = "Product stock must be a valid number with up to 2 decimals (use . as separator)";
+      errors.productStock = "El stock debe ser un número válido con hasta 2 decimales (use . como separador)";
     } else {
       const stock = Number(stockRaw);
       if (stock < 0) {
-        errors.productStock = "Product stock must be greater than or equal to 0";
+        errors.productStock = "El stock del producto debe ser mayor o igual a 0";
       } else {
         const parts = stock.toString().split('.');
         if (parts[0].length > 10) {
-          errors.productStock = "Product stock must have up to 10 integer digits";
+          errors.productStock = "El stock debe tener hasta 10 dígitos enteros";
         } else if (formData.unitOfMeasure === 'UNITS' && !Number.isInteger(stock)) {
-          errors.productStock = "Stock must be an integer value when unit of measure is Units";
+          errors.productStock = "El stock debe ser un valor entero cuando la unidad de medida es 'Unidades'";
         }
       }
     }
 
     const minStockRaw = String(formData.minimumStock).trim();
     if (minStockRaw === '') {
-      errors.minimumStock = "Minimum stock is required";
+      errors.minimumStock = "El stock mínimo es obligatorio";
     } else if (!numRegex.test(minStockRaw)) {
-      errors.minimumStock = "Minimum stock must be a valid number with up to 2 decimals (use . as separator)";
+      errors.minimumStock = "El stock mínimo debe ser un número válido con hasta 2 decimales (use . como separador)";
     } else {
       const minStock = Number(minStockRaw);
       if (minStock < 0) {
-        errors.minimumStock = "Minimum stock must be greater than or equal to 0";
+        errors.minimumStock = "El stock mínimo debe ser mayor o igual a 0";
       } else {
         const parts = minStock.toString().split('.');
         if (parts[0].length > 10) {
-          errors.minimumStock = "Minimum stock must have up to 10 integer digits";
+          errors.minimumStock = "El stock mínimo debe tener hasta 10 dígitos enteros";
         } else if (formData.unitOfMeasure === 'UNITS' && !Number.isInteger(minStock)) {
-          errors.minimumStock = "Minimum stock must be an integer value when unit of measure is Units";
+          errors.minimumStock = "El stock mínimo debe ser un valor entero cuando la unidad de medida es 'Unidades'";
         }
       }
     }
 
     if (!formData.unitOfMeasure) {
-      errors.unitOfMeasure = "Unit of measure is required";
+      errors.unitOfMeasure = "La unidad de medida es obligatoria";
     }
 
     setFormErrors(errors);
@@ -234,24 +234,24 @@ const ProductCreateView = () => {
       const res = await productService.createProduct(payload, { signal: controller.signal });
       clearTimeout(timeoutId);
       addToast(res.message || TEXTS.products.createSuccess, "success");
-      
+
       // IMPORTANT: Use the ref to bypass the navigation guard
       isSubmittingRef.current = true;
-      
-      navigate(`/dashboard/products/${res.data.productCode}`, { 
+
+      navigate(`/dashboard/products/${res.data.productCode}`, {
         state: { product: res.data },
-        replace: true 
+        replace: true
       });
 
     } catch (err) {
       clearTimeout(timeoutId);
       if (err.name === 'AbortError') {
-        setGeneralError('The request timed out. Please check your connection.');
-        addToast('Request timed out', 'error');
+        setGeneralError('La solicitud excedió el tiempo de espera. Verifique su conexión.');
+        addToast('La solicitud excedió el tiempo de espera', 'error');
       } else {
         const data = err.details || {};
         const errorData = data.error || {};
-        
+
         // Backend standardized error format handling
         if (err.status === 400) {
           if (errorData.field) {
@@ -262,12 +262,12 @@ const ProductCreateView = () => {
             setFormErrors(data);
             Object.values(data).forEach(msg => addToast(msg, 'error'));
           } else {
-            const msg = errorData.message || err.message || 'Invalid data provided';
+            const msg = errorData.message || err.message || 'Los datos proporcionados son inválidos';
             setGeneralError(msg);
             addToast(msg, 'error');
           }
         } else {
-          const msg = err.message || 'An error occurred while creating the product';
+          const msg = err.message || 'Ocurrió un error al registrar el producto';
           setGeneralError(msg);
           addToast(msg, 'error');
         }
@@ -293,7 +293,7 @@ const ProductCreateView = () => {
       <div className="detail-toolbar">
         <button type="button" className="btn-secondary" onClick={() => navigate('/dashboard/products')}>
           <ArrowLeft size={16} />
-          <span>Back to Products</span>
+          <span>Volver a Productos</span>
           <span className="btn-shortcut">Ctrl+B</span>
         </button>
       </div>
@@ -304,24 +304,24 @@ const ProductCreateView = () => {
             <Box size={28} className="form-main-icon" />
           </div>
           <div>
-            <h2 className="form-title">Register New Product</h2>
-            <p className="form-subtitle">Enter the details below to create a new product in the system.</p>
+            <h2 className="form-title">Registrar Nuevo Producto</h2>
+            <p className="form-subtitle">Ingrese los detalles a continuación para crear un nuevo producto en el sistema.</p>
           </div>
         </div>
-        
+
         <form onSubmit={handleSubmit} className="product-form" noValidate>
           <div className="form-grid">
             <div className="form-group">
-              <label htmlFor="productCode">Product Code <span className="required">*</span></label>
-              <input 
-                type="text" 
-                id="productCode" 
-                name="productCode" 
+              <label htmlFor="productCode">Código de Producto <span className="required">*</span></label>
+              <input
+                type="text"
+                id="productCode"
+                name="productCode"
                 className={getInputClass('productCode')}
-                value={formData.productCode} 
+                value={formData.productCode}
                 onChange={handleChange}
                 disabled={submitting}
-                placeholder="Ex. P-1004"
+                placeholder="Ingrese el código del producto"
               />
               <p className={`error-text ${formErrors.productCode ? 'visible' : ''}`}>
                 {formErrors.productCode || '\u00A0'}
@@ -330,24 +330,24 @@ const ProductCreateView = () => {
 
             <div className="form-group">
               <label htmlFor="productName" className="label-with-tooltip">
-                <span>Product Name <span className="required">*</span></span>
-                <div className="tooltip-container" tabIndex="0" aria-label="Use a clear and specific name to distinguish this product from similar products.">
+                <span>Nombre del Producto <span className="required">*</span></span>
+                <div className="tooltip-container" tabIndex="0" aria-label="Utilice un nombre claro y específico para distinguir este producto de productos similares.">
                   <Info size={14} className="info-icon" />
                   <span className="tooltip-text" aria-hidden="true">
-                    Use a clear and specific name to distinguish this product from similar products.
+                    Utilice un nombre claro y específico para distinguir este producto de productos similares.
                   </span>
                 </div>
               </label>
-              <input 
+              <input
                 ref={productNameRef}
-                type="text" 
-                id="productName" 
-                name="productName" 
+                type="text"
+                id="productName"
+                name="productName"
                 className={getInputClass('productName')}
-                value={formData.productName} 
+                value={formData.productName}
                 onChange={handleChange}
                 disabled={submitting}
-                placeholder="Ex. Coca Cola 2.25L"
+                placeholder="Ingrese el nombre del producto"
               />
               <p className={`error-text ${formErrors.productName ? 'visible' : ''}`}>
                 {formErrors.productName || '\u00A0'}
@@ -355,13 +355,13 @@ const ProductCreateView = () => {
             </div>
 
             <div className="form-group">
-              <label htmlFor="productPrice">Price ($) <span className="required">*</span></label>
-              <input 
-                type="text" 
-                id="productPrice" 
-                name="productPrice" 
+              <label htmlFor="productPrice">Precio ($) <span className="required">*</span></label>
+              <input
+                type="text"
+                id="productPrice"
+                name="productPrice"
                 className={getInputClass('productPrice')}
-                value={formData.productPrice} 
+                value={formData.productPrice}
                 onChange={handleChange}
                 onKeyDown={handleKeyDownNumeric}
                 disabled={submitting}
@@ -373,16 +373,16 @@ const ProductCreateView = () => {
             </div>
 
             <div className="form-group">
-              <label htmlFor="unitOfMeasure">Unit of Measure <span className="required">*</span></label>
-              <select 
-                id="unitOfMeasure" 
-                name="unitOfMeasure" 
+              <label htmlFor="unitOfMeasure">Unidad de Medida <span className="required">*</span></label>
+              <select
+                id="unitOfMeasure"
+                name="unitOfMeasure"
                 className={getInputClass('unitOfMeasure')}
-                value={formData.unitOfMeasure} 
+                value={formData.unitOfMeasure}
                 onChange={handleChange}
                 disabled={loadingOpts || submitting}
               >
-                {loadingOpts ? <option value="UNITS">Loading...</option> : null}
+                {loadingOpts ? <option value="UNITS">Cargando...</option> : null}
                 {unitOfMeasureOptions.map(opt => (
                   <option key={opt.code} value={opt.code}>{opt.label}</option>
                 ))}
@@ -393,13 +393,13 @@ const ProductCreateView = () => {
             </div>
 
             <div className="form-group">
-              <label htmlFor="productStock">Initial Stock <span className="required">*</span></label>
-              <input 
-                type="text" 
-                id="productStock" 
-                name="productStock" 
+              <label htmlFor="productStock">Stock Inicial <span className="required">*</span></label>
+              <input
+                type="text"
+                id="productStock"
+                name="productStock"
                 className={getInputClass('productStock')}
-                value={formData.productStock} 
+                value={formData.productStock}
                 onChange={handleChange}
                 onKeyDown={handleKeyDownNumeric}
                 disabled={submitting}
@@ -411,18 +411,28 @@ const ProductCreateView = () => {
             </div>
 
             <div className="form-group">
-              <label htmlFor="minimumStock">Minimum Stock <span className="required">*</span></label>
-              <input 
-                type="text" 
-                id="minimumStock" 
-                name="minimumStock" 
+
+              <label htmlFor="minimumStock" className="label-with-tooltip">
+                <span>Stock Mínimo <span className="required">*</span></span>
+                <div className="tooltip-container" tabIndex="0" aria-label="Es la cantidad mínima recomendada para este producto. Si el stock disponible es igual o inferior a este valor, el sistema alertará que el producto tiene stock bajo.">
+                  <Info size={14} className="info-icon" />
+                  <span className="tooltip-text" aria-hidden="true">
+                    Es la cantidad mínima recomendada para este producto. Si el stock disponible es igual o inferior a este valor, el sistema alertará que el producto tiene stock bajo.
+                  </span>
+                </div>
+              </label>
+              <input
+                type="text"
+                id="minimumStock"
+                name="minimumStock"
                 className={getInputClass('minimumStock')}
-                value={formData.minimumStock} 
+                value={formData.minimumStock}
                 onChange={handleChange}
                 onKeyDown={handleKeyDownNumeric}
                 disabled={submitting}
                 placeholder="0.00"
               />
+
               <p className={`error-text ${formErrors.minimumStock ? 'visible' : ''}`}>
                 {formErrors.minimumStock || '\u00A0'}
               </p>
@@ -430,23 +440,23 @@ const ProductCreateView = () => {
           </div>
 
           <div className="form-actions">
-            <button 
-              type="button" 
-              className="btn-secondary" 
+            <button
+              type="button"
+              className="btn-secondary"
               onClick={() => navigate('/dashboard/products')}
               disabled={submitting}
             >
               <X size={18} />
-              <span>Cancel</span>
+              <span>Cancelar</span>
               <span className="btn-shortcut">Esc</span>
             </button>
-            <button 
-              type="submit" 
-              className="btn-primary form-submit-btn" 
+            <button
+              type="submit"
+              className="btn-primary form-submit-btn"
               disabled={submitting}
             >
               <Save size={18} />
-              <span>{submitting ? 'Registering...' : 'Register Product'}</span>
+              <span>{submitting ? 'Registrando...' : 'Registrar Producto'}</span>
               <span className="btn-shortcut" style={{ backgroundColor: 'rgba(255, 255, 255, 0.2)', color: 'white', borderColor: 'rgba(255, 255, 255, 0.3)' }}>Ctrl+Enter</span>
             </button>
           </div>
@@ -455,11 +465,11 @@ const ProductCreateView = () => {
 
       <ConfirmModal
         isOpen={blocker.state === "blocked"}
-        title="Unsaved Changes"
-        message="You have unsaved changes. Are you sure you want to leave this page?"
+        title="Cambios sin guardar"
+        message="Tienes cambios sin guardar. ¿Estás seguro de que deseas salir de esta página?"
         onConfirm={() => blocker.proceed()}
         onCancel={() => blocker.reset()}
-        confirmText="Leave"
+        confirmText="Salir"
         confirmButtonTheme="danger"
       />
     </div>

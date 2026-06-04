@@ -27,7 +27,7 @@ public class ProductUpdateRequestDTO {
      * </p>
      */
     @NotBlank(message = "El nombre del producto es obligatorio")
-    @Size(max = 100, message = "El nombre del producto no puede superar los 100 caracteres")
+    @Size(max = 100, message = "El nombre del producto no debe superar los 100 caracteres")
     private String productName;
 
     /**
