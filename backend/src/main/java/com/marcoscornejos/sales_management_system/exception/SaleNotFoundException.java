@@ -1,21 +1,21 @@
 package com.marcoscornejos.sales_management_system.exception;
 
 /**
- * Exception thrown when a sale cannot be found.
+ * Excepción lanzada cuando no se puede encontrar una venta.
  *
  * <p>
- * Typically used when a sale lookup by ID or filters
- * does not return any result.
+ * Generalmente se utiliza cuando una búsqueda de venta por identificador
+ * o filtros no devuelve ningún resultado.
  * </p>
  *
  * <p>
- * This exception uses the standardized error format:
+ * Esta excepción utiliza el formato estandarizado de errores:
  * </p>
  *
  * <pre>
  * {
  *   "code": "SALE_NOT_FOUND",
- *   "message": "Human readable message",
+ *   "message": "Mensaje legible para el usuario",
  *   "field": null
  * }
  * </pre>
@@ -25,9 +25,9 @@ public class SaleNotFoundException extends SaleException {
     private static final String CODE = "SALE_NOT_FOUND";
 
     /**
-     * Creates an exception when a sale is not found.
+     * Crea una excepción cuando una venta no es encontrada.
      *
-     * @param message human-readable error message
+     * @param message mensaje de error legible para el usuario
      */
     public SaleNotFoundException(String message) {
         super(CODE, message, null);

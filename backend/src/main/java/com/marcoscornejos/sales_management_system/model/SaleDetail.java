@@ -1,16 +1,16 @@
 /**
- * Represents a line item within a sale.
+ * Representa una línea de detalle dentro de una venta.
  *
- * <p>Each sale detail links a product to a sale, including
- * the quantity sold, the unit of measure at the time of the sale,
- * the sale price at the moment of the transaction, and the calculated subtotal.</p>
+ * <p>Cada detalle de venta vincula un producto a una venta, incluyendo
+ * la cantidad vendida, la unidad de medida al momento de la venta,
+ * el precio de venta al momento de la transacción y el subtotal calculado.</p>
  *
- * <p>This entity preserves historical transactional data by storing
- * a snapshot of product information at the time of the sale, including:
- * product name, sale price, and unit of measure.</p>
+ * <p>Esta entidad preserva datos históricos de la transacción almacenando
+ * una instantánea de la información del producto al momento de la venta, incluyendo:
+ * nombre del producto, precio de venta y unidad de medida.</p>
  *
- * <p>This ensures that changes in product information (such as name,
- * price, or unit of measure) do not affect past sales records.</p>
+ * <p>Esto garantiza que los cambios en la información del producto (como nombre,
+ * precio o unidad de medida) no afecten los registros de ventas anteriores.</p>
  */
 
 package com.marcoscornejos.sales_management_system.model;
@@ -31,7 +31,7 @@ import java.math.BigDecimal;
         allocationSize = 1)
 public class SaleDetail {
 
-    /** Unique identifier of the sale detail. */
+    /** Identificador único del detalle de venta. */
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE,
             generator = "sale_detail_seq")
@@ -39,31 +39,33 @@ public class SaleDetail {
     private Long saleDetailId;
 
     /**
-     * Product associated with this sale detail.
-     * Represents the item being sold.
-     * Loaded lazily to avoid unnecessary queries unless accessed.
-     * */
+     * Producto asociado a este detalle de venta.
+     * Representa el artículo vendido.
+     * Se carga de forma diferida (lazy) para evitar consultas innecesarias
+     * hasta que sea accedido.
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_code")
     private Product product;
 
     /**
-     * Sale to which this detail belongs.
-     * Loaded lazily as it is typically accessed through the sale context.
+     * Venta a la que pertenece este detalle.
+     * Se carga de forma diferida (lazy), ya que normalmente se accede
+     * a través del contexto de la venta.
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "sale_id")
     private Sale sale;
 
-    /** Quantity of the product sold. */
+    /** Cantidad del producto vendido. */
     @Column(name = "product_quantity")
     private BigDecimal productQuantity;
 
     /**
-     * Unit of measure of the product at the time of the sale.
-     * This value is stored as an immutable snapshot of the product's unit of measure
-     * when the transaction is performed, ensuring historical accuracy even if the
-     * product configuration is modified later.
+     * Unidad de medida del producto al momento de la venta.
+     * Este valor se almacena como una instantánea inmutable de la unidad de medida
+     * del producto cuando se realiza la transacción, garantizando precisión histórica
+     * incluso si la configuración del producto es modificada posteriormente.
      */
     @Column(name = "unit_of_measure_at_sale")
     @Enumerated(EnumType.STRING)
@@ -71,16 +73,17 @@ public class SaleDetail {
 
 
     /**
-     * Product name at the time of the sale.
-     * This value is stored as an immutable snapshot to preserve historical accuracy
-     * even if the product name changes later in the product catalog.
+     * Nombre del producto al momento de la venta.
+     * Este valor se almacena como una instantánea inmutable para preservar
+     * la precisión histórica incluso si el nombre del producto cambia posteriormente
+     * en el catálogo de productos.
      */
     @Column(name = "product_name_at_sale")
     private String productNameAtSale;
 
     /**
-     * Unit price of the product at the time of the sale.
-     * Stored to preserve historical pricing.
+     * Precio unitario del producto al momento de la venta.
+     * Se almacena para preservar el historial de precios.
      */
     @Column(name = "sale_price")
     private BigDecimal salePrice;

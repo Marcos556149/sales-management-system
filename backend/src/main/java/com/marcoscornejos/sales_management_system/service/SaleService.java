@@ -41,26 +41,26 @@ public class SaleService implements ISaleService {
         private final ISystemConfigurationRepository iSystemConfigurationRepository;
 
         /**
-         * Retrieves a paginated list of sales applying:
+         * Recupera una lista paginada de ventas aplicando:
          * <ul>
-         * <li>Optional search by sale identifier</li>
-         * <li>Filter by sale date</li>
-         * <li>Chronological sorting by sale time</li>
-         * <li>Pagination (page number and size)</li>
+         * <li>Búsqueda opcional por identificador de venta</li>
+         * <li>Filtro por fecha de venta</li>
+         * <li>Ordenamiento cronológico por hora de venta</li>
+         * <li>Paginación (número de página y tamaño)</li>
          * </ul>
          *
          * <p>
-         * Search by sale identifier is optional and ignored if null.
-         * If no date is provided, the current date is used by default.
-         * Pagination and sorting are executed at database level.
+         * La búsqueda por identificador de venta es opcional y se ignora si es null.
+         * Si no se proporciona una fecha, se utiliza la fecha actual por defecto.
+         * La paginación y el ordenamiento se ejecutan a nivel de base de datos.
          * </p>
          *
-         * @param searchSaleId Optional sale identifier
-         * @param date         Sale date filter (if null, current date is used)
-         * @param timeSort     Sorting direction (NEWEST_FIRST / OLDEST_FIRST)
-         * @param page         Page number (0-based)
-         * @param size         Number of elements per page
-         * @return Paginated list of sales mapped to DTO
+         * @param searchSaleId identificador de venta opcional
+         * @param date fecha de venta a filtrar (si es null, se utiliza la fecha actual)
+         * @param timeSort dirección del ordenamiento (NEWEST_FIRST / OLDEST_FIRST)
+         * @param page número de página (basado en 0)
+         * @param size cantidad de elementos por página
+         * @return lista paginada de ventas mapeadas a DTO
          */
         @Override
         public PageResponseDTO<SaleListResponseDTO> getSales(Long searchSaleId,
@@ -69,38 +69,38 @@ public class SaleService implements ISaleService {
                         int page,
                         int size) {
 
-                // Validate pagination parameters
+                // Validar parámetros de paginación
                 if (page < 0) {
                         throw new InvalidSaleDataException(
-                                        "Page index must not be negative",
+                                        "El índice de página no puede ser negativo",
                                         "page");
                 }
 
                 if (size <= 0) {
                         throw new InvalidSaleDataException(
-                                        "Page size must be greater than zero",
+                                        "El tamaño de página debe ser mayor que cero",
                                         "size");
                 }
 
                 if (size > 50) {
                         throw new InvalidSaleDataException(
-                                        "Page size must not exceed 50",
+                                        "El tamaño de página no puede ser mayor a 50",
                                         "size");
                 }
 
-                // Validate optional search parameter
+                // Validar parámetro de búsqueda opcional
                 if (searchSaleId != null && searchSaleId <= 0) {
                         throw new InvalidSaleDataException(
-                                        "Sale ID must be greater than zero",
+                                        "El identificador de venta debe ser mayor que cero",
                                         "searchSaleId");
                 }
 
-                // Business rule: default date = current date
+                // Regla de negocio: fecha por defecto = fecha actual
                 if (date == null) {
                         date = LocalDate.now();
                 }
 
-                // Build sorting configuration (by sale time)
+                // Construir configuración de ordenamiento (por hora de venta)
                 Sort sort = Sort.by("saleTime");
 
                 if (timeSort == SortDirection.NEWEST_FIRST) {
@@ -109,31 +109,32 @@ public class SaleService implements ISaleService {
                         sort = sort.ascending();
                 }
 
-                // Pagination configuration (server-side)
+                // Configuración de paginación (del lado del servidor)
                 Pageable pageable = PageRequest.of(page, size, sort);
 
-                // Execute query with search, filtering and pageable
+                // Ejecutar consulta con búsqueda, filtrado y paginación
                 Page<Sale> salePage = iSaleRepository.findSales(
                                 searchSaleId,
                                 date,
                                 pageable);
 
-                // Total number of sales in database without filters.
-                // This value is only calculated when the filtered query returns no results,
-                // allowing the frontend to distinguish between:
+                // Cantidad total de ventas en la base de datos sin aplicar filtros.
                 //
-                // 1) No sales exist in the database
-                // 2) Sales exist, but none match the selected date filter
+                // Este valor solo se calcula cuando la consulta filtrada no devuelve resultados,
+                // permitiendo al frontend distinguir entre:
                 //
-                // When filtered results exist, this value remains null to avoid an
-                // unnecessary extra COUNT(*) query and improve performance.
+                // 1) No existen ventas en la base de datos
+                // 2) Existen ventas, pero ninguna coincide con el filtro de fecha seleccionado
+                //
+                // Cuando existen resultados filtrados, este valor permanece en null para evitar
+                // una consulta COUNT(*) adicional innecesaria y mejorar el rendimiento.
                 Long totalGlobalElements = null;
 
                 if (salePage.getTotalElements() == 0) {
                         totalGlobalElements = iSaleRepository.count();
                 }
 
-                // Map entities to DTOs using MapStruct
+                // Mapear entidades a DTOs utilizando MapStruct
                 return iPageResponseMapper.toPageResponseDTO(
                                 salePage.getContent()
                                                 .stream()
@@ -147,16 +148,16 @@ public class SaleService implements ISaleService {
         }
 
         /**
-         * Retrieves a sale by its unique identifier.
+         * Recupera una venta mediante su identificador único.
          *
          * <p>
-         * Searches for a sale in the database including its details and products.
-         * Throws an exception if the sale does not exist.
+         * Busca una venta en la base de datos junto con sus detalles y productos.
+         * Lanza una excepción si la venta no existe.
          * </p>
          *
-         * @param saleId the unique identifier of the sale
-         * @return the sale details as a DTO
-         * @throws SaleNotFoundException if the sale is not found
+         * @param saleId identificador único de la venta
+         * @return los detalles de la venta como un DTO
+         * @throws SaleNotFoundException si la venta no es encontrada
          */
         @Override
         @Transactional
@@ -164,25 +165,25 @@ public class SaleService implements ISaleService {
 
                 Sale sale = iSaleRepository.findByIdWithDetailsAndProducts(saleId)
                                 .orElseThrow(() -> new SaleNotFoundException(
-                                                String.format("Sale with ID '%s' not found", saleId)));
+                                                String.format("No se encontró la venta con identificador '%s'", saleId)));
 
                 return iSaleWithDetailsResponseMapper.toDto(sale);
         }
 
         /**
-         * Builds and returns available sorting options for sales.
+         * Construye y devuelve las opciones de ordenamiento disponibles para las ventas.
          *
          * <p>
-         * This method extracts values from {@link SortOrder} enum
-         * and converts them into a frontend-friendly {@link EnumDTO} format.
+         * Este método obtiene los valores del enum {@link SortDirection}
+         * y los convierte a un formato {@link EnumDTO} compatible con el frontend.
          * </p>
          *
          * <p>
-         * It ensures that the frontend always receives up-to-date options
-         * without requiring code changes on the client side.
+         * Garantiza que el frontend siempre reciba opciones actualizadas
+         * sin requerir cambios de código en el cliente.
          * </p>
          *
-         * @return SaleFiltersResponseDTO containing sort options
+         * @return SaleFiltersResponseDTO que contiene las opciones de ordenamiento
          */
         @Override
         public SaleFiltersResponseDTO getFilters() {
@@ -197,58 +198,55 @@ public class SaleService implements ISaleService {
         }
 
         /**
-         * Registers a new sale in the system.
+         * Registra una nueva venta en el sistema.
          *
          * <p>
-         * Validates that all requested products exist, are active, and have sufficient
-         * stock before creating the sale. If the same product appears multiple times
-         * in the request, quantities are consolidated into a single line item.
+         * Valida que todos los productos solicitados existan, estén activos y tengan
+         * stock suficiente antes de crear la venta. Si el mismo producto aparece varias veces
+         * en la solicitud, las cantidades se consolidan en una única línea de detalle.
          * </p>
          *
          * <p>
-         * Each sale is associated with the user performing the operation, and the
-         * total sale amount is calculated based on product prices at the time of sale.
+         * Cada venta se asocia al usuario que realiza la operación y el importe total
+         * de la venta se calcula en función de los precios de los productos al momento de la venta.
          * </p>
          *
          * <p>
-         * The operation is executed within a transactional context to ensure atomic
-         * persistence of the sale and its details.
+         * La operación se ejecuta dentro de un contexto transaccional para garantizar
+         * la persistencia atómica de la venta y sus detalles.
          * </p>
          *
          * <p>
-         * After successful persistence, the unique identifier of the created sale is returned.
-         * This identifier can be used to retrieve related information such as the printable ticket.
+         * Tras una persistencia exitosa, se devuelve el identificador único de la venta creada.
+         * Este identificador puede utilizarse para recuperar información relacionada,
+         * como el comprobante imprimible.
          * </p>
          *
-         * @param request the sale creation request containing products and quantities
-         * @return the unique identifier of the created sale
+         * @param request solicitud de creación de venta que contiene productos y cantidades
+         * @return identificador único de la venta creada
          *
-         * @throws UserNotFoundException    if the user performing the sale does not exist
-         * @throws ProductNotFoundException if any product does not exist
-         * @throws InvalidSaleDataException if a product is inactive, has invalid quantity,
-         *                                  or insufficient stock is available
+         * @throws UserNotFoundException si el usuario que realiza la venta no existe
+         * @throws ProductNotFoundException si algún producto no existe
+         * @throws InvalidSaleDataException si un producto está inactivo, tiene una cantidad inválida
+         *                                  o no dispone de stock suficiente
          */
         @Override
         @Transactional
         public Long registerSale(SaleCreateRequestDTO request) {
 
-                // Temporary default user until Spring Security is implemented
+                // Usuario temporal por defecto hasta que se implemente Spring Security
                 User user = iUserRepository.findById(2L)
-                                .orElseThrow(() -> new UserNotFoundException("Authenticated user not found"));
+                                .orElseThrow(() -> new UserNotFoundException("Usuario autenticado no encontrado"));
 
                 /*
-                 * // Future implementation with authenticated user
-                 * String username = SecurityContextHolder.getContext()
-                 * .getAuthentication()
-                 * .getName();
-                 * 
-                 * User user = iUserRepository.findByUserName(username)
-                 * .orElseThrow(() ->
-                 * new UserNotFoundException("Authenticated user not found")
-                 * );
+                 * // Implementación futura con usuario autenticado
+                 *
+                 * ...
+                 *
+                 * new UserNotFoundException("Usuario autenticado no encontrado")
                  */
 
-                // Consolidate repeated product codes into a single line item
+                // Consolidar códigos de producto repetidos en una única línea de detalle
                 Map<String, BigDecimal> groupedDetails = new LinkedHashMap<>();
 
                 for (SaleDetailCreateRequestDTO detail : request.getSaleDetails()) {
@@ -258,10 +256,10 @@ public class SaleService implements ISaleService {
                                         BigDecimal::add);
                 }
 
-                // Build normalized and validated sale details list
+                // Construir la lista de detalles de venta normalizada y validada
                 List<SaleDetail> saleDetails = new ArrayList<>();
 
-                // Load all requested products in a single query
+                // Cargar todos los productos solicitados en una única consulta
                 List<String> productCodes = new ArrayList<>(groupedDetails.keySet());
 
                 Map<String, Product> productsByCode = iProductRepository
@@ -271,7 +269,7 @@ public class SaleService implements ISaleService {
                                                 Product::getProductCode,
                                                 Function.identity()));
 
-                // Validate each requested product and build normalized sale details
+                // Validar cada producto solicitado y construir los detalles de venta normalizados
                 for (Map.Entry<String, BigDecimal> entry : groupedDetails.entrySet()) {
 
                         String productCode = entry.getKey();
@@ -281,39 +279,39 @@ public class SaleService implements ISaleService {
 
                         if (product == null) {
                                 throw new ProductNotFoundException(
-                                                "Product with code '" + productCode + "' not found");
+                                        "No se encontró el producto con código '" + productCode + "'");
                         }
 
                         String productLabel = product.getProductCode()
                                         + " - "
                                         + product.getProductName();
 
-                        // Only active products can be sold
+                        // Solo los productos activos pueden ser vendidos
                         if (product.getProductStatus() != ProductStatus.ACTIVE) {
                                 throw new InvalidSaleDataException(
-                                                "Product '" + productLabel
-                                                                + "' is inactive and cannot be added to the sale",
+                                                "El producto '" + productLabel
+                                                                + "' está inactivo y no puede ser agregado a la venta",
                                                 "productCode");
                         }
 
-                        // Products sold by units do not allow decimal quantities
+                        // Los productos vendidos por unidades no permiten cantidades decimales
                         if (product.getUnitOfMeasure() == UnitOfMeasure.UNITS
                                         && quantity.stripTrailingZeros().scale() > 0) {
 
                                 throw new InvalidSaleDataException(
-                                                "Product '" + productLabel
-                                                                + "' only accepts whole numbers because it is sold by units",
+                                                "El producto '" + productLabel
+                                                                + "' solo acepta números enteros porque se vende por unidades",
                                                 "productQuantity");
                         }
 
-                        // Requested quantity must not exceed available stock
+                        // La cantidad solicitada no debe superar el stock disponible
                         if (product.getProductStock().compareTo(quantity) < 0) {
                                 throw new InvalidSaleDataException(
-                                                "Insufficient stock for product " + productLabel,
+                                                "Stock insuficiente para el producto " + productLabel,
                                                 "productQuantity");
                         }
 
-                        // Create sale detail using current product price and unit of measure snapshot
+                        // Crear detalle de venta utilizando la instantánea actual del precio y la unidad de medida del producto
                         SaleDetail saleDetail = new SaleDetail();
                         saleDetail.setProduct(product);
                         saleDetail.setProductQuantity(quantity);
@@ -324,90 +322,90 @@ public class SaleService implements ISaleService {
                         saleDetails.add(saleDetail);
                 }
 
-                // Create sale entity and associate user
+                // Crear entidad de venta y asociar usuario
                 Sale sale = new Sale();
                 sale.setUser(user);
 
-                // Synchronize bidirectional relationship between Sale and SaleDetail
+                // Sincronizar la relación bidireccional entre Sale y SaleDetail
                 for (SaleDetail detail : saleDetails) {
                         detail.setSale(sale);
                         sale.getSaleDetails().add(detail);
                 }
 
-                // Persist sale and sale details (handled via CascadeType.PERSIST)
-                // Stock updates and final total recalculation are managed by database triggers,
-                // ensuring consistency at persistence level.
-                // The generated sale ID is returned after persistence.
+                // Persistir la venta y sus detalles (gestionado mediante CascadeType.PERSIST)
+                // Las actualizaciones de stock y el recálculo del importe total final son gestionados
+                // por disparadores de base de datos, garantizando la consistencia a nivel de persistencia.
+                // El identificador de la venta generado se devuelve después de la persistencia.
                 Sale savedSale = iSaleRepository.save(sale);
                 return savedSale.getSaleId();
         }
 
         /**
-         * Generates a formatted sale ticket for a given sale ID.
+         * Genera un comprobante de venta formateado para un identificador de venta dado.
          *
          * <p>
-         * Retrieves the sale along with its details and products, as well as
-         * the system configuration containing business information.
-         * Then builds a plain text ticket formatted for thermal printing.
+         * Recupera la venta junto con sus detalles, así como la configuración
+         * del sistema que contiene la información del negocio.
+         * Luego construye un comprobante en texto plano con formato para impresión térmica.
          * </p>
          *
-         * @param saleId the unique identifier of the sale
-         * @return the formatted sale ticket as plain text
-         * @throws SaleNotFoundException if the sale is not found
+         * @param saleId identificador único de la venta
+         * @return comprobante de venta formateado como texto plano
+         * @throws SaleNotFoundException si la venta no es encontrada
          */
         @Override
         @Transactional
         public String generateSaleTicket(Long saleId) {
 
-                // 1. Retrieve sale with details and products (1 query bien optimizada)
+                // 1. Recuperar venta con sus detalles (consulta optimizada)
                 Sale sale = iSaleRepository.findByIdWithDetails(saleId)
                                 .orElseThrow(() -> new SaleNotFoundException(
-                                                String.format("Sale with ID '%s' not found", saleId)));
+                                                String.format("No se encontró la venta con identificador '%s'", saleId)));
 
-                // 2. Retrieve system configuration (business info)
+                // 2. Recuperar configuración del sistema (información del negocio)
                 SystemConfiguration config = iSystemConfigurationRepository.findById(1L)
                         .orElseThrow(() -> new SystemConfigurationNotFoundException(
-                                "System configuration not found"
+                                "Configuración del sistema no encontrada"
                         ));
 
-                // 3. Current date and time
+                // 3. Fecha y hora actuales
                 LocalDateTime now = LocalDateTime.now();
 
                 DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
                 DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss");
 
-                // 4. Build ticket
+                // 4. Construir comprobante
                 StringBuilder ticket = new StringBuilder();
 
                 ticket.append(" \n");
 
-                // Business name (wrapped, left-aligned)
+                // Nombre del negocio (ajustado a varias líneas, alineado a la izquierda)
                 for (String line : wrapText(config.getBusinessName(), 32)) {
                         ticket.append(line).append("\n");
                 }
 
                 ticket.append("--------------------------------\n");
 
-                // Business address (wrapped, left-aligned)
+                // Dirección del negocio (ajustada a varias líneas, alineada a la izquierda)
                 for (String line : wrapText(config.getBusinessAddress(), 32)) {
                         ticket.append(line).append("\n");
                 }
                 ticket.append("--------------------------------\n");
 
-                ticket.append("Date: ").append(now.format(dateFormatter)).append("\n");
-                ticket.append("Time: ").append(now.format(timeFormatter)).append("\n");
+                ticket.append("Fecha: ").append(now.format(dateFormatter)).append("\n");
+                ticket.append("Hora: ").append(now.format(timeFormatter)).append("\n");
                 ticket.append("--------------------------------\n");
 
-                // Sale id
-                ticket.append("Sale ID: ").append(sale.getSaleId()).append("\n");
+                // Identificador de venta
+                ticket.append("ID de Venta: ").append(sale.getSaleId()).append("\n");
                 ticket.append("--------------------------------\n");
 
-                // Products header
-                ticket.append("PRODUCTS\n");
+                // Encabezado de productos
+                ticket.append("PRODUCTOS\n");
                 ticket.append("--------------------------------\n");
                 ticket.append(" \n");
 
-                // --- Details ---
+                // --- Detalles ---
                 for (SaleDetail detail : sale.getSaleDetails()) {
 
                         String productName = detail.getProductNameAtSale();
@@ -421,14 +419,14 @@ public class SaleService implements ISaleService {
 
                         String subtotalFormatted = "$" + subtotal;
 
-                        // Wrap product name if it exceeds ticket width
+                        // Ajustar nombre del producto si excede el ancho del comprobante
                         List<String> nameLines = wrapText(productName, 32);
 
                         for (String line : nameLines) {
                                 ticket.append(line).append("\n");
                         }
 
-                        // Build main item line (quantity, unit, unit price, subtotal)
+                        // Construir línea principal del producto (cantidad, unidad, precio unitario, subtotal)
                         String itemLine = String.format(
                                 "%s %s x %s = %s",
                                 quantity,
@@ -437,14 +435,14 @@ public class SaleService implements ISaleService {
                                 subtotalFormatted
                         );
 
-                        // Wrap full item line to avoid overflow in thermal printer
+                        // Ajustar línea completa para evitar desbordamiento en la impresora térmica
                         List<String> itemLines = wrapText(itemLine, 32);
 
                         for (String line : itemLines) {
                                 ticket.append(line).append("\n");
                         }
 
-                        // Spacer between products
+                        // Espacio entre productos
                         ticket.append(" \n");
 
                 }
@@ -458,7 +456,7 @@ public class SaleService implements ISaleService {
                 ));
 
                 ticket.append(" \n");
-                ticket.append(center("Thank you for your purchase!")).append("\n");
+                ticket.append(center("¡Gracias por su compra!")).append("\n");
 
                 for (int i = 0; i < 4; i++) {
                         ticket.append(" \n");
@@ -470,10 +468,10 @@ public class SaleService implements ISaleService {
         }
 
         /**
-         * Centers text for ticket printing assuming fixed width.
+         * Centra un texto para la impresión de comprobantes asumiendo un ancho fijo.
          *
-         * @param text the text to center
-         * @return centered text padded with spaces
+         * @param text el texto a centrar
+         * @return texto centrado rellenado con espacios
          */
         private String center(String text) {
 
@@ -501,21 +499,23 @@ public class SaleService implements ISaleService {
         }
 
         /**
-         * Wraps a text into multiple lines without breaking words whenever possible.
+         * Divide un texto en múltiples líneas sin cortar palabras siempre que sea posible.
          *
          * <p>
-         * This method formats text to fit within a fixed-width layout (such as a thermal printer),
-         * ensuring that words are preserved and not split across lines unless a single word exceeds
-         * the maximum width. In such cases, the word is split as a fallback.
+         * Este método formatea el texto para que se ajuste a un diseño de ancho fijo
+         * (como una impresora térmica), asegurando que las palabras se conserven y no
+         * se dividan entre líneas, salvo que una palabra individual exceda el ancho
+         * máximo permitido. En ese caso, la palabra se divide como mecanismo de respaldo.
          * </p>
          *
          * <p>
-         * It also normalizes whitespace by collapsing multiple spaces into a single space.
+         * También normaliza los espacios en blanco, reemplazando múltiples espacios
+         * consecutivos por un único espacio.
          * </p>
          *
-         * @param text the text to be wrapped
-         * @param width the maximum number of characters per line
-         * @return a list of properly wrapped lines that fit within the specified width
+         * @param text el texto que será dividido en líneas
+         * @param width la cantidad máxima de caracteres por línea
+         * @return una lista de líneas correctamente ajustadas al ancho especificado
          */
         private List<String> wrapText(String text, int width) {
                 List<String> lines = new ArrayList<>();
@@ -529,7 +529,7 @@ public class SaleService implements ISaleService {
 
                 for (String word : words) {
 
-                        // If the word itself is longer than the width, split it forcibly
+                        // Si la palabra por sí sola supera el ancho permitido, dividirla forzosamente
                         if (word.length() > width) {
 
                                 if (currentLine.length() > 0) {
@@ -544,20 +544,20 @@ public class SaleService implements ISaleService {
                                 continue;
                         }
 
-                        // If the word fits in the current line
+                        // Si la palabra cabe en la línea actual
                         if (currentLine.length() == 0) {
                                 currentLine.append(word);
                         } else if (currentLine.length() + 1 + word.length() <= width) {
                                 currentLine.append(" ").append(word);
                         } else {
-                                // Move to next line
+                                // Pasar a la siguiente línea
                                 lines.add(currentLine.toString());
                                 currentLine.setLength(0);
                                 currentLine.append(word);
                         }
                 }
 
-                // Add remaining content
+                // Agregar el contenido restante
                 if (currentLine.length() > 0) {
                         lines.add(currentLine.toString());
                 }

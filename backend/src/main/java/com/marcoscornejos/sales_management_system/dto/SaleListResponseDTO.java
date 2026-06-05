@@ -10,11 +10,11 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 
 /**
- * DTO used to represent sale data when returning information to the client.
+ * DTO utilizado para representar datos de una venta al devolver información al cliente.
  *
  * <p>
- * It includes general sale information such as identifier, date, time,
- * seller username, and total amount.
+ * Incluye información general de la venta como identificador, fecha, hora,
+ * nombre de usuario del vendedor e importe total.
  * </p>
  */
 @Getter
@@ -24,27 +24,27 @@ import java.time.LocalTime;
 public class SaleListResponseDTO {
 
     /**
-     * Unique identifier of the sale.
+     * Identificador único de la venta.
      */
     private Long saleId;
 
     /**
-     * Date when the sale was registered.
+     * Fecha en que se registró la venta.
      */
     private LocalDate saleDate;
 
     /**
-     * Time when the sale was registered.
+     * Hora en que se registró la venta.
      */
     private LocalTime saleTime;
 
     /**
-     * Username of the user who performed the sale.
+     * Nombre de usuario del usuario que realizó la venta.
      */
     private String userName;
 
     /**
-     * Total amount of the sale.
+     * Importe total de la venta.
      */
     private BigDecimal totalAmount;
 }

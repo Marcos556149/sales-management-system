@@ -8,13 +8,13 @@ import lombok.Setter;
 import java.util.List;
 
 /**
- * Response DTO that contains available sorting options
- * for the Sale module.
+ * DTO de respuesta que contiene las opciones de ordenamiento disponibles
+ * para el módulo de ventas.
  *
  * <p>
- * This DTO is used to dynamically provide the frontend with
- * all valid values for sorting sales,
- * avoiding hardcoded values on the client side.
+ * Este DTO se utiliza para proporcionar dinámicamente al frontend
+ * todos los valores válidos para ordenar ventas,
+ * evitando valores hardcodeados en el cliente.
  * </p>
  */
 @Getter @Setter
@@ -23,13 +23,13 @@ import java.util.List;
 public class SaleFiltersResponseDTO {
 
     /**
-     * List of available sorting options for sales by sale time.
+     * Lista de opciones disponibles para ordenar ventas por hora de venta.
      *
      * <p>
-     * Each option is represented as an {@link EnumDTO},
-     * containing the sort direction code and its display label.
-     * These options are used by the frontend to sort sales
-     * without hardcoding values.
+     * Cada opción se representa mediante un {@link EnumDTO},
+     * que contiene el código de dirección de ordenamiento y su etiqueta de visualización.
+     * Estas opciones son utilizadas por el frontend para ordenar ventas
+     * sin valores hardcodeados.
      * </p>
      */
     private List<EnumDTO> timeSortOptions;

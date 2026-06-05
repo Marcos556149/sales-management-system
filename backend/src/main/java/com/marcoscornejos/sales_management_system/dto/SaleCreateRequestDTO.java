@@ -8,16 +8,17 @@ import lombok.Setter;
 import java.util.List;
 
 /**
- * DTO used to register a new sale in the system.
+ * DTO utilizado para registrar una nueva venta en el sistema.
  *
  * <p>
- * Contains the list of products to be included in the sale,
- * along with their requested quantities.
+ * Contiene la lista de productos que serán incluidos en la venta,
+ * junto con las cantidades solicitadas de cada uno.
  * </p>
  *
  * <p>
- * General sale data such as identifier, date, time, total amount,
- * and authenticated user are automatically assigned by the system.
+ * Los datos generales de la venta, como el identificador, la fecha,
+ * la hora, el importe total y el usuario autenticado, son asignados
+ * automáticamente por el sistema.
  * </p>
  */
 @Getter
@@ -25,14 +26,14 @@ import java.util.List;
 public class SaleCreateRequestDTO {
 
     /**
-     * Products associated with the sale.
+     * Productos asociados a la venta.
      *
      * <p>
-     * A sale must contain at least one product detail.
-     * Each detail is individually validated.
+     * Una venta debe contener al menos un detalle de producto.
+     * Cada detalle es validado individualmente.
      * </p>
      */
-    @NotEmpty(message = "The sale must contain at least one product")
+    @NotEmpty(message = "La venta debe contener al menos un producto")
     @Valid
     private List<SaleDetailCreateRequestDTO> saleDetails;
 

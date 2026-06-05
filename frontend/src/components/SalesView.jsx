@@ -4,7 +4,7 @@ import { Search, Calendar, Filter, Edit2, Printer, X, RefreshCw, Trash2, Plus } 
 import Pagination from './Pagination';
 import { useToast } from './ToastContext';
 import DatePicker from 'react-datepicker';
-import { enUS } from 'date-fns/locale';
+import { es } from 'date-fns/locale';
 import 'react-datepicker/dist/react-datepicker.css';
 import './ProductsView.css';
 import './SalesView.css';
@@ -52,7 +52,7 @@ const SmartDateInput = React.forwardRef(({ value, onClick, onManualChange, onTyp
 
     const normalizedYear = Math.max(yInt, 1);
     const normalizedMonth = Math.min(Math.max(mInt, 1), 12);
-    
+
     const getDaysInMonth = (year, month) => {
       if (month === 2) {
         const isLeap = (year % 4 === 0 && (year % 100 !== 0 || year % 400 === 0));
@@ -65,7 +65,7 @@ const SmartDateInput = React.forwardRef(({ value, onClick, onManualChange, onTyp
     const normalizedDay = Math.min(Math.max(dInt, 1), maxDays);
 
     const newDateStr = `${String(normalizedYear).padStart(4, '0')}-${String(normalizedMonth).padStart(2, '0')}-${String(normalizedDay).padStart(2, '0')}`;
-    
+
     // Update local state for visual consistency
     setDay(String(normalizedDay).padStart(2, '0'));
     setMonth(String(normalizedMonth).padStart(2, '0'));
@@ -134,14 +134,14 @@ const SmartDateInput = React.forwardRef(({ value, onClick, onManualChange, onTyp
           placeholder="YYYY"
         />
       </div>
-      <button 
+      <button
         type="button"
-        className="smart-date-picker-btn" 
+        className="smart-date-picker-btn"
         onClick={(e) => {
           if (onClearFocus) onClearFocus();
           if (onClick) onClick(e);
         }}
-        title="Open Calendar"
+        title="Abrir Calendario"
       >
         <Calendar size={16} />
       </button>
@@ -152,20 +152,20 @@ const SmartDateInput = React.forwardRef(({ value, onClick, onManualChange, onTyp
 const SalesView = () => {
   const navigate = useNavigate();
   const { addToast } = useToast();
-  
+
   const {
-      searchSaleId, setSearchSaleId,
-      appliedSearchSaleId, setAppliedSearchSaleId,
-      dateFilter, setDateFilter,
-      sortOrder, setSortOrder,
-      pageFrontend, setPageFrontend,
-      salesData: sales, setSalesData: setSales,
-      totalPages, setTotalPages,
-      totalElements, setTotalElements,
-      totalGlobalElements, setTotalGlobalElements,
-      scrollPositionRef,
-      isCached, setIsCached,
-      getTodayFormatted
+    searchSaleId, setSearchSaleId,
+    appliedSearchSaleId, setAppliedSearchSaleId,
+    dateFilter, setDateFilter,
+    sortOrder, setSortOrder,
+    pageFrontend, setPageFrontend,
+    salesData: sales, setSalesData: setSales,
+    totalPages, setTotalPages,
+    totalElements, setTotalElements,
+    totalGlobalElements, setTotalGlobalElements,
+    scrollPositionRef,
+    isCached, setIsCached,
+    getTodayFormatted
   } = useSalesContext();
 
   // --- Options State ---
@@ -287,18 +287,18 @@ const SalesView = () => {
   // Handle row click
   const handleRowClick = async (id) => {
     if (actionLoading) return;
-    
+
     setActionLoading(true);
     try {
       const response = await apiClient.get(`/api/sales/${id}`);
       navigate(`/dashboard/sales/${id}`, { state: { sale: response.data } });
     } catch (err) {
       if (err.status === 400 || err.status === 404) {
-        addToast(err.message || `Sale with ID '${id}' not found`, 'error');
+        addToast(err.message || `No se encontró la venta con ID '${id}'`, 'error');
         // Refresh the list to remove the missing sale
         setRefreshTrigger(prev => prev + 1);
       } else {
-        addToast(err.message || 'Error checking sale', 'error');
+        addToast(err.message || 'Error consultando la venta', 'error');
       }
     } finally {
       setActionLoading(false);
@@ -313,14 +313,14 @@ const SalesView = () => {
       try {
         const response = await apiClient.get('/api/sales/filters', { signal: controller.signal });
         clearTimeout(timeoutId);
-        
+
         setSortOptions(response.data.timeSortOptions || []);
       } catch (err) {
         clearTimeout(timeoutId);
-        console.error("Error loading filters:", err);
+        console.error("Error cargando filtros:", err);
         setSortOptions([]);
         if (err.name === 'AbortError') {
-           addToast("Filters request timed out", "error");
+          addToast("La solicitud de filtros tardó demasiado", "error");
         }
       } finally {
         setFiltersLoading(false);
@@ -334,13 +334,13 @@ const SalesView = () => {
   // Scroll Position Management
   useEffect(() => {
     const container = document.querySelector('.content-area');
-    
+
     // If we came back from another view and have data, restore scroll
     if (isCached && sales.length > 0) {
       if (container && scrollPositionRef.current) {
-         requestAnimationFrame(() => {
-           container.scrollTop = scrollPositionRef.current;
-         });
+        requestAnimationFrame(() => {
+          container.scrollTop = scrollPositionRef.current;
+        });
       }
     }
 
@@ -349,11 +349,11 @@ const SalesView = () => {
         scrollPositionRef.current = container.scrollTop;
       }
     };
-    
+
     if (container) {
       container.addEventListener('scroll', handleScroll, { passive: true });
     }
-    
+
     return () => {
       if (container) {
         container.removeEventListener('scroll', handleScroll);
@@ -363,7 +363,7 @@ const SalesView = () => {
 
   // 1. Fetch data when filters/page changes
   useEffect(() => {
-    const paramsChanged = 
+    const paramsChanged =
       prevParams.current.dateFilter !== dateFilter ||
       prevParams.current.sortOrder !== sortOrder ||
       prevParams.current.pageFrontend !== pageFrontend ||
@@ -393,7 +393,7 @@ const SalesView = () => {
 
       try {
         const params = new URLSearchParams();
-        
+
         if (dateFilter) {
           params.append('date', dateFilter);
         }
@@ -413,7 +413,7 @@ const SalesView = () => {
         clearTimeout(timeoutId);
 
         const data = response.data;
-        
+
         if (abortControllerRef.current === abortController) {
           if (data.content !== undefined) {
             setSales(data.content);
@@ -432,15 +432,15 @@ const SalesView = () => {
         clearTimeout(timeoutId);
         if (err.name === 'AbortError') {
           if (abortControllerRef.current === abortController) {
-             setError('Request timed out. Please refresh the page.');
-             addToast("Sales list request timed out", "error");
+            setError('La solicitud tardó demasiado. Por favor, recarga la página.');
+            addToast("La solicitud de ventas tardó demasiado", "error");
           } else {
-             console.log('Previous request cancelled');
+            console.log('Previous request cancelled');
           }
         } else if (abortControllerRef.current === abortController) {
-          console.error("Failed to fetch sales:", err);
+          console.error("Error cargando ventas:", err);
           // 404 sets No sales found, show cleanly
-          if (err.message && err.message.toLowerCase().includes('no sales found')) {
+          if (err.message && err.message.toLowerCase().includes('No se encontraron ventas')) {
             setSales([]);
             setTotalPages(1);
             setTotalElements(0);
@@ -448,8 +448,8 @@ const SalesView = () => {
             setIsCached(true); // Empty list is still a valid cache
             // Don't show the red error box for empty lists, just empty state
           } else {
-            setError(err.message || 'Failed to load sales. Please try again later.');
-            addToast(err.message || "The list could not be refreshed. Please try again.", "error");
+            setError(err.message || 'No se pudieron cargar las ventas. Intenta nuevamente más tarde.');
+            addToast(err.message || "No se pudo actualizar la lista. Intenta nuevamente.", "error");
           }
         }
       } finally {
@@ -463,7 +463,7 @@ const SalesView = () => {
     const mountDebounceReq = setTimeout(() => {
       fetchSales();
     }, 15);
-    
+
     // Cleanup on unmount or re-run
     return () => {
       clearTimeout(mountDebounceReq);
@@ -520,13 +520,13 @@ const SalesView = () => {
       {/* Top action bar */}
       <div className="view-toolbar">
         <div className="toolbar-left">
-          
+
           <div className="search-bar">
             <Search className="search-icon" size={18} />
-            <input 
+            <input
               ref={searchInputRef}
-              type="text" 
-              placeholder="Search by Sale ID..." 
+              type="text"
+              placeholder="Buscar por ID de Venta…"
               value={searchSaleId}
               onChange={handleSearchChange}
               onFocus={() => setFocusedIndex(-1)}
@@ -534,8 +534,8 @@ const SalesView = () => {
             />
             <div className="search-actions">
               {searchSaleId && (
-                <button 
-                  className="clear-search-btn" 
+                <button
+                  className="clear-search-btn"
                   onClick={handleClearSearch}
                   title="Clear Search"
                 >
@@ -549,7 +549,7 @@ const SalesView = () => {
           <div className="filter-group">
             {/* Date Filter */}
             <div className="filter-item">
-              <span className="date-filter-label">Filter Date:</span>
+              <span className="date-filter-label">Filtrar por fecha:</span>
               <div className="custom-datepicker-wrapper">
                 <DatePicker
                   selected={(() => {
@@ -563,7 +563,7 @@ const SalesView = () => {
                       const month = String(date.getMonth() + 1).padStart(2, '0');
                       const day = String(date.getDate()).padStart(2, '0');
                       const newDateStr = `${year}-${month}-${day}`;
-                      
+
                       // If the date is the same as current filter, onChange might not be triggered 
                       // by some interactions, but when it is, we still update.
                       setDateFilter(newDateStr);
@@ -576,7 +576,7 @@ const SalesView = () => {
                       const month = String(date.getMonth() + 1).padStart(2, '0');
                       const day = String(date.getDate()).padStart(2, '0');
                       const selectedDateStr = `${year}-${month}-${day}`;
-                      
+
                       // If user selects the SAME date that is already in context, 
                       // we force the SmartDateInput to sync its internal state.
                       if (selectedDateStr === dateFilter) {
@@ -585,17 +585,17 @@ const SalesView = () => {
                     }
                   }}
                   dateFormat="yyyy-MM-dd"
-                  locale={enUS}
-                  todayButton="Today"
+                  locale={es}
+                  todayButton="Hoy"
                   customInput={
-                    <SmartDateInput 
-                      onClearFocus={() => setFocusedIndex(-1)} 
-                      onTyping={() => setFocusedIndex(-1)} 
+                    <SmartDateInput
+                      onClearFocus={() => setFocusedIndex(-1)}
+                      onTyping={() => setFocusedIndex(-1)}
                       forceSync={dateResetCounter}
                       onManualChange={(dateStr) => {
                         setDateFilter(dateStr);
                         setPageFrontend(1);
-                      }} 
+                      }}
                     />
                   }
                   wrapperClassName="date-picker-wrapper"
@@ -604,12 +604,12 @@ const SalesView = () => {
                 />
               </div>
             </div>
-            
+
             {/* Sort Order Control */}
             <div className="filter-item" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <span className="date-filter-label">Order by Time:</span>
-              <select 
-                value={sortOrder} 
+              <span className="date-filter-label">Ordenar por hora:</span>
+              <select
+                value={sortOrder}
                 onChange={(e) => {
                   setSortOrder(e.target.value);
                   setPageFrontend(1);
@@ -618,9 +618,9 @@ const SalesView = () => {
                 disabled={filtersLoading || sortOptions.length === 0}
               >
                 {filtersLoading ? (
-                  <option value="NEWEST_FIRST">Loading...</option>
+                  <option value="NEWEST_FIRST">Cargando…</option>
                 ) : sortOptions.length === 0 ? (
-                  <option value="NEWEST_FIRST">Newest First</option>
+                  <option value="NEWEST_FIRST">Más recientes primero</option>
                 ) : (
                   sortOptions.map(opt => (
                     <option key={opt.code} value={opt.code}>
@@ -634,22 +634,22 @@ const SalesView = () => {
         </div>
 
         <div className="toolbar-right" style={{ display: 'flex', gap: '12px' }}>
-          <button 
-            className="btn-secondary" 
-            onClick={handleManualRefresh} 
+          <button
+            className="btn-secondary"
+            onClick={handleManualRefresh}
             disabled={loading}
           >
             <RefreshCw size={18} className={loading ? "spin-animation" : ""} />
-            <span>{loading ? 'Refreshing...' : 'Refresh'}</span>
+            <span>{loading ? 'Actualizando...' : 'Actualizar'}</span>
             <span className="btn-shortcut">Ctrl+Shift+K</span>
           </button>
-          
-          <button 
+
+          <button
             className="btn-primary"
             onClick={() => navigate('/dashboard/sales/new')}
           >
             <Plus size={18} />
-            <span>New Sale</span>
+            <span>Nueva Venta</span>
             <span className="btn-shortcut" style={{ backgroundColor: 'rgba(255, 255, 255, 0.2)', color: 'white', borderColor: 'rgba(255, 255, 255, 0.3)' }}>Alt+N</span>
           </button>
         </div>
@@ -659,7 +659,7 @@ const SalesView = () => {
       <div className="table-card sales-table-card">
         {loading ? (
           <div className="loading-state">
-             <p>Loading sales...</p>
+            <p>Cargando ventas…</p>
           </div>
         ) : error ? (
           <div className="error-state">
@@ -667,9 +667,9 @@ const SalesView = () => {
           </div>
         ) : sales.length === 0 ? (
           <div className="empty-state">
-            {totalGlobalElements === 0 
-              ? <p>No sales available</p>
-              : <p>No sales match the search criteria</p>
+            {totalGlobalElements === 0
+              ? <p>No se encontraron ventas</p>
+              : <p>Ninguna venta coincide con los criterios de búsqueda</p>
             }
           </div>
         ) : (
@@ -677,18 +677,18 @@ const SalesView = () => {
             <table className="data-table">
               <thead>
                 <tr>
-                  <th>Sale ID</th>
-                  <th>Date</th>
-                  <th>Time</th>
-                  <th>Seller</th>
+                  <th>ID de Venta</th>
+                  <th>Fecha</th>
+                  <th>Hora</th>
+                  <th>Vendedor</th>
                   <th>Total</th>
-                  <th className="text-right">Actions</th>
+                  <th className="text-right">Acciones</th>
                 </tr>
               </thead>
               <tbody>
                 {sales.map((sale, index) => (
-                  <tr 
-                    key={sale.saleId} 
+                  <tr
+                    key={sale.saleId}
                     id={`sale-row-${index}`}
                     onClick={() => handleRowClick(sale.saleId)}
                     style={{ cursor: 'pointer' }}
@@ -697,20 +697,20 @@ const SalesView = () => {
                     <td className="font-mono text-sm">{sale.saleId}</td>
                     <td className="font-medium">{formatDate(sale.saleDate)}</td>
                     <td>{formatTime(sale.saleTime)}</td>
-                    <td>{sale.userName || 'Unknown'}</td>
+                    <td>{sale.userName || 'Desconocido'}</td>
                     <td className="total-amount-cell">${sale.totalAmount?.toFixed(2) ?? '0.00'}</td>
                     <td className="actions-cell text-right" onClick={(e) => e.stopPropagation()}>
-                        <button 
-                          className="action-btn print-btn" 
-                          title="Print Ticket"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setSelectedSaleId(sale.saleId);
-                            setShowPrintModal(true);
-                          }}
-                        >
-                          <Printer size={16} />
-                        </button>
+                      <button
+                        className="action-btn print-btn"
+                        title="Imprimir Ticket"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setSelectedSaleId(sale.saleId);
+                          setShowPrintModal(true);
+                        }}
+                      >
+                        <Printer size={16} />
+                      </button>
                     </td>
                   </tr>
                 ))}
@@ -718,37 +718,37 @@ const SalesView = () => {
             </table>
           </div>
         )}
-        
+
         {/* Pagination Bar */}
         {!loading && sales.length > 0 && (
-          <Pagination 
+          <Pagination
             currentPage={pageFrontend}
             totalPages={totalPages}
             totalElements={totalElements}
             onPageChange={setPageFrontend}
-            itemName="sales"
+            itemName="ventas"
           />
         )}
       </div>
 
       <ConfirmModal
         isOpen={showPrintModal}
-        title="Print Receipt"
-        message="Do you want to print the receipt?"
+        title="Imprimir Ticket"
+        message="¿Deseas imprimir el ticket?"
         onConfirm={async () => {
           setShowPrintModal(false);
           if (!selectedSaleId) return;
-          
+
           setActionLoading(true);
           try {
             await printTicket(selectedSaleId);
           } catch (err) {
             if (err.status === 400 || err.status === 404) {
-              addToast(err.message || `Sale with ID '${selectedSaleId}' not found`, 'error');
+              addToast(err.message || `No se encontró la venta con ID '${selectedSaleId}'`, 'error');
               // Refresh the list to remove the missing sale
               setRefreshTrigger(prev => prev + 1);
             } else {
-              addToast(err.message || "Could not print ticket", "error");
+              addToast(err.message || "No se pudo imprimir el ticket", "error");
             }
           } finally {
             setActionLoading(false);
@@ -759,7 +759,7 @@ const SalesView = () => {
           setShowPrintModal(false);
           setSelectedSaleId(null);
         }}
-        confirmText="Yes, Print"
+        confirmText="Sí, Imprimir"
         cancelText="No"
         confirmButtonTheme="success"
       />

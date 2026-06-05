@@ -1,22 +1,20 @@
 /**
- * Repository interface for managing {@link Sale} entities.
+ * Interfaz de repositorio para la gestión de entidades {@link Sale}.
  *
  * <p>
- * Extends {@link JpaRepository}, providing standard CRUD operations
- * such as save, delete, findById, and findAll without requiring
- * explicit implementation.
+ * Extiende {@link JpaRepository}, proporcionando operaciones CRUD estándar
+ * como save, delete, findById y findAll sin requerir una implementación explícita.
  * </p>
  *
  * <p>
- * This repository handles data access for sales.
- * Custom query methods can be defined here when needed.
+ * Este repositorio gestiona el acceso a los datos de las ventas.
+ * Aquí pueden definirse métodos de consulta personalizados cuando sea necesario.
  * </p>
  */
 
 package com.marcoscornejos.sales_management_system.repository;
 
 import com.marcoscornejos.sales_management_system.model.Sale;
-import com.marcoscornejos.sales_management_system.model.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
@@ -34,33 +32,33 @@ import java.util.Optional;
 public interface ISaleRepository extends JpaRepository<Sale, Long> {
 
     /**
-     * Retrieves sales with optional search by sale identifier,
-     * filtered by sale date, applying pagination and sorting
-     * at the database level.
+     * Recupera ventas con búsqueda opcional por identificador de venta,
+     * filtradas por fecha de venta, aplicando paginación y ordenamiento
+     * a nivel de base de datos.
      *
      * <p>
-     * Search is applied on exact match of sale identifier.
-     * If {@code searchSaleId} is null, search is ignored.
+     * La búsqueda se realiza mediante coincidencia exacta del identificador de venta.
+     * Si {@code searchSaleId} es null, la búsqueda se ignora.
      * </p>
      *
      * <p>
-     * Sales are always filtered by exact match on sale date.
+     * Las ventas siempre son filtradas mediante coincidencia exacta de la fecha de venta.
      * </p>
      *
      * <p>
-     * Pagination and sorting are handled using {@link Pageable},
-     * ensuring efficient server-side data retrieval.
+     * La paginación y el ordenamiento se gestionan mediante {@link Pageable},
+     * garantizando una recuperación eficiente de datos del lado del servidor.
      * </p>
      *
      * <p>
-     * The associated user is loaded using {@link EntityGraph}
-     * to avoid N+1 query problems.
+     * El usuario asociado se carga utilizando {@link EntityGraph}
+     * para evitar problemas de consultas N+1.
      * </p>
      *
-     * @param searchSaleId optional sale identifier
-     * @param date sale date filter
-     * @param pageable pagination and sorting configuration
-     * @return paginated result of matching sales
+     * @param searchSaleId identificador de venta opcional
+     * @param date filtro por fecha de venta
+     * @param pageable configuración de paginación y ordenamiento
+     * @return resultado paginado de las ventas coincidentes
      */
     @EntityGraph(attributePaths = "user")
     @Query("""
@@ -78,15 +76,15 @@ public interface ISaleRepository extends JpaRepository<Sale, Long> {
                          Pageable pageable);
 
     /**
-     * Retrieves a sale with its details, products, and user.
+     * Recupera una venta junto con sus detalles, productos y usuario.
      *
      * <p>
-     * Uses JOIN FETCH to load associated entities and avoid additional queries
-     * caused by lazy loading.
+     * Utiliza JOIN FETCH para cargar las entidades asociadas y evitar consultas
+     * adicionales provocadas por la carga diferida (lazy loading).
      * </p>
      *
-     * @param saleId the unique identifier of the sale
-     * @return an Optional containing the sale with its details, products, and user
+     * @param saleId identificador único de la venta
+     * @return un Optional que contiene la venta junto con sus detalles, productos y usuario
      */
     @Query("""
         SELECT DISTINCT s FROM Sale s
@@ -99,16 +97,16 @@ public interface ISaleRepository extends JpaRepository<Sale, Long> {
 
 
     /**
-     * Retrieves a sale with its details for ticket generation.
+     * Recupera una venta junto con sus detalles para la generación del comprobante.
      *
      * <p>
-     * Loads the sale and its associated sale details in a single query.
-     * Product and user entities are not fetched because the ticket uses
-     * historical snapshot data stored in SaleDetail.
+     * Carga la venta y sus detalles de venta asociados en una única consulta.
+     * Las entidades Product y User no se recuperan porque el comprobante utiliza
+     * los datos históricos almacenados en SaleDetail.
      * </p>
      *
-     * @param saleId the unique identifier of the sale
-     * @return an Optional containing the sale with its details
+     * @param saleId identificador único de la venta
+     * @return un Optional que contiene la venta junto con sus detalles
      */
     @Query("""
     SELECT DISTINCT s FROM Sale s
@@ -118,25 +116,25 @@ public interface ISaleRepository extends JpaRepository<Sale, Long> {
     Optional<Sale> findByIdWithDetails(Long saleId);
 
     /**
-     * Calculates the total revenue generated by sales
-     * within the provided filters.
+     * Calcula el importe total generado por las ventas
+     * dentro de los filtros proporcionados.
      *
      * <p>
-     * Revenue is calculated as the sum of all sale total amounts.
+     * El importe se calcula como la suma de los importes totales de todas las ventas.
      * </p>
      *
      * <p>
-     * If {@code userId} is null, sales from all users are included.
+     * Si {@code userId} es null, se incluyen las ventas de todos los usuarios.
      * </p>
      *
      * <p>
-     * If no matching sales exist, returns {@link BigDecimal#ZERO}.
+     * Si no existen ventas coincidentes, devuelve {@link BigDecimal#ZERO}.
      * </p>
      *
-     * @param userId optional user filter (null = all users)
-     * @param startDate start date filter
-     * @param endDate end date filter
-     * @return total revenue for matching sales
+     * @param userId filtro opcional por usuario (null = todos los usuarios)
+     * @param startDate fecha de inicio del filtro
+     * @param endDate fecha de fin del filtro
+     * @return importe total de las ventas coincidentes
      */
     @Query("""
     SELECT COALESCE(SUM(s.totalAmount), 0)
@@ -156,21 +154,21 @@ public interface ISaleRepository extends JpaRepository<Sale, Long> {
     );
 
     /**
-     * Counts the number of sales that match the provided filters.
+     * Cuenta la cantidad de ventas que coinciden con los filtros proporcionados.
      *
      * <p>
-     * If {@code userId} is null, sales from all users are included.
+     * Si {@code userId} es null, se incluyen las ventas de todos los usuarios.
      * </p>
      *
      * <p>
-     * The result represents the total number of sale records
-     * within the selected date range.
+     * El resultado representa la cantidad total de registros de venta
+     * dentro del rango de fechas seleccionado.
      * </p>
      *
-     * @param userId optional user filter (null = all users)
-     * @param startDate start date filter
-     * @param endDate end date filter
-     * @return total number of matching sales
+     * @param userId filtro opcional por usuario (null = todos los usuarios)
+     * @param startDate fecha de inicio del filtro
+     * @param endDate fecha de fin del filtro
+     * @return cantidad total de ventas coincidentes
      */
     @Query("""
     SELECT COUNT(s.saleId)
@@ -185,19 +183,19 @@ public interface ISaleRepository extends JpaRepository<Sale, Long> {
     );
 
     /**
-     * Retrieves the hour of the day (0–23) with the highest generated revenue
-     * within the provided filters.
+     * Recupera la hora del día (0–23) con el mayor importe generado
+     * dentro de los filtros proporcionados.
      *
      * <p>
-     * Sales are grouped by hour and ranked
-     * by total generated revenue.
+     * Las ventas se agrupan por hora y se ordenan
+     * según el importe total generado.
      * </p>
      *
-     * @param userId optional user filter (null = all users)
-     * @param startDate start date filter
-     * @param endDate end date filter
-     * @return hour (0–23) with the highest revenue,
-     *         or null if no matching sales exist
+     * @param userId filtro opcional por usuario (null = todos los usuarios)
+     * @param startDate fecha de inicio del filtro
+     * @param endDate fecha de fin del filtro
+     * @return hora (0–23) con el mayor importe generado,
+     *         o null si no existen ventas coincidentes
      */
     @Query(value = """
     SELECT
@@ -221,19 +219,19 @@ public interface ISaleRepository extends JpaRepository<Sale, Long> {
     );
 
     /**
-     * Retrieves the hour of the day (0–23) with the highest number of sales
-     * within the provided filters.
+     * Recupera la hora del día (0–23) con la mayor cantidad de ventas
+     * dentro de los filtros proporcionados.
      *
      * <p>
-     * Sales are grouped by hour and ranked
-     * by total number of sales records.
+     * Las ventas se agrupan por hora y se ordenan
+     * según la cantidad total de registros de venta.
      * </p>
      *
-     * @param userId optional user filter (null = all users)
-     * @param startDate start date filter
-     * @param endDate end date filter
-     * @return hour (0–23) with the highest number of sales,
-     *         or null if no matching sales exist
+     * @param userId filtro opcional por usuario (null = todos los usuarios)
+     * @param startDate fecha de inicio del filtro
+     * @param endDate fecha de fin del filtro
+     * @return hora (0–23) con la mayor cantidad de ventas,
+     *         o null si no existen ventas coincidentes
      */
     @Query(value = """
     SELECT
@@ -257,30 +255,30 @@ public interface ISaleRepository extends JpaRepository<Sale, Long> {
     );
 
     /**
-     * Retrieves revenue aggregated by hour for chart visualization.
+     * Recupera el importe generado agrupado por hora para la visualización de gráficos.
      *
      * <p>
-     * Revenue is calculated as the sum of sale total amounts
-     * grouped by sale hour.
+     * El importe se calcula como la suma de los importes totales de las ventas
+     * agrupadas por hora de venta.
      * </p>
      *
      * <p>
-     * This aggregation is used for single-day date ranges
-     * to provide more detailed chart visualization.
+     * Esta agregación se utiliza para rangos de fechas de un solo día,
+     * proporcionando una visualización más detallada en los gráficos.
      * </p>
      *
      * <p>
-     * If {@code userId} is null, sales from all users are included.
+     * Si {@code userId} es null, se incluyen las ventas de todos los usuarios.
      * </p>
      *
      * <p>
-     * Results are ordered chronologically by hour.
+     * Los resultados se ordenan cronológicamente por hora.
      * </p>
      *
-     * @param userId optional user filter (null = all users)
-     * @param startDate start date filter
-     * @param endDate end date filter
-     * @return hourly revenue time series
+     * @param userId filtro opcional por usuario (null = todos los usuarios)
+     * @param startDate fecha de inicio del filtro
+     * @param endDate fecha de fin del filtro
+     * @return serie temporal de importes por hora
      */
     @Query(value = """
     SELECT
@@ -304,25 +302,25 @@ public interface ISaleRepository extends JpaRepository<Sale, Long> {
     );
 
     /**
-     * Retrieves revenue aggregated by day for chart visualization.
+     * Recupera el importe generado agrupado por día para la visualización de gráficos.
      *
      * <p>
-     * Revenue is calculated as the sum of sale total amounts
-     * grouped by sale date.
+     * El importe se calcula como la suma de los importes totales de las ventas
+     * agrupadas por fecha de venta.
      * </p>
      *
      * <p>
-     * If {@code userId} is null, sales from all users are included.
+     * Si {@code userId} es null, se incluyen las ventas de todos los usuarios.
      * </p>
      *
      * <p>
-     * Results are ordered chronologically.
+     * Los resultados se ordenan cronológicamente.
      * </p>
      *
-     * @param userId optional user filter (null = all users)
-     * @param startDate start date filter
-     * @param endDate end date filter
-     * @return daily revenue time series
+     * @param userId filtro opcional por usuario (null = todos los usuarios)
+     * @param startDate fecha de inicio del filtro
+     * @param endDate fecha de fin del filtro
+     * @return serie temporal de importes por día
      */
     @Query(value = """
     SELECT
@@ -346,25 +344,25 @@ public interface ISaleRepository extends JpaRepository<Sale, Long> {
     );
 
     /**
-     * Retrieves revenue aggregated by month for chart visualization.
+     * Recupera el importe generado agrupado por mes para la visualización de gráficos.
      *
      * <p>
-     * Revenue is calculated as the sum of sale total amounts
-     * grouped by month and year.
+     * El importe se calcula como la suma de los importes totales de las ventas
+     * agrupadas por mes y año.
      * </p>
      *
      * <p>
-     * If {@code userId} is null, sales from all users are included.
+     * Si {@code userId} es null, se incluyen las ventas de todos los usuarios.
      * </p>
      *
      * <p>
-     * Results are ordered chronologically.
+     * Los resultados se ordenan cronológicamente.
      * </p>
      *
-     * @param userId optional user filter (null = all users)
-     * @param startDate start date filter
-     * @param endDate end date filter
-     * @return monthly revenue time series
+     * @param userId filtro opcional por usuario (null = todos los usuarios)
+     * @param startDate fecha de inicio del filtro
+     * @param endDate fecha de fin del filtro
+     * @return serie temporal de importes por mes
      */
     @Query(value = """
     SELECT
@@ -388,25 +386,25 @@ public interface ISaleRepository extends JpaRepository<Sale, Long> {
     );
 
     /**
-     * Retrieves revenue aggregated by year for chart visualization.
+     * Recupera el importe generado agrupado por año para la visualización de gráficos.
      *
      * <p>
-     * Revenue is calculated as the sum of sale total amounts
-     * grouped by year.
+     * El importe se calcula como la suma de los importes totales de las ventas
+     * agrupadas por año.
      * </p>
      *
      * <p>
-     * If {@code userId} is null, sales from all users are included.
+     * Si {@code userId} es null, se incluyen las ventas de todos los usuarios.
      * </p>
      *
      * <p>
-     * Results are ordered chronologically.
+     * Los resultados se ordenan cronológicamente.
      * </p>
      *
-     * @param userId optional user filter (null = all users)
-     * @param startDate start date filter
-     * @param endDate end date filter
-     * @return yearly revenue time series
+     * @param userId filtro opcional por usuario (null = todos los usuarios)
+     * @param startDate fecha de inicio del filtro
+     * @param endDate fecha de fin del filtro
+     * @return serie temporal de importes por año
      */
     @Query(value = """
     SELECT
@@ -430,30 +428,30 @@ public interface ISaleRepository extends JpaRepository<Sale, Long> {
     );
 
     /**
-     * Retrieves sales count aggregated by hour for chart visualization.
+     * Recupera la cantidad de ventas agrupada por hora para la visualización de gráficos.
      *
      * <p>
-     * Sales count is calculated as the total number of sale records
-     * grouped by sale hour.
+     * La cantidad de ventas se calcula como el número total de registros de venta
+     * agrupados por hora de venta.
      * </p>
      *
      * <p>
-     * This aggregation is used for single-day date ranges
-     * to provide more detailed chart visualization.
+     * Esta agregación se utiliza para rangos de fechas de un solo día,
+     * proporcionando una visualización más detallada en los gráficos.
      * </p>
      *
      * <p>
-     * If {@code userId} is null, sales from all users are included.
+     * Si {@code userId} es null, se incluyen las ventas de todos los usuarios.
      * </p>
      *
      * <p>
-     * Results are ordered chronologically by hour.
+     * Los resultados se ordenan cronológicamente por hora.
      * </p>
      *
-     * @param userId optional user filter (null = all users)
-     * @param startDate start date filter
-     * @param endDate end date filter
-     * @return hourly sales count time series
+     * @param userId filtro opcional por usuario (null = todos los usuarios)
+     * @param startDate fecha de inicio del filtro
+     * @param endDate fecha de fin del filtro
+     * @return serie temporal de cantidad de ventas por hora
      */
     @Query(value = """
     SELECT
@@ -477,25 +475,25 @@ public interface ISaleRepository extends JpaRepository<Sale, Long> {
     );
 
     /**
-     * Retrieves sales count aggregated by day for chart visualization.
+     * Recupera la cantidad de ventas agrupada por día para la visualización de gráficos.
      *
      * <p>
-     * Sales count is calculated as the total number of sale records
-     * grouped by sale date.
+     * La cantidad de ventas se calcula como el número total de registros de venta
+     * agrupados por fecha de venta.
      * </p>
      *
      * <p>
-     * If {@code userId} is null, sales from all users are included.
+     * Si {@code userId} es null, se incluyen las ventas de todos los usuarios.
      * </p>
      *
      * <p>
-     * Results are ordered chronologically.
+     * Los resultados se ordenan cronológicamente.
      * </p>
      *
-     * @param userId optional user filter (null = all users)
-     * @param startDate start date filter
-     * @param endDate end date filter
-     * @return daily sales count time series
+     * @param userId filtro opcional por usuario (null = todos los usuarios)
+     * @param startDate fecha de inicio del filtro
+     * @param endDate fecha de fin del filtro
+     * @return serie temporal de cantidad de ventas por día
      */
     @Query(value = """
     SELECT
@@ -519,25 +517,25 @@ public interface ISaleRepository extends JpaRepository<Sale, Long> {
     );
 
     /**
-     * Retrieves sales count aggregated by month for chart visualization.
+     * Recupera la cantidad de ventas agrupada por mes para la visualización de gráficos.
      *
      * <p>
-     * Sales count is calculated as the total number of sale records
-     * grouped by month and year.
+     * La cantidad de ventas se calcula como el número total de registros de venta
+     * agrupados por mes y año.
      * </p>
      *
      * <p>
-     * If {@code userId} is null, sales from all users are included.
+     * Si {@code userId} es null, se incluyen las ventas de todos los usuarios.
      * </p>
      *
      * <p>
-     * Results are ordered chronologically.
+     * Los resultados se ordenan cronológicamente.
      * </p>
      *
-     * @param userId optional user filter (null = all users)
-     * @param startDate start date filter
-     * @param endDate end date filter
-     * @return monthly sales count time series
+     * @param userId filtro opcional por usuario (null = todos los usuarios)
+     * @param startDate fecha de inicio del filtro
+     * @param endDate fecha de fin del filtro
+     * @return serie temporal de cantidad de ventas por mes
      */
     @Query(value = """
     SELECT
@@ -561,25 +559,25 @@ public interface ISaleRepository extends JpaRepository<Sale, Long> {
     );
 
     /**
-     * Retrieves sales count aggregated by year for chart visualization.
+     * Recupera la cantidad de ventas agrupada por año para la visualización de gráficos.
      *
      * <p>
-     * Sales count is calculated as the total number of sale records
-     * grouped by year.
+     * La cantidad de ventas se calcula como el número total de registros de venta
+     * agrupados por año.
      * </p>
      *
      * <p>
-     * If {@code userId} is null, sales from all users are included.
+     * Si {@code userId} es null, se incluyen las ventas de todos los usuarios.
      * </p>
      *
      * <p>
-     * Results are ordered chronologically.
+     * Los resultados se ordenan cronológicamente.
      * </p>
      *
-     * @param userId optional user filter (null = all users)
-     * @param startDate start date filter
-     * @param endDate end date filter
-     * @return yearly sales count time series
+     * @param userId filtro opcional por usuario (null = todos los usuarios)
+     * @param startDate fecha de inicio del filtro
+     * @param endDate fecha de fin del filtro
+     * @return serie temporal de cantidad de ventas por año
      */
     @Query(value = """
     SELECT

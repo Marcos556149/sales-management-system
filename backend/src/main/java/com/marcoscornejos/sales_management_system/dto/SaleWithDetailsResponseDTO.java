@@ -11,11 +11,11 @@ import java.time.LocalTime;
 import java.util.List;
 
 /**
- * Data Transfer Object for returning detailed sale information.
+ * Objeto de Transferencia de Datos utilizado para devolver información detallada de una venta.
  *
  * <p>
- * This DTO represents the complete data of a single sale
- * to be displayed in the sale detail view.
+ * Este DTO representa la información completa de una venta individual
+ * para ser mostrada en la vista de detalle de venta.
  * </p>
  */
 @Getter @Setter
@@ -24,32 +24,32 @@ import java.util.List;
 public class SaleWithDetailsResponseDTO {
 
     /**
-     * Unique identifier of the sale.
+     * Identificador único de la venta.
      */
     private Long saleId;
 
     /**
-     * Date when the sale was made.
+     * Fecha en que se realizó la venta.
      */
     private LocalDate saleDate;
 
     /**
-     * Time when the sale was made.
+     * Hora en que se realizó la venta.
      */
     private LocalTime saleTime;
 
     /**
-     * Username of the seller.
+     * Nombre de usuario del vendedor.
      */
     private String userName;
 
     /**
-     * Total amount of the sale.
+     * Importe total de la venta.
      */
     private BigDecimal totalAmount;
 
     /**
-     * List of products included in the sale.
+     * Lista de productos incluidos en la venta.
      */
     private List<SaleDetailResponseDTO> saleDetails;
 

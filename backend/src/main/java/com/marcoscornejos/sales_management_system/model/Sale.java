@@ -1,11 +1,11 @@
 /**
- * Represents a sale transaction in the system.
+ * Representa una transacción de venta en el sistema.
  *
- * <p>Stores information about the sale such as date, time,
- * total amount, and the user responsible for the transaction.</p>
+ * <p>Almacena información de la venta, como la fecha, hora,
+ * importe total y el usuario responsable de la transacción.</p>
  *
- * <p>A sale is composed of multiple sale details,
- * each representing a product included in the transaction.</p>
+ * <p>Una venta está compuesta por múltiples detalles de venta,
+ * cada uno representando un producto incluido en la transacción.</p>
  */
 
 package com.marcoscornejos.sales_management_system.model;
@@ -14,8 +14,6 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -32,7 +30,7 @@ import java.util.List;
         allocationSize = 1)
 public class Sale {
 
-    /** Unique identifier of the sale. */
+    /** Identificador único de la venta. */
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE,
             generator = "sale_seq")
@@ -40,53 +38,54 @@ public class Sale {
     private Long saleId;
 
     /**
-     * Date when the sale was made.
+     * Fecha en la que se realizó la venta.
      *
-     * <p>Defaults to the current system date when the entity is created</p>
+     * <p>Por defecto se asigna la fecha actual del sistema cuando la entidad es creada.</p>
      */
     @Column(name = "sale_date")
     private LocalDate saleDate=LocalDate.now();
 
     /**
-     * Time when the sale was made.
+     * Hora en la que se realizó la venta.
      *
-     * <p>Defaults to the current system time when the entity is created</p>
+     * <p>Por defecto se asigna la hora actual del sistema cuando la entidad es creada.</p>
      */
     @Column(name = "sale_time")
     private LocalTime saleTime=LocalTime.now();
 
-    /** Total monetary amount of the sale. */
+    /** Importe monetario total de la venta. */
     @Column(name = "total_amount")
     private BigDecimal totalAmount=BigDecimal.ZERO;
 
     /**
-     * User responsible for the sale.
+     * Usuario responsable de la venta.
      *
-     * <p>Represents the user who performed the transaction.</p>
+     * <p>Representa al usuario que realizó la transacción.</p>
      *
-     * <p>Loaded lazily to avoid unnecessary queries unless accessed.</p>
+     * <p>Se carga de forma diferida (lazy) para evitar consultas innecesarias
+     * hasta que sea accedido.</p>
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 
     /**
-     * List of sale details associated with this sale.
-     * Represents all products included in the sale and their quantities.
+     * Lista de detalles de venta asociados a esta venta.
+     * Representa todos los productos incluidos en la venta y sus cantidades.
      *
-     * <p>The configuration ensures the following behavior:</p>
+     * <p>La configuración garantiza el siguiente comportamiento:</p>
      * <ul>
-     *   <li><b>Persisting the sale:</b> Any new {@code SaleDetail} objects
-     *       contained in this list are automatically persisted together with
-     *       the parent sale.</li>
-     *   <li><b>No automatic updates or removals:</b> Existing details are not
-     *       merged or deleted through cascade operations, since sales are treated
-     *       as historical records after registration.</li>
-     *   <li><b>Relationship ownership:</b> The foreign key is managed by the
-     *       {@code SaleDetail.sale} side, while this collection allows
-     *       navigation from the sale to its details.</li>
-     *   <li><b>Safe initialization:</b> The collection is initialized by default
-     *       to avoid null references when adding details to a new sale.</li>
+     *   <li><b>Persistencia de la venta:</b> Cualquier objeto {@code SaleDetail}
+     *       nuevo contenido en esta lista se persiste automáticamente junto con
+     *       la venta padre.</li>
+     *   <li><b>Sin actualizaciones ni eliminaciones automáticas:</b> Los detalles
+     *       existentes no se fusionan ni eliminan mediante operaciones de cascada,
+     *       ya que las ventas son tratadas como registros históricos después de su registro.</li>
+     *   <li><b>Propiedad de la relación:</b> La clave foránea es gestionada por el lado
+     *       {@code SaleDetail.sale}, mientras que esta colección permite navegar
+     *       desde la venta hacia sus detalles.</li>
+     *   <li><b>Inicialización segura:</b> La colección se inicializa por defecto
+     *       para evitar referencias nulas al agregar detalles a una nueva venta.</li>
      * </ul>
      */
     @OneToMany(

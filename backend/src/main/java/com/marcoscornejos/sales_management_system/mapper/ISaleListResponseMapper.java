@@ -6,25 +6,26 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
 /**
- * Mapper for converting {@link Sale} entity to {@link SaleListResponseDTO}.
+ * Mapper para convertir una entidad {@link Sale}
+ * en un {@link SaleListResponseDTO}.
  *
  * <p>
- * Uses MapStruct to automatically map fields and extract
- * nested user information.
+ * Utiliza MapStruct para mapear automáticamente los campos
+ * y extraer información anidada del usuario.
  * </p>
  */
 @Mapper(componentModel = "spring")
 public interface ISaleListResponseMapper {
 
     /**
-     * Maps a {@link Sale} entity to a {@link SaleListResponseDTO}.
+     * Convierte una entidad {@link Sale} en un {@link SaleListResponseDTO}.
      *
      * <p>
-     * Extracts userName from the nested User entity.
+     * Extrae el nombre de usuario desde la entidad User asociada.
      * </p>
      *
-     * @param sale the Sale entity
-     * @return mapped SaleListResponseDTO
+     * @param sale entidad Sale
+     * @return SaleListResponseDTO mapeado
      */
     @Mapping(source = "user.userName", target = "userName")
     SaleListResponseDTO toDto(Sale sale);

@@ -19,7 +19,7 @@ const useSaleDetail = (saleId, initialSale = null) => {
 
   useEffect(() => {
     let isMounted = true;
-    
+
     // If we already have the sale from navigation state, don't fetch on mount
     if (sale && refreshTrigger === 0) {
       return;
@@ -33,10 +33,10 @@ const useSaleDetail = (saleId, initialSale = null) => {
       try {
         const response = await fetch(`/api/sales/${saleId}`, { signal: controller.signal });
         clearTimeout(timeoutId);
-        
+
         if (!response.ok) {
           const errorData = await response.json().catch(() => ({}));
-          
+
           let errorMessage = errorData.error || errorData.message;
           if (!errorMessage && Object.keys(errorData).length > 0) {
             // Mapping MethodArgumentTypeMismatchException -> usually { "saleId": "Incorrect value: abc" }
@@ -48,12 +48,12 @@ const useSaleDetail = (saleId, initialSale = null) => {
 
           // In Sales matching your rule, 400 with "Sale not found" might be returned by SaleNotFoundException mapped into SaleException.
           // Or 404. In either case, if the message includes "not found" we can normalize it exactly.
-          if ((response.status === 400 || response.status === 404) && 
-             (errorMessage && errorMessage.toLowerCase().includes('not found'))) {
-              throw new Error("Sale not found");
+          if ((response.status === 400 || response.status === 404) &&
+            (errorMessage && errorMessage.toLowerCase().includes('not found'))) {
+            throw new Error("Venta no encontrada");
           }
-          
-          throw new Error(errorMessage || `Error loading sale: ${response.status}`);
+
+          throw new Error(errorMessage || `Error cargando la venta: ${response.status}`);
         }
 
         const data = await response.json();
@@ -63,7 +63,7 @@ const useSaleDetail = (saleId, initialSale = null) => {
       } catch (err) {
         clearTimeout(timeoutId);
         if (isMounted) {
-          const msg = err.name === 'AbortError' ? 'Sale request timed out' : (err.message || 'Error loading sale');
+          const msg = err.name === 'AbortError' ? 'La búsqueda de la venta excedió el tiempo de espera.' : (err.message || 'Error cargando la venta.');
           setError(msg);
         }
       } finally {
@@ -91,7 +91,7 @@ const SaleDetailView = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { addToast } = useToast();
-  
+
   const { sale, loading, error } = useSaleDetail(saleId, location.state?.sale);
   const [actionLoading, setActionLoading] = useState(false);
   const [showPrintModal, setShowPrintModal] = useState(false);
@@ -105,7 +105,7 @@ const SaleDetailView = () => {
     'ctrl+b': () => handleBack(),
     't': () => {
       if (!actionLoading && sale) {
-         setShowPrintModal(true);
+        setShowPrintModal(true);
       }
     }
   }), [navigate, actionLoading, addToast]));
@@ -115,17 +115,17 @@ const SaleDetailView = () => {
     try {
       const [year, month, day] = dateStr.split('-');
       const dateObj = new Date(year, month - 1, day);
-      
+
       const dateOpts = { year: 'numeric', month: 'long', day: 'numeric' };
       const formattedDate = dateObj.toLocaleDateString('en-US', dateOpts);
-      
+
       const parts = timeStr.split(':');
       let seconds = '00';
       if (parts.length >= 3) {
         seconds = parts[2].split('.')[0];
       }
       return `${formattedDate} • ${parts[0]}:${parts[1]}:${seconds}`;
-    } catch(e) {
+    } catch (e) {
       return `${dateStr} at ${timeStr}`;
     }
   };
@@ -136,11 +136,11 @@ const SaleDetailView = () => {
         <div className="detail-toolbar">
           <button className="btn-secondary" onClick={handleBack}>
             <ArrowLeft size={16} />
-            <span>Back to Sales</span>
+            <span>Volver a ventas</span>
           </button>
         </div>
         <div className="detail-card" style={{ padding: '48px', textAlign: 'center', color: 'var(--text-secondary)' }}>
-          <p>Loading sale details...</p>
+          <p>Cargando detalles de la venta...</p>
         </div>
       </div>
     );
@@ -153,11 +153,11 @@ const SaleDetailView = () => {
         <div className="detail-toolbar">
           <button className="btn-secondary" onClick={handleBack}>
             <ArrowLeft size={16} />
-            <span>Back to Sales</span>
+            <span>Volver a ventas</span>
           </button>
         </div>
         <div className="not-found-card">
-          <h2>{error || "Sale not found"}</h2>
+          <h2>{error || "Venta no encontrada"}</h2>
         </div>
       </div>
     );
@@ -172,18 +172,18 @@ const SaleDetailView = () => {
       <div className="detail-toolbar">
         <button className="btn-secondary" onClick={handleBack}>
           <ArrowLeft size={16} />
-          <span>Back to Sales</span>
+          <span>Volver a ventas</span>
           <span className="btn-shortcut">Ctrl+B</span>
         </button>
-        
+
         <div className="detail-actions">
-          <button 
+          <button
             className="btn-outline-success whitespace-nowrap"
             disabled={actionLoading}
             onClick={() => setShowPrintModal(true)}
           >
             <Printer size={16} />
-            <span>Print Ticket</span>
+            <span>Imprimir ticket</span>
             <span className="btn-shortcut">T</span>
           </button>
         </div>
@@ -191,15 +191,15 @@ const SaleDetailView = () => {
 
       {/* Main SaaS Details Card */}
       <div className="detail-card">
-        
+
         {/* HEADER: Resumen de Venta */}
         <div className="sale-detail-header-card">
           <div className="sale-info-group">
             <Receipt size={36} className="sale-main-icon" strokeWidth={1.5} />
             <div className="sale-header-text">
-              <h2 className="sale-title">Sale {sale.saleId}</h2>
+              <h2 className="sale-title">ID de Venta: {sale.saleId}</h2>
               <div className="sale-meta-row">
-                <span className="sale-meta-item seller-badge">Seller: {sale.userName || 'Unknown'}</span>
+                <span className="sale-meta-item seller-badge">Vendedor: {sale.userName || 'Desconocido'}</span>
                 <span className="sale-meta-dot">•</span>
                 <span className="sale-meta-item date-badge">{formatDateTimeFull(sale.saleDate, sale.saleTime)}</span>
               </div>
@@ -212,16 +212,16 @@ const SaleDetailView = () => {
           <div className="sale-items-header">
             <h3 className="sale-items-title">Products Sold</h3>
           </div>
-          
+
           {sale.saleDetails && sale.saleDetails.length > 0 ? (
             <div className="table-responsive">
               <table className="items-table">
                 <thead>
                   <tr>
-                    <th>Code</th>
-                    <th>Product</th>
-                    <th>Quantity</th>
-                    <th>Unit Price</th>
+                    <th>Código</th>
+                    <th>Producto</th>
+                    <th>Cantidad</th>
+                    <th>Precio Unitario</th>
                     <th>Subtotal</th>
                   </tr>
                 </thead>
@@ -241,8 +241,8 @@ const SaleDetailView = () => {
               </table>
             </div>
           ) : (
-             <div className="empty-state">
-              <p>No items found for this sale</p>
+            <div className="empty-state">
+              <p>No se encontraron productos para esta venta</p>
             </div>
           )}
         </div>
@@ -250,30 +250,30 @@ const SaleDetailView = () => {
         {/* SUMMARY FOOTER */}
         <div className="sale-summary-footer">
           <div className="summary-total-only">
-            <span className="summary-total-label">Sale Total</span>
+            <span className="summary-total-label">Total de la venta</span>
             <span className="summary-total-value">${totalAmount}</span>
           </div>
         </div>
-        
+
       </div>
 
       <ConfirmModal
         isOpen={showPrintModal}
-        title="Print Receipt"
-        message="Do you want to print the receipt?"
+        title="Imprimir ticket"
+        message="¿Deseas imprimir el ticket?"
         onConfirm={async () => {
           setShowPrintModal(false);
           setActionLoading(true);
           try {
             await printTicket(saleId);
           } catch (err) {
-            addToast(err.message || "Could not print ticket", "error");
+            addToast(err.message || "No se pudo imprimir el ticket", "error");
           } finally {
             setActionLoading(false);
           }
         }}
         onCancel={() => setShowPrintModal(false)}
-        confirmText="Yes, Print"
+        confirmText="Sí, imprimir"
         cancelText="No"
         confirmButtonTheme="success"
       />

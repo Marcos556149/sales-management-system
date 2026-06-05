@@ -1,16 +1,15 @@
 /**
- * Repository interface for managing {@link SaleDetail} entities.
+ * Interfaz de repositorio para la gestión de entidades {@link SaleDetail}.
  *
  * <p>
- * Extends {@link JpaRepository}, providing standard CRUD operations
- * such as save, delete, findById, and findAll without requiring
- * explicit implementation.
+ * Extiende {@link JpaRepository}, proporcionando operaciones CRUD estándar
+ * como save, delete, findById y findAll sin requerir una implementación explícita.
  * </p>
  *
  * <p>
- * This repository handles data access for sale details, which represent
- * the individual items within a sale.
- * Custom query methods can be defined here when needed.
+ * Este repositorio gestiona el acceso a los datos de los detalles de venta,
+ * que representan los productos individuales incluidos en una venta.
+ * Aquí pueden definirse métodos de consulta personalizados cuando sea necesario.
  * </p>
  */
 

@@ -1,18 +1,18 @@
 /**
- * Enumeration that defines the sorting direction options for chronological data.
+ * Enumeración que define las opciones de dirección de ordenamiento para datos cronológicos.
  *
  * <p>
- * Used to specify the order in which time-based records are sorted,
- * such as sales history, transactions, or reports.
+ * Se utiliza para especificar el orden en que se ordenan los registros basados en tiempo,
+ * como el historial de ventas, transacciones o reportes.
  * </p>
  *
  * <p>
- * This enum is especially useful in listing operations where users need
- * to view the newest records first or the oldest records first.
+ * Esta enumeración es especialmente útil en operaciones de listado donde los usuarios necesitan
+ * ver primero los registros más recientes o los más antiguos.
  * </p>
  *
  * <p>
- * Each enum value includes a human-readable display name intended for UI representation.
+ * Cada valor del enum incluye un nombre legible destinado a su representación en la interfaz de usuario.
  * </p>
  */
 
@@ -23,8 +23,8 @@ import lombok.Getter;
 @Getter
 public enum SortDirection {
 
-    NEWEST_FIRST("Most Recent First"),
-    OLDEST_FIRST("Oldest First");
+    NEWEST_FIRST("Más recientes primero"),
+    OLDEST_FIRST("Más antiguos primero");
 
     private final String displayName;
 

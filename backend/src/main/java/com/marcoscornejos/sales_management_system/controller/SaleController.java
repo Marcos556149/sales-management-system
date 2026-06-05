@@ -13,11 +13,11 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDate;
 
 /**
- * REST controller responsible for handling sale queries.
+ * Controlador REST responsable de gestionar las consultas relacionadas con ventas.
  *
  * <p>
- * Provides endpoints to retrieve sales with optional filtering by date,
- * sorting by time, and pagination support.
+ * Proporciona endpoints para obtener ventas con filtrado opcional por fecha,
+ * ordenamiento por hora y soporte de paginación.
  * </p>
  */
 @RestController
@@ -28,27 +28,26 @@ public class SaleController {
         private final ISaleService iSaleService;
 
         /**
-         * Retrieves a paginated list of sales registered in the system.
+         * Obtiene una lista paginada de ventas registradas en el sistema.
          *
          * <p>
-         * Each sale includes general information such as identifier, sale date and
-         * time,
-         * seller username, and total amount.
+         * Cada venta incluye información general como identificador, fecha y hora
+         * de la venta, nombre de usuario del vendedor e importe total.
          * </p>
          *
          * <p>
-         * Supports server-side pagination, filtering by date, and chronological
-         * sorting.
+         * Soporta paginación del lado del servidor, filtrado por fecha y
+         * ordenamiento cronológico.
          * </p>
-         * 
-         * @param searchSaleId Optional sale identifier search
-         * @param date         Sale date filter (defaults to current date if not
-         *                     provided)
-         * @param timeSort     Sorting direction by sale time
-         *                     (NEWEST_FIRST or OLDEST_FIRST, default: NEWEST_FIRST)
-         * @param page         Page number (default: 0)
-         * @param size         Number of sales per page (default: 50)
-         * @return A paginated response containing sales and pagination metadata
+         *
+         * @param searchSaleId búsqueda opcional por identificador de venta
+         * @param date         filtro por fecha de venta (si no se proporciona,
+         *                     se utiliza la fecha actual por defecto)
+         * @param timeSort     dirección de ordenamiento por hora de venta
+         *                     (NEWEST_FIRST u OLDEST_FIRST, por defecto: NEWEST_FIRST)
+         * @param page         número de página (por defecto: 0)
+         * @param size         cantidad de ventas por página (por defecto: 50)
+         * @return respuesta paginada que contiene las ventas y los metadatos de paginación
          */
         @GetMapping
         public ResponseEntity<PageResponseDTO<SaleListResponseDTO>> getSales(
@@ -72,16 +71,16 @@ public class SaleController {
         }
 
         /**
-         * Retrieves detailed information of a specific sale by its identifier.
+         * Obtiene la información detallada de una venta específica mediante su identificador.
          *
          * <p>
-         * This endpoint allows clients to fetch a single sale's data,
-         * including its identifier, date, time, seller username,
-         * total amount, and the list of sold products with their details.
+         * Este endpoint permite a los clientes obtener los datos de una venta,
+         * incluyendo su identificador, fecha, hora, nombre de usuario del vendedor,
+         * importe total y la lista de productos vendidos con sus respectivos detalles.
          * </p>
          *
-         * @param saleId the unique identifier of the sale
-         * @return the sale details as a response DTO
+         * @param saleId identificador único de la venta
+         * @return los detalles de la venta como DTO de respuesta
          */
         @GetMapping("/{saleId}")
         public ResponseEntity<SaleWithDetailsResponseDTO> getSaleById(
@@ -93,15 +92,15 @@ public class SaleController {
         }
 
         /**
-         * Retrieves available sorting options for sales.
+         * Obtiene las opciones de ordenamiento disponibles para las ventas.
          *
          * <p>
-         * This endpoint provides dynamic configuration data for the frontend,
-         * including sorting options by sale time.
-         * It avoids hardcoded values in the client application.
+         * Este endpoint proporciona datos de configuración dinámicos para el frontend,
+         * incluyendo las opciones de ordenamiento por hora de venta.
+         * Evita el uso de valores codificados de forma fija en la aplicación cliente.
          * </p>
          *
-         * @return ResponseEntity containing SaleFiltersResponseDTO
+         * @return ResponseEntity que contiene un SaleFiltersResponseDTO
          */
         @GetMapping("/filters")
         public ResponseEntity<SaleFiltersResponseDTO> getFilters() {
@@ -112,22 +111,22 @@ public class SaleController {
         }
 
         /**
-         * Registers a new sale in the system.
+         * Registra una nueva venta en el sistema.
          *
          * <p>
-         * Creates a sale with its details, automatically assigning date, time,
-         * total amount, and the authenticated user. The sale must contain at least
-         * one product, and all business rules (stock, product status, quantity)
-         * are validated during processing.
+         * Crea una venta junto con sus detalles, asignando automáticamente la fecha,
+         * hora, importe total y el usuario autenticado. La venta debe contener al menos
+         * un producto y todas las reglas de negocio (stock, estado del producto y cantidad)
+         * son validadas durante el procesamiento.
          * </p>
          *
          * <p>
-         * Returns the unique identifier of the created sale, which can be used
-         * to retrieve additional information such as the printable ticket.
+         * Devuelve el identificador único de la venta creada, el cual puede utilizarse
+         * para obtener información adicional como el ticket imprimible.
          * </p>
          *
-         * @param request the sale data including products and quantities
-         * @return a standardized success response containing the created sale ID
+         * @param request los datos de la venta, incluyendo productos y cantidades
+         * @return una respuesta de éxito estandarizada que contiene el ID de la venta creada
          */
         @PostMapping
         public ResponseEntity<SuccessResponseDTO<Long>> registerSale(
@@ -137,7 +136,7 @@ public class SaleController {
 
                 SuccessResponseDTO<Long> response = new SuccessResponseDTO<>(
                         "SALE_CREATED",
-                        "Sale successfully registered",
+                        "Venta registrada correctamente",
                         saleId
                 );
 
@@ -145,17 +144,17 @@ public class SaleController {
         }
 
         /**
-         * Generates a printable ticket for a specific sale.
+         * Genera un ticket imprimible para una venta específica.
          *
          * <p>
-         * This endpoint retrieves the sale and its associated details,
-         * and returns a formatted ticket ready to be printed on a thermal printer.
-         * The ticket includes business information, date and time,
-         * sold products, quantities, unit prices, subtotals, and total amount.
+         * Este endpoint recupera la venta y sus detalles asociados,
+         * y devuelve un ticket formateado listo para ser impreso en una impresora térmica.
+         * El ticket incluye información del negocio, fecha y hora,
+         * productos vendidos, cantidades, precios unitarios, subtotales e importe total.
          * </p>
          *
-         * @param saleId the unique identifier of the sale
-         * @return the formatted sale ticket as plain text
+         * @param saleId identificador único de la venta
+         * @return el ticket de venta formateado como texto plano
          */
         @GetMapping("/{saleId}/ticket")
         public ResponseEntity<String> generateSaleTicket(

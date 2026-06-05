@@ -28,27 +28,27 @@ const restrictNumericInput = (e) => {
 const validateQty = (qtyStr, product) => {
   const raw = String(qtyStr).trim();
   if (raw === '') {
-    return "Product quantity is required";
+    return "La cantidad del producto es obligatoria";
   }
 
   const numRegex = /^-?\d+(\.\d{1,2})?$/;
   if (!numRegex.test(raw)) {
-    return "Product quantity must be a valid number with up to 2 decimals (use . as separator)";
+    return "La cantidad del producto debe ser un número válido con hasta 2 decimales (use . como separador)";
   }
 
   const num = Number(raw);
   if (num <= 0) {
-    return "Product quantity must be greater than 0";
+    return "La cantidad del producto debe ser mayor a 0";
   }
 
   const parts = raw.split('.');
   if (parts[0].length > 10) {
-    return "Product quantity must have up to 10 digits and 2 decimals";
+    return "La cantidad del producto debe tener hasta 10 dígitos y 2 decimales";
   }
 
   if (product.unitOfMeasure?.code === 'UNITS' && !Number.isInteger(num)) {
     const productLabel = `${product.productCode} - ${product.productName}`;
-    return `Product '${productLabel}' only accepts whole numbers because it is sold by units`;
+    return `El producto '${productLabel}' solo acepta números enteros porque se vende por unidades`;
   }
 
   return '';
@@ -145,31 +145,31 @@ const AddProductModal = ({ isOpen, product, onClose, onAdd }) => {
     <div className="pos-modal-overlay" onClick={onClose}>
       <div className="pos-modal-content" onClick={(e) => e.stopPropagation()}>
         <div className="pos-modal-header">
-          <h3>Add Product to Sale</h3>
+          <h3>Agregar producto a la venta</h3>
           <button className="pos-modal-close" onClick={onClose}><X size={20} /></button>
         </div>
         <div className="pos-modal-body">
           <div className="pos-modal-row">
-            <span className="pos-modal-label">Code:</span>
+            <span className="pos-modal-label">Código:</span>
             <span className="pos-modal-value font-mono">{product.productCode}</span>
           </div>
           <div className="pos-modal-row">
-            <span className="pos-modal-label">Name:</span>
+            <span className="pos-modal-label">Nombre:</span>
             <span className="pos-modal-value">{product.productName}</span>
           </div>
           <div className="pos-modal-row">
-            <span className="pos-modal-label">Price:</span>
+            <span className="pos-modal-label">Precio:</span>
             <span className="pos-modal-value">${product.productPrice?.toFixed(2) ?? '0.00'}</span>
           </div>
           <div className="pos-modal-row">
-            <span className="pos-modal-label">Available Stock:</span>
+            <span className="pos-modal-label">Stock disponible:</span>
             <span className="pos-modal-value">
               {product.productStock} {product.unitOfMeasure?.code === 'UNITS' ? 'u' : (product.unitOfMeasure?.label || '')}
             </span>
           </div>
 
           <div className="pos-modal-group">
-            <label>Quantity</label>
+            <label>Cantidad</label>
             <input
               type="text"
               className={`pos-modal-qty ${error ? 'error' : ''}`}
@@ -184,12 +184,19 @@ const AddProductModal = ({ isOpen, product, onClose, onAdd }) => {
               <span style={{ color: '#ef4444', fontSize: '0.85rem', lineHeight: '1.2' }}>{error || '\u00A0'}</span>
             </div>
           </div>
+
+          <div className="pos-modal-row" style={{ marginTop: '4px', borderTop: '1px solid #e5e7eb', paddingTop: '16px', paddingBottom: '4px' }}>
+            <span className="pos-modal-label" style={{ fontWeight: '600', fontSize: '1.1rem' }}>Subtotal:</span>
+            <span className="pos-modal-value" style={{ fontWeight: '600', fontSize: '1.2rem', color: '#111827' }}>
+              ${!isNaN(Number(qty)) && Number(qty) > 0 ? (Number(qty) * (product.productPrice || 0)).toFixed(2) : '0.00'}
+            </span>
+          </div>
         </div>
         <div className="pos-modal-footer">
-          <button className="pos-btn-cancel" onClick={onClose}>Cancel</button>
+          <button className="pos-btn-cancel" onClick={onClose}>Cancelar</button>
           <button className="pos-btn-add" onClick={(e) => { e.stopPropagation(); handleAdd(); }}>
             <Plus size={18} />
-            Add to Cart
+            Agregar al carrito
           </button>
         </div>
       </div>
@@ -291,7 +298,7 @@ const RegisterSaleView = () => {
   const processScannedCode = async (code) => {
     const regex = /^[a-zA-Z0-9-]{8,30}$/;
     if (!regex.test(code)) {
-      addToast('Barcode not recognized, please try again', 'error');
+      addToast('Código de barras no reconocido, inténtelo nuevamente.', 'error');
       return;
     }
 
@@ -302,9 +309,9 @@ const RegisterSaleView = () => {
       }
     } catch (err) {
       if (err.status === 404) {
-        addToast("Product not found in system", "error");
+        addToast("Producto no encontrado en el sistema", "error");
       } else {
-        addToast(err.message || "Error searching product", "error");
+        addToast(err.message || "Error al buscar el producto", "error");
       }
     }
   };
@@ -376,7 +383,7 @@ const RegisterSaleView = () => {
           setProducts([]);
           setTotalPages(1);
         } else {
-          addToast("Could not load products for POS", "error");
+          addToast("No se pudieron cargar los productos para el POS", "error");
         }
       }
     } finally {
@@ -513,7 +520,8 @@ const RegisterSaleView = () => {
     if (Date.now() - lastCloseTimeRef.current < 100) return;
 
     if (product.productStock <= 0) {
-      addToast(`Product ${product.productName} is out of stock`, "error");
+      const productLabel1 = `${product.productCode} - ${product.productName}`;
+      addToast(`Stock insuficiente para el producto ${productLabel1}`, "error");
       return;
     }
     setSelectedProduct(product);
@@ -643,7 +651,7 @@ const RegisterSaleView = () => {
   };
 
   const finishSaleFlow = (response) => {
-    addToast(response?.message || "Sale registered successfully", "success");
+    addToast(response?.message || "Venta registrada correctamente", "success");
     isSubmittingRef.current = true;
     setIsCached(false); // Force sales list refresh
     setCartItems([]);
@@ -652,7 +660,7 @@ const RegisterSaleView = () => {
 
   const handleConfirmSale = async () => {
     if (cartItems.length === 0) {
-      addToast("Sale must contain at least one product", "error");
+      addToast("La venta debe contener al menos un producto", "error");
       return;
     }
 
@@ -697,7 +705,7 @@ const RegisterSaleView = () => {
       console.error("Sale submission error:", err);
 
       if (err.name === 'AbortError') {
-        addToast('Request timed out. Please check your connection.', 'error');
+        addToast('La solicitud tardó demasiado. Por favor, revisa tu conexión.', 'error');
       } else {
         const data = err.details || {};
         const errorData = data.error || {};
@@ -712,11 +720,11 @@ const RegisterSaleView = () => {
               if (typeof msg === 'string') addToast(msg, 'error');
             });
           } else {
-            const msg = errorData.message || data.message || err.message || 'Invalid data provided';
+            const msg = errorData.message || data.message || err.message || 'Datos inválidos proporcionados';
             addToast(msg, 'error');
           }
         } else {
-          const msg = err.message || 'An error occurred while registering the sale';
+          const msg = err.message || 'Ocurrió un error al registrar la venta';
           addToast(msg, 'error');
         }
       }
@@ -736,7 +744,7 @@ const RegisterSaleView = () => {
             <div style={{ marginBottom: '16px', marginTop: '4px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px' }}>
               <button className="btn-secondary" onClick={() => navigate('/dashboard/sales')}>
                 <ArrowLeft size={16} />
-                <span>Back to Sales</span>
+                <span>Volver a Ventas</span>
                 <span className="btn-shortcut">Ctrl+B</span>
               </button>
               <button
@@ -748,21 +756,21 @@ const RegisterSaleView = () => {
                     setFocusedCartIndex(0);
                     setFocusedIndex(-1);
                   } else {
-                    addToast("Add products to the cart first", "error");
+                    addToast("Agregue productos al carrito primero", "error");
                   }
                 }}
               >
-                <span style={{ fontSize: '0.95rem' }}>Go to Cart</span>
+                <span style={{ fontSize: '0.95rem' }}>Ir al carrito</span>
                 <span className="btn-shortcut" style={{ marginLeft: '8px' }}>Ctrl + →</span>
               </button>
             </div>
             <div className="pos-catalog-header" onClick={() => { setActiveSection('catalog'); setFocusedCartIndex(-1); }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <h2>Products</h2>
+                <h2>Productos</h2>
                 <div className="tooltip-container" tabIndex="0">
                   <Info size={18} className="info-icon" style={{ cursor: 'help' }} />
                   <span className="tooltip-text">
-                    Inactive products or products out of stock are not shown in the list.
+                    Los productos inactivos o sin stock no se muestran en la lista.
                   </span>
                 </div>
               </div>
@@ -772,7 +780,7 @@ const RegisterSaleView = () => {
                   <input
                     ref={searchInputRef}
                     type="text"
-                    placeholder="Search by name or code..."
+                    placeholder="Buscar por nombre o código..."
                     value={searchTerm}
                     onChange={(e) => {
                       setSearchTerm(e.target.value);
@@ -785,7 +793,7 @@ const RegisterSaleView = () => {
                     {searchTerm && (
                       <button
                         className="clear-search-btn"
-                        title="Clear Search"
+                        title="Limpiar búsqueda"
                         onClick={() => { setSearchTerm(''); setAppliedSearch(''); setPage(1); }}
                       >
                         <X size={16} />
@@ -801,7 +809,7 @@ const RegisterSaleView = () => {
                   disabled={loadingProducts}
                 >
                   <RefreshCw size={18} className={loadingProducts ? "spin-animation" : ""} />
-                  <span>{loadingProducts ? 'Refreshing...' : 'Refresh'}</span>
+                  <span>{loadingProducts ? 'Actualizando...' : 'Actualizar'}</span>
                   <span className="btn-shortcut">Ctrl+Shift+K</span>
                 </button>
               </div>
@@ -810,21 +818,21 @@ const RegisterSaleView = () => {
 
           <div className="pos-catalog-content" onClick={() => { setActiveSection('catalog'); setFocusedCartIndex(-1); }}>
             {loadingProducts ? (
-              <div style={{ padding: '20px', textAlign: 'center', color: '#6b7280' }}>Loading products...</div>
+              <div style={{ padding: '20px', textAlign: 'center', color: '#6b7280' }}>Cargando productos...</div>
             ) : products.length === 0 ? (
               <div style={{ padding: '40px 20px', textAlign: 'center', color: '#6b7280' }}>
                 {totalGlobalElements === 0
-                  ? "No active products with available stock found"
-                  : "No products match the search criteria"
+                  ? "No se encontraron productos activos con stock disponible"
+                  : "Ningún producto coincide con los criterios de búsqueda"
                 }
               </div>
             ) : (
               <table className="pos-product-list">
                 <thead>
                   <tr>
-                    <th style={{ width: '15%' }}>Code</th>
-                    <th style={{ width: '45%' }}>Product</th>
-                    <th style={{ width: '25%' }}>Price</th>
+                    <th style={{ width: '15%' }}>Código</th>
+                    <th style={{ width: '45%' }}>Nombre</th>
+                    <th style={{ width: '25%' }}>Precio</th>
                     <th style={{ width: '15%' }}>Stock</th>
                   </tr>
                 </thead>
@@ -869,7 +877,7 @@ const RegisterSaleView = () => {
                 totalPages={totalPages}
                 totalElements={totalElements}
                 onPageChange={setPage}
-                itemName="products"
+                itemName="productos"
               />
             </div>
           )}
@@ -902,12 +910,12 @@ const RegisterSaleView = () => {
                 setFocusedIndex(0);
               }}
             >
-              <span style={{ fontSize: '0.95rem' }}>Catalog</span>
+              <span style={{ fontSize: '0.95rem' }}>Catálogo</span>
               <span className="btn-shortcut" style={{ marginLeft: '8px' }}>Ctrl + ←</span>
             </button>
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginLeft: '4px' }}>
               <ShoppingCart size={24} color="#374151" />
-              <h2 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 700, color: '#111827' }}>Current Sale</h2>
+              <h2 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 700, color: '#111827' }}>Venta actual</h2>
             </div>
           </div>
 
@@ -916,16 +924,16 @@ const RegisterSaleView = () => {
             {cartItems.length === 0 ? (
               <div className="pos-empty-cart">
                 <ShoppingCart size={48} opacity={0.2} />
-                <p>Cart is empty</p>
-                <span style={{ fontSize: '0.85rem' }}>Select products from the catalog to add them here</span>
+                <p>El carrito está vacío</p>
+                <span style={{ fontSize: '0.85rem' }}>Selecciona productos del catálogo para agregarlos aquí</span>
               </div>
             ) : (
               <table className="pos-cart-table">
                 <thead>
                   <tr>
-                    <th>Product</th>
-                    <th style={{ width: '80px', textAlign: 'center' }}>Quantity</th>
-                    <th style={{ width: '110px', textAlign: 'left' }}>Price</th>
+                    <th>Producto</th>
+                    <th style={{ width: '80px', textAlign: 'center' }}>Cantidad</th>
+                    <th style={{ width: '110px', textAlign: 'left' }}>Precio</th>
                     <th style={{ width: '110px', textAlign: 'left' }}>Subtotal</th>
                     <th style={{ width: '40px' }}></th>
                   </tr>
@@ -1017,7 +1025,7 @@ const RegisterSaleView = () => {
                             handleRemoveFromCart(index);
                             if (focusedCartIndex === index) setFocusedCartIndex(-1);
                           }}
-                          title="Remove Item"
+                          title="Eliminar producto"
                         >
                           <Trash2 size={16} />
                         </button>
@@ -1039,10 +1047,10 @@ const RegisterSaleView = () => {
               disabled={cartItems.length === 0 || isSubmitting}
               onClick={handleConfirmSale}
             >
-              {isSubmitting ? 'Processing...' : (
+              {isSubmitting ? 'Procesando...' : (
                 <>
                   <Check size={20} />
-                  Confirm Sale
+                  Confirmar Venta
                   <span className="btn-shortcut" style={{ marginLeft: 'auto', backgroundColor: 'rgba(255, 255, 255, 0.2)', color: 'white', borderColor: 'rgba(255, 255, 255, 0.3)' }}>F9</span>
                 </>
               )}
@@ -1058,17 +1066,17 @@ const RegisterSaleView = () => {
         />
         <ConfirmModal
           isOpen={blocker.state === "blocked"}
-          title="Unsaved Sale"
-          message="You have products in your cart. Are you sure you want to leave? The cart will be cleared."
+          title="Venta sin guardar"
+          message="Tiene productos en el carrito. ¿Está seguro de que desea salir? El carrito se borrará."
           onConfirm={() => blocker.proceed()}
           onCancel={() => blocker.reset()}
-          confirmText="Leave"
+          confirmText="Salir"
           confirmButtonTheme="danger"
         />
         <ConfirmModal
           isOpen={showPrintModal}
-          title="Print Receipt"
-          message="Do you want to print the receipt?"
+          title="Imprimir Ticket"
+          message="¿Deseas imprimir el ticket?"
           onConfirm={async () => {
             setShowPrintModal(false);
             try {
@@ -1080,7 +1088,7 @@ const RegisterSaleView = () => {
                 console.warn("No sale ID found in response, skipping print");
               }
             } catch (err) {
-              addToast(err.message || "Could not print ticket, but sale was registered", "error");
+              addToast(err.message || "No se pudo imprimir el ticket, pero la venta fue registrada", "error");
             } finally {
               finishSaleFlow(lastSaleResponse);
             }
@@ -1089,7 +1097,7 @@ const RegisterSaleView = () => {
             setShowPrintModal(false);
             finishSaleFlow(lastSaleResponse);
           }}
-          confirmText="Yes, Print"
+          confirmText="Sí, Imprimir"
           cancelText="No"
           confirmButtonTheme="success"
         />

@@ -8,7 +8,7 @@ import lombok.Setter;
 import java.math.BigDecimal;
 
 /**
- * DTO representing each product included in the sale.
+ * DTO que representa cada producto incluido en una venta.
  */
 @Getter
 @Setter
@@ -17,32 +17,32 @@ import java.math.BigDecimal;
 public class SaleDetailResponseDTO {
 
     /**
-     * Product code.
+     * Código del producto.
      */
     private String productCode;
 
     /**
-     * Product name at the time of the sale (snapshot).
+     * Nombre del producto al momento de la venta (snapshot histórico).
      */
     private String productNameAtSale;
 
     /**
-     * Quantity sold.
+     * Cantidad vendida.
      */
     private BigDecimal productQuantity;
 
     /**
-     * Unit of measure of the product at the time of the sale.
+     * Unidad de medida del producto al momento de la venta.
      */
     private EnumDTO unitOfMeasureAtSale;
 
     /**
-     * Price of the product at the time of sale.
+     * Precio del producto al momento de la venta.
      */
     private BigDecimal salePrice;
 
     /**
-     * Subtotal amount for this product.
+     * Importe subtotal de este producto.
      */
     private BigDecimal subtotal;
 }

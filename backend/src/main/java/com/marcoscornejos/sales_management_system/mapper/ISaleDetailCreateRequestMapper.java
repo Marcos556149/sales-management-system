@@ -5,30 +5,30 @@ import com.marcoscornejos.sales_management_system.model.SaleDetail;
 import org.mapstruct.Mapper;
 
 /**
- * Mapper for converting between {@link SaleDetailCreateRequestDTO}
- * and {@link SaleDetail} entities.
+ * Mapper para convertir entre {@link SaleDetailCreateRequestDTO}
+ * y entidades {@link SaleDetail}.
  *
  * <p>
- * Handles transformations required for sale detail creation requests
- * and persistence of SaleDetail data.
+ * Gestiona las transformaciones necesarias para las solicitudes
+ * de creación de detalles de venta y la persistencia de datos de {@link SaleDetail}.
  * </p>
  */
 @Mapper(componentModel = "spring")
 public interface ISaleDetailCreateRequestMapper {
 
     /**
-     * Maps a {@link SaleDetailCreateRequestDTO} to a {@link SaleDetail} entity.
+     * Convierte un {@link SaleDetailCreateRequestDTO} en una entidad {@link SaleDetail}.
      *
-     * @param dto the sale detail creation request DTO containing detail data
-     * @return a SaleDetail entity with corresponding fields set
+     * @param dto DTO de solicitud de creación de detalle de venta que contiene los datos del detalle
+     * @return entidad SaleDetail con los campos correspondientes asignados
      */
     SaleDetail toSaleDetail(SaleDetailCreateRequestDTO dto);
 
     /**
-     * Maps a {@link SaleDetail} entity to a {@link SaleDetailCreateRequestDTO}.
+     * Convierte una entidad {@link SaleDetail} en un {@link SaleDetailCreateRequestDTO}.
      *
-     * @param saleDetail the SaleDetail entity
-     * @return a SaleDetailCreateRequestDTO with corresponding fields set
+     * @param saleDetail entidad SaleDetail
+     * @return SaleDetailCreateRequestDTO con los campos correspondientes asignados
      */
     SaleDetailCreateRequestDTO toDto(SaleDetail saleDetail);
 }

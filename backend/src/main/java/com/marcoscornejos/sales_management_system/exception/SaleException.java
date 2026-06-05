@@ -3,19 +3,21 @@ package com.marcoscornejos.sales_management_system.exception;
 import lombok.Getter;
 
 /**
- * Base exception for all sale-related business and validation errors.
+ * Excepción base para todos los errores de negocio y validación
+ * relacionados con ventas.
  *
  * <p>
- * This exception defines a standard structure used across the Sale domain,
- * allowing consistent error handling in the GlobalExceptionHandler.
+ * Esta excepción define una estructura estándar utilizada en todo
+ * el dominio de ventas, permitiendo un manejo consistente de errores
+ * en el GlobalExceptionHandler.
  * </p>
  *
  * <p>
- * Each exception includes:
+ * Cada excepción incluye:
  * <ul>
- *   <li><b>code</b>: machine-readable error identifier</li>
- *   <li><b>message</b>: human-readable description of the error</li>
- *   <li><b>field</b>: optional field related to validation errors</li>
+ *   <li><b>code</b>: identificador de error legible por máquina</li>
+ *   <li><b>message</b>: descripción del error legible para el usuario</li>
+ *   <li><b>field</b>: campo opcional relacionado con errores de validación</li>
  * </ul>
  * </p>
  */
@@ -26,11 +28,11 @@ public class SaleException extends RuntimeException {
     private final String field;
 
     /**
-     * Creates a new SaleException.
+     * Crea una nueva instancia de SaleException.
      *
-     * @param code machine-readable error code
-     * @param message human-readable error message
-     * @param field optional field related to the error (can be null)
+     * @param code código de error legible por máquina
+     * @param message mensaje de error legible para el usuario
+     * @param field campo opcional relacionado con el error (puede ser null)
      */
     public SaleException(String code, String message, String field) {
         super(message);

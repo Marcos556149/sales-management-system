@@ -280,39 +280,39 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * Handles sale-related exceptions thrown when business rules
-     * or validations fail within the Sale domain.
+     * Maneja las excepciones relacionadas con ventas que se producen cuando
+     * fallan reglas de negocio o validaciones dentro del dominio de ventas.
      *
      * <p>
-     * This handler centralizes all exceptions that extend {@code SaleException},
-     * ensuring a consistent error response format across the application.
+     * Este manejador centraliza todas las excepciones que extienden de {@code SaleException},
+     * garantizando un formato de respuesta de error consistente en toda la aplicación.
      * </p>
      *
      * <p>
-     * The response follows the standardized structure:
+     * La respuesta sigue la siguiente estructura estandarizada:
      * </p>
      *
      * <pre>
      * {
      *   "error": {
      *     "code": "ERROR_CODE",
-     *     "message": "Human readable message",
-     *     "field": "Optional field related to the error"
+     *     "message": "Mensaje legible para el usuario",
+     *     "field": "Campo opcional relacionado con el error"
      *   }
      * }
      * </pre>
      *
      * <p>
-     * The frontend should use:
+     * El frontend debe utilizar:
      * <ul>
-     *   <li><b>code</b>: to determine error type and UI behavior</li>
-     *   <li><b>message</b>: to display or log human-readable information</li>
-     *   <li><b>field</b>: to associate validation errors with specific inputs</li>
+     *   <li><b>code</b>: para determinar el tipo de error y el comportamiento de la interfaz</li>
+     *   <li><b>message</b>: para mostrar o registrar información legible para el usuario</li>
+     *   <li><b>field</b>: para asociar errores de validación con campos específicos</li>
      * </ul>
      * </p>
      *
-     * @param ex the sale-related exception containing error details
-     * @return a 400 Bad Request response with a standardized error body
+     * @param ex excepción relacionada con ventas que contiene los detalles del error
+     * @return una respuesta HTTP 400 (Bad Request) con un cuerpo de error estandarizado
      */
     @ExceptionHandler(SaleException.class)
     public ResponseEntity<Map<String, Object>> handleSaleException(SaleException ex) {
@@ -411,49 +411,51 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * Handles exceptions thrown by the persistence layer when database-level
-     * business rules (PostgreSQL triggers or constraints) are violated.
+     * Maneja las excepciones generadas por la capa de persistencia cuando se violan
+     * reglas de negocio a nivel de base de datos (triggers o restricciones de PostgreSQL).
      *
      * <p>
-     * This includes errors raised via {@code RAISE EXCEPTION} in database triggers,
-     * such as stock validation failures or sale total limit violations.
+     * Esto incluye errores lanzados mediante {@code RAISE EXCEPTION} en triggers
+     * de base de datos, como validaciones de stock insuficiente o límites máximos
+     * para el total de una venta.
      * </p>
      *
      * <p>
-     * The handler extracts and normalizes database error messages, removing
-     * technical noise added by PostgreSQL, Hibernate, or JDBC (e.g. "ERROR:",
-     * "Where:"), keeping only business-relevant information for the frontend.
+     * El manejador extrae y normaliza los mensajes de error de la base de datos,
+     * eliminando información técnica agregada por PostgreSQL, Hibernate o JDBC
+     * (por ejemplo, "ERROR:" o "Where:"), conservando únicamente la información
+     * relevante para el negocio que será mostrada al frontend.
      * </p>
      *
      * <p>
-     * Supported business errors:
+     * Errores de negocio soportados:
      * <ul>
-     *   <li>Insufficient stock validation (product-level constraint)</li>
-     *   <li>Sale total maximum amount validation (financial constraint)</li>
+     *   <li>Validación de stock insuficiente (restricción a nivel de producto)</li>
+     *   <li>Validación del importe máximo permitido para una venta (restricción financiera)</li>
      * </ul>
      * </p>
      *
      * <p>
-     * If the error does not match a known business rule, a generic database
-     * error response is returned.
+     * Si el error no coincide con una regla de negocio conocida,
+     * se devuelve una respuesta genérica de error de base de datos.
      * </p>
      *
      * <p>
-     * Final response structure:
+     * Estructura final de la respuesta:
      * </p>
      *
      * <pre>
      * {
      *   "error": {
      *     "code": "ERROR_CODE",
-     *     "message": "Business-friendly message",
-     *     "field": "Optional related field"
+     *     "message": "Mensaje amigable para el negocio",
+     *     "field": "Campo relacionado opcional"
      *   }
      * }
      * </pre>
      *
-     * @param ex exception propagated from the persistence layer
-     * @return standardized error response containing code, message, and optional field
+     * @param ex excepción propagada desde la capa de persistencia
+     * @return respuesta de error estandarizada que contiene código, mensaje y campo opcional
      */
     @ExceptionHandler({
             DataIntegrityViolationException.class,
@@ -467,18 +469,18 @@ public class GlobalExceptionHandler {
         String rawMessage = (root != null ? root.getMessage() : ex.getMessage());
 
         // =========================
-        // CLEAN DATABASE MESSAGE
+        // LIMPIAR MENSAJE DE BASE DE DATOS
         // =========================
         String message = rawMessage;
 
         if (rawMessage != null) {
 
-            // remove PostgreSQL stack context
+            // eliminar contexto de pila agregado por PostgreSQL
             if (rawMessage.contains("Where:")) {
                 message = rawMessage.split("Where:")[0].trim();
             }
 
-            // remove JDBC/Hibernate prefix noise
+            // eliminar prefijos técnicos agregados por JDBC/Hibernate
             if (message.startsWith("ERROR:")) {
                 message = message.substring("ERROR:".length()).trim();
             }
@@ -486,16 +488,16 @@ public class GlobalExceptionHandler {
 
         String code = "DATABASE_ERROR";
         String field = null;
-        String userMessage = "Database operation failed";
+        String userMessage = "La operación en la base de datos ha fallado";
 
         Map<String, Object> errorBody = new HashMap<>();
 
         if (message != null) {
 
             // =========================
-            // STOCK ERROR
+            // ERROR DE STOCK
             // =========================
-            if (message.contains("Insufficient stock for product")) {
+            if (message.contains("Stock insuficiente para el producto")) {
 
                 code = "INSUFFICIENT_STOCK";
                 field = "productQuantity";
@@ -504,9 +506,9 @@ public class GlobalExceptionHandler {
             }
 
             // =========================
-            // TOTAL AMOUNT ERROR
+            // ERROR DE IMPORTE TOTAL
             // =========================
-            else if (message.contains("Sale total exceeds maximum allowed amount")) {
+            else if (message.contains("El importe total de la venta supera el máximo permitido")) {
 
                 code = "SALE_TOTAL_EXCEEDED";
                 field = "totalAmount";

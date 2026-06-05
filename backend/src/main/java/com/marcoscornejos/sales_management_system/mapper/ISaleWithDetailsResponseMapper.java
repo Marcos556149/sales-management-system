@@ -13,38 +13,42 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 
 /**
- * Mapper for converting {@link Sale} entity to {@link SaleWithDetailsResponseDTO}.
+ * Mapper para convertir una entidad {@link Sale}
+ * en un {@link SaleWithDetailsResponseDTO}.
  *
  * <p>
- * Handles mapping of sale data and its associated details.
+ * Gestiona el mapeo de los datos de la venta y sus detalles asociados.
  * </p>
  */
 @Mapper(componentModel = "spring")
 public interface ISaleWithDetailsResponseMapper {
 
     /**
-     * Maps a {@link Sale} entity to a {@link SaleWithDetailsResponseDTO}.
+     * Convierte una entidad {@link Sale} en un {@link SaleWithDetailsResponseDTO}.
      *
-     * @param sale the Sale entity
-     * @return SaleWithDetailsResponseDTO with mapped fields
+     * @param sale entidad Sale
+     * @return SaleWithDetailsResponseDTO con los campos mapeados
      */
     @Mapping(source = "user.userName", target = "userName")
     SaleWithDetailsResponseDTO toDto(Sale sale);
 
 
     /**
-     * Maps a {@link SaleDetail} entity to a SaleDetailResponseDTO.
+     * Convierte una entidad {@link SaleDetail} en un {@link SaleDetailResponseDTO}.
      *
-     * @param detail the SaleDetail entity
-     * @return SaleDetailResponseDTO with mapped fields
+     * @param detail entidad SaleDetail
+     * @return SaleDetailResponseDTO con los campos mapeados
      */
     @Mapping(source = "product.productCode", target = "productCode")
     @Mapping(target = "subtotal", expression = "java(calculateSubtotal(detail))")
     SaleDetailResponseDTO toSaleDetailResponseDTO(SaleDetail detail);
 
     /**
-     * Maps {@link UnitOfMeasure} to {@link EnumDTO}.
-     * Uses abbreviation for display.
+     * Convierte un {@link UnitOfMeasure} en un {@link EnumDTO}.
+     *
+     * <p>
+     * Utiliza la abreviatura de la unidad de medida para su visualización.
+     * </p>
      */
     default EnumDTO map(UnitOfMeasure unit) {
         if (unit == null) return null;
@@ -55,15 +59,15 @@ public interface ISaleWithDetailsResponseMapper {
     }
 
     /**
-     * Calculates the subtotal for a sale detail.
+     * Calcula el subtotal de un detalle de venta.
      *
      * <p>
-     * Multiplies the unit sale price by the quantity sold.
-     * Returns null if any required value is missing.
+     * Multiplica el precio de venta unitario por la cantidad vendida.
+     * Devuelve null si falta alguno de los valores requeridos.
      * </p>
      *
-     * @param detail the SaleDetail entity
-     * @return the calculated subtotal
+     * @param detail entidad SaleDetail
+     * @return subtotal calculado
      */
     default BigDecimal calculateSubtotal(SaleDetail detail) {
         if (detail == null || detail.getSalePrice() == null || detail.getProductQuantity() == null) {

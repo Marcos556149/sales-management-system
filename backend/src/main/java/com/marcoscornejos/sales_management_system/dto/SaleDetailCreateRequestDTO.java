@@ -11,16 +11,17 @@ import lombok.Setter;
 import java.math.BigDecimal;
 
 /**
- * DTO used to register a sale detail as part of a new sale.
+ * DTO utilizado para registrar un detalle de venta como parte de una nueva venta.
  *
  * <p>
- * Represents a product included in the sale and the quantity
- * requested by the user.
+ * Representa un producto incluido en la venta y la cantidad
+ * solicitada por el usuario.
  * </p>
  *
  * <p>
- * The sale detail identifier, unit price, and subtotal are not included
- * because they are automatically resolved by the system during sale registration.
+ * El identificador del detalle de venta, el precio unitario y el subtotal
+ * no se incluyen porque son resueltos automáticamente por el sistema
+ * durante el registro de la venta.
  * </p>
  */
 @Getter
@@ -28,33 +29,33 @@ import java.math.BigDecimal;
 public class SaleDetailCreateRequestDTO {
 
     /**
-     * Unique code of the product to associate with the sale.
+     * Código único del producto que se asociará a la venta.
      *
      * <p>
-     * Must not be blank and must not exceed 100 characters.
+     * No debe estar vacío y no debe superar los 100 caracteres.
      * </p>
      */
-    @NotBlank(message = "Product code is required")
-    @Size(max = 100, message = "Product code must not exceed 100 characters")
+    @NotBlank(message = "El código del producto es obligatorio")
+    @Size(max = 100, message = "El código del producto no debe superar los 100 caracteres")
     private String productCode;
 
     /**
-     * Quantity requested for the selected product.
+     * Cantidad solicitada para el producto seleccionado.
      *
      * <p>
-     * Must be greater than 0 and respect the database constraint
-     * NUMERIC(12,2), allowing up to 10 integer digits and 2 decimal places.
+     * Debe ser mayor que 0 y respetar la restricción de base de datos
+     * NUMERIC(12,2), permitiendo hasta 10 dígitos enteros y 2 decimales.
      * </p>
      *
      * <p>
-     * Compatibility with the product unit of measure
-     * (for example, no decimals for UNIT products)
-     * is validated in the business layer.
+     * La compatibilidad con la unidad de medida del producto
+     * (por ejemplo, no permitir decimales para productos vendidos por unidades)
+     * se valida en la capa de negocio.
      * </p>
      */
-    @NotNull(message = "Product quantity is required")
-    @DecimalMin(value = "0.01", inclusive = true, message = "Product quantity must be greater than 0")
-    @Digits(integer = 10, fraction = 2, message = "Product quantity must have up to 10 digits and 2 decimals")
+    @NotNull(message = "La cantidad del producto es obligatoria")
+    @DecimalMin(value = "0.01", inclusive = true, message = "La cantidad del producto debe ser mayor que 0")
+    @Digits(integer = 10, fraction = 2, message = "La cantidad del producto debe tener hasta 10 dígitos enteros y 2 decimales")
     private BigDecimal productQuantity;
 
 }

@@ -77,7 +77,7 @@ const BarcodeScanner = () => {
       // Only show error if it looks like a failed scan (more than 2 chars)
       // Small buffers are usually accidental keystrokes or shortcuts
       if (code.length > 2) {
-        addToast('No se pudo reconocer el código de barras. Inténtelo nuevamente.', 'error');
+        addToast('Código de barras no reconocido, inténtelo nuevamente.', 'error');
       }
       return;
     }
