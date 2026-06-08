@@ -9,9 +9,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 /**
- * Controller for handling authentication endpoints.
+ * Controlador encargado de los endpoints de autenticación.
  *
- * <p>Delegates authentication logic to {@link IAuthService}.
+ * <p>Delega la lógica de autenticación al servicio {@link IAuthService}.
  */
 @RestController
 @RequestMapping("/api/auth")
@@ -21,10 +21,10 @@ public class AuthController {
     private final IAuthService iAuthService;
 
     /**
-     * Endpoint for user login.
+     * Endpoint para el inicio de sesión del usuario.
      *
-     * @param request the login request DTO containing username and password
-     * @return {@link LoginResponseDTO} with user information if authentication is successful
+     * @param request DTO de inicio de sesión que contiene el nombre de usuario y la contraseña
+     * @return {@link LoginResponseDTO} con la información del usuario si la autenticación es exitosa
      */
     @PostMapping("/login")
     public ResponseEntity<LoginResponseDTO> login(@Valid @RequestBody LoginRequestDTO request) {

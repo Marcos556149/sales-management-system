@@ -1,27 +1,27 @@
 package com.marcoscornejos.sales_management_system.exception;
 
 /**
- * Exception thrown when the system fails
- * to generate the statistics PDF report.
+ * Excepción lanzada cuando el sistema falla al generar
+ * el informe PDF de estadísticas.
  *
  * <p>
- * This may occur due to:
+ * Esto puede ocurrir debido a:
  * <ul>
- *     <li>PDF document creation errors</li>
- *     <li>Invalid PDF content generation</li>
- *     <li>Chart rendering failures</li>
- *     <li>I/O related PDF processing errors</li>
+ *     <li>Errores en la creación del documento PDF</li>
+ *     <li>Generación de contenido PDF inválido</li>
+ *     <li>Fallos en el renderizado de gráficos</li>
+ *     <li>Errores de entrada/salida durante el procesamiento del PDF</li>
  * </ul>
  * </p>
  *
  * <p>
- * This exception uses the standardized error format:
+ * Esta excepción utiliza el formato de error estandarizado:
  * </p>
  *
  * <pre>
  * {
  *   "code": "PDF_GENERATION_ERROR",
- *   "message": "Human readable message",
+ *   "message": "Mensaje legible para el usuario",
  *   "field": null
  * }
  * </pre>
@@ -33,9 +33,9 @@ public class PdfGenerationException
             "PDF_GENERATION_ERROR";
 
     /**
-     * Creates a PDF generation exception.
+     * Crea una excepción de generación de PDF.
      *
-     * @param message human-readable error message
+     * @param message mensaje de error legible para el usuario
      */
     public PdfGenerationException(String message) {
         super(CODE, message, null);

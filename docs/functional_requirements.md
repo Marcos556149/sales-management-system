@@ -11,26 +11,26 @@
 - [RF-8: Consultar Ventas](#rf-8-consultar-ventas)
 - [RF-9: Agregar Producto a la Venta mediante Código de Barras](#rf-9-agregar-producto-a-la-venta-mediante-código-de-barras)
 - [RF-10: Generar Comprobante de Venta](#rf-10-generar-comprobante-de-venta)
-- [RF-11: User Authentication](#rf-11-user-authentication)
+- [RF-11: Autenticación de Usuarios](#rf-11-autenticación-de-usuarios)
 - [RF-12: Visualizar Producto](#rf-12-visualizar-producto)
 - [RF-13: Consultar Venta](#rf-13-consultar-venta)
-- [RF-14: Change System Configuration](#rf-14-change-system-configuration)
-- [RF-15: View Sales Statistics](#rf-15-view-sales-statistics)
-- [RF-16: Logout](#rf-16-logout)
-- [RF-17: Register User](#rf-17-register-user)
-- [RF-18: View Users](#rf-18-view-users)
-- [RF-19: View User](#rf-19-view-user)
-- [RF-20: Update User](#rf-20-update-user)
-- [RF-21: Change User Status](#rf-21-change-user-status)
+- [RF-14: Modificar Configuración del Sistema](#rf-14-modificar-configuración-del-sistema)
+- [RF-15: Visualizar Estadísticas de Ventas](#rf-15-visualizar-estadísticas-de-ventas)
+- [RF-16: Cerrar Sesión](#rf-16-cerrar-sesión)
+- [RF-17: Registrar Usuario](#rf-17-registrar-usuario)
+- [RF-18: Visualizar Usuarios](#rf-18-visualizar-usuarios)
+- [RF-19: Consultar Usuario](#rf-19-consultar-usuario)
+- [RF-20: Modificar Usuario](#rf-20-modificar-usuario)
+- [RF-21: Cambiar Estado de Usuario](#rf-21-cambiar-estado-de-usuario)
 - [RF-22: Reactivar Producto](#rf-22-reactivar-producto)
-- [RF-23: Generate Sales Statistics Report (PDF)](#rf-23-generate-sales-statistics-report-pdf)
+- [RF-23: Generar Reporte de Estadísticas de Ventas (PDF)](#rf-23-generar-reporte-de-estadísticas-de-ventas-pdf)
 
 
-### General Rules
-- [System Access Rules](#system-access-rules)
-  - [User Types](#user-types)
-- [Numeric and Decimal Data](#numeric-and-decimal-data)
-- [Date and Time Formats](#date-and-time-formats)
+### Reglas Generales
+- [Reglas de Acceso al Sistema](#reglas-de-acceso-al-sistema)
+  - [Tipos de Usuario](#tipos-de-usuario)
+- [Datos Numéricos y Decimales](#datos-numéricos-y-decimales)
+- [Formatos de Fecha y Hora](#formatos-de-fecha-y-hora)
 
 ## RF-1: Registrar Producto
 
@@ -567,37 +567,37 @@ El sistema debe permitir generar un comprobante de compra para cada venta regist
 
 ---
 
-## RF-11: User Authentication
+## RF-11: Autenticación de Usuarios
 
-### Description
-The system must allow users to access its functionalities through an authentication process based on a unique username and password associated with a registered user account.
+### Descripción
+El sistema debe permitir que los usuarios accedan a sus funcionalidades mediante un proceso de autenticación basado en un nombre de usuario único y una contraseña asociados a una cuenta de usuario registrada.
 
-### Main Flow
-1. The user accesses the login screen.  
-2. The user enters their unique username.  
-3. The user enters their password.  
-4. The system validates that the entered credentials are correct.  
-5. The system validates that the user status is "Active". 
-6. The system determines the user role (`Administrator` or `Operator`) and grants access to functionalities according to the associated permissions.
+### Flujo Principal
+1. El usuario accede a la pantalla de inicio de sesión.  
+2. El usuario ingresa su nombre de usuario único.  
+3. El usuario ingresa su contraseña.  
+4. El sistema valida que las credenciales ingresadas sean correctas.  
+5. El sistema valida que el estado del usuario sea "Activo".  
+6. El sistema determina el rol del usuario (`Administrador` u `Operador`) y concede acceso a las funcionalidades según los permisos asociados.
 
-### Alternative Flows
+### Flujos Alternativos
 
-**4.a Invalid Credentials**  
-4.a.1 The system detects that the username does not exist or that the password is incorrect.  
-4.a.2 The system displays a message: "Invalid credentials".
+**4.a Usuario o contraseña incorrectos**  
+4.a.1 El sistema detecta que el nombre de usuario no existe o que la contraseña es incorrecta.  
+4.a.2 El sistema muestra el mensaje: "Usuario o contraseña incorrectos."
 
-**5.b Inactive User**  
-5.b.1 The system detects that the user status is "Suspended" or "Deleted".  
-5.b.2 The system denies access.  
-5.b.3 The system displays an error message: "User account is not active".
+**5.b Usuario Inactivo**  
+5.b.1 El sistema detecta que el estado del usuario es "Suspendido" o "Eliminado".  
+5.b.2 El sistema deniega el acceso.  
+5.b.3 El sistema muestra el mensaje de error: "La cuenta de usuario no está activa".
 
-### Business Rules
-- Access to the system requires prior authentication.  
-- The entered password must match the provided username.  
-- The system automatically determines the user role from the user record and restricts access to functionalities accordingly.
-- Only users with "Active" status can access the system.  
-- Users with "Suspended" or "Deleted" status must be denied access.
-- The system must apply the user's preferred language configuration upon successful authentication.
+### Reglas de Negocio
+- El acceso al sistema requiere autenticación previa.  
+- La contraseña ingresada debe coincidir con el nombre de usuario proporcionado.  
+- El sistema determina automáticamente el rol del usuario a partir de su registro y restringe el acceso a las funcionalidades en consecuencia.
+- Solo los usuarios con estado "Activo" pueden acceder al sistema.  
+- A los usuarios con estado "Suspendido" o "Eliminado" se les debe denegar el acceso.
+- El sistema debe aplicar la configuración de idioma preferida del usuario tras una autenticación exitosa.
 
 ---
 
@@ -673,324 +673,325 @@ El sistema debe permitir al usuario consultar la información detallada de una v
 
 ---
 
-## RF-14: Change System Configuration
+## RF-14: Modificar Configuración del Sistema
 
-### Description
-The system must allow managing global configuration settings
+### Descripción
+El sistema debe permitir gestionar la configuración global del sistema.
 
-### Main Flow
-1. The user accesses the system configuration section.  
-2. The system displays the current configuration values:
-   - Business name  
-   - Business address   
-3. The user modifies the configuration values.
-   - Business name and business address (administrator only)  
-4. The system validates the entered data.  
-5. The system applies the changes:
-   - The business name and business address are updated globally (if modified by an administrator)  
-6. The system confirms that the configuration has been successfully updated.
+### Flujo Principal
+1. El usuario accede a la sección de configuración del sistema.  
+2. El sistema muestra los valores actuales de configuración:
+   - Nombre del negocio
+   - Dirección del negocio
+3. El usuario modifica los valores de configuración.
+   - Nombre del negocio y dirección del negocio (solo administradores)
+4. El sistema valida los datos ingresados.  
+5. El sistema aplica los cambios:
+   - El nombre del negocio y la dirección del negocio se actualizan globalmente (si fueron modificados por un administrador).
+6. El sistema confirma que la configuración ha sido actualizada correctamente.
 
-### Alternate Flow
-**4.a Invalid data**  
-4.a.1 The system displays an error message indicating the incorrect fields.  
-4.a.2 The user corrects the data.  
+### Flujo Alternativo
 
-### Business Rules
-- The business name is mandatory.
-- The business name is shared by all users.
-- The business address is mandatory.  
-- The business address is shared by all users.
-- The system must initialize the business name with a default value ("My Business").
-- The system must initialize the business address with a default value ("Business Address").
-- Only administrators can modify the business name and business address.
+**4.a Datos inválidos**  
+4.a.1 El sistema muestra un mensaje de error indicando los campos incorrectos.  
+4.a.2 El usuario corrige los datos.
 
----
-
-## RF-15: View Sales Statistics
-
-### Description
-The system must allow the user to view statistical information about sales and products based on selected filters.
-
-### Main Flow
-1. The user accesses the statistics section.  
-2. The user selects the desired filters:
-   - User ("All Users" or a specific user)  
-   - Date range (start date and end date)  
-3. The user requests the statistics generation.
-4. The system retrieves aggregated statistical data from the database based on the selected filters.
-5. The system displays the statistics divided into the following sections:
-
-   **Sales Information:**
-   - Total revenue  
-   - Total number of sales  
-   - Average ticket value  
-   - Hour with the highest revenue  
-   - Hour with the highest number of sales  
-   - The system must display time-based charts for:
-     - Total revenue over time
-     - Number of sales over time 
-
-   **Product Information:**
-
-   **Sold Products:**
-   - Top 10 products based on quantity sold (chart), including for each product:
-     - Product code
-     - Product name
-     - Quantity sold
-
-   - Top 10 products based on revenue generated (chart), including for each product:
-     - Product code
-     - Product name
-     - Revenue generated
-     
-   - Product ranking list based on the selected filters, including for each product:
-     - Product code  
-     - Product name  
-     - Quantity sold  
-     - Revenue generated  
-
-   **Unsold Products:**
-   - A list of products with no sales based on the selected filters, including for each product:
-     - Product code  
-     - Product name  
-
-### Alternative Flows
-
-**4.a No data available**  
-4.a.1 The system detects that no data matches the selected filters.  
-4.a.2 The system displays a message: "No data available for the selected criteria".  
-
-**5.a No unsold products**  
-5.a.1 The system detects that no products match the unsold products criteria based on the selected filters.  
-5.a.2 The system displays a message in the Unsold Products section: "No unsold products for the selected filters".  
-
-**5.b Filter sold products ranking list**  
-5.b.1 The user selects the desired filters:
-   - Metric ("Quantity Sold" or "Revenue Generated")
-   - Order ("Most sold → least sold" or "Least sold → most sold")
-5.b.2 The system retrieves the corresponding products based on the selected filters.  
-
-**5.c Product pagination**  
-5.c.1 The system allows navigation between pages of product lists (e.g., next page, previous page, or direct page selection).  
-5.c.2 This applies to both sold products ranking list and unsold products list. 
-
-### Business Rules
-
-- The system must allow filtering statistics by user ("All Users" or a specific user).  
-- The system must allow filtering statistics by date range (start date and end date).  
-- The system must calculate all statistical values based only on the selected filters.  
-
-- The system must calculate:
-  - Total revenue as the sum of all sales amounts  
-  - Total number of sales as the count of sales records  
-  - Average ticket value as total revenue divided by total number of sales  
-
-- The system must determine:
-  - Hour with the highest revenue  
-  - Hour with the highest number of sales  
-
-- The system must display time-based charts for:
-  - Total revenue over time  
-  - Number of sales over time  
-
-- The charts must adapt their time granularity according to the selected date range:
-  - Hour → when the selected range is a single day
-  - Day → for ranges up to 31 days
-  - Month → for ranges up to 365 days
-  - Year → for ranges greater than 365 days
-
-- The system must display only the top 10 products in each sold products chart:
-  - Top 10 products based on quantity sold  
-  - Top 10 products based on revenue generated
-
-- The system must allow viewing detailed lists in the statistics section using pagination for both sold products ranking list and unsold products list:
-  - The system must retrieve these lists in pages of 20 items by default.
-  - The system must ensure server-side pagination.
-  - If no page is specified, the system must return the first page by default for both paginated product lists.
-  - The system must allow navigation between pages for both sold products ranking list and unsold products list.
-
-- The system must allow sorting the product ranking list by:
-  - Quantity sold  
-  - Revenue generated  
-
-- The system must allow ordering the product ranking list:
-  - Most sold → least sold  
-  - Least sold → most sold
-
-- The system must identify unsold products as those with zero sales within the selected date range.  
-
-- For the statistics global filters:
-  - If no user filter is selected, the system defaults to "All Users".
-  - If no date range is selected, the system defaults to the current date.
-
-- For the sold products ranking list:
-  - If no metric is selected, the system defaults to "Revenue Generated".
-  - If no ordering criterion is selected, the system defaults to "Most sold → least sold".
+### Reglas de Negocio
+- El nombre del negocio es obligatorio.
+- El nombre del negocio es compartido por todos los usuarios.
+- La dirección del negocio es obligatoria.
+- La dirección del negocio es compartida por todos los usuarios.
+- El sistema debe inicializar el nombre del negocio con un valor predeterminado ("My Business").
+- El sistema debe inicializar la dirección del negocio con un valor predeterminado ("Business Address").
+- Solo los administradores pueden modificar el nombre y la dirección del negocio.
 
 ---
 
-## RF-16: Logout
+## RF-15: Visualizar Estadísticas de Ventas
 
-### Description
-The system must allow the user to log out from the account they are currently using.
+### Descripción
+El sistema debe permitir al usuario consultar información estadística sobre ventas y productos en función de los filtros seleccionados.
 
-### Main Flow
-1. The user clicks the "Logout" button.  
-2. The system displays a confirmation message: "Are you sure you want to log out? Any unsaved data will be lost."  
-3. If the user confirms, the system terminates the user's session.  
-4. The system redirects the user to the login screen.
+### Flujo Principal
+1. El usuario accede a la sección de estadísticas.  
+2. El usuario selecciona los filtros deseados:
+   - Usuario ("Todos los usuarios" o un usuario específico)
+   - Rango de fechas (fecha de inicio y fecha de fin)
+3. El usuario solicita la generación de estadísticas.
+4. El sistema recupera de la base de datos los datos estadísticos agregados según los filtros seleccionados.
+5. El sistema muestra las estadísticas divididas en las siguientes secciones:
 
-### Business Rules
-- The system must ensure that the session is fully terminated.
+   **Información de Ventas:**
+   - Ingresos totales
+   - Cantidad total de ventas
+   - Valor promedio por venta
+   - Hora con mayores ingresos
+   - Hora con mayor cantidad de ventas
+   - El sistema debe mostrar gráficos temporales de:
+     - Ingresos totales a lo largo del tiempo
+     - Cantidad de ventas a lo largo del tiempo
 
----
+   **Información de Productos:**
 
-## RF-17: Register User
+   **Productos Vendidos:**
+   - Top 10 de productos según cantidad vendida (gráfico), incluyendo para cada producto:
+     - Código de producto
+     - Nombre del producto
+     - Cantidad vendida
 
-### Description
-The system must allow administrators to register new users with the Operator role.
+   - Top 10 de productos según ingresos generados (gráfico), incluyendo para cada producto:
+     - Código de producto
+     - Nombre del producto
+     - Ingresos generados
 
-### Main Flow
-1. The administrator accesses the user management section.  
-2. The administrator selects the option to register a new user.  
-3. The administrator enters the required user data:
-   - Username  
-   - Password  
-4. The system validates that the entered data is correct.  
-5. The system verifies that the username is unique.  
-6. The system assigns the role "Operator" to the new user.  
-7. The system assigns the status "Active" to the new user.  
-8. The system assigns a unique identifier (User ID) to the new user.  
-9. The system stores the user in the database.  
-10. The system confirms that the user has been successfully registered.
+   - Lista de ranking de productos según los filtros seleccionados, incluyendo para cada producto:
+     - Código de producto
+     - Nombre del producto
+     - Cantidad vendida
+     - Ingresos generados
 
-### Alternative Flows
+   **Productos No Vendidos:**
+   - Una lista de productos sin ventas según los filtros seleccionados, incluyendo para cada producto:
+     - Código de producto
+     - Nombre del producto
 
-**5.a Username already exists**  
-5.a.1 The system detects that the username is already registered.  
-5.a.2 The system displays an error message: "Username already exists".
+### Flujos Alternativos
 
-**4.a Invalid input data**  
-4.a.1 The system detects invalid or incomplete input data.  
-4.a.2 The system displays an error message indicating invalid input.
+**4.a Sin datos disponibles**  
+4.a.1 El sistema detecta que no existen datos que coincidan con los filtros seleccionados.  
+4.a.2 El sistema muestra el mensaje: "No hay datos disponibles para los filtros seleccionados".
 
-### Business Rules
-- Only users with the Administrator role can perform this action.  
-- The username must be unique within the system.  
-- The system must assign the "Operator" role by default.  
-- The system must assign the "Active" status by default.  
-- The system assigns a unique identifier to the user upon creation.
+**5.a Sin productos no vendidos**  
+5.a.1 El sistema detecta que no existen productos que cumplan con el criterio de productos no vendidos según los filtros seleccionados.  
+5.a.2 El sistema muestra un mensaje en la sección de Productos No Vendidos: "No existen productos no vendidos para los filtros seleccionados".
 
----
+**5.b Filtrar lista de ranking de productos vendidos**  
+5.b.1 El usuario selecciona los filtros deseados:
+   - Métrica ("Cantidad vendida" o "Ingresos generados")
+   - Orden ("Más vendido → menos vendido" o "Menos vendido → más vendido")
+5.b.2 El sistema recupera los productos correspondientes según los filtros seleccionados.
 
-## RF-18: View Users
+**5.c Paginación de productos**  
+5.c.1 El sistema permite navegar entre las páginas de las listas de productos (por ejemplo, página siguiente, página anterior o selección directa de página).  
+5.c.2 Esto aplica tanto para la lista de ranking de productos vendidos como para la lista de productos no vendidos.
 
-### Description
-The system must allow administrators to view the list of registered users.
+### Reglas de Negocio
 
-### Main Flow
-1. The administrator accesses the user management section.  
-2. The system retrieves the list of users from the database.  
-3. The system displays the list of users with their main information:
-   - Username  
-   - Role  
-   - Status  
+- El sistema debe permitir filtrar las estadísticas por usuario ("Todos los usuarios" o un usuario específico).
+- El sistema debe permitir filtrar las estadísticas por rango de fechas (fecha de inicio y fecha de fin).
+- El sistema debe calcular todos los valores estadísticos únicamente en función de los filtros seleccionados.
 
-### Alternative Flows
+- El sistema debe calcular:
+  - Los ingresos totales como la suma de los importes de todas las ventas.
+  - La cantidad total de ventas como el conteo de registros de ventas.
+  - El valor promedio por venta como los ingresos totales divididos por la cantidad total de ventas.
 
-**2.a No users found**  
-2.a.1 The system detects that there are no registered users.  
-2.a.2 The system displays a message: "No users found".
+- El sistema debe determinar:
+  - La hora con mayores ingresos.
+  - La hora con mayor cantidad de ventas.
 
-### Business Rules
-- Only users with the Administrator role can perform this action.  
-The system must display all users with the role "Operator", including those with any status ("Active", "Suspended", "Deleted").
+- El sistema debe mostrar gráficos temporales de:
+  - Ingresos totales a lo largo del tiempo.
+  - Cantidad de ventas a lo largo del tiempo.
 
----
+- Los gráficos deben adaptar su granularidad temporal según el rango de fechas seleccionado:
+  - Hora → cuando el rango seleccionado corresponde a un único día.
+  - Día → para rangos de hasta 31 días.
+  - Mes → para rangos de hasta 365 días.
+  - Año → para rangos superiores a 365 días.
 
-## RF-19: View User
+- El sistema debe mostrar únicamente los 10 productos principales en cada gráfico de productos vendidos:
+  - Top 10 de productos según cantidad vendida.
+  - Top 10 de productos según ingresos generados.
 
-### Description
-The system must allow administrators to view detailed information of a specific user.
+- El sistema debe permitir visualizar listas detalladas en la sección de estadísticas utilizando paginación tanto para la lista de ranking de productos vendidos como para la lista de productos no vendidos:
+  - El sistema debe recuperar estas listas en páginas de 20 elementos de forma predeterminada.
+  - El sistema debe garantizar la paginación del lado del servidor.
+  - Si no se especifica una página, el sistema debe devolver la primera página por defecto para ambas listas paginadas de productos.
+  - El sistema debe permitir navegar entre páginas para ambas listas.
 
-### Main Flow
-1. The administrator accesses the user management section.  
-2. The administrator selects a specific user from the list.  
-3. The system retrieves the user information from the database.  
-4. The system displays the user details, including:
-   - Username  
-   - Role  
-   - Status  
+- El sistema debe permitir ordenar la lista de ranking de productos por:
+  - Cantidad vendida.
+  - Ingresos generados.
 
-### Alternative Flows
+- El sistema debe permitir definir el orden de la lista de ranking de productos:
+  - Más vendido → menos vendido.
+  - Menos vendido → más vendido.
 
-**3.a User Not Found**  
-3.a.1 The system detects that the selected user does not exist.  
-3.a.2 The system displays a message: "User with username '{username}' not found".
+- El sistema debe identificar como productos no vendidos a aquellos que no registren ventas dentro del rango de fechas seleccionado.
 
-### Business Rules
-- Only users with the Administrator role can perform this action.  
-- The system must not display the user's password.  
-- The system must display only non-sensitive user information.
+- Para los filtros globales de estadísticas:
+  - Si no se selecciona un filtro de usuario, el sistema utilizará por defecto "Todos los usuarios".
+  - Si no se selecciona un rango de fechas, el sistema utilizará la fecha actual.
 
----
-
-## RF-20: Update User
-
-### Description
-The system must allow administrators to update user information.
-
-### Main Flow
-1. The administrator accesses the user management section.  
-2. The administrator selects a user to update.  
-3. The system displays the current user data, excluding the password.  
-4. The administrator modifies the desired fields:
-   - Username (optional)  
-   - New password (optional)  
-5. The system validates the updated data.  
-6. The system verifies that the new username (if modified) is unique.  
-7. The system updates the user information in the database.  
-8. The system confirms that the user has been successfully updated.
-
-### Alternative Flows
-
-**5.a Invalid input data**  
-5.a.1 The system detects invalid or incomplete input data.  
-5.a.2 The system displays an error message indicating invalid input.
-
-**6.a Username already exists**  
-6.a.1 The system detects that the new username is already in use.  
-6.a.2 The system displays a message: "Username '{username}' already exists".
-
-### Business Rules
-- Only users with the Administrator role can perform this action.  
-- The username must remain unique within the system.  
-- The system must not display the current user password.  
-- If a new password is provided, it must replace the existing password.
+- Para la lista de ranking de productos vendidos:
+  - Si no se selecciona una métrica, el sistema utilizará por defecto "Ingresos generados".
+  - Si no se selecciona un criterio de orden, el sistema utilizará por defecto "Más vendido → menos vendido".
 
 ---
 
-## RF-21: Change User Status
+## RF-16: Cerrar Sesión
 
-### Description
-The system must allow administrators to change the status of a user.
+### Descripción
+El sistema debe permitir al usuario cerrar sesión de la cuenta que está utilizando actualmente.
 
-### Main Flow
-1. The administrator accesses the user management section.  
-2. The administrator selects a user.  
-3. The system displays the current user status.  
-4. The administrator selects a new status:
-   - Active  
-   - Suspended  
-   - Deleted  
-5. The system updates the user status in the database.  
-6. The system confirms that the user status has been successfully updated.
+### Flujo Principal
+1. El usuario hace clic en el botón "Cerrar sesión".
+2. El sistema muestra un mensaje de confirmación: "¿Está seguro de que desea cerrar sesión? Los datos no guardados se perderán."
+3. Si el usuario confirma, el sistema finaliza la sesión del usuario.
+4. El sistema redirige al usuario a la pantalla de inicio de sesión.
 
-### Business Rules
-- Only users with the Administrator role can perform this action.  
-- The system must allow only the following status values: "Active", "Suspended", "Deleted".  
-- Users with "Deleted" status must not be physically removed from the database.  
-- Users with "Suspended" or "Deleted" status must not be able to access the system.
+### Reglas de Negocio
+- El sistema debe garantizar que la sesión sea finalizada completamente.
+
+---
+
+## RF-17: Registrar Usuario
+
+### Descripción
+El sistema debe permitir a los administradores registrar nuevos usuarios con el rol Operador.
+
+### Flujo Principal
+1. El administrador accede a la sección de gestión de usuarios.  
+2. El administrador selecciona la opción para registrar un nuevo usuario.  
+3. El administrador ingresa los datos requeridos del usuario:
+   - Nombre de usuario  
+   - Contraseña  
+4. El sistema valida que los datos ingresados sean correctos.  
+5. El sistema verifica que el nombre de usuario sea único.  
+6. El sistema asigna el rol "Operador" al nuevo usuario.  
+7. El sistema asigna el estado "Activo" al nuevo usuario.  
+8. El sistema asigna un identificador único (ID de Usuario) al nuevo usuario.  
+9. El sistema almacena el usuario en la base de datos.  
+10. El sistema confirma que el usuario ha sido registrado correctamente.
+
+### Flujos Alternativos
+
+**5.a Nombre de usuario ya existente**  
+5.a.1 El sistema detecta que el nombre de usuario ya se encuentra registrado.  
+5.a.2 El sistema muestra un mensaje de error: "El nombre de usuario ya existe".
+
+**4.a Datos de entrada inválidos**  
+4.a.1 El sistema detecta datos inválidos o incompletos.  
+4.a.2 El sistema muestra un mensaje de error indicando los datos inválidos.
+
+### Reglas de Negocio
+- Solo los usuarios con el rol Administrador pueden realizar esta acción.  
+- El nombre de usuario debe ser único dentro del sistema.  
+- El sistema debe asignar el rol "Operador" por defecto.  
+- El sistema debe asignar el estado "Activo" por defecto.  
+- El sistema debe asignar un identificador único al usuario al momento de su creación.
+
+---
+
+## RF-18: Visualizar Usuarios
+
+### Descripción
+El sistema debe permitir a los administradores consultar la lista de usuarios registrados.
+
+### Flujo Principal
+1. El administrador accede a la sección de gestión de usuarios.  
+2. El sistema obtiene la lista de usuarios desde la base de datos.  
+3. El sistema muestra la lista de usuarios con su información principal:
+   - Nombre de usuario  
+   - Rol  
+   - Estado  
+
+### Flujos Alternativos
+
+**2.a No se encontraron usuarios**  
+2.a.1 El sistema detecta que no existen usuarios registrados.  
+2.a.2 El sistema muestra el mensaje: "No se encontraron usuarios".
+
+### Reglas de Negocio
+- Solo los usuarios con el rol Administrador pueden realizar esta acción.  
+- El sistema debe mostrar todos los usuarios con el rol "Operador", independientemente de su estado ("Activo", "Suspendido" o "Eliminado").
+
+---
+
+## RF-19: Consultar Usuario
+
+### Descripción
+El sistema debe permitir a los administradores consultar la información detallada de un usuario específico.
+
+### Flujo Principal
+1. El administrador accede a la sección de gestión de usuarios.  
+2. El administrador selecciona un usuario específico de la lista.  
+3. El sistema obtiene la información del usuario desde la base de datos.  
+4. El sistema muestra los detalles del usuario, incluyendo:
+   - Nombre de usuario  
+   - Rol  
+   - Estado  
+
+### Flujos Alternativos
+
+**3.a Usuario no encontrado**  
+3.a.1 El sistema detecta que el usuario seleccionado no existe.  
+3.a.2 El sistema muestra el mensaje: "No se encontró un usuario con el nombre de usuario '{username}'".
+
+### Reglas de Negocio
+- Solo los usuarios con el rol Administrador pueden realizar esta acción.  
+- El sistema no debe mostrar la contraseña del usuario.  
+- El sistema debe mostrar únicamente información no sensible del usuario.
+
+---
+
+## RF-20: Modificar Usuario
+
+### Descripción
+El sistema debe permitir a los administradores modificar la información de los usuarios.
+
+### Flujo Principal
+1. El administrador accede a la sección de gestión de usuarios.  
+2. El administrador selecciona un usuario para modificar.  
+3. El sistema muestra los datos actuales del usuario, excluyendo la contraseña.  
+4. El administrador modifica los campos deseados:
+   - Nombre de usuario (opcional)  
+   - Nueva contraseña (opcional)  
+5. El sistema valida los datos actualizados.  
+6. El sistema verifica que el nuevo nombre de usuario (si fue modificado) sea único.  
+7. El sistema actualiza la información del usuario en la base de datos.  
+8. El sistema confirma que el usuario ha sido actualizado correctamente.
+
+### Flujos Alternativos
+
+**5.a Datos de entrada inválidos**  
+5.a.1 El sistema detecta datos inválidos o incompletos.  
+5.a.2 El sistema muestra un mensaje de error indicando los datos inválidos.
+
+**6.a Nombre de usuario ya existente**  
+6.a.1 El sistema detecta que el nuevo nombre de usuario ya se encuentra en uso.  
+6.a.2 El sistema muestra el mensaje: "El nombre de usuario '{username}' ya existe".
+
+### Reglas de Negocio
+- Solo los usuarios con el rol Administrador pueden realizar esta acción.  
+- El nombre de usuario debe mantenerse único dentro del sistema.  
+- El sistema no debe mostrar la contraseña actual del usuario.  
+- Si se proporciona una nueva contraseña, esta debe reemplazar a la contraseña existente.
+
+---
+
+## RF-21: Cambiar Estado de Usuario
+
+### Descripción
+El sistema debe permitir a los administradores cambiar el estado de un usuario.
+
+### Flujo Principal
+1. El administrador accede a la sección de gestión de usuarios.  
+2. El administrador selecciona un usuario.  
+3. El sistema muestra el estado actual del usuario.  
+4. El administrador selecciona un nuevo estado:
+   - Activo  
+   - Suspendido  
+   - Eliminado  
+5. El sistema actualiza el estado del usuario en la base de datos.  
+6. El sistema confirma que el estado del usuario ha sido actualizado correctamente.
+
+### Reglas de Negocio
+- Solo los usuarios con el rol Administrador pueden realizar esta acción.  
+- El sistema solo debe permitir los siguientes estados: "Activo", "Suspendido" y "Eliminado".  
+- Los usuarios con estado "Eliminado" no deben ser eliminados físicamente de la base de datos.  
+- Los usuarios con estado "Suspendido" o "Eliminado" no deben poder acceder al sistema.
 
 ---
 
@@ -1034,241 +1035,241 @@ El sistema debe permitir al usuario reactivar un producto inactivo marcándolo c
 
 ---
 
-## RF-23: Generate Sales Statistics Report (PDF)
+## RF-23: Generar Reporte de Estadísticas de Ventas (PDF)
 
-### Description
-The system must allow the user to generate a downloadable PDF report based on sales statistics and product performance, using the same filters and data as the statistics module.
+### Descripción
+El sistema debe permitir al usuario generar un reporte PDF descargable basado en las estadísticas de ventas y el rendimiento de productos, utilizando los mismos filtros y datos que el módulo de estadísticas.
 
-### Main Flow
-1. The user accesses the statistics section.
-2. The user selects the desired filters:
-   - User ("All Users" or a specific user)
-   - Date range (start date and end date)
-3. The user requests to generate a PDF report.
-4. The user selects which sections to include in the report:
-   - Sales Information
-   - Product Information
-5. The system generates a PDF report containing only the selected sections.
-6. The system provides the PDF file for download.
+### Flujo Principal
+1. El usuario accede a la sección de estadísticas.
+2. El usuario selecciona los filtros deseados:
+   - Usuario ("Todos los Usuarios" o un usuario específico)
+   - Rango de fechas (fecha de inicio y fecha de fin)
+3. El usuario solicita generar un reporte PDF.
+4. El usuario selecciona qué secciones incluir en el reporte:
+   - Información de Ventas
+   - Información de Productos
+5. El sistema genera un reporte PDF que contiene únicamente las secciones seleccionadas.
+6. El sistema proporciona el archivo PDF para su descarga.
 
-### Report Content Rules
+### Reglas del Contenido del Reporte
 
-The report must always include:
+El reporte debe incluir siempre:
 
-- Report title
-- Report generation date and time
-- Selected user
-- Selected date range
+- Título del reporte
+- Fecha y hora de generación del reporte
+- Usuario seleccionado
+- Rango de fechas seleccionado
 
-Each selected section must include all its corresponding information.
+Cada sección seleccionada debe incluir toda la información correspondiente.
 
-**Sales Information:**
-- Total revenue
-- Total number of sales
-- Average ticket value
-- Hour with the highest revenue
-- Hour with the highest number of sales
+**Información de Ventas:**
+- Ingresos totales
+- Cantidad total de ventas
+- Valor promedio por venta
+- Hora con mayores ingresos
+- Hora con mayor cantidad de ventas
 
-- Revenue over time table, including:
-  - Time period
-  - Revenue generated
+- Tabla de ingresos a lo largo del tiempo, incluyendo:
+  - Período de tiempo
+  - Ingresos generados
 
-- Sales over time table, including:
-  - Time period
-  - Number of sales
+- Tabla de ventas a lo largo del tiempo, incluyendo:
+  - Período de tiempo
+  - Cantidad de ventas
 
-**Product Information:**
+**Información de Productos:**
 
-**Sold Products:**
+**Productos Vendidos:**
 
-- Top 10 products by quantity sold, including:
-  - Product code
-  - Product name
-  - Quantity sold
+- Top 10 productos por cantidad vendida, incluyendo:
+  - Código del producto
+  - Nombre del producto
+  - Cantidad vendida
 
-- Top 10 products by revenue generated, including:
-  - Product code
-  - Product name
-  - Revenue generated
+- Top 10 productos por ingresos generados, incluyendo:
+  - Código del producto
+  - Nombre del producto
+  - Ingresos generados
 
-- Product ranking list based on selected filters, including:
-  - Selected ranking metric
-  - Selected ranking order
-  - Total products matching the selected filters
-  - Number of products included in the report
+- Lista de ranking de productos según los filtros seleccionados, incluyendo:
+  - Métrica de ranking seleccionada
+  - Orden de ranking seleccionado
+  - Total de productos que coinciden con los filtros seleccionados
+  - Cantidad de productos incluidos en el reporte
 
-  For each product:
-  - Product code
-  - Product name
-  - Quantity sold
-  - Revenue generated
+  Para cada producto:
+  - Código del producto
+  - Nombre del producto
+  - Cantidad vendida
+  - Ingresos generados
 
-**Unsold Products:**
+**Productos No Vendidos:**
 
-- List of products with no sales based on selected filters, including:
-  - Total products matching the selected filters
-  - Number of products included in the report
+- Lista de productos sin ventas según los filtros seleccionados, incluyendo:
+  - Total de productos que coinciden con los filtros seleccionados
+  - Cantidad de productos incluidos en el reporte
 
-  For each product:
-  - Product code
-  - Product name
+  Para cada producto:
+  - Código del producto
+  - Nombre del producto
 
-- If no products match the criteria, the system must display the message:
-  "No unsold products for the selected filters"
+- Si ningún producto coincide con el criterio, el sistema debe mostrar el mensaje:
+  "No existen productos no vendidos para los filtros seleccionados".
 
+### Flujos Alternativos
 
-### Alternative Flows
+**4.a Generación del reporte cancelada**  
+4.a.1 El usuario cancela el proceso de generación del reporte.  
+4.a.2 El sistema regresa a la vista de estadísticas sin generar el PDF.
 
-**4.a Report generation canceled**
-4.a.1 The user cancels the report generation process.
-4.a.2 The system returns to the statistics view without generating the PDF.
+**4.b Ninguna sección seleccionada**  
+4.b.1 El usuario no selecciona ninguna sección del reporte.  
+4.b.2 El sistema muestra el mensaje:
+       "Debe seleccionar al menos una sección".  
+4.b.3 El sistema no genera el reporte.
 
-**4.b No sections selected**
-4.b.1 The user does not select any report section.
-4.b.2 The system displays a message:
-       "At least one section must be selected".
-4.b.3 The system does not generate the report.
+**5.a No hay datos disponibles**  
+5.a.1 El sistema detecta que no existen datos que coincidan con los filtros seleccionados.  
+5.a.2 El sistema muestra el mensaje:
+       "No hay datos disponibles para los filtros seleccionados".  
+5.a.3 El sistema no genera el reporte.
 
-**5.a No data available**
-5.a.1 The system detects that no data matches the selected filters.
-5.a.2 The system displays a message:
-       "No data available for the selected criteria".
-5.a.3 The system does not generate the report. 
+### Reglas de Negocio
 
-### Business Rules
+- El título del reporte debe ser "Reporte de Estadísticas de Ventas".
+- Si la cantidad de productos disponibles es menor que el límite seleccionado para el reporte, el sistema debe incluir todos los productos disponibles.
+- El usuario debe seleccionar al menos una sección antes de generar el reporte PDF.
+- Las listas detalladas de productos incluidas en el reporte deben indicar:
+  - Total de productos que coinciden con los filtros seleccionados
+  - Cantidad de productos incluidos en el reporte
+- El reporte debe generarse utilizando los filtros actualmente seleccionados en la sección de estadísticas.
+- El sistema debe generar el reporte bajo demanda y no debe almacenarlo en el sistema.
+- El usuario debe poder seleccionar qué secciones completas incluir en el reporte:
+  - Información de Ventas
+  - Información de Productos
 
-- The report title must be "Sales Statistics Report".
-- If the available products are fewer than the selected report limit, the system must include all available products.
-- The user must select at least one report section before generating the PDF report.
-- The detailed product lists included in the report must indicate:
-  - Total products matching the selected filters
-  - Number of products included in the report
-- The report must be generated using the filters currently selected in the statistics section.
-- The system must generate the report on demand and must not store it in the system.  
-- The user must be able to select which full sections are included in the report:
-  - Sales Information
-  - Product Information
+- El sistema debe incluir la fecha y hora de generación del reporte en el PDF.
 
-- The system must include the report generation date and time in the PDF.
+- El sistema debe garantizar que cada sección sea incluida en su totalidad (sin secciones parciales).
 
-- The system must ensure that each section is included in its entirety (no partial sections).  
+- El sistema debe permitir configurar la cantidad de productos incluidos en las listas detalladas de productos:
+  - 10 elementos
+  - 20 elementos
+  - 50 elementos
+  - 100 elementos
 
-- The system must allow configuring the number of products included in the detailed product lists:
-  - 10 items  
-  - 20 items  
-  - 50 items  
-  - 100 items  
+  Esta configuración se aplica de forma independiente a cada lista:
+  - Lista de ranking de productos
+  - Lista de productos sin ventas
 
-  This configuration is applied independently to each list:
-  - Product ranking list
-  - List of products with no sales
+- El sistema debe aplicar las selecciones predeterminadas al abrir el proceso de generación del reporte:
+  - Todas las secciones del reporte seleccionadas por defecto:
+    - Información de Ventas
+    - Información de Productos
 
-- The system must apply default selections when the report generation process is opened:
-  - All report sections are selected by default:
-    - Sales Information
-    - Product Information
+- El sistema debe aplicar los valores predeterminados para las listas detalladas de productos:
+  - 20 elementos para la Lista de Ranking de Productos
+  - 20 elementos para la Lista de Productos sin Ventas
 
-- The system must apply default values for detailed product lists:
-  - 20 items for Product ranking list
-  - 20 items for List of products with no sales
+- El sistema debe permitir configurar la Lista de Ranking de Productos incluida en el reporte según:
+  - Cantidad Vendida
+  - Ingresos Generados
 
-- The system must allow configuring the Product Ranking List included in the report by:
-  - Quantity Sold
-  - Revenue Generated
+- El sistema debe permitir ordenar la Lista de Ranking de Productos incluida en el reporte:
+  - Más vendidos → menos vendidos
+  - Menos vendidos → más vendidos
 
-- The system must allow ordering the Product Ranking List included in the report:
-  - Most sold → least sold
-  - Least sold → most sold
+- Si no se selecciona una métrica para la Lista de Ranking de Productos, el sistema utilizará por defecto "Ingresos Generados".
 
-- If no metric is selected for the Product Ranking List, the system defaults to "Revenue Generated".
+- Si no se selecciona un criterio de ordenamiento para la Lista de Ranking de Productos, el sistema utilizará por defecto "Más vendido → menos vendido".
 
-- If no ordering criterion is selected for the Product Ranking List, the system defaults to "Most sold → least sold".
+- El sistema debe garantizar que el PDF refleje exactamente los filtros seleccionados al momento de su generación.
 
-- The system must ensure that the PDF reflects exactly the selected filters at the moment of generation.
-
-- Revenue over time and number of sales over time statistics included in the report must be presented as tabular data.
-
+- Las estadísticas de ingresos a lo largo del tiempo y cantidad de ventas a lo largo del tiempo incluidas en el reporte deben presentarse en formato tabular.
 
 
----
-
-## General Rules
-
-### System Access Rules
-
-#### User Types
-
-**Administrator**
-- Full access to all system functionalities.  
-- Can register products (RF-1).  
-- Can view products (RF-2).  
-- Can update products (RF-3).  
-- Can deactivate products (RF-4).  
-- Can activate products (RF-22).  
-- Can search products by barcode (RF-5).  
-- Can register products by barcode (RF-6).  
-- Can view a specific product (RF-12).  
-- Can register sales (RF-7).  
-- Can view sales (RF-8).  
-- Can add products to a sale via barcode (RF-9).  
-- Can generate sale tickets (RF-10).  
-- Can view a specific sale (RF-13).  
-- Can authenticate in the system (RF-11).  
-- Can change system configuration settings, including business name and business address (RF-14).
-- Can view sales statistics (RF-15).
-- Can log out of the system (RF-16).
-- Can register users (RF-17).  
-- Can view users (RF-18).  
-- Can view a specific user (RF-19).  
-- Can update users (RF-20).  
-- Can change user status (RF-21). 
-- Can generate sales statistics reports in PDF format (RF-23).
-
-**Operator (Cashier)**
-- Can authenticate in the system (RF-11).  
-- Can view products (RF-2).  
-- Can search products by barcode (RF-5).  
-- Can view a specific product (RF-12).  
-- Can register sales (RF-7).  
-- Can view sales (RF-8).  
-- Can add products to a sale via barcode (RF-9).  
-- Can generate sale tickets (RF-10).  
-- Can view a specific sale (RF-13).  
-- Can log out of the system (RF-16). 
-- Cannot register products (RF-1).  
-- Cannot update products (RF-3).  
-- Cannot deactivate products (RF-4).  
-- Cannot activate products (RF-22).  
-- Cannot register products by barcode (RF-6).  
-- Cannot modify business name or business address (RF-14).  
-- Cannot view sales statistics (RF-15).  
-- Cannot register users (RF-17).  
-- Cannot view users (RF-18).  
-- Cannot view a specific user (RF-19).  
-- Cannot update users (RF-20).  
-- Cannot change user status (RF-21).
-- Cannot generate sales statistics reports in PDF format (RF-23).
 
 ---
 
-### Numeric and Decimal Data
+## Reglas Generales
 
-- All numeric values representing monetary amounts or product quantities must be stored and displayed with a maximum of 2 decimal places and 10 digits in the integer part.  
-  This includes:  
-  - Product price.  
-  - Product price in sale detail (sale price).  
-  - Subtotal of each sale detail.  
-  - Total sale amount.  
-  - Product stock.  
-  - Product quantity in each sale detail.
-  - Minimum stock of a product.
-- For products with unit of measure "Units", stock, quantity, and minimum stock must be integers, even though the system supports decimal precision.
+### Reglas de Acceso al Sistema
+
+#### Tipos de Usuario
+
+**Administrador**
+- Tiene acceso completo a todas las funcionalidades del sistema.  
+- Puede registrar productos (RF-1).  
+- Puede consultar productos (RF-2).  
+- Puede modificar productos (RF-3).  
+- Puede desactivar productos (RF-4).  
+- Puede activar productos (RF-22).  
+- Puede buscar productos por código de barras (RF-5).  
+- Puede registrar productos mediante código de barras (RF-6).  
+- Puede consultar un producto específico (RF-12).  
+- Puede registrar ventas (RF-7).  
+- Puede consultar ventas (RF-8).  
+- Puede agregar productos a una venta mediante código de barras (RF-9).  
+- Puede generar tickets de venta (RF-10).  
+- Puede consultar una venta específica (RF-13).  
+- Puede autenticarse en el sistema (RF-11).  
+- Puede modificar la configuración del sistema, incluyendo el nombre y la dirección del negocio (RF-14).  
+- Puede consultar estadísticas de ventas (RF-15).  
+- Puede cerrar sesión en el sistema (RF-16).  
+- Puede registrar usuarios (RF-17).  
+- Puede consultar usuarios (RF-18).  
+- Puede consultar un usuario específico (RF-19).  
+- Puede modificar usuarios (RF-20).  
+- Puede cambiar el estado de los usuarios (RF-21).  
+- Puede generar reportes PDF de estadísticas de ventas (RF-23).
+
+**Operador (Cajero)**
+- Puede autenticarse en el sistema (RF-11).  
+- Puede consultar productos (RF-2).  
+- Puede buscar productos por código de barras (RF-5).  
+- Puede consultar un producto específico (RF-12).  
+- Puede registrar ventas (RF-7).  
+- Puede consultar ventas (RF-8).  
+- Puede agregar productos a una venta mediante código de barras (RF-9).  
+- Puede generar tickets de venta (RF-10).  
+- Puede consultar una venta específica (RF-13).  
+- Puede cerrar sesión en el sistema (RF-16).  
+- No puede registrar productos (RF-1).  
+- No puede modificar productos (RF-3).  
+- No puede desactivar productos (RF-4).  
+- No puede activar productos (RF-22).  
+- No puede registrar productos mediante código de barras (RF-6).  
+- No puede modificar el nombre ni la dirección del negocio (RF-14).  
+- No puede consultar estadísticas de ventas (RF-15).  
+- No puede registrar usuarios (RF-17).  
+- No puede consultar usuarios (RF-18).  
+- No puede consultar un usuario específico (RF-19).  
+- No puede modificar usuarios (RF-20).  
+- No puede cambiar el estado de los usuarios (RF-21).  
+- No puede generar reportes PDF de estadísticas de ventas (RF-23).
 
 ---
 
-### Date and Time Formats
+### Datos Numéricos y Decimales
 
-- All dates in the system must be displayed in `DD/MM/YYYY` format.  
-- All times in the system must be displayed in 24-hour format with seconds `HH:MM:SS`.  
-- These formats apply to the user interface and reports.  
-- Any milliseconds stored in the database must not be displayed in the user interface or reports.
+- Todos los valores numéricos que representen importes monetarios o cantidades de productos deben almacenarse y mostrarse con un máximo de 2 decimales y hasta 10 dígitos en la parte entera.  
+  Esto incluye:  
+  - Precio del producto.  
+  - Precio del producto en el detalle de venta (precio de venta).  
+  - Subtotal de cada detalle de venta.  
+  - Importe total de la venta.  
+  - Stock del producto.  
+  - Cantidad de producto en cada detalle de venta.  
+  - Stock mínimo del producto.  
+
+- Para los productos cuya unidad de medida sea "Unidades", el stock, la cantidad y el stock mínimo deben ser valores enteros, aunque el sistema soporte precisión decimal.
+
+---
+
+### Formatos de Fecha y Hora
+
+- Todas las fechas del sistema deben mostrarse en formato `DD/MM/YYYY`.  
+- Todas las horas del sistema deben mostrarse en formato de 24 horas con segundos `HH:MM:SS`.  
+- Estos formatos se aplican tanto a la interfaz de usuario como a los reportes.  
+- Los milisegundos almacenados en la base de datos no deben mostrarse en la interfaz de usuario ni en los reportes.

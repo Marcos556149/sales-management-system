@@ -1,15 +1,15 @@
 /**
- * Repository interface for managing {@link User} entities.
+ * Repositorio para la gestión de entidades {@link User}.
  *
  * <p>
- * Extends {@link JpaRepository}, providing standard CRUD operations
- * such as save, delete, findById, and findAll without requiring
- * explicit implementation.
+ * Extiende {@link JpaRepository}, proporcionando operaciones CRUD estándar
+ * como guardar, eliminar, buscar por identificador y obtener todos los registros
+ * sin requerir una implementación explícita.
  * </p>
  *
  * <p>
- * This repository handles data access for users.
- * Custom query methods can be defined here when needed.
+ * Este repositorio gestiona el acceso a datos de los usuarios.
+ * Cuando sea necesario, aquí pueden definirse métodos de consulta personalizados.
  * </p>
  */
 
@@ -25,10 +25,10 @@ import java.util.Optional;
 public interface IUserRepository extends JpaRepository<User, Long> {
 
     /**
-     * Finds a user by username.
+     * Busca un usuario por su nombre de usuario.
      *
-     * @param userName the username to search for
-     * @return an Optional containing the User if found, or empty otherwise
+     * @param userName nombre de usuario a buscar
+     * @return un Optional que contiene el usuario si existe, o vacío en caso contrario
      */
     Optional<User> findByUserName(String userName);
 }

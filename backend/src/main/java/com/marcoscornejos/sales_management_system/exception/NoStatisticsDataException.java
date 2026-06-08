@@ -1,23 +1,23 @@
 package com.marcoscornejos.sales_management_system.exception;
 
 /**
- * Exception thrown when no statistical data exists
- * for the selected filters.
+ * Excepción lanzada cuando no existen datos estadísticos
+ * para los filtros seleccionados.
  *
  * <p>
- * This exception is raised when a statistics query
- * or report generation request does not match any
- * sales records.
+ * Esta excepción se produce cuando una consulta de estadísticas
+ * o una solicitud de generación de reporte no encuentra
+ * registros de ventas que coincidan con los criterios.
  * </p>
  *
  * <p>
- * This exception uses the standardized error format:
+ * Esta excepción utiliza el formato de error estandarizado:
  * </p>
  *
  * <pre>
  * {
  *   "code": "NO_STATISTICS_DATA",
- *   "message": "Human readable message",
+ *   "message": "Mensaje legible para el usuario",
  *   "field": null
  * }
  * </pre>
@@ -29,9 +29,9 @@ public class NoStatisticsDataException
             "NO_STATISTICS_DATA";
 
     /**
-     * Creates a no-data exception.
+     * Crea una excepción cuando no hay datos disponibles.
      *
-     * @param message human-readable error message
+     * @param message mensaje de error legible para el usuario
      */
     public NoStatisticsDataException(
             String message
@@ -40,11 +40,11 @@ public class NoStatisticsDataException
     }
 
     /**
-     * Creates a no-data exception with
-     * an optional related field.
+     * Crea una excepción cuando no hay datos disponibles
+     * con un campo relacionado opcional.
      *
-     * @param message human-readable error message
-     * @param field related field name (can be null)
+     * @param message mensaje de error legible para el usuario
+     * @param field nombre del campo relacionado (puede ser null)
      */
     public NoStatisticsDataException(
             String message,

@@ -1,18 +1,19 @@
 package com.marcoscornejos.sales_management_system.projection;
 
 /**
- * Projection interface used to retrieve products that have no sales
- * within a given filter range.
+ * Interfaz de proyección utilizada para obtener productos que no registran ventas
+ * dentro de un rango de filtros determinado.
  *
  * <p>
- * This projection only returns basic product identification data,
- * since no aggregated sales metrics exist for unsold products.
+ * Esta proyección devuelve únicamente datos básicos de identificación
+ * del producto, ya que los productos no vendidos no poseen métricas
+ * de ventas agregadas.
  * </p>
  */
 public interface UnsoldProductProjection {
 
     /**
-     * Unique product code that identifies the product.
+     * Código único que identifica al producto.
      */
     String getProductCode();
 

@@ -6,8 +6,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /**
- * DTO that represents the total number of sales
- * calculated based on the selected filters.
+ * DTO que representa la cantidad total de ventas
+ * calculadas en base a los filtros seleccionados.
  */
 @Getter
 @Setter
@@ -16,7 +16,7 @@ import lombok.Setter;
 public class TotalSalesResponseDTO {
 
     /**
-     * Total number of matching sales.
+     * Cantidad total de ventas coincidentes.
      */
     private Long totalSales;
 }

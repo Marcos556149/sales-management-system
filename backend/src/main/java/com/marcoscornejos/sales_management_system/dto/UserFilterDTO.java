@@ -6,19 +6,19 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /**
- * DTO that represents a user available for filtering
- * in the statistics module.
+ * DTO que representa un usuario disponible para filtros
+ * en el módulo de estadísticas.
  *
  * <p>
- * This DTO is used by the frontend to display selectable users
- * in filter dropdowns.
+ * Este DTO es utilizado por el frontend para mostrar usuarios seleccionables
+ * en los filtros desplegables.
  * </p>
  *
  * <p>
- * The frontend uses:
+ * El frontend utiliza:
  * <ul>
- *   <li>userId → for backend filtering</li>
- *   <li>username → for display purposes</li>
+ *   <li>userId → para el filtrado en backend</li>
+ *   <li>userName → para propósitos de visualización</li>
  * </ul>
  * </p>
  */
@@ -29,19 +29,19 @@ import lombok.Setter;
 public class UserFilterDTO {
 
     /**
-     * Unique identifier of the user.
+     * Identificador único del usuario.
      *
      * <p>
-     * This value is sent to the backend when filtering statistics.
+     * Este valor se envía al backend al aplicar filtros de estadísticas.
      * </p>
      */
     private Long userId;
 
     /**
-     * Display name of the user.
+     * Nombre visible del usuario.
      *
      * <p>
-     * This value is shown in the frontend UI.
+     * Este valor se muestra en la interfaz del frontend.
      * </p>
      */
     private String userName;

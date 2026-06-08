@@ -35,7 +35,7 @@ const SystemConfigurationModal = ({ isOpen, onClose }) => {
         businessAddress: res.data.businessAddress || ''
       });
     } catch (err) {
-      addToast(err.message || 'Error loading system configuration', 'error');
+      addToast(err.message || 'Error al cargar la configuración del sistema', 'error');
       onClose(); // Close if we can't load it
     } finally {
       setLoading(false);
@@ -55,16 +55,16 @@ const SystemConfigurationModal = ({ isOpen, onClose }) => {
     const errors = {};
     const name = formData.businessName.trim();
     if (!name) {
-      errors.businessName = "Business name is required";
+      errors.businessName = "El nombre del negocio es obligatorio";
     } else if (name.length > 100) {
-      errors.businessName = "Business name must not exceed 100 characters";
+      errors.businessName = "El nombre del negocio no debe superar los 100 caracteres";
     }
 
     const address = formData.businessAddress.trim();
     if (!address) {
-      errors.businessAddress = "Business address is required";
+      errors.businessAddress = "La dirección del negocio es obligatoria";
     } else if (address.length > 200) {
-      errors.businessAddress = "Business address must not exceed 200 characters";
+      errors.businessAddress = "La dirección del negocio no debe superar los 200 caracteres";
     }
 
     setFormErrors(errors);
@@ -82,12 +82,12 @@ const SystemConfigurationModal = ({ isOpen, onClose }) => {
         businessAddress: formData.businessAddress.trim()
       };
       const res = await configService.updateConfig(payload);
-      addToast(res.message || 'Configuration updated successfully', 'success');
+      addToast(res.message || 'Configuración actualizada correctamente', 'success');
       onClose();
     } catch (err) {
       const data = err.details || {};
       const errorData = data.error || {};
-      
+
       // Handle standard API validation errors
       if (err.status === 400) {
         if (errorData.field) {
@@ -97,11 +97,11 @@ const SystemConfigurationModal = ({ isOpen, onClose }) => {
           setFormErrors(data);
           Object.values(data).forEach(msg => addToast(msg, 'error'));
         } else {
-          const msg = errorData.message || err.message || 'Invalid data provided';
+          const msg = errorData.message || err.message || 'Datos inválidos proporcionados';
           addToast(msg, 'error');
         }
       } else {
-        addToast(err.message || 'Failed to update configuration', 'error');
+        addToast(err.message || 'Error al actualizar la configuración', 'error');
       }
     } finally {
       setSaving(false);
@@ -143,11 +143,11 @@ const SystemConfigurationModal = ({ isOpen, onClose }) => {
         <div className="config-modal-header">
           <h3 className="config-modal-title">
             <Settings size={20} />
-            System Configuration
+            Configuración del sistema
           </h3>
-          <button 
+          <button
             type="button"
-            className="config-modal-close-btn" 
+            className="config-modal-close-btn"
             onClick={onClose}
             disabled={saving}
           >
@@ -158,15 +158,15 @@ const SystemConfigurationModal = ({ isOpen, onClose }) => {
         {loading ? (
           <div className="config-modal-loading">
             <Loader2 size={32} className="config-spin-animation" />
-            <p>Loading configuration...</p>
+            <p>Cargando configuración...</p>
           </div>
         ) : (
           <form onSubmit={handleSubmit} noValidate>
             <div className="config-modal-body">
               <div className="config-form-group">
-                <label htmlFor="businessName">Business Name <span className="required">*</span></label>
-                <input 
-                  type="text" 
+                <label htmlFor="businessName">Nombre del negocio <span className="required">*</span></label>
+                <input
+                  type="text"
                   id="businessName"
                   name="businessName"
                   className={getInputClass('businessName')}
@@ -181,9 +181,9 @@ const SystemConfigurationModal = ({ isOpen, onClose }) => {
               </div>
 
               <div className="config-form-group">
-                <label htmlFor="businessAddress">Business Address <span className="required">*</span></label>
-                <input 
-                  type="text" 
+                <label htmlFor="businessAddress">Dirección del negocio <span className="required">*</span></label>
+                <input
+                  type="text"
                   id="businessAddress"
                   name="businessAddress"
                   className={getInputClass('businessAddress')}
@@ -199,28 +199,28 @@ const SystemConfigurationModal = ({ isOpen, onClose }) => {
             </div>
 
             <div className="config-modal-footer">
-              <button 
-                type="button" 
-                className="btn-secondary" 
+              <button
+                type="button"
+                className="btn-secondary"
                 onClick={onClose}
                 disabled={saving}
               >
                 Cancel
               </button>
-              <button 
-                type="submit" 
-                className="btn-primary" 
+              <button
+                type="submit"
+                className="btn-primary"
                 disabled={saving}
               >
                 {saving ? (
                   <>
                     <Loader2 size={16} className="config-spin-animation" style={{ marginBottom: 0, marginRight: '8px' }} />
-                    Saving...
+                    Guardando...
                   </>
                 ) : (
                   <>
                     <Save size={16} />
-                    Save Configuration
+                    Guardar configuración
                   </>
                 )}
               </button>

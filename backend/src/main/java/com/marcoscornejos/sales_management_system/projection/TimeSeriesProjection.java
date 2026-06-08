@@ -3,27 +3,27 @@ package com.marcoscornejos.sales_management_system.projection;
 import java.math.BigDecimal;
 
 /**
- * Projection used for time-series statistical aggregations.
+ * Proyección utilizada para agregaciones estadísticas basadas en series temporales.
  *
  * <p>
- * Represents a single aggregated chart point,
- * including a time label and its associated value.
+ * Representa un único punto agregado de un gráfico,
+ * incluyendo una etiqueta temporal y su valor asociado.
  * </p>
  */
 public interface TimeSeriesProjection {
 
     /**
-     * Time label representing the aggregation period
-     * (day, month, or year).
+     * Etiqueta temporal que representa el período de agregación
+     * (hora, día, mes o año).
      *
-     * @return chart label
+     * @return etiqueta del gráfico
      */
     String getLabel();
 
     /**
-     * Aggregated value for the time period.
+     * Valor agregado correspondiente al período de tiempo.
      *
-     * @return aggregated metric value
+     * @return valor de la métrica agregada
      */
     BigDecimal getValue();
 }

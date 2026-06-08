@@ -5,23 +5,23 @@ import com.marcoscornejos.sales_management_system.model.SystemConfiguration;
 import org.mapstruct.Mapper;
 
 /**
- * Mapper responsible for converting {@link SystemConfiguration}
- * entities into {@link SystemConfigurationResponseDTO}.
+ * Mapper responsable de convertir entidades {@link SystemConfiguration}
+ * en {@link SystemConfigurationResponseDTO}.
  *
  * <p>
- * Handles the transformation of global configuration data
- * to a format suitable for client responses.
+ * Maneja la transformación de la configuración global del sistema
+ * a un formato adecuado para las respuestas del cliente.
  * </p>
  */
 @Mapper(componentModel = "spring")
 public interface ISystemConfigurationResponseMapper {
 
     /**
-     * Maps a {@link SystemConfiguration} entity
-     * to a {@link SystemConfigurationResponseDTO}.
+     * Mapea una entidad {@link SystemConfiguration}
+     * a un {@link SystemConfigurationResponseDTO}.
      *
-     * @param configuration the SystemConfiguration entity
-     * @return SystemConfigurationResponseDTO with mapped fields
+     * @param configuration entidad SystemConfiguration
+     * @return SystemConfigurationResponseDTO con los campos mapeados
      */
     SystemConfigurationResponseDTO toDto(SystemConfiguration configuration);
 }

@@ -8,11 +8,12 @@ import lombok.Setter;
 import java.math.BigDecimal;
 
 /**
- * DTO used to represent products available for sale.
+ * DTO utilizado para representar productos disponibles para la venta.
  *
  * <p>
- * Includes the essential product data required by the sale registration
- * interface, excluding administrative fields such as product status.
+ * Incluye los datos esenciales del producto requeridos por la interfaz
+ * de registro de ventas, excluyendo campos administrativos como el estado
+ * del producto.
  * </p>
  */
 @Getter
@@ -22,32 +23,32 @@ import java.math.BigDecimal;
 public class ProductSaleListResponseDTO {
 
     /**
-     * Unique product code that identifies the product.
+     * Código único del producto que lo identifica.
      */
     private String productCode;
 
     /**
-     * Name of the product.
+     * Nombre del producto.
      */
     private String productName;
 
     /**
-     * Price of the product.
+     * Precio del producto.
      */
     private BigDecimal productPrice;
 
     /**
-     * Available stock quantity of the product.
+     * Cantidad de stock disponible del producto.
      */
     private BigDecimal productStock;
 
     /**
-     * Minimum stock threshold configured for the product.
+     * Umbral mínimo de stock configurado para el producto.
      */
     private BigDecimal minimumStock;
 
     /**
-     * Unit of measure associated with the stock (e.g., kg, u).
+     * Unidad de medida asociada al stock (por ejemplo: kg, u).
      */
     private EnumDTO unitOfMeasure;
 }

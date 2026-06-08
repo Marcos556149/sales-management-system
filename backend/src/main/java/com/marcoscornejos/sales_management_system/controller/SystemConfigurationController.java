@@ -10,11 +10,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 /**
- * REST controller responsible for managing global system configuration.
+ * Controlador REST responsable de la gestión de la configuración global del sistema.
  *
  * <p>
- * Provides endpoints to retrieve and update system-wide configuration values
- * such as business name and business address.
+ * Expone endpoints para obtener y actualizar valores de configuración a nivel sistema,
+ * como el nombre del negocio y la dirección del mismo.
  * </p>
  */
 @RestController
@@ -25,14 +25,14 @@ public class SystemConfigurationController {
     private final ISystemConfigurationService iSystemConfigurationService;
 
     /**
-     * Retrieves the current system configuration.
+     * Obtiene la configuración actual del sistema.
      *
      * <p>
-     * Returns global configuration values shared across all users,
-     * including business name and business address.
+     * Devuelve los valores de configuración global compartidos por todos los usuarios,
+     * incluyendo el nombre del negocio y su dirección.
      * </p>
      *
-     * @return The current system configuration
+     * @return la configuración actual del sistema
      */
     @GetMapping
     public ResponseEntity<SystemConfigurationResponseDTO> getConfiguration() {
@@ -44,27 +44,27 @@ public class SystemConfigurationController {
     }
 
     /**
-     * Updates the global system configuration.
+     * Actualiza la configuración global del sistema.
      *
      * <p>
-     * Allows modifying system-wide configuration values such as
-     * business name and business address.
-     * These values are shared across all users of the system.
+     * Permite modificar valores de configuración a nivel sistema, como
+     * el nombre del negocio y la dirección del mismo.
+     * Estos valores son compartidos por todos los usuarios del sistema.
      * </p>
      *
      * <p>
-     * Only users with administrator privileges are authorized
-     * to perform this operation.
+     * Solo los usuarios con privilegios de administrador están autorizados
+     * para realizar esta operación.
      * </p>
      *
      * <p>
-     * The system validates the input data before applying changes.
-     * If validation fails, an error response is returned indicating
-     * the invalid fields.
+     * El sistema valida los datos de entrada antes de aplicar los cambios.
+     * Si la validación falla, se devuelve una respuesta de error indicando
+     * los campos inválidos.
      * </p>
      *
-     * @param request the new configuration values to be applied
-     * @return a standardized success response containing the updated configuration
+     * @param request los nuevos valores de configuración a aplicar
+     * @return una respuesta estándar de éxito que contiene la configuración actualizada
      */
     @PutMapping
     public ResponseEntity<SuccessResponseDTO<SystemConfigurationResponseDTO>> updateConfiguration(
@@ -77,7 +77,7 @@ public class SystemConfigurationController {
         SuccessResponseDTO<SystemConfigurationResponseDTO> response =
                 new SuccessResponseDTO<>(
                         "CONFIGURATION_UPDATED",
-                        "System configuration successfully updated",
+                        "Configuración del sistema actualizada correctamente",
                         updatedConfig
                 );
 

@@ -6,14 +6,14 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /**
- * DTO that represents peak sales hour statistics
- * calculated based on the selected filters.
+ * DTO que representa estadísticas de horas pico de ventas
+ * calculadas en base a los filtros seleccionados.
  *
  * <p>
- * This DTO contains:
+ * Este DTO contiene:
  * <ul>
- *   <li>The hour with the highest revenue generated</li>
- *   <li>The hour with the highest number of sales</li>
+ *   <li>La hora con mayor generación de ingresos</li>
+ *   <li>La hora con mayor número de ventas</li>
  * </ul>
  * </p>
  */
@@ -24,29 +24,29 @@ import lombok.Setter;
 public class PeakHoursResponseDTO {
 
     /**
-     * Hour with the highest revenue generated.
+     * Hora con mayor generación de ingresos.
      *
      * <p>
-     * Represents the hour interval that accumulated
-     * the greatest total revenue within the selected filters.
+     * Representa el intervalo horario que acumuló
+     * el mayor ingreso total dentro de los filtros seleccionados.
      * </p>
      *
      * <p>
-     * May be {@code null} if no matching sales exist.
+     * Puede ser {@code null} si no existen ventas que coincidan.
      * </p>
      */
     private String highestRevenueHour;
 
     /**
-     * Hour with the highest number of sales.
+     * Hora con mayor número de ventas.
      *
      * <p>
-     * Represents the hour interval with the greatest
-     * number of sales within the selected filters.
+     * Representa el intervalo horario con la mayor
+     * cantidad de ventas dentro de los filtros seleccionados.
      * </p>
      *
      * <p>
-     * May be {@code null} if no matching sales exist.
+     * Puede ser {@code null} si no existen ventas que coincidan.
      * </p>
      */
     private String highestSalesHour;

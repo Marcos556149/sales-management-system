@@ -6,11 +6,13 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /**
- * DTO that represents aggregated sales statistics based on selected filters.
+ * DTO que representa estadísticas de ventas agregadas
+ * basadas en los filtros seleccionados.
  *
  * <p>
- * This object groups all analytical information such as sales KPIs,
- * product rankings, and unsold product data.
+ * Este objeto agrupa toda la información analítica,
+ * como KPIs de ventas, rankings de productos y datos
+ * de productos no vendidos.
  * </p>
  */
 @Getter
@@ -20,12 +22,12 @@ import lombok.Setter;
 public class SalesStatisticsResponseDTO {
 
     /**
-     * Aggregated sales information (KPIs and time-based metrics).
+     * Información agregada de ventas (KPIs y métricas temporales).
      */
     private SalesInfoDTO salesInfo;
 
     /**
-     * Product-related statistics (sold and unsold products).
+     * Estadísticas relacionadas con productos (vendidos y no vendidos).
      */
     private ProductStatisticsDTO productStatistics;
 }

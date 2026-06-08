@@ -1,21 +1,21 @@
 package com.marcoscornejos.sales_management_system.exception;
 
 /**
- * Exception thrown when a user cannot be found.
+ * Excepción lanzada cuando no se puede encontrar un usuario.
  *
  * <p>
- * Typically used when a user lookup by ID, username,
- * or other criteria does not return any result.
+ * Se utiliza normalmente cuando una búsqueda de usuario por ID, nombre de usuario
+ * u otro criterio no devuelve ningún resultado.
  * </p>
  *
  * <p>
- * This exception uses the standardized error format:
+ * Esta excepción utiliza el formato de error estandarizado:
  * </p>
  *
  * <pre>
  * {
  *   "code": "USER_NOT_FOUND",
- *   "message": "Human readable message",
+ *   "message": "Mensaje legible para el usuario",
  *   "field": null
  * }
  * </pre>
@@ -25,9 +25,9 @@ public class UserNotFoundException extends UserException {
     private static final String CODE = "USER_NOT_FOUND";
 
     /**
-     * Creates an exception when a user is not found.
+     * Crea una excepción cuando no se encuentra un usuario.
      *
-     * @param message human-readable error message
+     * @param message mensaje de error legible para el usuario
      */
     public UserNotFoundException(String message) {
         super(CODE, message, null);

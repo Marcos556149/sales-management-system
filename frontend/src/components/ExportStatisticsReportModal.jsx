@@ -28,7 +28,7 @@ const ExportStatisticsReportModal = ({ isOpen, onClose, filters }) => {
         try {
           const response = await apiClient.get('/api/statistics/filters/product-ranking');
           setFilterOptions(response.data);
-          
+
           // Set initial values if options are available
           if (response.data?.metricOptions?.length > 0) {
             setMetric(response.data.metricOptions[0].code);
@@ -38,12 +38,12 @@ const ExportStatisticsReportModal = ({ isOpen, onClose, filters }) => {
           }
         } catch (err) {
           console.error("Error fetching ranking filters:", err);
-          addToast("Could not load ranking filter options", "error");
+          addToast("No se pudieron cargar las opciones de filtrado del ranking", "error");
         } finally {
           setLoadingFilters(false);
         }
       };
-      
+
       fetchFilters();
     } else {
       // Reset state when closing
@@ -60,7 +60,7 @@ const ExportStatisticsReportModal = ({ isOpen, onClose, filters }) => {
     if (e) e.preventDefault();
 
     if (!includeSales && !includeProduct) {
-      addToast("At least one report section must be selected", "error");
+      addToast("Debe seleccionar al menos una sección", "error");
       return;
     }
 
@@ -101,19 +101,17 @@ const ExportStatisticsReportModal = ({ isOpen, onClose, filters }) => {
       link.remove();
       window.URL.revokeObjectURL(blobUrl);
 
-      addToast("Report exported successfully", "success");
+      addToast("Reporte exportado correctamente", "success");
       onClose();
     } catch (err) {
       console.error("Error exporting statistics PDF:", err);
-      const msg = err.message;
-      if (
-        msg === "No data available for the selected criteria" || 
-        msg === "At least one report section must be selected"
-      ) {
-        addToast(msg, "error");
-      } else {
-        addToast("An error occurred while generating the PDF report", "error");
-      }
+
+      const msg =
+        err.response?.data?.message ||
+        err.message ||
+        "Ocurrió un error al generar el reporte PDF";
+
+      addToast(msg, "error");
     } finally {
       setExporting(false);
     }
@@ -149,11 +147,11 @@ const ExportStatisticsReportModal = ({ isOpen, onClose, filters }) => {
         <div className="pdf-modal-header">
           <h3 className="pdf-modal-title">
             <FileText size={20} />
-            Export Statistics Report
+            Exportar reporte de estadísticas
           </h3>
-          <button 
+          <button
             type="button"
-            className="pdf-modal-close-btn" 
+            className="pdf-modal-close-btn"
             onClick={onClose}
             disabled={exporting}
             aria-label="Close"
@@ -165,45 +163,45 @@ const ExportStatisticsReportModal = ({ isOpen, onClose, filters }) => {
         {loadingFilters ? (
           <div className="pdf-modal-loading">
             <Loader2 size={32} className="pdf-spin-animation" />
-            <p>Loading configurations...</p>
+            <p>Cargando configuraciones...</p>
           </div>
         ) : (
           <form onSubmit={handleExport} noValidate>
             <div className="pdf-modal-body">
-              
+
               {/* SECTION 1: Included Sections */}
               <div className="pdf-form-section">
-                <h4 className="pdf-section-title">Included Sections</h4>
+                <h4 className="pdf-section-title">Secciones incluidas</h4>
                 <div className="pdf-checkbox-group">
                   <label className="pdf-checkbox-label">
-                    <input 
+                    <input
                       type="checkbox"
                       id="includeSalesInformation"
                       checked={includeSales}
                       onChange={(e) => setIncludeSales(e.target.checked)}
                       disabled={exporting}
                     />
-                    <span>Sales Information</span>
+                    <span>Información de ventas</span>
                   </label>
                   <label className="pdf-checkbox-label">
-                    <input 
+                    <input
                       type="checkbox"
                       id="includeProductInformation"
                       checked={includeProduct}
                       onChange={(e) => setIncludeProduct(e.target.checked)}
                       disabled={exporting}
                     />
-                    <span>Product Information</span>
+                    <span>Información de productos</span>
                   </label>
                 </div>
               </div>
 
               {/* SECTION 2: Product Ranking Configuration */}
               <div className={`pdf-form-section ${!includeProduct ? 'disabled' : ''}`}>
-                <h4 className="pdf-section-title">Product Ranking Configuration</h4>
+                <h4 className="pdf-section-title">Configuración del ranking de productos</h4>
                 <div className="pdf-form-grid">
                   <div className="pdf-form-group">
-                    <label htmlFor="metric">Ranking Metric</label>
+                    <label htmlFor="metric">Métrica de ranking</label>
                     <select
                       id="metric"
                       value={metric}
@@ -213,12 +211,12 @@ const ExportStatisticsReportModal = ({ isOpen, onClose, filters }) => {
                     >
                       {filterOptions?.metricOptions?.map(opt => (
                         <option key={opt.code} value={opt.code}>{opt.label}</option>
-                      )) || <option value="REVENUE_GENERATED">Revenue Generated</option>}
+                      )) || <option value="REVENUE_GENERATED">Ingresos generados</option>}
                     </select>
                   </div>
 
                   <div className="pdf-form-group">
-                    <label htmlFor="order">Ranking Order</label>
+                    <label htmlFor="order">Orden del ranking</label>
                     <select
                       id="order"
                       value={order}
@@ -228,7 +226,7 @@ const ExportStatisticsReportModal = ({ isOpen, onClose, filters }) => {
                     >
                       {filterOptions?.orderOptions?.map(opt => (
                         <option key={opt.code} value={opt.code}>{opt.label}</option>
-                      )) || <option value="MOST_TO_LEAST">Most sold → least sold</option>}
+                      )) || <option value="MOST_TO_LEAST">Más vendido → menos vendido</option>}
                     </select>
                   </div>
                 </div>
@@ -236,10 +234,10 @@ const ExportStatisticsReportModal = ({ isOpen, onClose, filters }) => {
 
               {/* SECTION 3: Product Limits */}
               <div className={`pdf-form-section ${!includeProduct ? 'disabled' : ''}`}>
-                <h4 className="pdf-section-title">Product Limits</h4>
+                <h4 className="pdf-section-title">Límites de productos</h4>
                 <div className="pdf-form-grid">
                   <div className="pdf-form-group">
-                    <label htmlFor="soldProductsLimit">Sold Products Limit</label>
+                    <label htmlFor="soldProductsLimit">Límite de productos vendidos</label>
                     <select
                       id="soldProductsLimit"
                       value={soldLimit}
@@ -255,7 +253,7 @@ const ExportStatisticsReportModal = ({ isOpen, onClose, filters }) => {
                   </div>
 
                   <div className="pdf-form-group">
-                    <label htmlFor="unsoldProductsLimit">Unsold Products Limit</label>
+                    <label htmlFor="unsoldProductsLimit">Límite de productos no vendidos</label>
                     <select
                       id="unsoldProductsLimit"
                       value={unsoldLimit}
@@ -275,28 +273,28 @@ const ExportStatisticsReportModal = ({ isOpen, onClose, filters }) => {
             </div>
 
             <div className="pdf-modal-footer">
-              <button 
-                type="button" 
-                className="pdf-btn-secondary" 
+              <button
+                type="button"
+                className="pdf-btn-secondary"
                 onClick={onClose}
                 disabled={exporting}
               >
-                Cancel
+                Cancelar
               </button>
-              <button 
-                type="submit" 
-                className="pdf-btn-primary" 
+              <button
+                type="submit"
+                className="pdf-btn-primary"
                 disabled={exporting}
               >
                 {exporting ? (
                   <>
                     <Loader2 size={16} className="pdf-spin-animation" style={{ marginRight: '8px' }} />
-                    Generating PDF...
+                    Generando PDF
                   </>
                 ) : (
                   <>
                     <FileDown size={16} style={{ marginRight: '8px' }} />
-                    Export PDF
+                    Exportar PDF
                   </>
                 )}
               </button>

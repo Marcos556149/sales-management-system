@@ -16,26 +16,12 @@ import com.marcoscornejos.sales_management_system.repository.IProductRepository;
 import com.marcoscornejos.sales_management_system.repository.ISaleRepository;
 import com.marcoscornejos.sales_management_system.repository.IUserRepository;
 import lombok.RequiredArgsConstructor;
-import org.jfree.chart.ChartFactory;
-import org.jfree.chart.ChartUtils;
-import org.jfree.chart.JFreeChart;
-import org.jfree.chart.axis.CategoryAxis;
-import org.jfree.chart.axis.CategoryLabelPositions;
-import org.jfree.chart.axis.NumberAxis;
-import org.jfree.chart.plot.CategoryPlot;
-import org.jfree.chart.plot.PlotOrientation;
-import org.jfree.data.category.DefaultCategoryDataset;
-import org.jfree.data.time.Hour;
-import org.jfree.data.time.TimeSeries;
-import org.jfree.data.time.TimeSeriesCollection;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -59,70 +45,24 @@ public class StatisticsService implements IStatisticsService{
     private static final Set<Integer> ALLOWED_PRODUCT_LIMITS_REPORT_PDF =
             Set.of(10, 20, 50, 100);
 
-
-    /*
-    @Override
-    public SalesStatisticsResponseDTO getSalesStatistics(
-            Long userId,
-            LocalDate startDate,
-            LocalDate endDate,
-            ProductRankingMetric metric,
-            ProductQuantityOrderType order
-    ) {
-
-        // Normalize filters
-        LocalDate[] normalizedDates =
-                normalizeDateRange(startDate, endDate);
-
-        startDate = normalizedDates[0];
-        endDate = normalizedDates[1];
-
-        if (userId != null && !iUserRepository.existsById(userId)) {
-            throw new UserNotFoundException(
-                    "The selected user is not valid or does not exist"
-            );
-        }
-
-        // Build sales information
-        SalesInfoDTO salesInfo =
-                buildSalesInfo(userId, startDate, endDate);
-
-        // Build product statistics
-        ProductStatisticsDTO productStatistics =
-                buildProductStatistics(
-                        userId,
-                        startDate,
-                        endDate,
-                        metric,
-                        order
-                );
-
-        // Final response
-        return new SalesStatisticsResponseDTO(
-                salesInfo,
-                productStatistics
-        );
-    }
-
-     */
-
     /**
-     * Applies default behavior to the provided date range.
+     * Aplica el comportamiento predeterminado al rango de fechas proporcionado.
      *
      * <p>
-     * If no dates are provided, both start and end date default to the current date.
+     * Si no se proporcionan fechas, tanto la fecha de inicio como la fecha de fin
+     * se establecen con la fecha actual.
      * </p>
      *
-     * @param startDate requested start date
-     * @param endDate requested end date
-     * @return normalized date range
+     * @param startDate fecha de inicio solicitada
+     * @param endDate fecha de fin solicitada
+     * @return rango de fechas normalizado
      */
     private LocalDate[] normalizeDateRange(
             LocalDate startDate,
             LocalDate endDate
     ) {
 
-        // Apply defaults when no range is provided
+        // Aplicar valores predeterminados cuando no se proporciona un rango
         if (startDate == null && endDate == null) {
             LocalDate today = LocalDate.now();
 
@@ -130,17 +70,17 @@ public class StatisticsService implements IStatisticsService{
             endDate = today;
         }
 
-        // Validate incomplete range
+        // Validar rango incompleto
         if (startDate == null || endDate == null) {
             throw new InvalidStatisticsFilterException(
-                    "A valid date range is required (start and end date)"
+                    "Se requiere un rango de fechas válido (fecha de inicio y fecha de fin)"
             );
         }
 
-        // Validate chronological order
+        // Validar orden cronológico
         if (endDate.isBefore(startDate)) {
             throw new InvalidStatisticsFilterException(
-                    "End date cannot be earlier than start date",
+                    "La fecha de fin no puede ser anterior a la fecha de inicio",
                     "endDate"
             );
         }
@@ -148,105 +88,29 @@ public class StatisticsService implements IStatisticsService{
         return new LocalDate[]{ startDate, endDate };
     }
 
-
-
-    /*
-
-    private SalesInfoDTO buildSalesInfo(
-            Long userId,
-            LocalDate startDate,
-            LocalDate endDate
-    ) {
-
-        BigDecimal totalRevenue = iSaleRepository.sumRevenue(
-                userId,
-                startDate,
-                endDate
-        );
-
-        Long totalSales = iSaleRepository.countSales(
-                userId,
-                startDate,
-                endDate
-        );
-
-        BigDecimal averageTicket =
-                totalSales == 0
-                        ? BigDecimal.ZERO
-                        : totalRevenue.divide(
-                        BigDecimal.valueOf(totalSales),
-                        2,
-                        RoundingMode.HALF_UP
-                );
-
-        String highestRevenueHour =
-                iSaleRepository.findPeakRevenueHour(
-                        userId,
-                        startDate,
-                        endDate
-                );
-
-        String highestSalesHour =
-                iSaleRepository.findPeakSalesHour(
-                        userId,
-                        startDate,
-                        endDate
-                );
-
-        StatisticsGranularity granularity =
-                determineGranularity(startDate, endDate);
-
-        List<TimeSeriesPointDTO> revenueOverTime =
-                getRevenueOverTime(
-                        userId,
-                        startDate,
-                        endDate,
-                        granularity
-                );
-
-        List<TimeSeriesPointDTO> salesOverTime =
-                getSalesOverTime(
-                        userId,
-                        startDate,
-                        endDate,
-                        granularity
-                );
-
-        return new SalesInfoDTO(
-                totalRevenue,
-                totalSales,
-                averageTicket,
-                highestRevenueHour,
-                highestSalesHour,
-                revenueOverTime,
-                salesOverTime
-        );
-    }
-
-     */
-
     /**
-     * Determines the appropriate chart aggregation granularity
-     * based on the selected date range.
+     * Determina la granularidad de agregación más adecuada para los gráficos
+     * según el rango de fechas seleccionado.
      *
      * <p>
-     * Granularity is automatically adjusted to improve chart readability
-     * and avoid excessive data points for large date ranges.
+     * La granularidad se ajusta automáticamente para mejorar la legibilidad
+     * de los gráficos y evitar una cantidad excesiva de puntos de datos en
+     * rangos de fechas amplios.
      * </p>
      *
      * <p>
-     * Granularity rules:
+     * Reglas de granularidad:
      * <ul>
-     *   <li>HOUR → single-day ranges</li>
-     *   <li>DAY → ranges up to 31 days</li>
-     *   <li>MONTH → ranges up to 365 days</li>
-     *   <li>YEAR → ranges greater than 365 days</li>
+     *   <li>HOUR → rangos de un solo día</li>
+     *   <li>DAY → rangos de hasta 31 días</li>
+     *   <li>MONTH → rangos de hasta 365 días</li>
+     *   <li>YEAR → rangos superiores a 365 días</li>
      * </ul>
      * </p>
      *
-     * @param startDate normalized start date
-     * @param endDate normalized end date
-     * @return calculated statistics granularity
+     * @param startDate fecha de inicio normalizada
+     * @param endDate fecha de fin normalizada
+     * @return granularidad estadística calculada
      */
     private StatisticsGranularity determineGranularity(
             LocalDate startDate,
@@ -256,51 +120,52 @@ public class StatisticsService implements IStatisticsService{
         long days =
                 ChronoUnit.DAYS.between(startDate, endDate) + 1;
 
-        // Single day → hourly granularity
+        // Un solo día → granularidad por hora
         if (days == 1) {
             return StatisticsGranularity.HOUR;
         }
 
-        // Short ranges → daily granularity
+        // Rangos cortos → granularidad diaria
         if (days <= 31) {
             return StatisticsGranularity.DAY;
         }
 
-        // Medium ranges → monthly granularity
+        // Rangos medios → granularidad mensual
         if (days <= 365) {
             return StatisticsGranularity.MONTH;
         }
 
-        // Long ranges → yearly granularity
+        // Rangos largos → granularidad anual
         return StatisticsGranularity.YEAR;
     }
 
     /**
-     * Retrieves revenue chart data aggregated according to the selected granularity.
+     * Obtiene los datos del gráfico de ingresos agregados según la
+     * granularidad seleccionada.
      *
      * <p>
-     * Delegates the query to the appropriate repository method depending on the
-     * calculated statistics granularity.
+     * Delega la consulta al método correspondiente del repositorio según
+     * la granularidad estadística calculada.
      * </p>
      *
      * <p>
-     * Repository queries return lightweight statistical projections,
-     * which are then mapped into {@link TimeSeriesPointDTO} objects
-     * used by the API response layer.
+     * Las consultas del repositorio devuelven proyecciones estadísticas
+     * ligeras, que posteriormente son transformadas en objetos
+     * {@link TimeSeriesPointDTO} utilizados por la capa de respuesta de la API.
      * </p>
      *
      * <p>
-     * When the granularity is {@link StatisticsGranularity#HOUR},
-     * raw hour labels are transformed into explicit hour ranges
-     * (e.g. "18:00 - 18:59") to improve chart readability
-     * and accurately represent the aggregated time bucket.
+     * Cuando la granularidad es {@link StatisticsGranularity#HOUR},
+     * las etiquetas de hora se transforman en rangos horarios explícitos
+     * (por ejemplo, "18:00 - 18:59") para mejorar la legibilidad del gráfico
+     * y representar correctamente el intervalo de tiempo agregado.
      * </p>
      *
-     * @param userId resolved user identifier (null = all users)
-     * @param startDate normalized start date
-     * @param endDate normalized end date
-     * @param granularity chart aggregation granularity
-     * @return revenue time series data
+     * @param userId identificador del usuario resuelto (null = todos los usuarios)
+     * @param startDate fecha de inicio normalizada
+     * @param endDate fecha de fin normalizada
+     * @param granularity granularidad de agregación del gráfico
+     * @return datos de la serie temporal de ingresos
      */
     private List<TimeSeriesPointDTO> getRevenueOverTime(
             Long userId,
@@ -358,31 +223,32 @@ public class StatisticsService implements IStatisticsService{
     }
 
     /**
-     * Retrieves sales count chart data aggregated according to the selected granularity.
+     * Obtiene los datos del gráfico de cantidad de ventas agregados según la
+     * granularidad seleccionada.
      *
      * <p>
-     * Delegates the query to the appropriate repository method depending on the
-     * calculated statistics granularity.
+     * Delega la consulta al método correspondiente del repositorio según
+     * la granularidad estadística calculada.
      * </p>
      *
      * <p>
-     * Repository queries return lightweight statistical projections,
-     * which are then mapped into {@link TimeSeriesPointDTO} objects
-     * used by the API response layer.
+     * Las consultas del repositorio devuelven proyecciones estadísticas
+     * ligeras, que posteriormente son transformadas en objetos
+     * {@link TimeSeriesPointDTO} utilizados por la capa de respuesta de la API.
      * </p>
      *
      * <p>
-     * When the granularity is {@link StatisticsGranularity#HOUR},
-     * raw hour labels are transformed into explicit hour ranges
-     * (e.g. "18:00 - 18:59") to improve chart readability
-     * and accurately represent the aggregated time bucket.
+     * Cuando la granularidad es {@link StatisticsGranularity#HOUR},
+     * las etiquetas de hora se transforman en rangos horarios explícitos
+     * (por ejemplo, "18:00 - 18:59") para mejorar la legibilidad del gráfico
+     * y representar correctamente el intervalo de tiempo agregado.
      * </p>
      *
-     * @param userId resolved user identifier (null = all users)
-     * @param startDate normalized start date
-     * @param endDate normalized end date
-     * @param granularity chart aggregation granularity
-     * @return sales count time series data
+     * @param userId identificador del usuario resuelto (null = todos los usuarios)
+     * @param startDate fecha de inicio normalizada
+     * @param endDate fecha de fin normalizada
+     * @param granularity granularidad de agregación del gráfico
+     * @return datos de la serie temporal de cantidad de ventas
      */
     private List<TimeSeriesPointDTO> getSalesOverTime(
             Long userId,
@@ -439,105 +305,28 @@ public class StatisticsService implements IStatisticsService{
                 .toList();
     }
 
-    /*
-    private ProductStatisticsDTO buildProductStatistics(
-            Long userId,
-            LocalDate startDate,
-            LocalDate endDate,
-            ProductRankingMetric metric,
-            ProductQuantityOrderType order
-    ) {
-
-        List<SoldProductDTO> topByQuantity =
-                iProductRepository.findTopByQuantity(
-                                userId,
-                                startDate,
-                                endDate
-                        ).stream()
-                        .map(p -> new SoldProductDTO(
-                                p.getProductCode(),
-                                p.getProductName(),
-                                p.getQuantitySold(),
-                                p.getRevenueGenerated()
-                        ))
-                        .toList();
-
-        List<SoldProductDTO> topByRevenue =
-                iProductRepository.findTopByRevenue(
-                                userId,
-                                startDate,
-                                endDate
-                        ).stream()
-                        .map(p -> new SoldProductDTO(
-                                p.getProductCode(),
-                                p.getProductName(),
-                                p.getQuantitySold(),
-                                p.getRevenueGenerated()
-                        ))
-                        .toList();
-
-        List<SoldProductDTO> ranking =
-                iProductRepository.findRanking(
-                                userId,
-                                startDate,
-                                endDate,
-                                metric.name()
-                        ).stream()
-                        .map(p -> new SoldProductDTO(
-                                p.getProductCode(),
-                                p.getProductName(),
-                                p.getQuantitySold(),
-                                p.getRevenueGenerated()
-                        ))
-                        .collect(Collectors.toCollection(ArrayList::new));
-
-        if (order == ProductQuantityOrderType.LEAST_TO_MOST) {
-            Collections.reverse(ranking);
-        }
-
-        List<UnsoldProductDTO> unsold =
-                iProductRepository.findUnsoldProducts(
-                                userId,
-                                startDate,
-                                endDate
-                        ).stream()
-                        .map(p -> new UnsoldProductDTO(
-                                p.getProductCode(),
-                                p.getProductName()
-                        ))
-                        .toList();
-
-        return new ProductStatisticsDTO(
-                topByQuantity,
-                topByRevenue,
-                ranking,
-                unsold
-        );
-    }
-
-     */
-
     /**
-     * Retrieves available users for statistics filtering.
+     * Obtiene los usuarios disponibles para el filtrado de estadísticas.
      *
      * <p>
-     * Users are retrieved dynamically from the database and mapped
-     * into lightweight DTOs intended for frontend filter selectors.
+     * Los usuarios se recuperan dinámicamente desde la base de datos y se
+     * transforman en DTOs ligeros destinados a los selectores de filtros
+     * del frontend.
      * </p>
      *
      * <p>
-     * Each DTO contains:
+     * Cada DTO contiene:
      * <ul>
-     *   <li>User identifier</li>
-     *   <li>User display name</li>
+     *   <li>Identificador del usuario</li>
+     *   <li>Nombre de usuario</li>
      * </ul>
      * </p>
      *
      * <p>
-     * If no users exist, an empty list is returned.
+     * Si no existen usuarios, se devuelve una lista vacía.
      * </p>
      *
-     * @return list of available users for statistics filtering
+     * @return lista de usuarios disponibles para el filtrado de estadísticas
      */
     @Override
     public List<UserFilterDTO> getStatisticsFilterUsers() {
@@ -552,28 +341,28 @@ public class StatisticsService implements IStatisticsService{
     }
 
     /**
-     * Retrieves available product ranking filter options.
+     * Obtiene las opciones de filtrado disponibles para el ranking de productos.
      *
      * <p>
-     * Filter options are generated dynamically from
-     * application enums to ensure consistency between
-     * backend logic and frontend selectors.
+     * Las opciones de filtrado se generan dinámicamente a partir de las
+     * enumeraciones de la aplicación para garantizar la consistencia entre
+     * la lógica del backend y los selectores del frontend.
      * </p>
      *
      * <p>
-     * The returned configuration includes:
+     * La configuración devuelta incluye:
      * <ul>
-     *   <li>Product ranking metrics</li>
-     *   <li>Product ranking ordering options</li>
+     *   <li>Métricas del ranking de productos</li>
+     *   <li>Opciones de ordenamiento del ranking de productos</li>
      * </ul>
      * </p>
      *
-     * @return product ranking filter options
+     * @return opciones de filtrado para el ranking de productos
      */
     @Override
     public ProductRankingFiltersResponseDTO getProductRankingFilters() {
 
-        // Metric options
+        // Opciones de métricas
         List<EnumDTO> metricOptions =
                 Arrays.stream(ProductRankingMetric.values())
                         .map(metric -> new EnumDTO(
@@ -582,7 +371,7 @@ public class StatisticsService implements IStatisticsService{
                         ))
                         .toList();
 
-        // Order options
+        // Opciones de ordenamiento
         List<EnumDTO> orderOptions =
                 Arrays.stream(ProductQuantityOrderType.values())
                         .map(order -> new EnumDTO(
@@ -598,26 +387,26 @@ public class StatisticsService implements IStatisticsService{
     }
 
     /**
-     * Retrieves the total revenue based on the selected filters.
+     * Obtiene el total de ingresos según los filtros seleccionados.
      *
      * <p>
-     * Total revenue is calculated as the sum of all sales amounts
-     * that match the provided filters.
+     * El total de ingresos se calcula como la suma de todos los importes
+     * de venta que coinciden con los filtros proporcionados.
      * </p>
      *
      * <p>
-     * Filter behavior:
+     * Comportamiento de los filtros:
      * <ul>
-     *   <li>If userId is null, statistics are calculated for all users</li>
-     *   <li>If both dates are null, current date is used</li>
-     *   <li>If only one date is provided, an exception is thrown</li>
+     *   <li>Si userId es null, las estadísticas se calculan para todos los usuarios</li>
+     *   <li>Si ambas fechas son null, se utiliza la fecha actual</li>
+     *   <li>Si solo se proporciona una fecha, se lanza una excepción</li>
      * </ul>
      * </p>
      *
-     * @param userId optional user filter (null = all users)
-     * @param startDate optional start date filter
-     * @param endDate optional end date filter
-     * @return total revenue response
+     * @param userId filtro opcional por usuario (null = todos los usuarios)
+     * @param startDate filtro opcional de fecha de inicio
+     * @param endDate filtro opcional de fecha de fin
+     * @return respuesta con el total de ingresos
      */
     @Override
     public TotalRevenueResponseDTO getTotalRevenue(
@@ -626,21 +415,21 @@ public class StatisticsService implements IStatisticsService{
             LocalDate endDate
     ) {
 
-        // Normalize date range
+        // Normalizar rango de fechas
         LocalDate[] normalizedDates =
                 normalizeDateRange(startDate, endDate);
 
         startDate = normalizedDates[0];
         endDate = normalizedDates[1];
 
-        // Validate user existence
+        // Validar existencia del usuario
         if (userId != null && !iUserRepository.existsById(userId)) {
             throw new UserNotFoundException(
-                    "The selected user is not valid or does not exist"
+                    "El usuario seleccionado no es válido o no existe"
             );
         }
 
-        // Calculate total revenue
+        // Calcular total de ingresos
         BigDecimal totalRevenue =
                 iSaleRepository.sumRevenue(
                         userId,
@@ -652,26 +441,26 @@ public class StatisticsService implements IStatisticsService{
     }
 
     /**
-     * Retrieves the total number of sales based on the selected filters.
+     * Obtiene la cantidad total de ventas según los filtros seleccionados.
      *
      * <p>
-     * Total sales are calculated as the count of all sales records
-     * that match the provided filters.
+     * La cantidad total de ventas se calcula como el conteo de todos los
+     * registros de venta que coinciden con los filtros proporcionados.
      * </p>
      *
      * <p>
-     * Filter behavior:
+     * Comportamiento de los filtros:
      * <ul>
-     *   <li>If userId is null, statistics are calculated for all users</li>
-     *   <li>If both dates are null, current date is used</li>
-     *   <li>If only one date is provided, an exception is thrown</li>
+     *   <li>Si userId es null, las estadísticas se calculan para todos los usuarios</li>
+     *   <li>Si ambas fechas son null, se utiliza la fecha actual</li>
+     *   <li>Si solo se proporciona una fecha, se lanza una excepción</li>
      * </ul>
      * </p>
      *
-     * @param userId optional user filter (null = all users)
-     * @param startDate optional start date filter
-     * @param endDate optional end date filter
-     * @return total sales response
+     * @param userId filtro opcional por usuario (null = todos los usuarios)
+     * @param startDate filtro opcional de fecha de inicio
+     * @param endDate filtro opcional de fecha de fin
+     * @return respuesta con la cantidad total de ventas
      */
     @Override
     public TotalSalesResponseDTO getTotalSales(
@@ -680,21 +469,21 @@ public class StatisticsService implements IStatisticsService{
             LocalDate endDate
     ) {
 
-        // Normalize date range
+        // Normalizar rango de fechas
         LocalDate[] normalizedDates =
                 normalizeDateRange(startDate, endDate);
 
         startDate = normalizedDates[0];
         endDate = normalizedDates[1];
 
-        // Validate user existence
+        // Validar existencia del usuario
         if (userId != null && !iUserRepository.existsById(userId)) {
             throw new UserNotFoundException(
-                    "The selected user is not valid or does not exist"
+                    "El usuario seleccionado no es válido o no existe"
             );
         }
 
-        // Calculate total sales
+        // Calcular cantidad total de ventas
         Long totalSales =
                 iSaleRepository.countSales(
                         userId,
@@ -706,31 +495,31 @@ public class StatisticsService implements IStatisticsService{
     }
 
     /**
-     * Retrieves the average ticket value based on the selected filters.
+     * Obtiene el valor promedio del ticket según los filtros seleccionados.
      *
      * <p>
-     * Average ticket value is calculated as:
-     * total revenue divided by total number of sales.
+     * El valor promedio del ticket se calcula como:
+     * total de ingresos dividido por la cantidad total de ventas.
      * </p>
      *
      * <p>
-     * Filter behavior:
+     * Comportamiento de los filtros:
      * <ul>
-     *   <li>If userId is null, statistics are calculated for all users</li>
-     *   <li>If both dates are null, current date is used</li>
-     *   <li>If only one date is provided, an exception is thrown</li>
+     *   <li>Si userId es null, las estadísticas se calculan para todos los usuarios</li>
+     *   <li>Si ambas fechas son null, se utiliza la fecha actual</li>
+     *   <li>Si solo se proporciona una fecha, se lanza una excepción</li>
      * </ul>
      * </p>
      *
      * <p>
-     * If no matching sales exist, the average ticket value
-     * defaults to {@link BigDecimal#ZERO}.
+     * Si no existen ventas que coincidan con los filtros,
+     * el valor promedio del ticket será {@link BigDecimal#ZERO}.
      * </p>
      *
-     * @param userId optional user filter (null = all users)
-     * @param startDate optional start date filter
-     * @param endDate optional end date filter
-     * @return average ticket response
+     * @param userId filtro opcional por usuario (null = todos los usuarios)
+     * @param startDate filtro opcional de fecha de inicio
+     * @param endDate filtro opcional de fecha de fin
+     * @return respuesta con el valor promedio del ticket
      */
     @Override
     public AverageTicketResponseDTO getAverageTicket(
@@ -739,21 +528,21 @@ public class StatisticsService implements IStatisticsService{
             LocalDate endDate
     ) {
 
-        // Normalize date range
+        // Normalizar rango de fechas
         LocalDate[] normalizedDates =
                 normalizeDateRange(startDate, endDate);
 
         startDate = normalizedDates[0];
         endDate = normalizedDates[1];
 
-        // Validate user existence
+        // Validar existencia del usuario
         if (userId != null && !iUserRepository.existsById(userId)) {
             throw new UserNotFoundException(
-                    "The selected user is not valid or does not exist"
+                    "El usuario seleccionado no es válido o no existe"
             );
         }
 
-        // Retrieve aggregated values
+        // Obtener valores agregados
         BigDecimal totalRevenue =
                 iSaleRepository.sumRevenue(
                         userId,
@@ -768,7 +557,7 @@ public class StatisticsService implements IStatisticsService{
                         endDate
                 );
 
-        // Calculate average ticket
+        // Calcular valor promedio del ticket
         BigDecimal averageTicket =
                 totalSales == 0
                         ? BigDecimal.ZERO
@@ -784,41 +573,42 @@ public class StatisticsService implements IStatisticsService{
     }
 
     /**
-     * Retrieves peak sales hour statistics based on the selected filters.
+     * Obtiene las estadísticas de las horas pico de ventas según los filtros seleccionados.
      *
      * <p>
-     * This method calculates:
+     * Este método calcula:
      * <ul>
-     *   <li>The time range with the highest generated revenue</li>
-     *   <li>The time range with the highest number of sales</li>
+     *   <li>La franja horaria con mayores ingresos generados</li>
+     *   <li>La franja horaria con la mayor cantidad de ventas</li>
      * </ul>
      * </p>
      *
      * <p>
-     * Returned values are formatted as hourly ranges
-     * using the following pattern:
+     * Los valores devueltos se formatean como rangos horarios
+     * utilizando el siguiente patrón:
      * <pre>
      * HH:00 - HH:59
      * </pre>
      * </p>
      *
      * <p>
-     * Filter behavior:
+     * Comportamiento de los filtros:
      * <ul>
-     *   <li>If userId is null, statistics are calculated for all users</li>
-     *   <li>If both dates are null, current date is used</li>
-     *   <li>If only one date is provided, an exception is thrown</li>
+     *   <li>Si userId es null, las estadísticas se calculan para todos los usuarios</li>
+     *   <li>Si ambas fechas son null, se utiliza la fecha actual</li>
+     *   <li>Si solo se proporciona una fecha, se lanza una excepción</li>
      * </ul>
      * </p>
      *
      * <p>
-     * If no matching sales exist, both values may return {@code null}.
+     * Si no existen ventas que coincidan con los filtros,
+     * ambos valores pueden devolver {@code null}.
      * </p>
      *
-     * @param userId optional user filter (null = all users)
-     * @param startDate optional start date filter
-     * @param endDate optional end date filter
-     * @return peak sales hour statistics
+     * @param userId filtro opcional por usuario (null = todos los usuarios)
+     * @param startDate filtro opcional de fecha de inicio
+     * @param endDate filtro opcional de fecha de fin
+     * @return estadísticas de horas pico de ventas
      */
     @Override
     public PeakHoursResponseDTO getPeakHours(
@@ -827,21 +617,21 @@ public class StatisticsService implements IStatisticsService{
             LocalDate endDate
     ) {
 
-        // Normalize date range
+        // Normalizar rango de fechas
         LocalDate[] normalizedDates =
                 normalizeDateRange(startDate, endDate);
 
         startDate = normalizedDates[0];
         endDate = normalizedDates[1];
 
-        // Validate user existence
+        // Validar existencia del usuario
         if (userId != null && !iUserRepository.existsById(userId)) {
             throw new UserNotFoundException(
-                    "The selected user is not valid or does not exist"
+                    "El usuario seleccionado no es válido o no existe"
             );
         }
 
-        // Retrieve raw peak hours
+        // Obtener horas pico sin formato
         Integer revenueHour =
                 iSaleRepository.findPeakRevenueHour(
                         userId,
@@ -856,7 +646,7 @@ public class StatisticsService implements IStatisticsService{
                         endDate
                 );
 
-        // Format hour ranges
+        // Formatear rangos horarios
         String highestRevenueHour =
                 formatHourRange(revenueHour);
 
@@ -870,19 +660,19 @@ public class StatisticsService implements IStatisticsService{
     }
 
     /**
-     * Formats an hour value into a human-readable hour range.
+     * Formatea una hora en un rango horario legible para el usuario.
      *
      * <p>
-     * Example:
+     * Ejemplo:
      * <ul>
      *   <li>18 → "18:00 - 18:59"</li>
      *   <li>9 → "09:00 - 09:59"</li>
      * </ul>
      * </p>
      *
-     * @param hour hour value (0–23)
-     * @return formatted hour range,
-     *         or null if hour is null
+     * @param hour valor de la hora (0–23)
+     * @return rango horario formateado,
+     *         o null si la hora es null
      */
     private String formatHourRange(Integer hour) {
 
@@ -898,44 +688,45 @@ public class StatisticsService implements IStatisticsService{
     }
 
     /**
-     * Retrieves time-series sales statistics based on the selected filters.
+     * Obtiene las estadísticas temporales de ventas según los filtros seleccionados.
      *
      * <p>
-     * This method calculates:
+     * Este método calcula:
      * <ul>
-     *   <li>Total revenue evolution over time</li>
-     *   <li>Total number of sales over time</li>
+     *   <li>La evolución de los ingresos a lo largo del tiempo</li>
+     *   <li>La evolución de la cantidad de ventas a lo largo del tiempo</li>
      * </ul>
      * </p>
      *
      * <p>
-     * Time-series aggregation granularity is automatically determined
-     * based on the selected date range:
+     * La granularidad de agregación de las series temporales se determina
+     * automáticamente según el rango de fechas seleccionado:
      * <ul>
-     *   <li>HOUR → single-day ranges</li>
-     *   <li>DAY → ranges up to 31 days</li>
-     *   <li>MONTH → ranges up to 365 days</li>
-     *   <li>YEAR → ranges greater than 365 days</li>
+     *   <li>HOUR → rangos de un solo día</li>
+     *   <li>DAY → rangos de hasta 31 días</li>
+     *   <li>MONTH → rangos de hasta 365 días</li>
+     *   <li>YEAR → rangos superiores a 365 días</li>
      * </ul>
      * </p>
      *
      * <p>
-     * Filter behavior:
+     * Comportamiento de los filtros:
      * <ul>
-     *   <li>If userId is null, statistics are calculated for all users</li>
-     *   <li>If both dates are null, current date is used</li>
-     *   <li>If only one date is provided, an exception is thrown</li>
+     *   <li>Si userId es null, las estadísticas se calculan para todos los usuarios</li>
+     *   <li>Si ambas fechas son null, se utiliza la fecha actual</li>
+     *   <li>Si solo se proporciona una fecha, se lanza una excepción</li>
      * </ul>
      * </p>
      *
      * <p>
-     * If no matching sales exist, both series may return empty lists.
+     * Si no existen ventas que coincidan con los filtros,
+     * ambas series pueden devolver listas vacías.
      * </p>
      *
-     * @param userId optional user filter (null = all users)
-     * @param startDate optional start date filter
-     * @param endDate optional end date filter
-     * @return time-series sales statistics
+     * @param userId filtro opcional por usuario (null = todos los usuarios)
+     * @param startDate filtro opcional de fecha de inicio
+     * @param endDate filtro opcional de fecha de fin
+     * @return estadísticas temporales de ventas
      */
     @Override
     public SalesTimeSeriesResponseDTO getSalesTimeSeries(
@@ -944,25 +735,25 @@ public class StatisticsService implements IStatisticsService{
             LocalDate endDate
     ) {
 
-        // Normalize date range
+        // Normalizar rango de fechas
         LocalDate[] normalizedDates =
                 normalizeDateRange(startDate, endDate);
 
         startDate = normalizedDates[0];
         endDate = normalizedDates[1];
 
-        // Validate user existence
+        // Validar existencia del usuario
         if (userId != null && !iUserRepository.existsById(userId)) {
             throw new UserNotFoundException(
-                    "The selected user is not valid or does not exist"
+                    "El usuario seleccionado no es válido o no existe"
             );
         }
 
-        // Determine chart granularity
+        // Determinar granularidad del gráfico
         StatisticsGranularity granularity =
                 determineGranularity(startDate, endDate);
 
-        // Retrieve revenue time-series
+        // Obtener serie temporal de ingresos
         List<TimeSeriesPointDTO> revenueOverTime =
                 getRevenueOverTime(
                         userId,
@@ -971,7 +762,7 @@ public class StatisticsService implements IStatisticsService{
                         granularity
                 );
 
-        // Retrieve sales count time-series
+        // Obtener serie temporal de cantidad de ventas
         List<TimeSeriesPointDTO> salesOverTime =
                 getSalesOverTime(
                         userId,
@@ -987,18 +778,18 @@ public class StatisticsService implements IStatisticsService{
     }
 
     /**
-     * Formats an hourly chart label into an explicit hour range.
+     * Formatea una etiqueta horaria de un gráfico en un rango horario explícito.
      *
      * <p>
-     * Example:
+     * Ejemplo:
      * <ul>
-     *   <li>18 -> "18:00 - 18:59"</li>
-     *   <li>9 -> "09:00 - 09:59"</li>
+     *   <li>18 → "18:00 - 18:59"</li>
+     *   <li>9 → "09:00 - 09:59"</li>
      * </ul>
      * </p>
      *
-     * @param label raw hour label
-     * @return formatted hour range label
+     * @param label etiqueta horaria sin formato
+     * @return etiqueta de rango horario formateada
      */
     private String formatHourlyChartLabel(String label) {
 
@@ -1016,39 +807,40 @@ public class StatisticsService implements IStatisticsService{
     }
 
     /**
-     * Retrieves top-performing product statistics based on the selected filters.
+     * Obtiene estadísticas de los productos con mejor desempeño según los filtros seleccionados.
      *
      * <p>
-     * This method calculates:
+     * Este método calcula:
      * <ul>
-     *   <li>Top 10 products by quantity sold</li>
-     *   <li>Top 10 products by revenue generated</li>
+     *   <li>Los 10 productos más vendidos según la cantidad vendida</li>
+     *   <li>Los 10 productos con mayores ingresos generados</li>
      * </ul>
      * </p>
      *
      * <p>
-     * Filter behavior:
+     * Comportamiento de los filtros:
      * <ul>
-     *   <li>If userId is null, statistics are calculated for all users</li>
-     *   <li>If both dates are null, current date is used</li>
-     *   <li>If only one date is provided, an exception is thrown</li>
+     *   <li>Si userId es null, las estadísticas se calculan para todos los usuarios</li>
+     *   <li>Si ambas fechas son null, se utiliza la fecha actual</li>
+     *   <li>Si solo se proporciona una fecha, se lanza una excepción</li>
      * </ul>
      * </p>
      *
      * <p>
-     * Repository queries return lightweight database projections,
-     * which are then mapped into DTOs at service level to ensure
-     * separation between persistence and API layers.
+     * Las consultas del repositorio devuelven proyecciones ligeras de base de datos,
+     * que posteriormente son convertidas a DTOs en la capa de servicio para mantener
+     * la separación entre la capa de persistencia y la capa de API.
      * </p>
      *
      * <p>
-     * If no matching sales exist, both lists may return empty lists.
+     * Si no existen ventas que coincidan con los filtros,
+     * ambas listas pueden devolver listas vacías.
      * </p>
      *
-     * @param userId optional user filter (null = all users)
-     * @param startDate optional start date filter
-     * @param endDate optional end date filter
-     * @return top-performing product statistics
+     * @param userId filtro opcional por usuario (null = todos los usuarios)
+     * @param startDate filtro opcional de fecha de inicio
+     * @param endDate filtro opcional de fecha de fin
+     * @return estadísticas de los productos con mejor desempeño
      */
     @Override
     public TopProductsResponseDTO getTopProducts(
@@ -1057,21 +849,21 @@ public class StatisticsService implements IStatisticsService{
             LocalDate endDate
     ) {
 
-        // Normalize date range
+        // Normalizar rango de fechas
         LocalDate[] normalizedDates =
                 normalizeDateRange(startDate, endDate);
 
         startDate = normalizedDates[0];
         endDate = normalizedDates[1];
 
-        // Validate user existence
+        // Validar existencia del usuario
         if (userId != null && !iUserRepository.existsById(userId)) {
             throw new UserNotFoundException(
-                    "The selected user is not valid or does not exist"
+                    "El usuario seleccionado no es válido o no existe"
             );
         }
 
-        // Retrieve top products by quantity sold
+        // Obtener los productos más vendidos por cantidad
         List<TopProductsByQuantityDTO> topProductsByQuantity =
                 iProductRepository.findTopByQuantity(
                                 userId,
@@ -1087,7 +879,7 @@ public class StatisticsService implements IStatisticsService{
                         )
                         .toList();
 
-        // Retrieve top products by revenue generated
+        // Obtener los productos con mayores ingresos generados
         List<TopProductsByRevenueDTO> topProductsByRevenue =
                 iProductRepository.findTopByRevenue(
                                 userId,
@@ -1110,32 +902,33 @@ public class StatisticsService implements IStatisticsService{
     }
 
     /**
-     * Normalizes revenue values to a fixed decimal scale.
+     * Normaliza los valores de ingresos a una escala decimal fija.
      *
      * <p>
-     * This method ensures that all monetary values returned by the API
-     * are consistently formatted with 2 decimal places, regardless of
-     * the internal precision produced by database aggregation operations
-     * (e.g., SUM, multiplication of numeric fields).
+     * Este método garantiza que todos los valores monetarios devueltos por la API
+     * se formateen de manera consistente con 2 decimales, independientemente de
+     * la precisión interna generada por las operaciones de agregación de la base
+     * de datos (por ejemplo, SUM o multiplicaciones de campos numéricos).
      * </p>
      *
      * <p>
-     * This is particularly important for:
+     * Esto es especialmente importante para:
      * <ul>
-     *   <li>Revenue calculations using aggregated SQL queries</li>
-     *   <li>Ensuring consistent JSON output for frontend charts</li>
-     *   <li>Avoiding floating precision artifacts (e.g., 123.4500000)</li>
+     *   <li>Cálculos de ingresos realizados mediante consultas SQL agregadas</li>
+     *   <li>Garantizar una salida JSON consistente para los gráficos del frontend</li>
+     *   <li>Evitar artefactos de precisión decimal (por ejemplo, 123.4500000)</li>
      * </ul>
      * </p>
      *
      * <p>
-     * Rounding strategy used: {@link RoundingMode#HALF_UP}
+     * Estrategia de redondeo utilizada: {@link RoundingMode#HALF_UP}
      * </p>
      *
-     * @param value raw revenue value from repository (may have variable scale)
-     * @return normalized value with scale 2 (e.g., 123.45)
+     * @param value valor de ingresos obtenido del repositorio (puede tener una escala variable)
+     * @return valor normalizado con escala 2 (por ejemplo, 123.45)
      */
     private BigDecimal normalizeRevenue(BigDecimal value) {
+
 
         if (value == null) {
             return BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP);
@@ -1145,35 +938,35 @@ public class StatisticsService implements IStatisticsService{
     }
 
     /**
-     * Retrieves a paginated ranking of sold products
-     * based on selected filters and ranking criteria.
+     * Obtiene un ranking paginado de productos vendidos
+     * según los filtros y criterios de clasificación seleccionados.
      *
      * <p>
-     * Supports:
+     * Soporta:
      * <ul>
-     *     <li>User filtering</li>
-     *     <li>Date range filtering</li>
-     *     <li>Ranking by quantity sold or revenue generated</li>
-     *     <li>Ascending or descending ordering</li>
-     *     <li>Server-side pagination</li>
+     *     <li>Filtrado por usuario</li>
+     *     <li>Filtrado por rango de fechas</li>
+     *     <li>Clasificación por cantidad vendida o ingresos generados</li>
+     *     <li>Orden ascendente o descendente</li>
+     *     <li>Paginación del lado del servidor</li>
      * </ul>
      * </p>
      *
      * <p>
-     * Repository queries return lightweight projections
-     * which are mapped into DTOs at service level
-     * to preserve separation between persistence
-     * and API layers.
+     * Las consultas del repositorio devuelven proyecciones ligeras
+     * que posteriormente son convertidas a DTOs en la capa de servicio
+     * para mantener la separación entre la capa de persistencia
+     * y la capa de API.
      * </p>
      *
-     * @param userId optional user filter
-     * @param startDate optional start date
-     * @param endDate optional end date
-     * @param metric ranking metric
-     * @param order ranking order
-     * @param page requested page number
-     * @param size requested page size
-     * @return paginated sold products ranking
+     * @param userId filtro opcional por usuario
+     * @param startDate fecha de inicio opcional
+     * @param endDate fecha de fin opcional
+     * @param metric métrica de clasificación
+     * @param order orden de clasificación
+     * @param page número de página solicitado
+     * @param size tamaño de página solicitado
+     * @return ranking paginado de productos vendidos
      */
     @Override
     public PageResponseDTO<SoldProductDTO> getSoldProductsRanking(
@@ -1186,43 +979,43 @@ public class StatisticsService implements IStatisticsService{
             int size
     ) {
 
-        // Validate pagination parameters
+        // Validar parámetros de paginación
         if (page < 0) {
             throw new InvalidProductDataException(
-                    "Page index must not be negative",
+                    "El índice de página no puede ser negativo",
                     "page"
             );
         }
 
         if (size <= 0) {
             throw new InvalidProductDataException(
-                    "Page size must be greater than zero",
+                    "El tamaño de página debe ser mayor que cero",
                     "size"
             );
         }
 
         if (size > 100) {
             throw new InvalidProductDataException(
-                    "Page size must not exceed 100",
+                    "El tamaño de página no puede superar los 100 elementos",
                     "size"
             );
         }
 
-        // Normalize date range
+        // Normalizar rango de fechas
         LocalDate[] normalizedDates =
                 normalizeDateRange(startDate, endDate);
 
         startDate = normalizedDates[0];
         endDate = normalizedDates[1];
 
-        // Validate user existence
+        // Validar existencia del usuario
         if (
                 userId != null
                         &&
                         !iUserRepository.existsById(userId)
         ) {
             throw new UserNotFoundException(
-                    "The selected user is not valid or does not exist"
+                    "El usuario seleccionado no es válido o no existe"
             );
         }
 
@@ -1234,8 +1027,8 @@ public class StatisticsService implements IStatisticsService{
 
         Page<SoldProductProjection> rankingPage;
 
-        // Repository decides only metric.
-        // Service decides ordering direction.
+        // El repositorio decide únicamente la métrica.
+        // El servicio decide la dirección del ordenamiento.
         if (order == ProductQuantityOrderType.MOST_TO_LEAST) {
 
             rankingPage =
@@ -1285,36 +1078,36 @@ public class StatisticsService implements IStatisticsService{
     }
 
     /**
-     * Retrieves a paginated list of products
-     * with no sales activity within the selected filters.
+     * Obtiene una lista paginada de productos
+     * sin ventas dentro de los filtros seleccionados.
      *
      * <p>
-     * Supports:
+     * Soporta:
      * <ul>
-     *     <li>User filtering</li>
-     *     <li>Date range filtering</li>
-     *     <li>Server-side pagination</li>
+     *     <li>Filtrado por usuario</li>
+     *     <li>Filtrado por rango de fechas</li>
+     *     <li>Paginación del lado del servidor</li>
      * </ul>
      * </p>
      *
      * <p>
-     * A product is considered unsold when no matching sales
-     * exist within the selected filter range.
+     * Un producto se considera sin ventas cuando no existen ventas
+     * asociadas que coincidan con el rango de filtros seleccionado.
      * </p>
      *
      * <p>
-     * Repository queries return lightweight projections
-     * which are mapped into DTOs at service level
-     * to preserve separation between persistence
-     * and API layers.
+     * Las consultas del repositorio devuelven proyecciones ligeras
+     * que posteriormente son convertidas a DTOs en la capa de servicio
+     * para mantener la separación entre la capa de persistencia
+     * y la capa de API.
      * </p>
      *
-     * @param userId optional user filter
-     * @param startDate optional start date
-     * @param endDate optional end date
-     * @param page requested page number
-     * @param size requested page size
-     * @return paginated unsold products list
+     * @param userId filtro opcional por usuario
+     * @param startDate fecha de inicio opcional
+     * @param endDate fecha de fin opcional
+     * @param page número de página solicitado
+     * @param size tamaño de página solicitado
+     * @return lista paginada de productos sin ventas
      */
     @Override
     public PageResponseDTO<UnsoldProductDTO> getUnsoldProducts(
@@ -1325,54 +1118,54 @@ public class StatisticsService implements IStatisticsService{
             int size
     ) {
 
-        // Validate pagination parameters
+        // Validar parámetros de paginación
         if (page < 0) {
             throw new InvalidProductDataException(
-                    "Page index must not be negative",
+                    "El índice de página no puede ser negativo",
                     "page"
             );
         }
 
         if (size <= 0) {
             throw new InvalidProductDataException(
-                    "Page size must be greater than zero",
+                    "El tamaño de página debe ser mayor que cero",
                     "size"
             );
         }
 
         if (size > 100) {
             throw new InvalidProductDataException(
-                    "Page size must not exceed 100",
+                    "El tamaño de página no puede superar los 100 elementos",
                     "size"
             );
         }
 
-        // Normalize date range
+        // Normalizar rango de fechas
         LocalDate[] normalizedDates =
                 normalizeDateRange(startDate, endDate);
 
         startDate = normalizedDates[0];
         endDate = normalizedDates[1];
 
-        // Validate user existence
+        // Validar existencia del usuario
         if (
                 userId != null
                         &&
                         !iUserRepository.existsById(userId)
         ) {
             throw new UserNotFoundException(
-                    "The selected user is not valid or does not exist"
+                    "El usuario seleccionado no es válido o no existe"
             );
         }
 
-        // Build pagination configuration
+        // Construir configuración de paginación
         Pageable pageable =
                 PageRequest.of(
                         page,
                         size
                 );
 
-        // Retrieve unsold products
+        // Obtener productos sin ventas
         Page<UnsoldProductProjection> unsoldProductsPage =
                 iProductRepository.findUnsoldProducts(
                         userId,
@@ -1381,7 +1174,7 @@ public class StatisticsService implements IStatisticsService{
                         pageable
                 );
 
-        // Map projection → DTO
+        // Convertir proyección → DTO
         List<UnsoldProductDTO> unsoldProducts =
                 unsoldProductsPage.getContent()
                         .stream()
@@ -1404,38 +1197,39 @@ public class StatisticsService implements IStatisticsService{
     }
 
     /**
-     * Generates a PDF report containing sales statistics
-     * and product information.
+     * Genera un informe PDF que contiene estadísticas de ventas
+     * e información de productos.
      *
      * <p>
-     * This method orchestrates the complete report generation
-     * process, including request validation, data availability
-     * verification, report data retrieval, and PDF document creation.
+     * Este método orquesta el proceso completo de generación del informe,
+     * incluyendo la validación de la solicitud, la verificación de
+     * disponibilidad de datos, la obtención de la información requerida
+     * y la creación del documento PDF.
      * </p>
      *
      * <p>
-     * The generated report content is determined by the
-     * selected filters and report configuration provided
-     * in the request.
+     * El contenido del informe generado está determinado por los filtros
+     * seleccionados y la configuración del informe proporcionada
+     * en la solicitud.
      * </p>
      *
      * <p>
-     * Generation process:
+     * Proceso de generación:
      * <ol>
-     *     <li>Validate request parameters and business rules</li>
-     *     <li>Verify that statistical data exists for the selected filters</li>
-     *     <li>Retrieve all data required by the report</li>
-     *     <li>Generate the PDF document</li>
+     *     <li>Validar parámetros de la solicitud y reglas de negocio</li>
+     *     <li>Verificar que existan datos estadísticos para los filtros seleccionados</li>
+     *     <li>Obtener toda la información requerida para el informe</li>
+     *     <li>Generar el documento PDF</li>
      * </ol>
      * </p>
      *
      * <p>
-     * Report generation is aborted if no statistical data
-     * is available for the selected criteria.
+     * La generación del informe se cancela si no existen datos
+     * estadísticos para los criterios seleccionados.
      * </p>
      *
-     * @param request PDF generation configuration
-     * @return generated PDF document as a byte array
+     * @param request configuración de generación del PDF
+     * @return documento PDF generado como arreglo de bytes
      */
     @Override
     public byte[] generatePdf(
@@ -1443,21 +1237,21 @@ public class StatisticsService implements IStatisticsService{
     ) {
 
         /*
-         * Step 1:
-         * Validate request parameters and business rules.
+         * Paso 1:
+         * Validar parámetros de la solicitud y reglas de negocio.
          */
         validateAndNormalizePdfRequest(request);
 
         /*
-         * Step 2:
-         * Validate statistics data availability.
+         * Paso 2:
+         * Validar disponibilidad de datos estadísticos.
          */
         TotalSalesResponseDTO totalSales =
                 validateStatisticsDataAvailability(request);
 
         /*
-         * Step 3:
-         * Retrieve all statistics required by the report.
+         * Paso 3:
+         * Obtener todas las estadísticas requeridas para el informe.
          */
         StatisticsPdfDataDTO reportData =
                 buildPdfData(
@@ -1466,61 +1260,61 @@ public class StatisticsService implements IStatisticsService{
                 );
 
         /*
-         * Step 4:
-         * Generate the PDF document.
+         * Paso 4:
+         * Generar el documento PDF.
          */
         return generatePdfDocument(reportData);
     }
 
     /**
-     * Validates and normalizes the PDF generation request.
+     * Valida y normaliza la solicitud de generación del PDF.
      *
      * <p>
-     * This method applies the same filtering and date
-     * normalization rules used by the statistics module
-     * to ensure consistency between displayed statistics
-     * and generated reports.
+     * Este método aplica las mismas reglas de filtrado y
+     * normalización de fechas utilizadas por el módulo de estadísticas
+     * para garantizar la consistencia entre las estadísticas mostradas
+     * y los informes generados.
      * </p>
      *
      * <p>
-     * The provided request is updated with normalized
-     * values and default configuration when required.
+     * La solicitud proporcionada se actualiza con valores
+     * normalizados y configuraciones predeterminadas cuando es necesario.
      * </p>
      *
      * <p>
-     * Validation rules:
+     * Reglas de validación:
      * <ul>
-     *     <li>If a user is specified, the user must exist</li>
-     *     <li>At least one report section must be selected</li>
-     *     <li>Product list limits must be one of the allowed values:
-     *         10, 20, 50, or 100</li>
+     *     <li>Si se especifica un usuario, este debe existir</li>
+     *     <li>Debe seleccionarse al menos una sección del informe</li>
+     *     <li>Los límites de productos deben ser uno de los valores permitidos:
+     *         10, 20, 50 o 100</li>
      * </ul>
      * </p>
      *
      * <p>
-     * Date normalization is delegated to the shared
-     * statistics date-range normalization logic.
+     * La normalización del rango de fechas se delega a la lógica
+     * compartida de normalización utilizada por el módulo de estadísticas.
      * </p>
      *
      * <p>
-     * Default values:
+     * Valores predeterminados:
      * <ul>
-     *     <li>Sales Information section → included</li>
-     *     <li>Product Information section → included</li>
-     *     <li>Ranking metric → Revenue Generated</li>
-     *     <li>Ranking order → Most sold → least sold</li>
-     *     <li>Sold products limit → 20</li>
-     *     <li>Unsold products limit → 20</li>
+     *     <li>Sección Información de Ventas → incluida</li>
+     *     <li>Sección Información de Productos → incluida</li>
+     *     <li>Métrica del ranking → Ingresos generados</li>
+     *     <li>Orden del ranking → Más vendidos → menos vendidos</li>
+     *     <li>Límite de productos vendidos → 20</li>
+     *     <li>Límite de productos sin ventas → 20</li>
      * </ul>
      * </p>
      *
-     * @param request PDF generation configuration
+     * @param request configuración de generación del PDF
      */
     private void validateAndNormalizePdfRequest(
             StatisticsPdfRequestDTO request
     ) {
 
-        // Apply default section selection
+        // Aplicar selección predeterminada de secciones
         if (request.getIncludeSalesInformation() == null) {
             request.setIncludeSalesInformation(true);
         }
@@ -1529,32 +1323,32 @@ public class StatisticsService implements IStatisticsService{
             request.setIncludeProductInformation(true);
         }
 
-        // Validate selected sections
+        // Validar secciones seleccionadas
         if (!request.getIncludeSalesInformation()
                 && !request.getIncludeProductInformation()) {
 
             throw new InvalidStatisticsFilterException(
-                    "At least one report section must be selected"
+                    "Debe seleccionar al menos una sección"
             );
         }
 
-        // Validate user existence
+        // Validar existencia del usuario
         if (request.getUserId() != null
                 && !iUserRepository.existsById(request.getUserId())) {
 
             throw new UserNotFoundException(
-                    "The selected user is not valid or does not exist"
+                    "El usuario seleccionado no es válido o no existe"
             );
         }
 
-        // Normalize date range
+        // Normalizar rango de fechas
         LocalDate[] normalizedDates =
                 normalizeDateRange(
                         request.getStartDate(),
                         request.getEndDate()
                 );
 
-        // Apply default ranking configuration
+        // Aplicar configuración predeterminada del ranking
         if (request.getMetric() == null) {
             request.setMetric(
                     ProductRankingMetric.REVENUE_GENERATED
@@ -1567,7 +1361,7 @@ public class StatisticsService implements IStatisticsService{
             );
         }
 
-        // Apply default product limits
+        // Aplicar límites predeterminados de productos
         if (request.getSoldProductsLimit() == null) {
             request.setSoldProductsLimit(20);
         }
@@ -1580,7 +1374,7 @@ public class StatisticsService implements IStatisticsService{
                 request.getSoldProductsLimit())) {
 
             throw new InvalidStatisticsFilterException(
-                    "Invalid sold products limit"
+                    "El límite de productos vendidos no es válido"
             );
         }
 
@@ -1588,7 +1382,7 @@ public class StatisticsService implements IStatisticsService{
                 request.getUnsoldProductsLimit())) {
 
             throw new InvalidStatisticsFilterException(
-                    "Invalid unsold products limit"
+                    "El límite de productos no vendidos no es válido"
             );
         }
 
@@ -1598,43 +1392,43 @@ public class StatisticsService implements IStatisticsService{
     }
 
     /**
-     * Builds the complete data model required
-     * to generate the statistics PDF report.
+     * Construye el modelo de datos completo requerido
+     * para generar el reporte PDF de estadísticas.
      *
      * <p>
-     * This method retrieves and prepares all report data
-     * according to the selected filters and report
-     * configuration.
+     * Este método recupera y prepara toda la información
+     * del reporte de acuerdo con los filtros seleccionados
+     * y la configuración especificada para el reporte.
      * </p>
      *
      * <p>
-     * Only the sections selected by the user are loaded.
-     * Unselected sections are omitted from the resulting
-     * report data object.
+     * Solo se cargan las secciones seleccionadas por el usuario.
+     * Las secciones no seleccionadas se omiten del objeto
+     * de datos resultante.
      * </p>
      *
      * <p>
-     * The generated data may include:
+     * Los datos generados pueden incluir:
      * <ul>
-     *     <li>Report metadata</li>
-     *     <li>Selected filter information</li>
-     *     <li>Sales statistics</li>
-     *     <li>Revenue and sales over time data</li>
-     *     <li>Product statistics</li>
-     *     <li>Detailed product lists</li>
-     *     <li>Product ranking configuration labels</li>
+     *     <li>Metadatos del reporte</li>
+     *     <li>Información de los filtros seleccionados</li>
+     *     <li>Estadísticas de ventas</li>
+     *     <li>Datos de ingresos y ventas a lo largo del tiempo</li>
+     *     <li>Estadísticas de productos</li>
+     *     <li>Listados detallados de productos</li>
+     *     <li>Etiquetas de configuración del ranking de productos</li>
      * </ul>
      * </p>
      *
      * <p>
-     * The total sales information obtained during
-     * data availability validation is reused to avoid
-     * an additional database query.
+     * La información de ventas totales obtenida durante
+     * la validación de disponibilidad de datos se reutiliza
+     * para evitar una consulta adicional a la base de datos.
      * </p>
      *
-     * @param request normalized PDF request
-     * @param totalSales previously validated total sales information
-     * @return prepared report data used by the PDF generator
+     * @param request solicitud PDF normalizada
+     * @param totalSales información de ventas totales previamente validada
+     * @return datos preparados del reporte utilizados por el generador PDF
      */
     private StatisticsPdfDataDTO buildPdfData(
             StatisticsPdfRequestDTO request,
@@ -1645,10 +1439,10 @@ public class StatisticsService implements IStatisticsService{
                 new StatisticsPdfDataDTO();
 
         /*
-         * Report metadata
+         * Metadatos del reporte
          */
         data.setReportTitle(
-                "Sales Statistics Report"
+                "Reporte de Estadísticas de Ventas"
         );
 
         data.setGenerationDateTime(
@@ -1657,7 +1451,7 @@ public class StatisticsService implements IStatisticsService{
 
         data.setSelectedUser(
                 request.getUserId() == null
-                        ? "All Users"
+                        ? "Todos los usuarios"
                         : iUserRepository.findById(
                         request.getUserId()
                 ).orElseThrow().getUserName()
@@ -1680,7 +1474,7 @@ public class StatisticsService implements IStatisticsService{
         );
 
         /*
-         * Sales Information
+         * Información de Ventas
          */
         if (request.getIncludeSalesInformation()) {
 
@@ -1720,7 +1514,7 @@ public class StatisticsService implements IStatisticsService{
         }
 
         /*
-         * Product Information
+         * Información de Productos
          */
         if (request.getIncludeProductInformation()) {
 
@@ -1746,15 +1540,15 @@ public class StatisticsService implements IStatisticsService{
             data.setSoldProductsMetric(
                     request.getMetric()
                             == ProductRankingMetric.QUANTITY_SOLD
-                            ? "Quantity Sold"
-                            : "Revenue Generated"
+                            ? "Cantidad Vendida"
+                            : "Ingresos Generados"
             );
 
             data.setSoldProductsOrder(
                     request.getOrder()
                             == ProductQuantityOrderType.MOST_TO_LEAST
-                            ? "Most sold → least sold"
-                            : "Least sold → most sold"
+                            ? "Más vendido → menos vendido"
+                            : "Menos vendido → más vendido"
             );
 
             data.setSoldProducts(
@@ -1795,29 +1589,30 @@ public class StatisticsService implements IStatisticsService{
     }
 
     /**
-     * Validates that data exists for the selected
-     * filters before generating the report.
+     * Valida que exista información para los filtros
+     * seleccionados antes de generar el reporte.
      *
      * <p>
-     * This validation follows the same business rule
-     * used by the statistics module.
+     * Esta validación sigue la misma regla de negocio
+     * utilizada por el módulo de estadísticas.
      * </p>
      *
      * <p>
-     * The total number of sales is used as the
-     * availability indicator. If no sales exist
-     * for the selected criteria, the report
-     * generation process is aborted.
+     * La cantidad total de ventas se utiliza como
+     * indicador de disponibilidad de información.
+     * Si no existen ventas para los criterios
+     * seleccionados, el proceso de generación del
+     * reporte se cancela.
      * </p>
      *
      * <p>
-     * The retrieved total sales information is returned
-     * so it can be reused during report generation,
-     * avoiding an additional database query.
+     * La información de ventas totales obtenida se devuelve
+     * para que pueda reutilizarse durante la generación
+     * del reporte, evitando una consulta adicional a la base de datos.
      * </p>
      *
-     * @param request normalized PDF request
-     * @return total sales information used during report generation
+     * @param request solicitud de PDF normalizada
+     * @return información de ventas totales utilizada durante la generación del reporte
      */
     private TotalSalesResponseDTO validateStatisticsDataAvailability(
             StatisticsPdfRequestDTO request
@@ -1833,7 +1628,7 @@ public class StatisticsService implements IStatisticsService{
         if (totalSales.getTotalSales() == 0) {
 
             throw new NoStatisticsDataException(
-                    "No data available for the selected criteria"
+                    "No hay datos disponibles para los filtros seleccionados"
             );
         }
 
@@ -1841,35 +1636,35 @@ public class StatisticsService implements IStatisticsService{
     }
 
     /**
-     * Generates the final PDF document using the
-     * previously prepared report data.
+     * Genera el documento PDF final utilizando los
+     * datos del reporte previamente preparados.
      *
      * <p>
-     * This method orchestrates the complete PDF
-     * rendering process, including:
+     * Este método orquesta el proceso completo de
+     * generación del PDF, incluyendo:
      * <ul>
-     *     <li>Document creation</li>
-     *     <li>Report header rendering</li>
-     *     <li>Selected filters rendering</li>
-     *     <li>Sales Information section rendering</li>
-     *     <li>Product Information section rendering</li>
-     *     <li>Document finalization</li>
+     *     <li>Creación del documento</li>
+     *     <li>Renderizado del encabezado del reporte</li>
+     *     <li>Renderizado de la información de filtros seleccionados</li>
+     *     <li>Renderizado de la sección Información de Ventas</li>
+     *     <li>Renderizado de la sección Información de Productos</li>
+     *     <li>Finalización del documento</li>
      * </ul>
      * </p>
      *
      * <p>
-     * Only the sections selected in the report
-     * configuration are included in the generated PDF.
+     * Solo se incluyen en el PDF generado las secciones
+     * seleccionadas en la configuración del reporte.
      * </p>
      *
      * <p>
-     * The document is generated entirely in memory
-     * and returned as a byte array suitable for
-     * download by the client.
+     * El documento se genera completamente en memoria
+     * y se devuelve como un arreglo de bytes apto para
+     * ser descargado por el cliente.
      * </p>
      *
-     * @param data fully prepared report data
-     * @return generated PDF document as byte array
+     * @param data datos del reporte completamente preparados
+     * @return documento PDF generado como arreglo de bytes
      */
     private byte[] generatePdfDocument(
             StatisticsPdfDataDTO data
@@ -1881,43 +1676,43 @@ public class StatisticsService implements IStatisticsService{
         ) {
 
             /*
-             * Step 1:
-             * Create PDF document.
+             * Paso 1:
+             * Crear documento PDF.
              */
             Document document =
                     createDocument(outputStream);
 
             /*
-             * Step 2:
-             * Add report header.
+             * Paso 2:
+             * Agregar encabezado del reporte.
              */
             addReportHeader(document, data);
 
             /*
-             * Step 3:
-             * Add selected filters information.
+             * Paso 3:
+             * Agregar información de filtros seleccionados.
              */
             addFiltersInformation(document, data);
 
             /*
-             * Step 4:
-             * Add Sales Information section.
+             * Paso 4:
+             * Agregar sección Información de Ventas.
              */
             if (data.isIncludeSalesInformation()) {
                 addSalesInformationSection(document, data);
             }
 
             /*
-             * Step 5:
-             * Add Product Information section.
+             * Paso 5:
+             * Agregar sección Información de Productos.
              */
             if (data.isIncludeProductInformation()) {
                 addProductInformationSection(document, data);
             }
 
             /*
-             * Step 6:
-             * Finalize document.
+             * Paso 6:
+             * Finalizar documento.
              */
             document.close();
 
@@ -1926,31 +1721,31 @@ public class StatisticsService implements IStatisticsService{
         } catch (Exception e) {
 
             throw new PdfGenerationException(
-                    "An error occurred while generating the PDF report"
+                    "Ocurrió un error al generar el reporte PDF"
             );
         }
     }
 
     /**
-     * Creates and initializes the PDF document.
+     * Crea e inicializa el documento PDF.
      *
      * <p>
-     * This method configures:
+     * Este método configura:
      * <ul>
-     *     <li>Document page size</li>
-     *     <li>Document margins</li>
-     *     <li>PDF writer binding</li>
+     *     <li>El tamaño de página del documento</li>
+     *     <li>Los márgenes del documento</li>
+     *     <li>La asociación con el escritor PDF</li>
      * </ul>
      * </p>
      *
      * <p>
-     * The document is automatically opened before
-     * being returned.
+     * El documento se abre automáticamente antes
+     * de ser retornado.
      * </p>
      *
-     * @param outputStream target PDF output stream
-     * @return initialized and opened PDF document
-     * @throws DocumentException if the PDF document cannot be created
+     * @param outputStream flujo de salida destino para el PDF
+     * @return documento PDF inicializado y abierto
+     * @throws DocumentException si no se puede crear el documento PDF
      */
     private Document createDocument(
             ByteArrayOutputStream outputStream
@@ -1967,26 +1762,26 @@ public class StatisticsService implements IStatisticsService{
     }
 
     /**
-     * Adds the report header section to the PDF document.
+     * Agrega la sección de encabezado del reporte al documento PDF.
      *
      * <p>
-     * The header contains the report metadata that is
-     * always included in the generated document:
+     * El encabezado contiene los metadatos del reporte que
+     * siempre se incluyen en el documento generado:
      * <ul>
-     *     <li>Report title</li>
-     *     <li>Report generation date and time</li>
+     *     <li>Título del reporte</li>
+     *     <li>Fecha y hora de generación del reporte</li>
      * </ul>
      * </p>
      *
      * <p>
-     * This section is rendered at the beginning
-     * of the report before any filter information
-     * or statistics sections.
+     * Esta sección se renderiza al comienzo
+     * del reporte, antes de cualquier información
+     * de filtros o sección de estadísticas.
      * </p>
      *
-     * @param document target PDF document
-     * @param data prepared report data
-     * @throws DocumentException if the content cannot be added
+     * @param document documento PDF de destino
+     * @param data datos preparados del reporte
+     * @throws DocumentException si el contenido no puede agregarse
      */
     private void addReportHeader(
             Document document,
@@ -2028,7 +1823,7 @@ public class StatisticsService implements IStatisticsService{
 
         Paragraph generationDate =
                 new Paragraph(
-                        "Generated on: " + formattedDate,
+                        "Generado el: " + formattedDate,
                         metadataFont
                 );
 
@@ -2040,27 +1835,27 @@ public class StatisticsService implements IStatisticsService{
     }
 
     /**
-     * Adds the selected filters section to the PDF document.
+     * Agrega la sección de filtros seleccionados al documento PDF.
      *
      * <p>
-     * This section displays the filtering criteria
-     * used to generate the report:
+     * Esta sección muestra los criterios de filtrado
+     * utilizados para generar el reporte:
      * <ul>
-     *     <li>Selected user</li>
-     *     <li>Selected date range</li>
+     *     <li>Usuario seleccionado</li>
+     *     <li>Rango de fechas seleccionado</li>
      * </ul>
      * </p>
      *
      * <p>
-     * The displayed information reflects exactly
-     * the filters applied when the report was generated,
-     * allowing the statistics contained in the document
-     * to be properly contextualized.
+     * La información mostrada refleja exactamente
+     * los filtros aplicados al momento de generar el reporte,
+     * permitiendo contextualizar correctamente las estadísticas
+     * contenidas en el documento.
      * </p>
      *
-     * @param document target PDF document
-     * @param data prepared report data
-     * @throws DocumentException if the content cannot be added
+     * @param document documento PDF de destino
+     * @param data datos preparados del reporte
+     * @throws DocumentException si no es posible agregar el contenido
      */
     private void addFiltersInformation(
             Document document,
@@ -2081,7 +1876,7 @@ public class StatisticsService implements IStatisticsService{
 
         Paragraph sectionTitle =
                 new Paragraph(
-                        "Selected Filters",
+                        "Filtros Seleccionados",
                         sectionTitleFont
                 );
 
@@ -2091,19 +1886,22 @@ public class StatisticsService implements IStatisticsService{
 
         Paragraph selectedUser =
                 new Paragraph(
-                        "User: "
+                        "Usuario: "
                                 + data.getSelectedUser(),
                         contentFont
                 );
 
         document.add(selectedUser);
 
+        DateTimeFormatter dateFormatter =
+                DateTimeFormatter.ofPattern("dd/MM/yyyy");
+
         Paragraph selectedDates =
                 new Paragraph(
-                        "Date Range: "
-                                + data.getStartDate()
-                                + " to "
-                                + data.getEndDate(),
+                        "Rango de Fechas: "
+                                + data.getStartDate().format(dateFormatter)
+                                + " a "
+                                + data.getEndDate().format(dateFormatter),
                         contentFont
                 );
 
@@ -2113,27 +1911,27 @@ public class StatisticsService implements IStatisticsService{
     }
 
     /**
-     * Adds the complete Sales Information section
-     * to the PDF document.
+     * Agrega la sección completa de Información de Ventas
+     * al documento PDF.
      *
      * <p>
-     * This section includes:
+     * Esta sección incluye:
      * <ul>
-     *     <li>Sales summary statistics</li>
-     *     <li>Peak sales hours information</li>
-     *     <li>Revenue over time table</li>
-     *     <li>Sales over time table</li>
+     *     <li>Estadísticas resumidas de ventas</li>
+     *     <li>Información sobre horarios pico de ventas</li>
+     *     <li>Tabla de ingresos a lo largo del tiempo</li>
+     *     <li>Tabla de ventas a lo largo del tiempo</li>
      * </ul>
      * </p>
      *
      * <p>
-     * All displayed information is calculated using
-     * the filters selected when the report was generated.
+     * Toda la información mostrada se calcula utilizando
+     * los filtros seleccionados al momento de generar el reporte.
      * </p>
      *
-     * @param document target PDF document
-     * @param data prepared report data
-     * @throws DocumentException if PDF content cannot be added
+     * @param document documento PDF de destino
+     * @param data datos preparados del reporte
+     * @throws DocumentException si no es posible agregar contenido al PDF
      */
     private void addSalesInformationSection(
             Document document,
@@ -2141,17 +1939,17 @@ public class StatisticsService implements IStatisticsService{
     ) throws DocumentException, IOException {
 
         /*
-         * Step 1:
-         * Add section title.
+         * Paso 1:
+         * Agregar el título de la sección.
          */
         addSectionTitle(
                 document,
-                "Sales Information"
+                "Información de Ventas"
         );
 
         /*
-         * Step 2:
-         * Add sales summary statistics.
+         * Paso 2:
+         * Agregar estadísticas resumidas de ventas.
          */
         addSalesSummary(
                 document,
@@ -2159,8 +1957,8 @@ public class StatisticsService implements IStatisticsService{
         );
 
         /*
-         * Step 3:
-         * Add peak sales hours information.
+         * Paso 3:
+         * Agregar información sobre horarios pico de ventas.
          */
         addPeakHoursInformation(
                 document,
@@ -2168,8 +1966,8 @@ public class StatisticsService implements IStatisticsService{
         );
 
         /*
-         * Step 4:
-         * Add revenue over time statistics table.
+         * Paso 4:
+         * Agregar la tabla de ingresos a lo largo del tiempo.
          */
         addRevenueOverTimeTable(
                 document,
@@ -2177,8 +1975,8 @@ public class StatisticsService implements IStatisticsService{
         );
 
         /*
-         * Step 5:
-         * Add sales over time statistics table.
+         * Paso 5:
+         * Agregar la tabla de ventas a lo largo del tiempo.
          */
         addSalesOverTimeTable(
                 document,
@@ -2187,16 +1985,16 @@ public class StatisticsService implements IStatisticsService{
     }
 
     /**
-     * Adds a section title to the PDF document.
+     * Agrega un título de sección al documento PDF.
      *
      * <p>
-     * This helper method is used to visually separate
-     * the major sections of the report.
+     * Este método auxiliar se utiliza para separar visualmente
+     * las secciones principales del reporte.
      * </p>
      *
-     * @param document target PDF document
-     * @param title section title
-     * @throws DocumentException if the content cannot be added
+     * @param document documento PDF de destino
+     * @param title título de la sección
+     * @throws DocumentException si el contenido no puede agregarse
      */
     private void addSectionTitle(
             Document document,
@@ -2222,22 +2020,22 @@ public class StatisticsService implements IStatisticsService{
     }
 
     /**
-     * Adds the sales summary subsection
-     * to the PDF document.
+     * Agrega la subsección de resumen de ventas
+     * al documento PDF.
      *
      * <p>
-     * This subsection displays the main sales KPIs
-     * calculated for the selected filters:
+     * Esta subsección muestra los principales indicadores
+     * de ventas calculados para los filtros seleccionados:
      * <ul>
-     *     <li>Total revenue</li>
-     *     <li>Total number of sales</li>
-     *     <li>Average ticket value</li>
+     *     <li>Ingresos totales</li>
+     *     <li>Cantidad total de ventas</li>
+     *     <li>Ticket promedio</li>
      * </ul>
      * </p>
      *
-     * @param document target PDF document
-     * @param data prepared report data
-     * @throws DocumentException if the content cannot be added
+     * @param document documento PDF de destino
+     * @param data datos preparados para el reporte
+     * @throws DocumentException si el contenido no puede agregarse
      */
     private void addSalesSummary(
             Document document,
@@ -2252,7 +2050,7 @@ public class StatisticsService implements IStatisticsService{
 
         Paragraph revenue =
                 new Paragraph(
-                        "Total Revenue: $"
+                        "Ingresos Totales: $"
                                 + data.getTotalRevenue()
                                 .getTotalRevenue(),
                         contentFont
@@ -2260,7 +2058,7 @@ public class StatisticsService implements IStatisticsService{
 
         Paragraph totalSales =
                 new Paragraph(
-                        "Total Sales: "
+                        "Cantidad Total de Ventas: "
                                 + data.getTotalSales()
                                 .getTotalSales(),
                         contentFont
@@ -2268,7 +2066,7 @@ public class StatisticsService implements IStatisticsService{
 
         Paragraph averageTicket =
                 new Paragraph(
-                        "Average Ticket: $"
+                        "Ticket Promedio: $"
                                 + data.getAverageTicket()
                                 .getAverageTicket(),
                         contentFont
@@ -2284,25 +2082,25 @@ public class StatisticsService implements IStatisticsService{
     }
 
     /**
-     * Adds the peak sales hours subsection
-     * to the PDF document.
+     * Agrega la subsección de horas pico de ventas
+     * al documento PDF.
      *
      * <p>
-     * This subsection displays:
+     * Esta subsección muestra:
      * <ul>
-     *     <li>Hour with the highest revenue</li>
-     *     <li>Hour with the highest number of sales</li>
+     *     <li>La hora con mayores ingresos</li>
+     *     <li>La hora con la mayor cantidad de ventas</li>
      * </ul>
      * </p>
      *
      * <p>
-     * Both values are calculated using the filters
-     * selected when the report was generated.
+     * Ambos valores se calculan utilizando los filtros
+     * seleccionados al momento de generar el reporte.
      * </p>
      *
-     * @param document target PDF document
-     * @param data prepared report data
-     * @throws DocumentException if the content cannot be added
+     * @param document documento PDF de destino
+     * @param data datos preparados para el reporte
+     * @throws DocumentException si el contenido no puede agregarse
      */
     private void addPeakHoursInformation(
             Document document,
@@ -2317,7 +2115,7 @@ public class StatisticsService implements IStatisticsService{
 
         Paragraph highestRevenueHour =
                 new Paragraph(
-                        "Highest Revenue Hour: "
+                        "Hora con Mayores Ingresos: "
                                 + data.getPeakHours()
                                 .getHighestRevenueHour(),
                         contentFont
@@ -2325,7 +2123,7 @@ public class StatisticsService implements IStatisticsService{
 
         Paragraph highestSalesHour =
                 new Paragraph(
-                        "Highest Sales Hour: "
+                        "Hora con Más Ventas: "
                                 + data.getPeakHours()
                                 .getHighestSalesHour(),
                         contentFont
@@ -2339,33 +2137,33 @@ public class StatisticsService implements IStatisticsService{
     }
 
     /**
-     * Adds the revenue over time table
-     * to the PDF document.
+     * Agrega la tabla de ingresos a lo largo del tiempo
+     * al documento PDF.
      *
      * <p>
-     * This subsection displays revenue statistics
-     * aggregated by time period.
+     * Esta subsección muestra estadísticas de ingresos
+     * agrupadas por período de tiempo.
      * </p>
      *
      * <p>
-     * The time period granularity depends on the
-     * selected date range and may represent:
+     * La granularidad del período depende del rango de fechas
+     * seleccionado y puede representar:
      * <ul>
-     *     <li>Hours</li>
-     *     <li>Days</li>
-     *     <li>Months</li>
-     *     <li>Years</li>
+     *     <li>Horas</li>
+     *     <li>Días</li>
+     *     <li>Meses</li>
+     *     <li>Años</li>
      * </ul>
      * </p>
      *
      * <p>
-     * Each row represents a time period and its
-     * corresponding revenue generated.
+     * Cada fila representa un período de tiempo y los
+     * ingresos generados correspondientes.
      * </p>
      *
-     * @param document target PDF document
-     * @param salesTimeSeries sales time-series data
-     * @throws DocumentException if the content cannot be added
+     * @param document documento PDF de destino
+     * @param salesTimeSeries datos de series temporales de ventas
+     * @throws DocumentException si el contenido no puede agregarse
      */
     private void addRevenueOverTimeTable(
             Document document,
@@ -2374,7 +2172,7 @@ public class StatisticsService implements IStatisticsService{
 
         Paragraph title =
                 new Paragraph(
-                        "Revenue Over Time",
+                        "Ingresos a lo Largo del Tiempo",
                         FontFactory.getFont(
                                 FontFactory.HELVETICA_BOLD,
                                 13
@@ -2391,8 +2189,8 @@ public class StatisticsService implements IStatisticsService{
 
         table.setWidthPercentage(100);
 
-        table.addCell("Time Period");
-        table.addCell("Revenue Generated");
+        table.addCell("Período");
+        table.addCell("Ingresos Generados");
 
         for (TimeSeriesPointDTO point
                 : salesTimeSeries.getRevenueOverTime()) {
@@ -2410,33 +2208,33 @@ public class StatisticsService implements IStatisticsService{
     }
 
     /**
-     * Adds the sales over time table
-     * to the PDF document.
+     * Agrega la tabla de ventas a lo largo del tiempo
+     * al documento PDF.
      *
      * <p>
-     * This subsection displays sales statistics
-     * aggregated by time period.
+     * Esta subsección muestra estadísticas de ventas
+     * agrupadas por período de tiempo.
      * </p>
      *
      * <p>
-     * The time period granularity depends on the
-     * selected date range and may represent:
+     * La granularidad del período depende del rango de fechas
+     * seleccionado y puede representar:
      * <ul>
-     *     <li>Hours</li>
-     *     <li>Days</li>
-     *     <li>Months</li>
-     *     <li>Years</li>
+     *     <li>Horas</li>
+     *     <li>Días</li>
+     *     <li>Meses</li>
+     *     <li>Años</li>
      * </ul>
      * </p>
      *
      * <p>
-     * Each row represents a time period and its
-     * corresponding number of sales.
+     * Cada fila representa un período de tiempo y su
+     * correspondiente cantidad de ventas.
      * </p>
      *
-     * @param document target PDF document
-     * @param salesTimeSeries sales time-series data
-     * @throws DocumentException if the content cannot be added
+     * @param document documento PDF de destino
+     * @param salesTimeSeries datos de series temporales de ventas
+     * @throws DocumentException si el contenido no puede agregarse
      */
     private void addSalesOverTimeTable(
             Document document,
@@ -2445,7 +2243,7 @@ public class StatisticsService implements IStatisticsService{
 
         Paragraph title =
                 new Paragraph(
-                        "Sales Over Time",
+                        "Ventas a lo Largo del Tiempo",
                         FontFactory.getFont(
                                 FontFactory.HELVETICA_BOLD,
                                 13
@@ -2462,8 +2260,8 @@ public class StatisticsService implements IStatisticsService{
 
         table.setWidthPercentage(100);
 
-        table.addCell("Time Period");
-        table.addCell("Number of Sales");
+        table.addCell("Período");
+        table.addCell("Cantidad de Ventas");
 
         for (TimeSeriesPointDTO point
                 : salesTimeSeries.getSalesOverTime()) {
@@ -2485,28 +2283,28 @@ public class StatisticsService implements IStatisticsService{
     }
 
     /**
-     * Adds the complete Product Information section
-     * to the PDF document.
+     * Agrega la sección completa de información de productos
+     * al documento PDF.
      *
      * <p>
-     * This section includes:
+     * Esta sección incluye:
      * <ul>
-     *     <li>Top products by quantity sold</li>
-     *     <li>Top products by revenue generated</li>
-     *     <li>Sold products ranking list</li>
-     *     <li>Unsold products list</li>
+     *     <li>Productos más vendidos por cantidad</li>
+     *     <li>Productos con mayores ingresos generados</li>
+     *     <li>Ranking de productos vendidos</li>
+     *     <li>Lista de productos sin ventas</li>
      * </ul>
      * </p>
      *
      * <p>
-     * All statistics and product information are
-     * calculated using the filters selected when
-     * the report was generated.
+     * Todas las estadísticas e información de productos
+     * se calculan utilizando los filtros seleccionados
+     * al momento de generar el reporte.
      * </p>
      *
-     * @param document target PDF document
-     * @param data prepared report data
-     * @throws DocumentException if PDF content cannot be added
+     * @param document documento PDF de destino
+     * @param data datos preparados para el reporte
+     * @throws DocumentException si el contenido PDF no puede agregarse
      */
     private void addProductInformationSection(
             Document document,
@@ -2514,17 +2312,17 @@ public class StatisticsService implements IStatisticsService{
     ) throws DocumentException {
 
         /*
-         * Step 1:
-         * Add section title.
+         * Paso 1:
+         * Agregar título de la sección.
          */
         addSectionTitle(
                 document,
-                "Product Information"
+                "Información de Productos"
         );
 
         /*
-         * Step 2:
-         * Add top products summary.
+         * Paso 2:
+         * Agregar resumen de productos destacados.
          */
         addTopProductsSummary(
                 document,
@@ -2532,8 +2330,8 @@ public class StatisticsService implements IStatisticsService{
         );
 
         /*
-         * Step 3:
-         * Add sold products ranking list.
+         * Paso 3:
+         * Agregar ranking de productos vendidos.
          */
         addSoldProductsRanking(
                 document,
@@ -2541,8 +2339,8 @@ public class StatisticsService implements IStatisticsService{
         );
 
         /*
-         * Step 4:
-         * Add unsold products list.
+         * Paso 4:
+         * Agregar lista de productos sin ventas.
          */
         addUnsoldProductsList(
                 document,
@@ -2551,25 +2349,25 @@ public class StatisticsService implements IStatisticsService{
     }
 
     /**
-     * Adds the top products summary subsection
-     * to the PDF document.
+     * Agrega la subsección de resumen de productos destacados
+     * al documento PDF.
      *
      * <p>
-     * This subsection contains:
+     * Esta subsección contiene:
      * <ul>
-     *     <li>Top products by quantity sold table</li>
-     *     <li>Top products by revenue generated table</li>
+     *     <li>Tabla de productos más vendidos por cantidad</li>
+     *     <li>Tabla de productos con mayores ingresos generados</li>
      * </ul>
      * </p>
      *
      * <p>
-     * These rankings provide a quick overview of the
-     * best-performing products for the selected filters.
+     * Estos rankings brindan una visión rápida de los
+     * productos con mejor desempeño según los filtros seleccionados.
      * </p>
      *
-     * @param document target PDF document
-     * @param data prepared report data
-     * @throws DocumentException if the content cannot be added
+     * @param document documento PDF de destino
+     * @param data datos preparados para el reporte
+     * @throws DocumentException si el contenido no puede agregarse
      */
     private void addTopProductsSummary(
             Document document,
@@ -2588,26 +2386,26 @@ public class StatisticsService implements IStatisticsService{
     }
 
     /**
-     * Adds the top products by quantity sold table
-     * to the PDF document.
+     * Agrega la tabla de productos más vendidos por cantidad
+     * al documento PDF.
      *
      * <p>
-     * This table displays the products with the
-     * highest quantity sold for the selected filters.
+     * Esta tabla muestra los productos con mayor cantidad vendida
+     * según los filtros seleccionados.
      * </p>
      *
      * <p>
-     * Each row includes:
+     * Cada fila incluye:
      * <ul>
-     *     <li>Product code</li>
-     *     <li>Product name</li>
-     *     <li>Quantity sold</li>
+     *     <li>Código del producto</li>
+     *     <li>Nombre del producto</li>
+     *     <li>Cantidad vendida</li>
      * </ul>
      * </p>
      *
-     * @param document target PDF document
-     * @param topProducts top products statistics
-     * @throws DocumentException if the content cannot be added
+     * @param document documento PDF de destino
+     * @param topProducts estadísticas de productos destacados
+     * @throws DocumentException si el contenido no puede agregarse
      */
     private void addTopProductsByQuantityTable(
             Document document,
@@ -2616,7 +2414,7 @@ public class StatisticsService implements IStatisticsService{
 
         Paragraph title =
                 new Paragraph(
-                        "Top Products by Quantity Sold",
+                        "Productos Más Vendidos por Cantidad (hasta 10 productos)",
                         FontFactory.getFont(
                                 FontFactory.HELVETICA_BOLD,
                                 13
@@ -2633,9 +2431,9 @@ public class StatisticsService implements IStatisticsService{
 
         table.setWidthPercentage(100);
 
-        table.addCell("Code");
-        table.addCell("Product");
-        table.addCell("Quantity Sold");
+        table.addCell("Código");
+        table.addCell("Nombre");
+        table.addCell("Cantidad Vendida");
 
         for (TopProductsByQuantityDTO product
                 : topProducts.getTopProductsByQuantity()) {
@@ -2655,21 +2453,21 @@ public class StatisticsService implements IStatisticsService{
     }
 
     /**
-     * Adds the top products by revenue generated table
-     * to the PDF document.
+     * Agrega la tabla de productos más vendidos por ingresos
+     * generados al documento PDF.
      *
      * <p>
-     * Each row includes:
+     * Cada fila incluye:
      * <ul>
-     *     <li>Product code</li>
-     *     <li>Product name</li>
-     *     <li>Revenue generated</li>
+     *     <li>Código del producto</li>
+     *     <li>Nombre del producto</li>
+     *     <li>Ingresos generados</li>
      * </ul>
      * </p>
      *
-     * @param document target PDF document
-     * @param topProducts top products statistics
-     * @throws DocumentException if content cannot be added
+     * @param document documento PDF de destino
+     * @param topProducts estadísticas de productos destacados
+     * @throws DocumentException si el contenido no puede agregarse
      */
     private void addTopProductsByRevenueTable(
             Document document,
@@ -2678,7 +2476,7 @@ public class StatisticsService implements IStatisticsService{
 
         Paragraph title =
                 new Paragraph(
-                        "Top Products by Revenue Generated",
+                        "Productos con Mayores Ingresos (hasta 10 productos)",
                         FontFactory.getFont(
                                 FontFactory.HELVETICA_BOLD,
                                 13
@@ -2695,9 +2493,9 @@ public class StatisticsService implements IStatisticsService{
 
         table.setWidthPercentage(100);
 
-        table.addCell("Code");
-        table.addCell("Product");
-        table.addCell("Revenue Generated");
+        table.addCell("Código");
+        table.addCell("Nombre");
+        table.addCell("Ingresos Generados");
 
         for (TopProductsByRevenueDTO product
                 : topProducts.getTopProductsByRevenue()) {
@@ -2715,29 +2513,28 @@ public class StatisticsService implements IStatisticsService{
     }
 
     /**
-     * Adds the sold products ranking list
-     * to the PDF document.
+     * Agrega el ranking de productos vendidos al documento PDF.
      *
      * <p>
-     * This subsection includes:
+     * Esta subsección incluye:
      * <ul>
-     *     <li>Selected ranking metric</li>
-     *     <li>Selected ranking order</li>
-     *     <li>Total matching sold products</li>
-     *     <li>Number of included products</li>
-     *     <li>Detailed sold products table</li>
+     *     <li>Métrica de ranking seleccionada</li>
+     *     <li>Orden del ranking seleccionado</li>
+     *     <li>Total de productos vendidos coincidentes</li>
+     *     <li>Cantidad de productos incluidos</li>
+     *     <li>Tabla detallada de productos vendidos</li>
      * </ul>
      * </p>
      *
      * <p>
-     * The ranking configuration displayed in the report
-     * reflects the metric and ordering selected when the
-     * report was generated.
+     * La configuración del ranking mostrada en el reporte
+     * refleja la métrica y el orden seleccionados al momento
+     * de generar el reporte.
      * </p>
      *
-     * @param document target PDF document
-     * @param data prepared report data
-     * @throws DocumentException if content cannot be added
+     * @param document documento PDF de destino
+     * @param data datos preparados para el reporte
+     * @throws DocumentException si el contenido no puede agregarse
      */
     private void addSoldProductsRanking(
             Document document,
@@ -2746,7 +2543,7 @@ public class StatisticsService implements IStatisticsService{
 
         Paragraph title =
                 new Paragraph(
-                        "Sold Products Ranking",
+                        "Ranking de Productos Vendidos",
                         FontFactory.getFont(
                                 FontFactory.HELVETICA_BOLD,
                                 13
@@ -2760,7 +2557,7 @@ public class StatisticsService implements IStatisticsService{
 
         Paragraph metadata =
                 new Paragraph(
-                        "Included Products: "
+                        "Productos incluidos: "
                                 + data.getIncludedSoldProducts()
                                 + " / "
                                 + data.getTotalSoldProducts()
@@ -2772,9 +2569,9 @@ public class StatisticsService implements IStatisticsService{
 
         Paragraph rankingConfiguration =
                 new Paragraph(
-                        "Metric: "
+                        "Métrica: "
                                 + data.getSoldProductsMetric()
-                                + " | Order: "
+                                + " | Orden: "
                                 + data.getSoldProductsOrder()
                 );
 
@@ -2787,10 +2584,10 @@ public class StatisticsService implements IStatisticsService{
 
         table.setWidthPercentage(100);
 
-        table.addCell("Code");
-        table.addCell("Product");
-        table.addCell("Quantity Sold");
-        table.addCell("Revenue Generated");
+        table.addCell("Código");
+        table.addCell("Nombre");
+        table.addCell("Cantidad Vendida");
+        table.addCell("Ingresos Generados");
 
         for (SoldProductDTO product
                 : data.getSoldProducts()) {
@@ -2813,28 +2610,28 @@ public class StatisticsService implements IStatisticsService{
     }
 
     /**
-     * Adds the unsold products list
-     * to the PDF document.
+     * Agrega la lista de productos sin ventas
+     * al documento PDF.
      *
      * <p>
-     * This subsection includes:
+     * Esta subsección incluye:
      * <ul>
-     *     <li>Total matching unsold products</li>
-     *     <li>Number of included products</li>
-     *     <li>Detailed unsold products table</li>
+     *     <li>Total de productos sin ventas coincidentes</li>
+     *     <li>Cantidad de productos incluidos</li>
+     *     <li>Tabla detallada de productos sin ventas</li>
      * </ul>
      * </p>
      *
      * <p>
-     * If no unsold products match the selected filters,
-     * the message
-     * "No unsold products for the selected filters"
-     * is displayed instead of the table.
+     * Si no existen productos sin ventas que coincidan con los filtros seleccionados,
+     * se muestra el mensaje:
+     * "No hay productos sin ventas para los filtros seleccionados"
+     * en lugar de la tabla.
      * </p>
      *
-     * @param document target PDF document
-     * @param data prepared report data
-     * @throws DocumentException if content cannot be added
+     * @param document documento PDF de destino
+     * @param data datos preparados para el reporte
+     * @throws DocumentException si el contenido no puede agregarse
      */
     private void addUnsoldProductsList(
             Document document,
@@ -2843,7 +2640,7 @@ public class StatisticsService implements IStatisticsService{
 
         Paragraph title =
                 new Paragraph(
-                        "Unsold Products",
+                        "Productos no vendidos",
                         FontFactory.getFont(
                                 FontFactory.HELVETICA_BOLD,
                                 13
@@ -2859,7 +2656,7 @@ public class StatisticsService implements IStatisticsService{
 
             Paragraph emptyMessage =
                     new Paragraph(
-                            "No unsold products for the selected filters"
+                            "No hay productos no vendidos para los filtros seleccionados"
                     );
 
             emptyMessage.setSpacingAfter(10f);
@@ -2871,7 +2668,7 @@ public class StatisticsService implements IStatisticsService{
 
         Paragraph metadata =
                 new Paragraph(
-                        "Included Products: "
+                        "Productos incluidos: "
                                 + data.getIncludedUnsoldProducts()
                                 + " / "
                                 + data.getTotalUnsoldProducts()
@@ -2886,8 +2683,8 @@ public class StatisticsService implements IStatisticsService{
 
         table.setWidthPercentage(100);
 
-        table.addCell("Code");
-        table.addCell("Product");
+        table.addCell("Código");
+        table.addCell("Nombre");
 
         for (UnsoldProductDTO product
                 : data.getUnsoldProducts()) {

@@ -1,7 +1,7 @@
 /**
- * Represents the global system configuration.
+ * Representa la configuración global del sistema.
  *
- * <p>Stores system-wide settings such as the business name and address.</p>
+ * <p>Almacena configuraciones compartidas a nivel del sistema, como el nombre y la dirección del negocio.</p>
  *
  */
 
@@ -20,16 +20,16 @@ import lombok.Setter;
 @Table(name = "system_configuration", schema = "core")
 public class SystemConfiguration {
 
-    /** Unique identifier for the system configuration. */
+    /** Identificador único de la configuración del sistema. */
     @Id
     @Column(name = "system_configuration_id")
     private Long systemConfigurationId;
 
-    /** Name of the business, used in receipts and displayed across the system. */
+    /** Nombre del negocio, utilizado en los comprobantes y mostrado en todo el sistema. */
     @Column(name = "business_name")
     private String businessName;
 
-    /** Business address, used in receipts and displayed across the system. */
+    /** Dirección del negocio, utilizada en los comprobantes y mostrada en todo el sistema. */
     @Column(name = "business_address")
     private String businessAddress;
 }

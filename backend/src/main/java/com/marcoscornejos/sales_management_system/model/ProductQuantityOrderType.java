@@ -1,13 +1,15 @@
 /**
- * Enumeration that defines the ordering criteria based on product quantity sold.
+ * Enumeración que define los criterios de ordenamiento basados en la cantidad de productos vendidos.
  *
  * <p>
- * Used to specify how products should be sorted when retrieving sales statistics,
- * such as ranking products from most sold to least sold or vice versa.
+ * Se utiliza para especificar cómo deben ordenarse los productos al consultar
+ * estadísticas de ventas, como clasificar los productos desde los más vendidos
+ * hasta los menos vendidos o viceversa.
  * </p>
  *
  * <p>
- * Each enum value includes a human-readable display name intended for UI representation.
+ * Cada valor de la enumeración incluye un nombre descriptivo destinado a su
+ * representación en la interfaz de usuario.
  * </p>
  */
 
@@ -17,8 +19,8 @@ import lombok.Getter;
 
 @Getter
 public enum ProductQuantityOrderType {
-    MOST_TO_LEAST("Most sold → least sold"),
-    LEAST_TO_MOST("Least sold → most sold");
+    MOST_TO_LEAST("Más vendido → menos vendido"),
+    LEAST_TO_MOST("Menos vendido → más vendido");
 
     private final String displayName;
 

@@ -1,11 +1,10 @@
 /**
- * Represents a system user.
+ * Representa un usuario del sistema.
  *
- * <p>Stores authentication and authorization data such as username,
- * role, and password.</p>
+ * <p>Almacena información de autenticación y autorización, como el nombre de usuario,
+ * el rol y la contraseña.</p>
  *
- * <p>Users are responsible for interacting with the system
- * according to their assigned role.</p>
+ * <p>Los usuarios interactúan con el sistema de acuerdo con el rol que tengan asignado.</p>
  */
 
 package com.marcoscornejos.sales_management_system.model;
@@ -24,34 +23,35 @@ import lombok.Setter;
         allocationSize = 1)
 public class User {
 
-    /** Unique identifier of the user. */
+    /** Identificador único del usuario. */
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE,
             generator = "user_seq")
     @Column(name = "user_id")
     private Long userId;
 
-    /** Username used for identification/login. */
+    /** Nombre de usuario utilizado para la identificación/inicio de sesión. */
     @Column(name = "user_name")
     private String userName;
 
     /**
-     * Role assigned to the user (e.g., ADMIN, OPERATOR).
+     * Rol asignado al usuario (por ejemplo, ADMINISTRATOR u OPERATOR).
      *
-     * <p>Stored as a string in the database for readability and stability.</p>
+     * <p>Se almacena como una cadena de texto en la base de datos para mejorar
+     * la legibilidad y la estabilidad.</p>
      */
     @Column(name = "user_role")
     @Enumerated(EnumType.STRING)
     private UserRole userRole=UserRole.OPERATOR;
 
-    /** Encrypted password of the user. */
+    /** Contraseña cifrada del usuario. */
     @Column(name = "user_password")
     private String userPassword;
 
     /**
-     * Logical status of the user (e.g., ACTIVE, SUSPENDED, DELETED).
+     * Estado lógico del usuario (por ejemplo, ACTIVE, SUSPENDED o DELETED).
      *
-     * <p>Determines whether the user can access or interact with the system.</p>
+     * <p>Determina si el usuario puede acceder o interactuar con el sistema.</p>
      */
     @Column(name = "user_status")
     @Enumerated(EnumType.STRING)

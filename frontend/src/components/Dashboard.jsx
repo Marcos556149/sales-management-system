@@ -8,18 +8,18 @@ const Dashboard = ({ onLogout, user }) => {
   const [activeSection, setActiveSection] = useState('products');
 
   // Destructure userName if exists, otherwise fallback to "Administrator"
-  const userName = user?.userName || "Administrator";
+  const userName = user?.userName || "Administrador";
 
   // Currently only products is implemented
   const renderContent = () => {
-    switch(activeSection) {
+    switch (activeSection) {
       case 'products':
         return <ProductsView />;
       default:
         return (
           <div className="coming-soon">
-            <h2>{activeSection.charAt(0).toUpperCase() + activeSection.slice(1)} Module</h2>
-            <p>This functional area is currently under development.</p>
+            <h2>{activeSection.charAt(0).toUpperCase() + activeSection.slice(1)} Módulo</h2>
+            <p>Esta funcionalidad se encuentra actualmente en desarrollo.</p>
           </div>
         );
     }
@@ -28,10 +28,10 @@ const Dashboard = ({ onLogout, user }) => {
   return (
     <div className="dashboard-layout">
       <Sidebar activeSection={activeSection} setActiveSection={setActiveSection} />
-      
+
       <div className="main-content">
         <Header userName={userName} />
-        
+
         <main className="content-area">
           {renderContent()}
         </main>

@@ -6,23 +6,23 @@ import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
 
 /**
- * Mapper for updating {@link SystemConfiguration} entities
- * from {@link SystemConfigurationRequestDTO}.
+ * Mapper para actualizar entidades {@link SystemConfiguration}
+ * a partir de {@link SystemConfigurationRequestDTO}.
  *
  * <p>
- * Handles the transformation of incoming configuration data
- * into an existing system configuration entity.
+ * Se encarga de transformar los datos de configuración entrantes
+ * en una entidad de configuración del sistema existente.
  * </p>
  */
 @Mapper(componentModel = "spring")
 public interface ISystemConfigurationRequestMapper {
 
     /**
-     * Updates an existing {@link SystemConfiguration} entity
-     * using data from the given DTO.
+     * Actualiza una entidad {@link SystemConfiguration} existente
+     * utilizando los datos del DTO proporcionado.
      *
-     * @param dto the system configuration request DTO containing updated values
-     * @param configuration the existing SystemConfiguration entity to be updated
+     * @param dto DTO de configuración del sistema con los valores actualizados
+     * @param configuration entidad SystemConfiguration existente a actualizar
      */
     void updateSystemConfigurationFromDto(
             SystemConfigurationRequestDTO dto,
@@ -30,15 +30,15 @@ public interface ISystemConfigurationRequestMapper {
     );
 
     /**
-     * Maps a {@link SystemConfiguration} entity
-     * to a {@link SystemConfigurationRequestDTO}.
+     * Mapea una entidad {@link SystemConfiguration}
+     * a un {@link SystemConfigurationRequestDTO}.
      *
      * <p>
-     * Useful for pre-filling forms on the client side.
+     * Útil para precargar formularios en el cliente.
      * </p>
      *
-     * @param configuration the SystemConfiguration entity
-     * @return a SystemConfigurationRequestDTO with corresponding fields set
+     * @param configuration entidad SystemConfiguration
+     * @return SystemConfigurationRequestDTO con los campos correspondientes
      */
     SystemConfigurationRequestDTO toDto(SystemConfiguration configuration);
 }

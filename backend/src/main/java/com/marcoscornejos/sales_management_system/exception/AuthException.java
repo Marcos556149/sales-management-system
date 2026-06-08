@@ -3,11 +3,11 @@ package com.marcoscornejos.sales_management_system.exception;
 import lombok.Getter;
 
 /**
- * Exception for authentication-related errors.
+ * Excepción para errores relacionados con autenticación.
  *
  * <p>
- * Used when authentication or authorization rules are violated,
- * such as invalid credentials or unauthorized access attempts.
+ * Se utiliza cuando se violan reglas de autenticación o autorización,
+ * como credenciales inválidas o intentos de acceso no autorizados.
  * </p>
  */
 @Getter
@@ -17,11 +17,11 @@ public class AuthException extends RuntimeException {
     private final String field;
 
     /**
-     * Creates a new AuthException.
+     * Crea una nueva AuthException.
      *
-     * @param code machine-readable error code
-     * @param message human-readable error message
-     * @param field optional field related to the error (can be null)
+     * @param code código de error legible por máquina
+     * @param message mensaje de error legible para el usuario
+     * @param field campo opcional relacionado con el error (puede ser null)
      */
     public AuthException(String code, String message, String field) {
         super(message);

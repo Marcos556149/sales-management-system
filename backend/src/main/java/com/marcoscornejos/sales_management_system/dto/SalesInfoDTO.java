@@ -9,12 +9,14 @@ import java.math.BigDecimal;
 import java.util.List;
 
 /**
- * Contains global sales KPIs and time-based analytics for a selected filter range.
+ * Contiene KPIs globales de ventas y analíticas basadas en tiempo
+ * para un rango de filtros seleccionado.
  *
  * <p>
- * This DTO represents aggregated business metrics derived from sales data,
- * including total revenue, number of sales, average ticket value,
- * peak performance hours, and time-series data used for chart visualization.
+ * Este DTO representa métricas de negocio agregadas derivadas de los datos de ventas,
+ * incluyendo ingresos totales, número de ventas, valor promedio del ticket,
+ * horas de mayor rendimiento y datos en serie temporal utilizados para visualización
+ * en gráficos.
  * </p>
  */
 
@@ -25,39 +27,39 @@ import java.util.List;
 public class SalesInfoDTO {
 
     /**
-     * Total revenue generated from all sales within the selected filter range.
+     * Ingresos totales generados por todas las ventas dentro del rango seleccionado.
      */
     private BigDecimal totalRevenue;
 
     /**
-     * Total number of sales transactions within the selected filter range.
+     * Número total de transacciones de ventas dentro del rango seleccionado.
      */
     private Long totalSales;
 
     /**
-     * Average ticket value calculated as totalRevenue divided by totalSales.
+     * Valor promedio del ticket calculado como totalRevenue dividido por totalSales.
      */
     private BigDecimal averageTicket;
 
     /**
-     * Hour of the day with the highest revenue generation.
+     * Hora del día con mayor generación de ingresos.
      */
     private String highestRevenueHour;
 
     /**
-     * Hour of the day with the highest number of sales transactions.
+     * Hora del día con mayor número de transacciones de ventas.
      */
     private String highestSalesHour;
 
     /**
-     * Time-series data representing revenue evolution over time.
-     * Each point contains a time label and the corresponding revenue value.
+     * Datos en serie temporal que representan la evolución de ingresos en el tiempo.
+     * Cada punto contiene una etiqueta temporal y el valor correspondiente de ingresos.
      */
     private List<TimeSeriesPointDTO> revenueOverTime;
 
     /**
-     * Time-series data representing number of sales over time.
-     * Each point contains a time label and the corresponding sales count.
+     * Datos en serie temporal que representan la evolución del número de ventas en el tiempo.
+     * Cada punto contiene una etiqueta temporal y el conteo de ventas correspondiente.
      */
     private List<TimeSeriesPointDTO> salesOverTime;
 }

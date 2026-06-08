@@ -12,9 +12,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 /**
- * Service for handling authentication logic.
+ * Servicio encargado de gestionar la lógica de autenticación.
  *
- * <p>Validates user credentials and ensures the user account is active.</p>
+ * <p>
+ * Valida las credenciales del usuario y verifica que la cuenta
+ * se encuentre en estado activo.
+ * </p>
  */
 @Service
 @RequiredArgsConstructor
@@ -27,36 +30,36 @@ public class AuthService implements IAuthService{
     @Override
     public LoginResponseDTO login(LoginRequestDTO request) {
 
-        // Convert DTO to User
+        // Convertir DTO a Usuario
         User loginUser = iLoginRequestMapper.toUser(request);
 
-        // Find user
+        // Buscar usuario
         User user = iUserRepository.findByUserName(loginUser.getUserName())
                 .orElseThrow(() -> new AuthException(
                         "USER_NOT_FOUND",
-                        "User not found",
+                        "Usuario no encontrado",
                         "userName"
                 ));
 
-        // Validate password
+        // Validar contraseña
         if (!user.getUserPassword().equals(loginUser.getUserPassword())) {
             throw new AuthException(
                     "INVALID_CREDENTIALS",
-                    "Invalid username or password",
+                    "Usuario o contraseña incorrectos",
                     "userPassword"
             );
         }
 
-        // Validate status
+        // Validar estado
         if (user.getUserStatus() != UserStatus.ACTIVE) {
             throw new AuthException(
                     "USER_INACTIVE",
-                    "User account is not active",
+                    "La cuenta de usuario no está activa",
                     "userStatus"
             );
         }
 
-        // Success
+        // Autenticación exitosa
         return iLoginResponseMapper.toDto(user);
     }
 }

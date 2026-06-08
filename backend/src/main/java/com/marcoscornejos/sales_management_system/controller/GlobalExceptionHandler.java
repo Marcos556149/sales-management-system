@@ -37,15 +37,15 @@ import java.util.Map;
 public class GlobalExceptionHandler {
 
     /**
-     * Handles authentication-related exceptions.
+     * Maneja las excepciones relacionadas con autenticación.
      *
      * <p>
-     * Returns a standardized error response compatible with the frontend error handler,
-     * including error code, message, and optional field reference.
+     * Devuelve una respuesta de error estandarizada compatible con el manejador de errores del frontend,
+     * incluyendo código de error, mensaje y referencia opcional al campo afectado.
      * </p>
      *
-     * @param ex authentication exception
-     * @return standardized error response with HTTP 401 status
+     * @param ex excepción de autenticación
+     * @return respuesta de error estandarizada con estado HTTP 401
      */
     @ExceptionHandler(AuthException.class)
     public ResponseEntity<Map<String, Object>> handleAuthException(AuthException ex) {
@@ -362,39 +362,39 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * Handles user-related exceptions thrown when business rules
-     * or validations fail within the User domain.
+     * Maneja las excepciones relacionadas con usuarios lanzadas cuando las reglas de negocio
+     * o validaciones fallan dentro del dominio de Usuario.
      *
      * <p>
-     * This handler centralizes all exceptions that extend {@code UserException},
-     * ensuring a consistent error response format across the application.
+     * Este manejador centraliza todas las excepciones que extienden de {@code UserException},
+     * asegurando un formato de respuesta de error consistente en toda la aplicación.
      * </p>
      *
      * <p>
-     * The response follows the standardized structure:
+     * La respuesta sigue la estructura estandarizada:
      * </p>
      *
      * <pre>
      * {
      *   "error": {
      *     "code": "ERROR_CODE",
-     *     "message": "Human readable message",
-     *     "field": "Optional field related to the error"
+     *     "message": "Mensaje legible para el usuario",
+     *     "field": "Campo opcional relacionado con el error"
      *   }
      * }
      * </pre>
      *
      * <p>
-     * The frontend should use:
+     * El frontend debe utilizar:
      * <ul>
-     *   <li><b>code</b>: to determine error type and UI behavior</li>
-     *   <li><b>message</b>: to display or log human-readable information</li>
-     *   <li><b>field</b>: to associate validation errors with specific inputs</li>
+     *   <li><b>code</b>: para determinar el tipo de error y el comportamiento de la UI</li>
+     *   <li><b>message</b>: para mostrar o registrar información legible para el usuario</li>
+     *   <li><b>field</b>: para asociar errores de validación con campos específicos</li>
      * </ul>
      * </p>
      *
-     * @param ex the user-related exception containing error details
-     * @return a 400 Bad Request response with a standardized error body
+     * @param ex excepción relacionada con usuarios que contiene los detalles del error
+     * @return respuesta 400 Bad Request con un cuerpo de error estandarizado
      */
     @ExceptionHandler(UserException.class)
     public ResponseEntity<Map<String, Object>> handleUserException(UserException ex) {
@@ -528,39 +528,39 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * Handles system configuration-related exceptions thrown when
-     * business rules or validations fail within the System Configuration domain.
+     * Maneja las excepciones relacionadas con la configuración del sistema lanzadas cuando
+     * las reglas de negocio o validaciones fallan dentro del dominio de Configuración del Sistema.
      *
      * <p>
-     * This handler centralizes all exceptions that extend {@code SystemConfigurationException},
-     * ensuring a consistent error response format across the application.
+     * Este manejador centraliza todas las excepciones que extienden de {@code SystemConfigurationException},
+     * asegurando un formato de respuesta de error consistente en toda la aplicación.
      * </p>
      *
      * <p>
-     * The response follows the standardized structure:
+     * La respuesta sigue la estructura estandarizada:
      * </p>
      *
      * <pre>
      * {
      *   "error": {
      *     "code": "ERROR_CODE",
-     *     "message": "Human readable message",
-     *     "field": "Optional field related to the error"
+     *     "message": "Mensaje legible para el usuario",
+     *     "field": "Campo opcional relacionado con el error"
      *   }
      * }
      * </pre>
      *
      * <p>
-     * The frontend should use:
+     * El frontend debe utilizar:
      * <ul>
-     *   <li><b>code</b>: to determine error type and UI behavior</li>
-     *   <li><b>message</b>: to display or log human-readable information</li>
-     *   <li><b>field</b>: to associate validation errors with specific inputs</li>
+     *   <li><b>code</b>: para determinar el tipo de error y el comportamiento de la UI</li>
+     *   <li><b>message</b>: para mostrar o registrar información legible para el usuario</li>
+     *   <li><b>field</b>: para asociar errores de validación con campos específicos</li>
      * </ul>
      * </p>
      *
-     * @param ex the system configuration-related exception containing error details
-     * @return a 400 Bad Request response with a standardized error body
+     * @param ex excepción relacionada con la configuración del sistema que contiene los detalles del error
+     * @return respuesta 400 Bad Request con un cuerpo de error estandarizado
      */
     @ExceptionHandler(SystemConfigurationException.class)
     public ResponseEntity<Map<String, Object>> handleSystemConfigurationException(
@@ -578,39 +578,39 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * Handles statistics-related exceptions thrown when business rules
-     * or validations fail within the Statistics domain.
+     * Maneja las excepciones relacionadas con estadísticas lanzadas cuando
+     * las reglas de negocio o validaciones fallan dentro del dominio de Estadísticas.
      *
      * <p>
-     * This handler centralizes all exceptions that extend {@code StatisticsException},
-     * ensuring a consistent error response format across the application.
+     * Este manejador centraliza todas las excepciones que extienden de {@code StatisticsException},
+     * asegurando un formato de respuesta de error consistente en toda la aplicación.
      * </p>
      *
      * <p>
-     * The response follows the standardized structure:
+     * La respuesta sigue la estructura estandarizada:
      * </p>
      *
      * <pre>
      * {
      *   "error": {
      *     "code": "ERROR_CODE",
-     *     "message": "Human readable message",
-     *     "field": "Optional field related to the error"
+     *     "message": "Mensaje legible para el usuario",
+     *     "field": "Campo opcional relacionado con el error"
      *   }
      * }
      * </pre>
      *
      * <p>
-     * The frontend should use:
+     * El frontend debe utilizar:
      * <ul>
-     *   <li><b>code</b>: to determine error type and UI behavior</li>
-     *   <li><b>message</b>: to display or log human-readable information</li>
-     *   <li><b>field</b>: to associate validation errors with specific inputs</li>
+     *   <li><b>code</b>: para determinar el tipo de error y el comportamiento de la UI</li>
+     *   <li><b>message</b>: para mostrar o registrar información legible para el usuario</li>
+     *   <li><b>field</b>: para asociar errores de validación con campos específicos</li>
      * </ul>
      * </p>
      *
-     * @param ex the statistics-related exception containing error details
-     * @return a 400 Bad Request response with a standardized error body
+     * @param ex excepción relacionada con estadísticas que contiene los detalles del error
+     * @return respuesta 400 Bad Request con un cuerpo de error estandarizado
      */
     @ExceptionHandler(StatisticsException.class)
     public ResponseEntity<Map<String, Object>> handleStatisticsException(

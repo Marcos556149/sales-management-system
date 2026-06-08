@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { 
-  Package, 
-  Loader2, 
+import {
+  Package,
+  Loader2,
   AlertCircle,
   ClipboardList
 } from 'lucide-react';
@@ -12,7 +12,7 @@ import { useToast } from './ToastContext';
 
 const UnsoldProductsSection = ({ userId, startDate, endDate }) => {
   const { addToast } = useToast();
-  
+
   // Filters & pagination state
   const [page, setPage] = useState(1); // Frontend page: 1-indexed
   const size = 20;
@@ -45,7 +45,7 @@ const UnsoldProductsSection = ({ userId, startDate, endDate }) => {
 
       const controller = new AbortController();
       abortControllerRef.current = controller;
-      
+
       setLoading(true);
       setError(null);
 
@@ -71,11 +71,11 @@ const UnsoldProductsSection = ({ userId, startDate, endDate }) => {
         }
       } catch (err) {
         if (err.name === 'AbortError') return;
-        
+
         console.error("Error fetching unsold products:", err);
         if (controller === abortControllerRef.current) {
-          setError(err.message || "Failed to load unsold products");
-          addToast(err.message || "Error fetching unsold products", "error");
+          setError(err.message || "No se pudieron cargar los productos no vendidos");
+          addToast(err.message || "Error al obtener los productos no vendidos", "error");
         }
       } finally {
         if (controller === abortControllerRef.current) {
@@ -105,8 +105,8 @@ const UnsoldProductsSection = ({ userId, startDate, endDate }) => {
         <table className="unsold-table skeleton">
           <thead>
             <tr>
-              <th>Product Code</th>
-              <th>Product Name</th>
+              <th>Código de Producto</th>
+              <th>Nombre del Producto</th>
             </tr>
           </thead>
           <tbody>
@@ -132,8 +132,8 @@ const UnsoldProductsSection = ({ userId, startDate, endDate }) => {
             <ClipboardList size={20} />
           </div>
           <div>
-            <h2>Unsold Products</h2>
-            <p>Paginatable list of products that had no sales within the selected filters</p>
+            <h2>Productos No Vendidos</h2>
+            <p>Lista paginada de productos que no registraron ventas dentro de los filtros seleccionados</p>
           </div>
         </div>
       </header>
@@ -145,13 +145,13 @@ const UnsoldProductsSection = ({ userId, startDate, endDate }) => {
         ) : error ? (
           <div className="unsold-error-state">
             <AlertCircle size={40} className="error-icon" />
-            <h3>Error Loading Data</h3>
+            <h3>Error al Cargar los Datos</h3>
             <p>{error}</p>
           </div>
         ) : !hasData ? (
           <div className="unsold-empty-state">
             <Package size={44} className="empty-icon" />
-            <h3>No unsold products for the selected filters</h3>
+            <h3>No hay productos no vendidos para los filtros seleccionados</h3>
           </div>
         ) : (
           <>
@@ -159,8 +159,8 @@ const UnsoldProductsSection = ({ userId, startDate, endDate }) => {
               <table className="unsold-table">
                 <thead>
                   <tr>
-                    <th>Product Code</th>
-                    <th>Product Name</th>
+                    <th>Código de Producto</th>
+                    <th>Nombre del Producto</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -176,7 +176,7 @@ const UnsoldProductsSection = ({ userId, startDate, endDate }) => {
 
             {/* Pagination Footer */}
             <div className="unsold-pagination-wrapper">
-              <Pagination 
+              <Pagination
                 currentPage={page}
                 totalPages={data.totalPages || 1}
                 totalElements={data.totalElements || 0}

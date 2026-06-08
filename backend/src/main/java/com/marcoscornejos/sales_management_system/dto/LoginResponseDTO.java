@@ -1,17 +1,16 @@
 package com.marcoscornejos.sales_management_system.dto;
 
-import com.marcoscornejos.sales_management_system.dto.EnumDTO;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /**
- * DTO representing the information returned to the client
- * after a successful login.
+ * DTO que representa la información devuelta al cliente
+ * después de un inicio de sesión exitoso.
  *
- * <p>Contains user-visible details such as username, role,
- * and preferred interface language.</p>
+ * <p>Contiene detalles visibles para el usuario, como el nombre de usuario,
+ * el rol asignado y el idioma de interfaz preferido.</p>
  */
 @Getter
 @Setter
@@ -19,10 +18,10 @@ import lombok.Setter;
 @AllArgsConstructor
 public class LoginResponseDTO {
 
-    /** Username of the authenticated user. */
+    /** Nombre de usuario del usuario autenticado. */
     private String userName;
 
-    /** Role assigned to the user (code + label). */
+    /** Rol asignado al usuario (código y etiqueta). */
     private EnumDTO userRole;
 
 }

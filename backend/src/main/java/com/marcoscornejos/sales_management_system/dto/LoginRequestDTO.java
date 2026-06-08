@@ -7,12 +7,12 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /**
- * DTO for receiving login data from the frontend.
+ * DTO para recibir los datos de inicio de sesión desde el frontend.
  *
- * <p>This object contains the username and password entered
- * by the user on the login form.</p>
+ * <p>Este objeto contiene el nombre de usuario y la contraseña ingresados
+ * por el usuario en el formulario de login.</p>
  *
- * <p>Validation ensures that neither field is left blank.</p>
+ * <p>La validación asegura que ningún campo quede vacío.</p>
  */
 @Getter
 @Setter
@@ -20,11 +20,11 @@ import lombok.Setter;
 @AllArgsConstructor
 public class LoginRequestDTO {
 
-    /** Username entered by the user. Must not be blank. */
-    @NotBlank(message = "Username is required")
+    /** Nombre de usuario ingresado por el usuario. No debe estar vacío. */
+    @NotBlank(message = "El nombre de usuario es obligatorio")
     private String userName;
 
-    /** Password entered by the user. Must not be blank. */
-    @NotBlank(message = "Password is required")
+    /** Contraseña ingresada por el usuario. No debe estar vacía. */
+    @NotBlank(message = "La contraseña es obligatoria")
     private String userPassword;
 }

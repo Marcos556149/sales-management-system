@@ -8,8 +8,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /**
- * DTO that represents the total revenue calculated
- * based on the selected filters.
+ * DTO que representa los ingresos totales calculados
+ * en base a los filtros seleccionados.
  */
 @Getter
 @Setter
@@ -18,7 +18,7 @@ import lombok.Setter;
 public class TotalRevenueResponseDTO {
 
     /**
-     * Sum of all sales amounts.
+     * Suma total de los montos de ventas.
      */
     private BigDecimal totalRevenue;
 }

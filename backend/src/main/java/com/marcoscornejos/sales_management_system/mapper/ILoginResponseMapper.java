@@ -7,23 +7,34 @@ import com.marcoscornejos.sales_management_system.model.UserRole;
 import org.mapstruct.Mapper;
 
 /**
- * Mapper for converting between {@link User} and {@link LoginResponseDTO}.
+ * Mapper para convertir entre {@link User} y {@link LoginResponseDTO}.
  *
- * <p>Handles transformations needed to return user info after login.</p>
+ * <p>
+ * Maneja las transformaciones necesarias para devolver la información
+ * del usuario después del inicio de sesión.
+ * </p>
  */
 @Mapper(componentModel = "spring")
 public interface ILoginResponseMapper {
 
     /**
-     * Maps a {@link User} entity to a {@link LoginResponseDTO}.
+     * Mapea una entidad {@link User} a un {@link LoginResponseDTO}.
      *
-     * @param user the User entity
-     * @return a LoginResponseDTO containing userName, userRole
+     * @param user entidad User
+     * @return LoginResponseDTO con el nombre de usuario y rol
      */
     LoginResponseDTO toDto(User user);
 
     /**
-     * Maps {@link UserRole} to {@link EnumDTO}.
+     * Mapea un {@link UserRole} a un {@link EnumDTO}.
+     *
+     * <p>
+     * Convierte el enum de rol de usuario a un DTO genérico de enumeración
+     * con su valor técnico y su nombre visible.
+     * </p>
+     *
+     * @param role rol del usuario
+     * @return EnumDTO con el valor y nombre del rol, o null si es null
      */
     default EnumDTO map(UserRole role) {
         if (role == null) {

@@ -3,32 +3,33 @@ package com.marcoscornejos.sales_management_system.projection;
 import java.math.BigDecimal;
 
 /**
- * Projection interface used to retrieve top-performing products
- * ranked by quantity sold.
+ * Interfaz de proyección utilizada para obtener los productos con mejor desempeño
+ * según la cantidad vendida.
  *
  * <p>
- * Provides only the fields required for quantity-based
- * product ranking charts.
+ * Proporciona únicamente los campos necesarios para generar gráficos
+ * de ranking de productos basados en cantidad vendida.
  * </p>
  */
 public interface TopProductsByQuantityProjection {
 
     /**
-     * Unique product code that identifies the product.
+     * Código único que identifica al producto.
      *
-     * @return product code
+     * @return código del producto
      */
     String getProductCode();
 
     /**
-     * Name of the product.
+     * Nombre del producto.
      *
-     * @return product name
+     * @return nombre del producto
      */
     String getProductName();
 
     /**
-     * Total quantity sold (supports fractional values depending on unit type).
+     * Cantidad total vendida (admite valores fraccionarios según
+     * la unidad de medida del producto).
      */
     BigDecimal getQuantitySold();
 }

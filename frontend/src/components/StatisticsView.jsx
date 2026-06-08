@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  BarChart3, 
-  Users, 
-  Calendar as CalendarIcon, 
-  Filter, 
+import {
+  BarChart3,
+  Users,
+  Calendar as CalendarIcon,
+  Filter,
   Play,
   TrendingUp,
   Loader2,
@@ -14,7 +14,7 @@ import {
   FileDown
 } from 'lucide-react';
 import DatePicker from 'react-datepicker';
-import { enUS } from 'date-fns/locale';
+import { enUS, es } from 'date-fns/locale';
 import 'react-datepicker/dist/react-datepicker.css';
 import './StatisticsView.css';
 import { apiClient } from '../api/client';
@@ -62,7 +62,7 @@ const IsolatedDateInput = React.forwardRef(({ value, onClick, onManualChange, on
 
     const normY = Math.max(yInt, 1);
     const normM = Math.min(Math.max(mInt, 1), 12);
-    
+
     const daysInMonth = (y, m) => {
       if (m === 2) {
         const leap = (y % 4 === 0 && (y % 100 !== 0 || y % 400 === 0));
@@ -75,7 +75,7 @@ const IsolatedDateInput = React.forwardRef(({ value, onClick, onManualChange, on
     const normD = Math.min(Math.max(dInt, 1), maxD);
 
     const formatted = `${String(normY).padStart(4, '0')}-${String(normM).padStart(2, '0')}-${String(normD).padStart(2, '0')}`;
-    
+
     setDay(String(normD).padStart(2, '0'));
     setMonth(String(normM).padStart(2, '0'));
     setYear(String(normY).padStart(4, '0'));
@@ -102,31 +102,31 @@ const IsolatedDateInput = React.forwardRef(({ value, onClick, onManualChange, on
   return (
     <div className="stats-iso-date-container" ref={ref}>
       <div className="stats-iso-date-inputs">
-        <input 
-          className="stats-iso-date-field stats-iso-day" 
-          value={day} 
+        <input
+          className="stats-iso-date-field stats-iso-day"
+          value={day}
           onChange={e => handleChange(e, setDay, 2)}
           onBlur={() => validateAndFormat(day, month, year, true)}
           onKeyDown={handleKeyDown}
           placeholder="DD"
         />
         <span className="stats-iso-separator">/</span>
-        <input 
-          className="stats-iso-date-field stats-iso-month" 
-          value={month} 
+        <input
+          className="stats-iso-date-field stats-iso-month"
+          value={month}
           onChange={e => handleChange(e, setMonth, 2)}
           onBlur={() => validateAndFormat(day, month, year, true)}
           onKeyDown={handleKeyDown}
           placeholder="MM"
         />
         <span className="stats-iso-separator">/</span>
-        <input 
-          className="stats-iso-date-field stats-iso-year" 
-          value={year} 
+        <input
+          className="stats-iso-date-field stats-iso-year"
+          value={year}
           onChange={e => handleChange(e, setYear, 4)}
           onBlur={() => validateAndFormat(day, month, year, true)}
           onKeyDown={handleKeyDown}
-          placeholder="YYYY"
+          placeholder="AAAA"
         />
       </div>
       <button type="button" className="stats-iso-cal-btn" onClick={onClick}>
@@ -138,13 +138,13 @@ const IsolatedDateInput = React.forwardRef(({ value, onClick, onManualChange, on
 
 const StatisticsView = () => {
   const { addToast } = useToast();
-  
+
   // State for Filters
   const [users, setUsers] = useState([]);
   const [selectedUser, setSelectedUser] = useState("ALL");
   const [startDate, setStartDate] = useState(new Date());
   const [endDate, setEndDate] = useState(new Date());
-  
+
   // UI State
   const [loadingUsers, setLoadingUsers] = useState(true);
   const [generating, setGenerating] = useState(false);
@@ -155,20 +155,20 @@ const StatisticsView = () => {
   const [loadingChart, setLoadingChart] = useState(false);
   const [appliedFilters, setAppliedFilters] = useState(null);
   const [isExportOpen, setIsExportOpen] = useState(false);
-  
+
   // Debug state changes
   useEffect(() => {
-    console.log("[StatisticsView] Filter State Changed:", { 
-      selectedUser, 
-      startDate: startDate.toISOString().split('T')[0], 
-      endDate: endDate.toISOString().split('T')[0] 
+    console.log("[StatisticsView] Filter State Changed:", {
+      selectedUser,
+      startDate: startDate.toISOString().split('T')[0],
+      endDate: endDate.toISOString().split('T')[0]
     });
   }, [selectedUser, startDate, endDate]);
 
   // Fetch Users for Filter
   useEffect(() => {
     const controller = new AbortController();
-    
+
     const fetchUsers = async () => {
       try {
         const response = await apiClient.get('/api/statistics/filters/users', {
@@ -178,7 +178,7 @@ const StatisticsView = () => {
       } catch (err) {
         if (err.name === 'AbortError') return;
         console.error("Error fetching users for stats:", err);
-        addToast("Could not load users for filtering", "error");
+        addToast("No se pudieron cargar los usuarios para el filtro", "error");
       } finally {
         setLoadingUsers(false);
       }
@@ -202,7 +202,7 @@ const StatisticsView = () => {
     setTimeSeriesData(null);
     setTopProductsData(null);
     setAppliedFilters(null);
-    
+
     // Format dates for backend (YYYY-MM-DD)
     const formatStr = (date) => {
       const targetDate = date || new Date();
@@ -230,7 +230,7 @@ const StatisticsView = () => {
       const totalSales = salesResponse.data.totalSales;
 
       if (totalSales === 0) {
-        addToast("No data available for the selected criteria", "info");
+        addToast("No hay datos disponibles para los filtros seleccionados", "error");
         setStatsData(null);
         setTopProductsData(null);
         return;
@@ -263,7 +263,7 @@ const StatisticsView = () => {
 
     } catch (err) {
       console.error("Error generating statistics:", err);
-      const errorMessage = err.message || "An error occurred while fetching statistics";
+      const errorMessage = err.message || "Ocurrió un error al obtener las estadísticas";
       addToast(errorMessage, "error");
     } finally {
       setGenerating(false);
@@ -288,10 +288,10 @@ const StatisticsView = () => {
     };
   }, [generating, selectedUser, startDate, endDate]);
 
-  // Keyboard Shortcut: Ctrl + Shift + K to open export modal
+  // Keyboard Shortcut: Ctrl + Shift + F to open export modal
   useEffect(() => {
     const handleGlobalShortcut = (e) => {
-      if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key.toLowerCase() === 'k') {
+      if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key.toLowerCase() === 'f') {
         e.preventDefault();
         setIsExportOpen(true);
       }
@@ -322,8 +322,8 @@ const StatisticsView = () => {
       {/* Header */}
       <header className="stats-iso-header">
         <div className="stats-iso-title-group">
-          <h1>Sales Statistics</h1>
-          <p>Analyze your business performance and product trends.</p>
+          <h1>Estadísticas de ventas</h1>
+          <p>Analiza el rendimiento de tu negocio y las tendencias de productos.</p>
         </div>
         <div className="stats-iso-icon">
           <TrendingUp size={40} color="#3182ce" opacity={0.2} />
@@ -333,20 +333,20 @@ const StatisticsView = () => {
       {/* Filters Card */}
       <section className="stats-iso-filters-card">
         <div className="stats-iso-filters-grid">
-          
+
           {/* User Filter */}
           <div className="stats-iso-filter-item">
             <label className="stats-iso-label">
               <Users size={16} />
-              Filter by Seller
+              Filtrar por vendedor
             </label>
-            <select 
+            <select
               className="stats-iso-select"
               value={selectedUser}
               onChange={(e) => setSelectedUser(e.target.value)}
               disabled={loadingUsers}
             >
-              <option value="ALL">All Users</option>
+              <option value="ALL">Todos los usuarios</option>
               {users.map(u => (
                 <option key={u.userId} value={u.userId}>{u.userName}</option>
               ))}
@@ -357,7 +357,7 @@ const StatisticsView = () => {
           <div className="stats-iso-filter-item">
             <label className="stats-iso-label">
               <CalendarIcon size={16} />
-              Start Date
+              Fecha de Inicio
             </label>
             <DatePicker
               selected={startDate}
@@ -368,10 +368,10 @@ const StatisticsView = () => {
                 }
               }}
               dateFormat="yyyy-MM-dd"
-              locale={enUS}
-              todayButton="Today"
+              locale={es}
+              todayButton="Hoy"
               customInput={
-                <IsolatedDateInput 
+                <IsolatedDateInput
                   value={toDateStr(startDate)}
                   onManualChange={str => setStartDate(fromDateStr(str))}
                   forceSync={syncCounter}
@@ -384,7 +384,7 @@ const StatisticsView = () => {
           <div className="stats-iso-filter-item">
             <label className="stats-iso-label">
               <CalendarIcon size={16} />
-              End Date
+              Fecha de fin
             </label>
             <DatePicker
               selected={endDate}
@@ -395,10 +395,10 @@ const StatisticsView = () => {
                 }
               }}
               dateFormat="yyyy-MM-dd"
-              locale={enUS}
-              todayButton="Today"
+              locale={es}
+              todayButton="Hoy"
               customInput={
-                <IsolatedDateInput 
+                <IsolatedDateInput
                   value={toDateStr(endDate)}
                   onManualChange={str => setEndDate(fromDateStr(str))}
                   forceSync={syncCounter}
@@ -410,7 +410,7 @@ const StatisticsView = () => {
 
         {/* Generate Button Container - Below Filters */}
         <div className="stats-iso-action-container">
-          <button 
+          <button
             className="stats-iso-btn-primary"
             onClick={handleGenerate}
             disabled={generating}
@@ -421,22 +421,22 @@ const StatisticsView = () => {
             ) : (
               <Play size={20} fill="currentColor" />
             )}
-            <span>Generate Statistics</span>
+            <span>Generar estadísticas</span>
             {!generating && (
               <span className="btn-shortcut" style={{ backgroundColor: 'rgba(255, 255, 255, 0.2)', color: 'white', borderColor: 'rgba(255, 255, 255, 0.3)' }}>Ctrl+Enter</span>
             )}
           </button>
 
-          <button 
+          <button
             type="button"
             className="stats-iso-btn-secondary"
             onClick={() => setIsExportOpen(true)}
             disabled={generating}
-            title="Ctrl + Shift + K"
+            title="Ctrl + Shift + F"
           >
             <FileDown size={20} />
-            <span>Export PDF</span>
-            <span className="btn-shortcut" style={{ backgroundColor: 'rgba(49, 130, 206, 0.1)', color: '#3182ce', borderColor: 'rgba(49, 130, 206, 0.2)' }}>Ctrl+Shift+K</span>
+            <span>Exportar PDF</span>
+            <span className="btn-shortcut" style={{ backgroundColor: 'rgba(49, 130, 206, 0.1)', color: '#3182ce', borderColor: 'rgba(49, 130, 206, 0.2)' }}>Ctrl+Shift+F</span>
           </button>
         </div>
       </section>
@@ -447,88 +447,88 @@ const StatisticsView = () => {
           <div className="stats-iso-section-header">
             <TrendingUp size={22} className="section-header-icon" />
             <div>
-              <h2>Sales Information</h2>
-              <p>General metrics and store revenue evolution over time</p>
+              <h2>Información de ventas</h2>
+              <p>Métricas generales y evolución de ingresos del negocio a lo largo del tiempo</p>
             </div>
           </div>
           <div className="stats-iso-results-grid">
-          {/* Total Sales Card */}
-          <div className="stats-iso-card stats-card-blue">
-            <div className="stats-card-icon">
-              <ShoppingBag size={24} />
+            {/* Total Sales Card */}
+            <div className="stats-iso-card stats-card-blue">
+              <div className="stats-card-icon">
+                <ShoppingBag size={24} />
+              </div>
+              <div className="stats-card-info">
+                <h3>Total de ventas</h3>
+                <p className="stats-card-value">{statsData.totalSales}</p>
+                <span className="stats-card-label">Pedidos procesados</span>
+              </div>
             </div>
-            <div className="stats-card-info">
-              <h3>Total Sales</h3>
-              <p className="stats-card-value">{statsData.totalSales}</p>
-              <span className="stats-card-label">Orders processed</span>
-            </div>
-          </div>
 
-          {/* Total Revenue Card */}
-          <div className="stats-iso-card stats-card-emerald">
-            <div className="stats-card-icon">
-              <DollarSign size={24} />
+            {/* Total Revenue Card */}
+            <div className="stats-iso-card stats-card-emerald">
+              <div className="stats-card-icon">
+                <DollarSign size={24} />
+              </div>
+              <div className="stats-card-info">
+                <h3>Ingresos totales</h3>
+                <p className="stats-card-value">
+                  ${statsData.totalRevenue}
+                </p>
+                <span className="stats-card-label">Ingresos brutos</span>
+              </div>
             </div>
-            <div className="stats-card-info">
-              <h3>Total Revenue</h3>
-              <p className="stats-card-value">
-                ${statsData.totalRevenue}
-              </p>
-              <span className="stats-card-label">Gross earnings</span>
-            </div>
-          </div>
 
-          {/* Average Ticket Card */}
-          <div className="stats-iso-card stats-card-indigo">
-            <div className="stats-card-icon">
-              <TrendingUp size={24} />
+            {/* Average Ticket Card */}
+            <div className="stats-iso-card stats-card-indigo">
+              <div className="stats-card-icon">
+                <TrendingUp size={24} />
+              </div>
+              <div className="stats-card-info">
+                <h3>Ticket promedio</h3>
+                <p className="stats-card-value">
+                  ${statsData.averageTicket}
+                </p>
+                <span className="stats-card-label">Por transacción</span>
+              </div>
             </div>
-            <div className="stats-card-info">
-              <h3>Average Ticket</h3>
-              <p className="stats-card-value">
-                ${statsData.averageTicket}
-              </p>
-              <span className="stats-card-label">Per transaction</span>
-            </div>
-          </div>
 
-          {/* Highest Sales Hour Card */}
-          <div className="stats-iso-card stats-card-orange">
-            <div className="stats-card-icon">
-              <Clock size={24} />
+            {/* Highest Sales Hour Card */}
+            <div className="stats-iso-card stats-card-orange">
+              <div className="stats-card-icon">
+                <Clock size={24} />
+              </div>
+              <div className="stats-card-info">
+                <h3>Hora pico de ventas</h3>
+                <p className="stats-card-value">
+                  {statsData.highestSalesHour || "N/A"}
+                </p>
+                <span className="stats-card-label">Mayor cantidad de pedidos</span>
+              </div>
             </div>
-            <div className="stats-card-info">
-              <h3>Peak Sales Hour</h3>
-              <p className="stats-card-value">
-                {statsData.highestSalesHour || "N/A"}
-              </p>
-              <span className="stats-card-label">Most orders</span>
-            </div>
-          </div>
 
-          {/* Highest Revenue Hour Card */}
-          <div className="stats-iso-card stats-card-purple">
-            <div className="stats-card-icon">
-              <Clock size={24} />
-            </div>
-            <div className="stats-card-info">
-              <h3>Peak Revenue Hour</h3>
-              <p className="stats-card-value">
-                {statsData.highestRevenueHour || "N/A"}
-              </p>
-              <span className="stats-card-label">Highest earnings</span>
+            {/* Highest Revenue Hour Card */}
+            <div className="stats-iso-card stats-card-purple">
+              <div className="stats-card-icon">
+                <Clock size={24} />
+              </div>
+              <div className="stats-card-info">
+                <h3>Hora pico de ingresos</h3>
+                <p className="stats-card-value">
+                  {statsData.highestRevenueHour || "N/A"}
+                </p>
+                <span className="stats-card-label">Mayores ingresos</span>
+              </div>
             </div>
           </div>
-        </div>
         </>
       )}
 
       {/* Time Series Chart */}
       {(generating || timeSeriesData) && (
         <section className="stats-iso-chart-section">
-          <SalesTimeSeriesChart 
-            data={timeSeriesData} 
-            loading={loadingChart} 
+          <SalesTimeSeriesChart
+            data={timeSeriesData}
+            loading={loadingChart}
             startDate={startDate}
             endDate={endDate}
           />
@@ -541,24 +541,24 @@ const StatisticsView = () => {
           <div className="stats-iso-section-header">
             <Package size={22} className="section-header-icon" />
             <div>
-              <h2>Products Information</h2>
-              <p>Analyze top selling products and inventory performance</p>
+              <h2>Información de productos</h2>
+              <p>Analiza los productos más vendidos y el rendimiento del inventario</p>
             </div>
           </div>
-          <TopProductsSection 
-            data={topProductsData} 
-            loading={generating} 
+          <TopProductsSection
+            data={topProductsData}
+            loading={generating}
             startDate={startDate}
             endDate={endDate}
           />
           {appliedFilters && (
             <>
-              <SoldProductsRankingSection 
+              <SoldProductsRankingSection
                 userId={appliedFilters.userId}
                 startDate={appliedFilters.startDate}
                 endDate={appliedFilters.endDate}
               />
-              <UnsoldProductsSection 
+              <UnsoldProductsSection
                 userId={appliedFilters.userId}
                 startDate={appliedFilters.startDate}
                 endDate={appliedFilters.endDate}

@@ -22,7 +22,7 @@ const RevenueTooltip = ({ active, payload, label }) => {
         <div className="tooltip-items">
           <div className="tooltip-item revenue">
             <span className="dot"></span>
-            <span className="label">Revenue:</span>
+            <span className="label">Ingresos:</span>
             <span className="value">${payload[0].value}</span>
           </div>
         </div>
@@ -43,8 +43,8 @@ const SalesTooltip = ({ active, payload, label }) => {
         <div className="tooltip-items">
           <div className="tooltip-item sales">
             <span className="dot"></span>
-            <span className="label">Sales Count:</span>
-            <span className="value">{payload[0].value} orders</span>
+            <span className="label">Ventas:</span>
+            <span className="value">{payload[0].value} órdenes</span>
           </div>
         </div>
       </div>
@@ -57,43 +57,43 @@ const SalesTooltip = ({ active, payload, label }) => {
  * SalesTimeSeriesChart Component (Renders two separate modern dashboard charts)
  */
 const SalesTimeSeriesChart = ({ data, loading, startDate, endDate }) => {
-  
+
   // 0. Format Date Range for Chart Subtitles
   const formattedRange = useMemo(() => {
     if (!startDate || !endDate) return '';
     const options = { year: 'numeric', month: 'short', day: 'numeric' };
-    const startStr = startDate.toLocaleDateString('en-US', options);
-    const endStr = endDate.toLocaleDateString('en-US', options);
+    const startStr = startDate.toLocaleDateString('es-AR', options);
+    const endStr = endDate.toLocaleDateString('es-AR', options);
     return `${startStr} – ${endStr}`;
   }, [startDate, endDate]);
-  
+
   // 1. Data Transformation
   const chartData = useMemo(() => {
     if (!data || !data.revenueOverTime || !data.salesOverTime) return [];
-    
+
     // Create a map by label to merge data
     const merged = {};
-    
+
     data.revenueOverTime.forEach(item => {
-      merged[item.label] = { 
+      merged[item.label] = {
         name: item.label,
         revenue: item.value,
-        sales: 0 
+        sales: 0
       };
     });
-    
+
     data.salesOverTime.forEach(item => {
       if (merged[item.label]) {
         merged[item.label].sales = item.value;
       } else {
-        merged[item.label] = { 
+        merged[item.label] = {
           name: item.label,
           revenue: 0,
-          sales: item.value 
+          sales: item.value
         };
       }
     });
-    
+
     return Object.values(merged).sort((a, b) => a.name.localeCompare(b.name));
   }, [data]);
 
@@ -116,26 +116,26 @@ const SalesTimeSeriesChart = ({ data, loading, startDate, endDate }) => {
 
   const formatXAxisLabel = (label) => {
     if (!label) return '';
-    
+
     // 1. HOUR: "14:00" or "22:00 - 22:59"
     if (label.includes(':')) {
       return label;
     }
-    
+
     const dateParts = label.split('-');
-    
+
     // 2. DAY: "2026-05-11"
     if (dateParts.length === 3) {
       const date = new Date(dateParts[0], dateParts[1] - 1, dateParts[2]);
-      return date.toLocaleDateString('en-US', { day: 'numeric', month: 'short' });
+      return date.toLocaleDateString('es-AR', { day: 'numeric', month: 'short' });
     }
-    
+
     // 3. MONTH: "2026-05"
     if (dateParts.length === 2) {
       const date = new Date(dateParts[0], dateParts[1] - 1, 1);
-      return date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+      return date.toLocaleDateString('es-AR', { month: 'short', year: 'numeric' });
     }
-    
+
     // 4. YEAR: "2026"
     return label;
   };
@@ -162,8 +162,8 @@ const SalesTimeSeriesChart = ({ data, loading, startDate, endDate }) => {
       <div className="stats-chart-card empty-state">
         <div className="empty-content">
           <TrendingUp size={48} className="empty-icon" />
-          <h3>No activity recorded</h3>
-          <p>No data available for the selected criteria.</p>
+          <h3>No hay actividad registrada</h3>
+          <p>No hay datos disponibles para los filtros seleccionados.</p>
         </div>
       </div>
     );
@@ -171,7 +171,7 @@ const SalesTimeSeriesChart = ({ data, loading, startDate, endDate }) => {
 
   return (
     <div className="stats-dashboard-charts-grid">
-      
+
       {/* Chart 1: Revenue Evolution */}
       <div className="stats-chart-card">
         <header className="chart-header">
@@ -180,8 +180,8 @@ const SalesTimeSeriesChart = ({ data, loading, startDate, endDate }) => {
               <DollarSign size={20} />
             </div>
             <div>
-              <h2>Total Revenue</h2>
-              <p>{formattedRange || 'Earnings evolution over the selected period'}</p>
+              <h2>Ingresos totales</h2>
+              <p>{formattedRange || 'Evolución de ingresos en el período seleccionado'}</p>
             </div>
           </div>
         </header>
@@ -194,19 +194,19 @@ const SalesTimeSeriesChart = ({ data, loading, startDate, endDate }) => {
             >
               <defs>
                 <linearGradient id="colorRevenueDual" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#6366f1" stopOpacity={0.25}/>
-                  <stop offset="95%" stopColor="#6366f1" stopOpacity={0}/>
+                  <stop offset="5%" stopColor="#6366f1" stopOpacity={0.25} />
+                  <stop offset="95%" stopColor="#6366f1" stopOpacity={0} />
                 </linearGradient>
               </defs>
-              
-              <CartesianGrid 
-                strokeDasharray="4 4" 
-                vertical={false} 
-                stroke="#f1f5f9" 
+
+              <CartesianGrid
+                strokeDasharray="4 4"
+                vertical={false}
+                stroke="#f1f5f9"
               />
-              
-              <XAxis 
-                dataKey="name" 
+
+              <XAxis
+                dataKey="name"
                 tickFormatter={formatXAxisLabel}
                 axisLine={false}
                 tickLine={false}
@@ -214,8 +214,8 @@ const SalesTimeSeriesChart = ({ data, loading, startDate, endDate }) => {
                 tickMargin={6}
                 minTickGap={25}
               />
-              
-              <YAxis 
+
+              <YAxis
                 tickFormatter={formatYAxisRevenue}
                 axisLine={false}
                 tickLine={false}
@@ -223,12 +223,12 @@ const SalesTimeSeriesChart = ({ data, loading, startDate, endDate }) => {
                 tickMargin={6}
                 width={60}
               />
-              
-              <Tooltip 
-                content={<RevenueTooltip />} 
+
+              <Tooltip
+                content={<RevenueTooltip />}
                 cursor={{ stroke: '#e2e8f0', strokeWidth: 1, strokeDasharray: '4 4' }}
               />
-              
+
               <Area
                 type="monotone"
                 dataKey="revenue"
@@ -252,8 +252,8 @@ const SalesTimeSeriesChart = ({ data, loading, startDate, endDate }) => {
               <ShoppingCart size={20} />
             </div>
             <div>
-              <h2>Sales Volume</h2>
-              <p>{formattedRange || 'Number of completed sales over time'}</p>
+              <h2>Volumen de ventas</h2>
+              <p>{formattedRange || 'Cantidad de ventas realizadas en el tiempo'}</p>
             </div>
           </div>
         </header>
@@ -266,19 +266,19 @@ const SalesTimeSeriesChart = ({ data, loading, startDate, endDate }) => {
             >
               <defs>
                 <linearGradient id="colorSalesDual" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#334155" stopOpacity={0.15}/>
-                  <stop offset="95%" stopColor="#334155" stopOpacity={0}/>
+                  <stop offset="5%" stopColor="#334155" stopOpacity={0.15} />
+                  <stop offset="95%" stopColor="#334155" stopOpacity={0} />
                 </linearGradient>
               </defs>
-              
-              <CartesianGrid 
-                strokeDasharray="4 4" 
-                vertical={false} 
-                stroke="#f1f5f9" 
+
+              <CartesianGrid
+                strokeDasharray="4 4"
+                vertical={false}
+                stroke="#f1f5f9"
               />
-              
-              <XAxis 
-                dataKey="name" 
+
+              <XAxis
+                dataKey="name"
                 tickFormatter={formatXAxisLabel}
                 axisLine={false}
                 tickLine={false}
@@ -286,8 +286,8 @@ const SalesTimeSeriesChart = ({ data, loading, startDate, endDate }) => {
                 tickMargin={6}
                 minTickGap={25}
               />
-              
-              <YAxis 
+
+              <YAxis
                 tickFormatter={formatYAxisSales}
                 axisLine={false}
                 tickLine={false}
@@ -295,12 +295,12 @@ const SalesTimeSeriesChart = ({ data, loading, startDate, endDate }) => {
                 tickMargin={6}
                 width={40}
               />
-              
-              <Tooltip 
-                content={<SalesTooltip />} 
+
+              <Tooltip
+                content={<SalesTooltip />}
                 cursor={{ stroke: '#e2e8f0', strokeWidth: 1, strokeDasharray: '4 4' }}
               />
-              
+
               <Area
                 type="monotone"
                 dataKey="sales"

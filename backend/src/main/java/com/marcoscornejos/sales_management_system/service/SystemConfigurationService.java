@@ -21,24 +21,25 @@ public class SystemConfigurationService implements ISystemConfigurationService{
 
 
     /**
-     * Retrieves the global system configuration.
+     * Obtiene la configuración global del sistema.
      *
      * <p>
-     * This method fetches the unique system configuration record identified
-     * by a fixed ID (1L). The configuration contains global values shared
-     * across all users, such as the business name and business address.
+     * Este método recupera el único registro de configuración del sistema,
+     * identificado por un ID fijo (1L). La configuración contiene valores
+     * globales compartidos por todos los usuarios, como el nombre y la
+     * dirección del negocio.
      * </p>
      *
      * <p>
-     * The existence of this record is guaranteed by database initialization.
-     * If the configuration is not found, it indicates a system inconsistency
-     * and an exception is thrown.
+     * La existencia de este registro está garantizada por la inicialización
+     * de la base de datos. Si la configuración no se encuentra, se considera
+     * una inconsistencia del sistema y se lanza una excepción.
      * </p>
      *
-     * @return the current system configuration mapped to a response DTO
+     * @return la configuración actual del sistema mapeada a un DTO de respuesta
      *
-     * @throws SystemConfigurationNotFoundException if the configuration
-     *         record does not exist in the database
+     * @throws SystemConfigurationNotFoundException si el registro de
+     *         configuración no existe en la base de datos
      */
     @Override
     @Transactional
@@ -47,50 +48,50 @@ public class SystemConfigurationService implements ISystemConfigurationService{
         SystemConfiguration configuration = iSystemConfigurationRepository
                 .findById(1L)
                 .orElseThrow(() -> new SystemConfigurationNotFoundException(
-                        "System configuration not found"
+                        "Configuración del sistema no encontrada"
                 ));
 
         return iSystemConfigurationResponseMapper.toDto(configuration);
     }
 
     /**
-     * Updates the global system configuration.
+     * Actualiza la configuración global del sistema.
      *
      * <p>
-     * Retrieves the unique system configuration record (ID = 1),
-     * applies the updated values, and persists the changes.
+     * Recupera el único registro de configuración del sistema (ID = 1),
+     * aplica los nuevos valores y persiste los cambios.
      * </p>
      *
      * <p>
-     * This operation is executed within a transactional context
-     * to ensure atomicity and consistency.
+     * Esta operación se ejecuta dentro de un contexto transaccional
+     * para garantizar atomicidad y consistencia.
      * </p>
      *
-     * @param request the new configuration values
-     * @return the updated system configuration
+     * @param request los nuevos valores de configuración
+     * @return la configuración actualizada del sistema
      *
-     * @throws SystemConfigurationNotFoundException if the configuration
-     *         record does not exist in the database
+     * @throws SystemConfigurationNotFoundException si el registro de
+     *         configuración no existe en la base de datos
      */
     @Override
     @Transactional
     public SystemConfigurationResponseDTO updateConfiguration(SystemConfigurationRequestDTO request) {
 
-        // 1. Retrieve existing configuration (ID = 1)
+        // 1. Recuperar configuración existente (ID = 1)
         SystemConfiguration configuration = iSystemConfigurationRepository
                 .findById(1L)
                 .orElseThrow(() -> new SystemConfigurationNotFoundException(
-                        "System configuration not found"
+                        "Configuración del sistema no encontrada"
                 ));
 
-        // 2. Apply updates using MapStruct
+        // 2. Aplicar actualizaciones mediante MapStruct
         iSystemConfigurationRequestMapper
                 .updateSystemConfigurationFromDto(request, configuration);
 
-        // 3. Persist changes
+        // 3. Persistir cambios
         iSystemConfigurationRepository.save(configuration);
 
-        // 4. Map directly from managed entity
+        // 4. Mapear directamente desde la entidad gestionada
         return iSystemConfigurationResponseMapper.toDto(configuration);
     }
 }

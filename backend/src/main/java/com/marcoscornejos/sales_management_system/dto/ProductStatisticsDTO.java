@@ -8,13 +8,13 @@ import lombok.Setter;
 import java.util.List;
 
 /**
- * Contains aggregated statistical information about products based on sales performance
- * within a selected filter range.
+ * Contiene información estadística agregada de productos basada en el rendimiento de ventas
+ * dentro de un rango de filtros seleccionado.
  *
  * <p>
- * This DTO groups different product analytics views, including top-performing products,
- * dynamic rankings, and products with no sales activity. It is used as part of the
- * sales statistics dashboard to provide insights into product behavior.
+ * Este DTO agrupa diferentes vistas analíticas de productos, incluyendo productos con mejor rendimiento,
+ * rankings dinámicos y productos sin actividad de ventas. Se utiliza como parte del dashboard
+ * de estadísticas de ventas para proporcionar información sobre el comportamiento de los productos.
  * </p>
  */
 
@@ -25,22 +25,22 @@ import java.util.List;
 public class ProductStatisticsDTO {
 
     /**
-     * Top 10 products by quantity sold.
+     * Top 10 productos por cantidad vendida.
      */
     private List<SoldProductDTO> topProductsByQuantity;
 
     /**
-     * Top 10 products by revenue generated.
+     * Top 10 productos por ingresos generados.
      */
     private List<SoldProductDTO> topProductsByRevenue;
 
     /**
-     * Full product ranking based on selected metric and order.
+     * Ranking completo de productos basado en la métrica y orden seleccionados.
      */
     private List<SoldProductDTO> productRanking;
 
     /**
-     * Products with no sales in selected range.
+     * Productos sin ventas en el rango seleccionado.
      */
     private List<UnsoldProductDTO> unsoldProducts;
 }

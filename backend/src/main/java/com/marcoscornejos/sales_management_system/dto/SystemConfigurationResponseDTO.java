@@ -6,11 +6,12 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /**
- * DTO used to represent system configuration data returned to the client.
+ * DTO utilizado para representar la configuración del sistema
+ * enviada al cliente.
  *
  * <p>
- * It includes global configuration values shared across all users,
- * such as the business name and business address.
+ * Incluye valores globales compartidos entre todos los usuarios,
+ * como el nombre del negocio y la dirección del negocio.
  * </p>
  */
 @Getter @Setter
@@ -19,19 +20,19 @@ import lombok.Setter;
 public class SystemConfigurationResponseDTO {
 
     /**
-     * Name of the business.
+     * Nombre del negocio.
      *
      * <p>
-     * This value is global and shared across all users of the system.
+     * Este valor es global y compartido por todos los usuarios del sistema.
      * </p>
      */
     private String businessName;
 
     /**
-     * Address of the business.
+     * Dirección del negocio.
      *
      * <p>
-     * This value is global and shared across all users of the system.
+     * Este valor es global y compartido por todos los usuarios del sistema.
      * </p>
      */
     private String businessAddress;

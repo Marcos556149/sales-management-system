@@ -8,20 +8,20 @@ import lombok.Setter;
 import java.util.List;
 
 /**
- * DTO that contains top-performing product statistics
- * for analytics charts.
+ * DTO que contiene estadísticas de productos con mejor rendimiento
+ * para gráficos de análisis.
  *
  * <p>
- * This DTO provides:
+ * Este DTO proporciona:
  * <ul>
- *   <li>Top 10 products by quantity sold</li>
- *   <li>Top 10 products by revenue generated</li>
+ *   <li>Top 10 productos por cantidad vendida</li>
+ *   <li>Top 10 productos por ingresos generados</li>
  * </ul>
  * </p>
  *
  * <p>
- * All rankings are calculated using only the sales
- * that match the selected filters.
+ * Todos los rankings se calculan utilizando únicamente las ventas
+ * que coinciden con los filtros seleccionados.
  * </p>
  */
 @Getter
@@ -31,12 +31,12 @@ import java.util.List;
 public class TopProductsResponseDTO {
 
     /**
-     * Top 10 products ranked by quantity sold.
+     * Top 10 productos ordenados por cantidad vendida.
      */
     private List<TopProductsByQuantityDTO> topProductsByQuantity;
 
     /**
-     * Top 10 products ranked by revenue generated.
+     * Top 10 productos ordenados por ingresos generados.
      */
     private List<TopProductsByRevenueDTO> topProductsByRevenue;
 }

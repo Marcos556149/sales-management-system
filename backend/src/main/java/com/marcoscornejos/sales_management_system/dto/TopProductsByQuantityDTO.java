@@ -8,12 +8,12 @@ import lombok.Setter;
 import java.math.BigDecimal;
 
 /**
- * Represents a top-performing product ranked by quantity sold.
+ * Representa un producto destacado ordenado por cantidad vendida.
  *
  * <p>
- * This DTO is used for chart visualizations that display
- * the products with the highest number of sold units
- * within the selected filter range.
+ * Este DTO se utiliza para visualizaciones de gráficos que muestran
+ * los productos con mayor número de unidades vendidas dentro del
+ * rango de filtros seleccionado.
  * </p>
  */
 @Getter
@@ -23,18 +23,18 @@ import java.math.BigDecimal;
 public class TopProductsByQuantityDTO {
 
     /**
-     * Unique product code that identifies the product.
+     * Código único del producto que lo identifica.
      */
     private String productCode;
 
     /**
-     * Name of the product.
+     * Nombre del producto.
      */
     private String productName;
 
     /**
-     * Total quantity sold (can be fractional depending on unit type,
-     * e.g., kilograms, liters, etc.).
+     * Cantidad total vendida (puede ser fraccionaria dependiendo del tipo de unidad,
+     * por ejemplo: kilogramos, litros, etc.).
      */
     private BigDecimal quantitySold;
 }

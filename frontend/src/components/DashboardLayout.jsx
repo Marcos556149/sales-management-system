@@ -6,16 +6,16 @@ import './Dashboard.css';
 
 const DashboardLayout = ({ onLogout, user }) => {
   // Destructure userName if exists, otherwise fallback to "Administrator"
-  const userName = user?.userName || "Administrator";
+  const userName = user?.userName || "Administrador";
 
   return (
     <div className="dashboard-layout">
       {/* Sidebar now handles its own navigation via react-router */}
       <Sidebar />
-      
+
       <div className="main-content">
         <Header userName={userName} />
-        
+
         <main className="content-area">
           {/* Render the matched child route component */}
           <Outlet />

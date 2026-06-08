@@ -1,30 +1,30 @@
 /**
- * Enumeration that defines the aggregation granularity
- * used for time-based sales statistics and charts.
+ * Enumeración que define la granularidad de agrupación
+ * utilizada para estadísticas de ventas y gráficos basados en el tiempo.
  *
  * <p>
- * Granularity determines how statistical data is grouped
- * when generating analytics such as revenue over time
- * and sales count over time.
+ * La granularidad determina cómo se agrupan los datos estadísticos
+ * al generar análisis como ingresos a lo largo del tiempo
+ * y cantidad de ventas a lo largo del tiempo.
  * </p>
  *
  * <p>
- * The system automatically selects the most appropriate granularity
- * based on the selected date range in order to:
+ * El sistema selecciona automáticamente la granularidad más apropiada
+ * según el rango de fechas seleccionado con el fin de:
  * <ul>
- *   <li>Improve chart readability</li>
- *   <li>Avoid excessive data points in large ranges</li>
- *   <li>Maintain consistent visual aggregation</li>
+ *   <li>Mejorar la legibilidad de los gráficos</li>
+ *   <li>Evitar una cantidad excesiva de puntos de datos en rangos amplios</li>
+ *   <li>Mantener una agregación visual consistente</li>
  * </ul>
  * </p>
  *
  * <p>
- * Granularity rules:
+ * Reglas de granularidad:
  * <ul>
- *   <li>{@code HOUR}: used for single-day ranges</li>
- *   <li>{@code DAY}: used for short ranges (up to 31 days)</li>
- *   <li>{@code MONTH}: used for medium ranges (up to 365 days)</li>
- *   <li>{@code YEAR}: used for long ranges (more than 365 days)</li>
+ *   <li>{@code HOUR}: utilizada para rangos de un solo día</li>
+ *   <li>{@code DAY}: utilizada para rangos cortos (hasta 31 días)</li>
+ *   <li>{@code MONTH}: utilizada para rangos medios (hasta 365 días)</li>
+ *   <li>{@code YEAR}: utilizada para rangos largos (más de 365 días)</li>
  * </ul>
  * </p>
  */
@@ -33,22 +33,22 @@ package com.marcoscornejos.sales_management_system.model;
 public enum StatisticsGranularity {
 
     /**
-     * Groups statistics by hour.
+     * Agrupa las estadísticas por hora.
      */
     HOUR,
 
     /**
-     * Groups statistics by day.
+     * Agrupa las estadísticas por día.
      */
     DAY,
 
     /**
-     * Groups statistics by month.
+     * Agrupa las estadísticas por mes.
      */
     MONTH,
 
     /**
-     * Groups statistics by year.
+     * Agrupa las estadísticas por año.
      */
     YEAR
 }

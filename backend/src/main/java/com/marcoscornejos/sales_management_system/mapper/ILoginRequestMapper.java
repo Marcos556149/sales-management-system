@@ -5,26 +5,29 @@ import com.marcoscornejos.sales_management_system.model.User;
 import org.mapstruct.Mapper;
 
 /**
- * Mapper for converting between {@link LoginRequestDTO} and {@link User} entities.
+ * Mapper para convertir entre {@link LoginRequestDTO} y {@link User}.
  *
- * <p>Handles transformations needed for authentication requests and User data.</p>
+ * <p>
+ * Maneja las transformaciones necesarias para las solicitudes de autenticación
+ * y los datos del usuario.
+ * </p>
  */
 @Mapper(componentModel = "spring")
 public interface ILoginRequestMapper {
 
     /**
-     * Maps a {@link LoginRequestDTO} to a {@link User} entity.
+     * Mapea un {@link LoginRequestDTO} a una entidad {@link User}.
      *
-     * @param dto the login request DTO containing userName and userPassword
-     * @return a User entity with userName and userPassword set
+     * @param dto DTO de login que contiene nombre de usuario y contraseña
+     * @return entidad User con nombre de usuario y contraseña asignados
      */
     User toUser(LoginRequestDTO dto);
 
     /**
-     * Maps a {@link User} entity to a {@link LoginRequestDTO}.
+     * Mapea una entidad {@link User} a un {@link LoginRequestDTO}.
      *
-     * @param user the User entity
-     * @return a LoginRequestDTO with userName and userPassword set
+     * @param user entidad User
+     * @return LoginRequestDTO con nombre de usuario y contraseña asignados
      */
     LoginRequestDTO toDto(User user);
 }

@@ -1,18 +1,19 @@
 /**
- * Enumeration that defines the roles assigned to system users.
+ * Enumeración que define los roles asignados a los usuarios del sistema.
  *
  * <p>
- * Used to control access and permissions within the application,
- * distinguishing between administrative users and regular operators.
+ * Se utiliza para controlar los accesos y permisos dentro de la aplicación,
+ * distinguiendo entre usuarios administradores y operadores.
  * </p>
  *
  * <p>
- * This enum plays a key role in authorization logic, determining
- * which actions a user is allowed to perform.
+ * Esta enumeración desempeña un papel fundamental en la lógica de autorización,
+ * determinando qué acciones tiene permitido realizar cada usuario.
  * </p>
  *
  * <p>
- * Each enum value includes a human-readable display name intended for UI representation.
+ * Cada valor de la enumeración incluye un nombre descriptivo destinado a su
+ * representación en la interfaz de usuario.
  * </p>
  */
 
@@ -22,8 +23,8 @@ import lombok.Getter;
 
 @Getter
 public enum UserRole {
-    ADMIN("Administrator"),
-    OPERATOR("Operator");
+    ADMIN("Administrador"),
+    OPERATOR("Operador");
 
     private final String displayName;
 

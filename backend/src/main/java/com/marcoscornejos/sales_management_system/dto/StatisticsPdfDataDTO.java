@@ -10,19 +10,19 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 /**
- * DTO that contains all information required
- * to generate a sales statistics PDF report.
+ * DTO que contiene toda la información necesaria
+ * para generar un reporte PDF de estadísticas de ventas.
  *
  * <p>
- * This DTO acts as an intermediate data structure
- * between statistics retrieval and PDF generation.
+ * Este DTO actúa como una estructura de datos intermedia
+ * entre la obtención de estadísticas y la generación del PDF.
  * </p>
  *
  * <p>
- * All report information is pre-calculated and
- * prepared before the PDF document is created,
- * allowing the PDF generation layer to focus
- * exclusively on document rendering.
+ * Toda la información del reporte se encuentra pre-calculada y
+ * preparada antes de la creación del documento PDF, permitiendo
+ * que la capa de generación del PDF se enfoque exclusivamente
+ * en el renderizado del documento.
  * </p>
  */
 @Getter
@@ -32,150 +32,150 @@ import java.util.List;
 public class StatisticsPdfDataDTO {
 
     /**
-     * Report title displayed in the PDF.
+     * Título del reporte mostrado en el PDF.
      */
     private String reportTitle;
 
     /**
-     * Date and time when the report was generated.
+     * Fecha y hora en la que se generó el reporte.
      */
     private LocalDateTime generationDateTime;
 
     /**
-     * Selected user displayed in the report.
+     * Usuario seleccionado mostrado en el reporte.
      *
      * <p>
-     * Possible values include:
+     * Valores posibles:
      * <ul>
-     *     <li>"All Users"</li>
-     *     <li>A specific user name</li>
+     *     <li>"Todos los usuarios"</li>
+     *     <li>Nombre de un usuario específico</li>
      * </ul>
      * </p>
      */
     private String selectedUser;
 
     /**
-     * Selected report start date.
+     * Fecha de inicio seleccionada para el reporte.
      */
     private LocalDate startDate;
 
     /**
-     * Selected report end date.
+     * Fecha de fin seleccionada para el reporte.
      */
     private LocalDate endDate;
 
     /*
-     * Included sections
+     * Secciones incluidas
      */
 
     /**
-     * Indicates whether the Sales Information
-     * section is included in the report.
+     * Indica si la sección de información de ventas
+     * está incluida en el reporte.
      */
     private boolean includeSalesInformation;
 
     /**
-     * Indicates whether the Product Information
-     * section is included in the report.
+     * Indica si la sección de información de productos
+     * está incluida en el reporte.
      */
     private boolean includeProductInformation;
 
     /*
-     * Sales Information
+     * Información de ventas
      */
 
     /**
-     * Total revenue statistics.
+     * Estadísticas de ingresos totales.
      */
     private TotalRevenueResponseDTO totalRevenue;
 
     /**
-     * Total sales statistics.
+     * Estadísticas de ventas totales.
      */
     private TotalSalesResponseDTO totalSales;
 
     /**
-     * Average ticket statistics.
+     * Estadísticas del ticket promedio.
      */
     private AverageTicketResponseDTO averageTicket;
 
     /**
-     * Peak sales hour statistics.
+     * Estadísticas de la hora pico de ventas.
      */
     private PeakHoursResponseDTO peakHours;
 
     /**
-     * Time-series statistics included in the
-     * Sales Information section of the report.
+     * Serie temporal de estadísticas incluida en
+     * la sección de información de ventas del reporte.
      */
     private SalesTimeSeriesResponseDTO salesTimeSeries;
 
     /*
-     * Product Information
+     * Información de productos
      */
 
     /**
-     * Top products statistics used to generate:
+     * Estadísticas de productos destacados utilizadas para generar:
      * <ul>
-     *     <li>Top products by quantity sold</li>
-     *     <li>Top products by revenue generated</li>
+     *     <li>Productos con mayor cantidad vendida</li>
+     *     <li>Productos con mayores ingresos generados</li>
      * </ul>
      */
     private TopProductsResponseDTO topProducts;
 
     /*
-     * Sold Products
+     * Productos vendidos
      */
 
     /**
-     * Total number of sold products matching
-     * the selected filters.
+     * Número total de productos vendidos que coinciden
+     * con los filtros seleccionados.
      */
     private Long totalSoldProducts;
 
     /**
-     * Number of sold products included
-     * in the report.
+     * Número de productos vendidos incluidos
+     * en el reporte.
      */
     private Integer includedSoldProducts;
 
     /**
-     * Sold products ranking list included
-     * in the report.
+     * Lista de productos vendidos incluida
+     * en el reporte.
      */
     private List<SoldProductDTO> soldProducts;
 
     /*
-     * Unsold Products
+     * Productos no vendidos
      */
 
     /**
-     * Total number of unsold products matching
-     * the selected filters.
+     * Número total de productos no vendidos que coinciden
+     * con los filtros seleccionados.
      */
     private Long totalUnsoldProducts;
 
     /**
-     * Number of unsold products included
-     * in the report.
+     * Número de productos no vendidos incluidos
+     * en el reporte.
      */
     private Integer includedUnsoldProducts;
 
     /**
-     * Unsold products list included
-     * in the report.
+     * Lista de productos no vendidos incluida
+     * en el reporte.
      */
     private List<UnsoldProductDTO> unsoldProducts;
 
     /**
-     * Human-readable ranking metric displayed
-     * in the Sold Products Ranking subsection.
+     * Métrica de ranking legible para humanos mostrada
+     * en la subsección de ranking de productos vendidos.
      */
     private String soldProductsMetric;
 
     /**
-     * Human-readable ranking order displayed
-     * in the Sold Products Ranking subsection.
+     * Orden de ranking legible para humanos mostrado
+     * en la subsección de ranking de productos vendidos.
      */
     private String soldProductsOrder;
 }

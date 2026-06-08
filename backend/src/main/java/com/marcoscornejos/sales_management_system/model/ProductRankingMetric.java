@@ -1,13 +1,16 @@
 /**
- * Enumeration that defines the metric used for product ranking in sales statistics.
+ * Enumeración que define la métrica utilizada para el ranking de productos
+ * en las estadísticas de ventas.
  *
  * <p>
- * This enum determines how products are evaluated and ordered within statistical
- * reports, allowing ranking based on either quantity sold or revenue generated.
+ * Esta enumeración determina cómo se evalúan y ordenan los productos dentro
+ * de los reportes estadísticos, permitiendo clasificarlos según la cantidad
+ * vendida o los ingresos generados.
  * </p>
  *
  * <p>
- * Each enum value includes a human-readable display name intended for UI representation.
+ * Cada valor de la enumeración incluye un nombre descriptivo destinado a su
+ * representación en la interfaz de usuario.
  * </p>
  */
 
@@ -17,8 +20,8 @@ import lombok.Getter;
 
 @Getter
 public enum ProductRankingMetric {
-    QUANTITY_SOLD("Quantity Sold"),
-    REVENUE_GENERATED("Revenue Generated");
+    QUANTITY_SOLD("Cantidad Vendida"),
+    REVENUE_GENERATED("Ingresos Generados");
 
     private final String displayName;
 

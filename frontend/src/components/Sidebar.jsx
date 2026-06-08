@@ -18,55 +18,55 @@ const Sidebar = () => {
           {isMobileOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
       </div>
-      
+
       <nav className={`sidebar-nav ${isMobileOpen ? 'mobile-open' : ''}`}>
         <ul className="nav-list">
           <li className="nav-item">
-            <NavLink 
-              to="/dashboard/products" 
+            <NavLink
+              to="/dashboard/products"
               className={({ isActive }) => `nav-button ${isActive ? 'active-link' : ''}`}
               onClick={() => setIsMobileOpen(false)}
             >
               <Package className="nav-icon" size={20} />
-              <span>Products</span>
+              <span>Productos</span>
               <span className="nav-shortcut">Ctrl+Shift+P</span>
             </NavLink>
           </li>
-          
+
           <li className="nav-item">
-            <NavLink 
-              to="/dashboard/sales" 
+            <NavLink
+              to="/dashboard/sales"
               className={({ isActive }) => `nav-button ${isActive ? 'active-link' : ''}`}
               onClick={() => setIsMobileOpen(false)}
             >
               <ShoppingCart className="nav-icon" size={20} />
-              <span>Sales</span>
+              <span>Ventas</span>
               <span className="nav-shortcut">Ctrl+Shift+V</span>
             </NavLink>
           </li>
-          
+
           <li className="nav-item">
-            <NavLink 
-              to="/dashboard/statistics" 
+            <NavLink
+              to="/dashboard/statistics"
               className={({ isActive }) => `nav-button ${isActive ? 'active-link' : ''}`}
               onClick={() => setIsMobileOpen(false)}
             >
               <BarChart3 className="nav-icon" size={20} />
-              <span>Statistics</span>
+              <span>Estadísticas</span>
               <span className="nav-shortcut">Ctrl+Shift+A</span>
             </NavLink>
           </li>
-          
+
           {/* Admin only placeholder */}
           <li className="nav-item user-section-placeholder">
-            <button className="nav-button disabled" title="Admin only - Coming soon">
+            <button className="nav-button disabled" title="Solo administradores - Próximamente">
               <Users className="nav-icon" size={20} />
-              <span>Users</span>
+              <span>Usuarios</span>
             </button>
           </li>
         </ul>
       </nav>
-      
+
       <div className="sidebar-footer">
         <p className="system-version">v1.0.0 Alpha</p>
       </div>

@@ -6,12 +6,12 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /**
- * Represents a product that had no sales within the selected filter range.
+ * Representa un producto que no tuvo ventas dentro del rango de filtros seleccionado.
  *
  * <p>
- * This DTO is used to identify products with zero sales activity,
- * helping analyze inventory inefficiencies, low-demand products,
- * or potential stock issues.
+ * Este DTO se utiliza para identificar productos con actividad de ventas nula,
+ * lo que ayuda a analizar ineficiencias de inventario, productos de baja demanda
+ * o posibles problemas de stock.
  * </p>
  */
 
@@ -22,12 +22,12 @@ import lombok.Setter;
 public class UnsoldProductDTO {
 
     /**
-     * Unique product code that identifies the product.
+     * Código único del producto que lo identifica.
      */
     private String productCode;
 
     /**
-     * Name of the product.
+     * Nombre del producto.
      */
     private String productName;
 }

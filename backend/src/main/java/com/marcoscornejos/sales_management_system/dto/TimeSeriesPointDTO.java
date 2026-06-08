@@ -8,13 +8,14 @@ import lombok.Setter;
 import java.math.BigDecimal;
 
 /**
- * Represents a single data point in a time-based chart series.
+ * Representa un punto de datos en una serie temporal para gráficos.
  *
  * <p>
- * This DTO is used to build time-series visualizations such as revenue over time
- * and number of sales over time. The label typically represents a time unit
- * (hour, day, month, or year depending on the selected granularity),
- * and the value represents the aggregated metric for that period.
+ * Este DTO se utiliza para construir visualizaciones de series temporales como
+ * ingresos a lo largo del tiempo o cantidad de ventas a lo largo del tiempo.
+ * El label normalmente representa una unidad de tiempo (hora, día, mes o año
+ * dependiendo de la granularidad seleccionada), y el value representa la métrica
+ * agregada para ese período.
  * </p>
  */
 
@@ -25,13 +26,14 @@ import java.math.BigDecimal;
 public class TimeSeriesPointDTO {
 
     /**
-     * Label representing the time unit of the data point
-     * (e.g., hour, day, month, or year depending on granularity).
+     * Etiqueta que representa la unidad de tiempo del punto de datos
+     * (por ejemplo: hora, día, mes o año según la granularidad).
      */
     private String label;
 
     /**
-     * Aggregated value for the given time unit (e.g., revenue or number of sales).
+     * Valor agregado para la unidad de tiempo correspondiente
+     * (por ejemplo: ingresos o cantidad de ventas).
      */
     private BigDecimal value;
 }

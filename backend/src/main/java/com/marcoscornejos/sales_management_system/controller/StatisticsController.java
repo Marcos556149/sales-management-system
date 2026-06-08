@@ -12,16 +12,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 /**
- * REST controller responsible for providing sales statistics and analytical data.
+ * Controlador REST responsable de proporcionar estadísticas de ventas y datos analíticos.
  *
  * <p>
- * This controller handles aggregated queries over sales and products,
- * including revenue metrics, product rankings, and time-based statistics.
+ * Este controlador gestiona consultas agregadas sobre ventas y productos,
+ * incluyendo métricas de ingresos, rankings de productos y estadísticas basadas en el tiempo.
  * </p>
  */
 @RestController
@@ -30,69 +29,36 @@ import java.util.List;
 public class StatisticsController {
 
     private final IStatisticsService iStatisticsService;
-
-    /*
-    @GetMapping("/sales")
-    public ResponseEntity<SalesStatisticsResponseDTO> getSalesStatistics(
-
-            @RequestParam(required = false) Long userId,
-
-            @RequestParam(required = false)
-            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
-            LocalDate startDate,
-
-            @RequestParam(required = false)
-            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
-            LocalDate endDate,
-
-            @RequestParam(defaultValue = "REVENUE_GENERATED")
-            ProductRankingMetric metric,
-
-            @RequestParam(defaultValue = "MOST_TO_LEAST")
-            ProductQuantityOrderType order
-    ) {
-
-        SalesStatisticsResponseDTO response =
-                iStatisticsService.getSalesStatistics(
-                        userId,
-                        startDate,
-                        endDate,
-                        metric,
-                        order
-                );
-
-        return ResponseEntity.ok(response);
-    }
-
-     */
+    private static final DateTimeFormatter DATE_FORMATTER =
+            DateTimeFormatter.ofPattern("dd-MM-yyyy");
 
     /**
-     * Retrieves available users for statistics filtering.
+     * Obtiene los usuarios disponibles para filtrar estadísticas.
      *
      * <p>
-     * This endpoint provides the list of users that can be used
-     * to filter sales statistics in the frontend.
+     * Este endpoint proporciona la lista de usuarios que pueden utilizarse
+     * para filtrar las estadísticas de ventas en el frontend.
      * </p>
      *
      * <p>
-     * Each returned user includes:
+     * Cada usuario devuelto incluye:
      * <ul>
-     *   <li>User identifier (used for backend filtering)</li>
-     *   <li>Display name (used in frontend selectors)</li>
+     *   <li>Identificador del usuario (usado para filtrado en backend)</li>
+     *   <li>Nombre visible (usado en selectores del frontend)</li>
      * </ul>
      * </p>
      *
      * <p>
-     * If no users exist in the system, an empty list is returned.
-     * The frontend must interpret this as "no user-specific filtering available".
+     * Si no existen usuarios en el sistema, se devuelve una lista vacía.
+     * El frontend debe interpretar esto como "no hay filtros por usuario disponibles".
      * </p>
      *
      * <p>
-     * This endpoint acts as the single source of truth for
-     * user-based statistics filtering options.
+     * Este endpoint actúa como la única fuente de verdad para
+     * las opciones de filtrado de estadísticas por usuario.
      * </p>
      *
-     * @return list of available users for statistics filtering
+     * @return lista de usuarios disponibles para filtrar estadísticas
      */
     @GetMapping("/filters/users")
     public ResponseEntity<List<UserFilterDTO>> getStatisticsFilterUsers() {
@@ -104,29 +70,29 @@ public class StatisticsController {
     }
 
     /**
-     * Retrieves available product ranking filter options.
+     * Obtiene las opciones disponibles para el filtrado del ranking de productos.
      *
      * <p>
-     * This endpoint provides all enum-based filter options
-     * required by the frontend to build the product ranking
-     * filtering UI dynamically.
+     * Este endpoint proporciona todas las opciones basadas en enums
+     * que el frontend necesita para construir dinámicamente la interfaz
+     * de filtrado del ranking de productos.
      * </p>
      *
      * <p>
-     * The returned information includes:
+     * La información devuelta incluye:
      * <ul>
-     *   <li>Available product ranking metrics</li>
-     *   <li>Available ordering options</li>
+     *   <li>Métricas disponibles para el ranking de productos</li>
+     *   <li>Opciones de ordenamiento disponibles</li>
      * </ul>
      * </p>
      *
      * <p>
-     * All options are derived directly from backend enums,
-     * ensuring consistency between frontend filters
-     * and backend business rules.
+     * Todas las opciones provienen directamente de enums del backend,
+     * asegurando consistencia entre los filtros del frontend
+     * y las reglas de negocio del backend.
      * </p>
      *
-     * @return product ranking filter options
+     * @return opciones de filtrado para el ranking de productos
      */
     @GetMapping("/filters/product-ranking")
     public ResponseEntity<ProductRankingFiltersResponseDTO>
@@ -139,25 +105,25 @@ public class StatisticsController {
     }
 
     /**
-     * Retrieves the total revenue based on selected filters.
+     * Obtiene los ingresos totales basados en los filtros seleccionados.
      *
      * <p>
-     * Total revenue is calculated as the sum of all sales amounts
-     * that match the provided filters.
+     * Los ingresos totales se calculan como la suma de todos los montos de ventas
+     * que coinciden con los filtros proporcionados.
      * </p>
      *
      * <p>
-     * If no filters are provided:
+     * Si no se proporcionan filtros:
      * <ul>
-     *   <li>User defaults to "All Users"</li>
-     *   <li>Date range defaults to current date</li>
+     *   <li>El usuario por defecto es "Todos los usuarios"</li>
+     *   <li>El rango de fechas por defecto es la fecha actual</li>
      * </ul>
      * </p>
      *
-     * @param userId optional user filter (null = all users)
-     * @param startDate optional start date filter
-     * @param endDate optional end date filter
-     * @return total revenue information
+     * @param userId filtro opcional por usuario (null = todos los usuarios)
+     * @param startDate filtro opcional de fecha inicial
+     * @param endDate filtro opcional de fecha final
+     * @return información de ingresos totales
      */
     @GetMapping("/sales/total-revenue")
     public ResponseEntity<TotalRevenueResponseDTO> getTotalRevenue(
@@ -173,10 +139,6 @@ public class StatisticsController {
             LocalDate endDate
     ) {
 
-        System.out.println("userId: " + userId);
-        System.out.println("startDate: " + startDate);
-        System.out.println("endDate: " + endDate);
-
         TotalRevenueResponseDTO response =
                 iStatisticsService.getTotalRevenue(
                         userId,
@@ -188,25 +150,25 @@ public class StatisticsController {
     }
 
     /**
-     * Retrieves the total number of sales based on selected filters.
+     * Obtiene el número total de ventas basado en los filtros seleccionados.
      *
      * <p>
-     * Total sales are calculated as the count of all sales records
-     * that match the provided filters.
+     * El total de ventas se calcula como el conteo de todos los registros de ventas
+     * que coinciden con los filtros proporcionados.
      * </p>
      *
      * <p>
-     * If no filters are provided:
+     * Si no se proporcionan filtros:
      * <ul>
-     *   <li>User defaults to "All Users"</li>
-     *   <li>Date range defaults to current date</li>
+     *   <li>El usuario por defecto es "Todos los usuarios"</li>
+     *   <li>El rango de fechas por defecto es la fecha actual</li>
      * </ul>
      * </p>
      *
-     * @param userId optional user filter (null = all users)
-     * @param startDate optional start date filter
-     * @param endDate optional end date filter
-     * @return total sales information
+     * @param userId filtro opcional por usuario (null = todos los usuarios)
+     * @param startDate filtro opcional de fecha inicial
+     * @param endDate filtro opcional de fecha final
+     * @return información del total de ventas
      */
     @GetMapping("/sales/total-sales")
     public ResponseEntity<TotalSalesResponseDTO> getTotalSales(
@@ -222,9 +184,6 @@ public class StatisticsController {
             LocalDate endDate
     ) {
 
-        System.out.println("userId: " + userId);
-        System.out.println("startDate: " + startDate);
-        System.out.println("endDate: " + endDate);
 
         TotalSalesResponseDTO response =
                 iStatisticsService.getTotalSales(
@@ -237,25 +196,25 @@ public class StatisticsController {
     }
 
     /**
-     * Retrieves the average ticket value based on selected filters.
+     * Obtiene el valor promedio del ticket basado en los filtros seleccionados.
      *
      * <p>
-     * Average ticket value is calculated as:
-     * total revenue divided by total number of sales.
+     * El valor promedio del ticket se calcula como:
+     * ingresos totales divididos por el número total de ventas.
      * </p>
      *
      * <p>
-     * If no filters are provided:
+     * Si no se proporcionan filtros:
      * <ul>
-     *   <li>User defaults to "All Users"</li>
-     *   <li>Date range defaults to current date</li>
+     *   <li>El usuario por defecto es "Todos los usuarios"</li>
+     *   <li>El rango de fechas por defecto es la fecha actual</li>
      * </ul>
      * </p>
      *
-     * @param userId optional user filter (null = all users)
-     * @param startDate optional start date filter
-     * @param endDate optional end date filter
-     * @return average ticket information
+     * @param userId filtro opcional por usuario (null = todos los usuarios)
+     * @param startDate filtro opcional de fecha inicial
+     * @param endDate filtro opcional de fecha final
+     * @return información del ticket promedio
      */
     @GetMapping("/sales/average-ticket")
     public ResponseEntity<AverageTicketResponseDTO> getAverageTicket(
@@ -271,9 +230,6 @@ public class StatisticsController {
             LocalDate endDate
     ) {
 
-        System.out.println("userId: " + userId);
-        System.out.println("startDate: " + startDate);
-        System.out.println("endDate: " + endDate);
 
         AverageTicketResponseDTO response =
                 iStatisticsService.getAverageTicket(
@@ -286,38 +242,38 @@ public class StatisticsController {
     }
 
     /**
-     * Retrieves peak sales hours based on selected filters.
+     * Obtiene las horas pico de ventas basadas en los filtros seleccionados.
      *
      * <p>
-     * This endpoint provides:
+     * Este endpoint proporciona:
      * <ul>
-     *   <li>The hour with the highest revenue generated</li>
-     *   <li>The hour with the highest number of sales</li>
+     *   <li>La hora con mayor generación de ingresos</li>
+     *   <li>La hora con mayor número de ventas</li>
      * </ul>
      * </p>
      *
      * <p>
-     * All values are calculated using only the sales
-     * that match the provided filters.
+     * Todos los valores se calculan únicamente con las ventas
+     * que coinciden con los filtros proporcionados.
      * </p>
      *
      * <p>
-     * If no filters are provided:
+     * Si no se proporcionan filtros:
      * <ul>
-     *   <li>User defaults to "All Users"</li>
-     *   <li>Date range defaults to current date</li>
+     *   <li>El usuario por defecto es "Todos los usuarios"</li>
+     *   <li>El rango de fechas por defecto es la fecha actual</li>
      * </ul>
      * </p>
      *
      * <p>
-     * If no matching sales exist, both values may return {@code null},
-     * indicating that no peak hour data is available.
+     * Si no existen ventas que coincidan, ambos valores pueden retornar {@code null},
+     * indicando que no hay datos de horas pico disponibles.
      * </p>
      *
-     * @param userId optional user filter (null = all users)
-     * @param startDate optional start date filter
-     * @param endDate optional end date filter
-     * @return peak sales hour statistics
+     * @param userId filtro opcional por usuario (null = todos los usuarios)
+     * @param startDate filtro opcional de fecha inicial
+     * @param endDate filtro opcional de fecha final
+     * @return estadísticas de horas pico de ventas
      */
     @GetMapping("/sales/peak-hours")
     public ResponseEntity<PeakHoursResponseDTO> getPeakHours(
@@ -344,48 +300,48 @@ public class StatisticsController {
     }
 
     /**
-     * Retrieves time-series sales statistics based on selected filters.
+     * Obtiene estadísticas de ventas en serie temporal basadas en los filtros seleccionados.
      *
      * <p>
-     * This endpoint provides chart-ready statistical data including:
+     * Este endpoint proporciona datos estadísticos listos para gráficos, incluyendo:
      * <ul>
-     *   <li>Total revenue evolution over time</li>
-     *   <li>Total number of sales over time</li>
+     *   <li>Evolución de ingresos totales en el tiempo</li>
+     *   <li>Evolución del número total de ventas en el tiempo</li>
      * </ul>
      * </p>
      *
      * <p>
-     * All values are calculated using only the sales
-     * that match the provided filters.
+     * Todos los valores se calculan únicamente con las ventas
+     * que coinciden con los filtros proporcionados.
      * </p>
      *
      * <p>
-     * Time-series aggregation granularity is automatically adjusted
-     * based on the selected date range:
+     * La granularidad de la agregación temporal se ajusta automáticamente
+     * según el rango de fechas seleccionado:
      * <ul>
-     *   <li>HOUR → single-day ranges</li>
-     *   <li>DAY → ranges up to 31 days</li>
-     *   <li>MONTH → ranges up to 365 days</li>
-     *   <li>YEAR → ranges greater than 365 days</li>
+     *   <li>HORA → rangos de un solo día</li>
+     *   <li>DÍA → rangos de hasta 31 días</li>
+     *   <li>MES → rangos de hasta 365 días</li>
+     *   <li>AÑO → rangos mayores a 365 días</li>
      * </ul>
      * </p>
      *
      * <p>
-     * If no filters are provided:
+     * Si no se proporcionan filtros:
      * <ul>
-     *   <li>User defaults to "All Users"</li>
-     *   <li>Date range defaults to current date</li>
+     *   <li>El usuario por defecto es "Todos los usuarios"</li>
+     *   <li>El rango de fechas por defecto es la fecha actual</li>
      * </ul>
      * </p>
      *
      * <p>
-     * If no matching sales exist, both series may return empty lists.
+     * Si no existen ventas que coincidan, ambas series pueden devolver listas vacías.
      * </p>
      *
-     * @param userId optional user filter (null = all users)
-     * @param startDate optional start date filter
-     * @param endDate optional end date filter
-     * @return time-series sales statistics
+     * @param userId filtro opcional por usuario (null = todos los usuarios)
+     * @param startDate filtro opcional de fecha inicial
+     * @param endDate filtro opcional de fecha final
+     * @return estadísticas de ventas en serie temporal
      */
     @GetMapping("/sales/time-series")
     public ResponseEntity<SalesTimeSeriesResponseDTO> getSalesTimeSeries(
@@ -412,37 +368,37 @@ public class StatisticsController {
     }
 
     /**
-     * Retrieves top-performing products statistics based on selected filters.
+     * Obtiene estadísticas de productos con mejor rendimiento basadas en los filtros seleccionados.
      *
      * <p>
-     * This endpoint provides:
+     * Este endpoint proporciona:
      * <ul>
-     *   <li>Top 10 products by quantity sold</li>
-     *   <li>Top 10 products by revenue generated</li>
+     *   <li>Top 10 productos por cantidad vendida</li>
+     *   <li>Top 10 productos por ingresos generados</li>
      * </ul>
      * </p>
      *
      * <p>
-     * All values are calculated using only the sales
-     * that match the provided filters.
+     * Todos los valores se calculan únicamente con las ventas
+     * que coinciden con los filtros proporcionados.
      * </p>
      *
      * <p>
-     * If no filters are provided:
+     * Si no se proporcionan filtros:
      * <ul>
-     *   <li>User defaults to "All Users"</li>
-     *   <li>Date range defaults to current date</li>
+     *   <li>El usuario por defecto es "Todos los usuarios"</li>
+     *   <li>El rango de fechas por defecto es la fecha actual</li>
      * </ul>
      * </p>
      *
      * <p>
-     * If no matching sales exist, both lists may return empty lists.
+     * Si no existen ventas que coincidan, ambas listas pueden devolverse vacías.
      * </p>
      *
-     * @param userId optional user filter (null = all users)
-     * @param startDate optional start date filter
-     * @param endDate optional end date filter
-     * @return top-performing products statistics
+     * @param userId filtro opcional por usuario (null = todos los usuarios)
+     * @param startDate filtro opcional de fecha inicial
+     * @param endDate filtro opcional de fecha final
+     * @return estadísticas de productos con mejor rendimiento
      */
     @GetMapping("/products/top")
     public ResponseEntity<TopProductsResponseDTO> getTopProducts(
@@ -469,61 +425,61 @@ public class StatisticsController {
     }
 
     /**
-     * Retrieves a paginated ranking of sold products
-     * based on selected filters.
+     * Obtiene un ranking paginado de productos vendidos
+     * basado en los filtros seleccionados.
      *
      * <p>
-     * This endpoint returns products that had sales activity
-     * within the selected date range, including:
+     * Este endpoint devuelve los productos que tuvieron actividad de ventas
+     * dentro del rango de fechas seleccionado, incluyendo:
      * <ul>
-     *   <li>Product code</li>
-     *   <li>Product name</li>
-     *   <li>Total quantity sold</li>
-     *   <li>Total revenue generated</li>
+     *   <li>Código del producto</li>
+     *   <li>Nombre del producto</li>
+     *   <li>Cantidad total vendida</li>
+     *   <li>Ingresos totales generados</li>
      * </ul>
      * </p>
      *
      * <p>
-     * Results support dynamic ranking using:
+     * Los resultados permiten ranking dinámico utilizando:
      * <ul>
-     *   <li>Metric:
+     *   <li>Métrica:
      *      <ul>
-     *          <li>Quantity Sold</li>
-     *          <li>Revenue Generated</li>
+     *          <li>Cantidad vendida</li>
+     *          <li>Ingresos generados</li>
      *      </ul>
      *   </li>
-     *   <li>Ordering:
+     *   <li>Orden:
      *      <ul>
-     *          <li>Most sold → least sold</li>
-     *          <li>Least sold → most sold</li>
+     *          <li>Más vendidos → menos vendidos</li>
+     *          <li>Menos vendidos → más vendidos</li>
      *      </ul>
      *   </li>
      * </ul>
      * </p>
      *
      * <p>
-     * Default behavior:
+     * Comportamiento por defecto:
      * <ul>
-     *   <li>User → All Users</li>
-     *   <li>Date range → Current date</li>
-     *   <li>Metric → Revenue Generated</li>
-     *   <li>Order → Most sold → least sold</li>
-     *   <li>Page size → 20</li>
+     *   <li>Usuario → Todos los usuarios</li>
+     *   <li>Rango de fechas → Fecha actual</li>
+     *   <li>Métrica → Ingresos generados</li>
+     *   <li>Orden → Más vendidos → menos vendidos</li>
+     *   <li>Tamaño de página → 20</li>
      * </ul>
      * </p>
      *
      * <p>
-     * If no matching products exist, an empty page is returned.
+     * Si no existen productos que coincidan, se devuelve una página vacía.
      * </p>
      *
-     * @param userId optional user filter
-     * @param startDate optional start date filter
-     * @param endDate optional end date filter
-     * @param metric ranking metric
-     * @param order ranking order
-     * @param page requested page number
-     * @param size requested page size
-     * @return paginated sold products ranking
+     * @param userId filtro opcional por usuario
+     * @param startDate filtro opcional de fecha inicial
+     * @param endDate filtro opcional de fecha final
+     * @param metric métrica de ranking
+     * @param order orden del ranking
+     * @param page número de página solicitado
+     * @param size tamaño de página solicitado
+     * @return ranking paginado de productos vendidos
      */
     @GetMapping("/products/sold")
     public ResponseEntity<PageResponseDTO<SoldProductDTO>>
@@ -576,42 +532,42 @@ public class StatisticsController {
     }
 
     /**
-     * Retrieves a paginated list of products with no sales
-     * based on selected filters.
+     * Obtiene una lista paginada de productos sin ventas
+     * basada en los filtros seleccionados.
      *
      * <p>
-     * This endpoint returns products that had zero sales activity
-     * within the selected date range, including:
+     * Este endpoint devuelve los productos que no tuvieron actividad de ventas
+     * dentro del rango de fechas seleccionado, incluyendo:
      * <ul>
-     *     <li>Product code</li>
-     *     <li>Product name</li>
+     *     <li>Código del producto</li>
+     *     <li>Nombre del producto</li>
      * </ul>
      * </p>
      *
      * <p>
-     * Products are considered unsold only if they have no
-     * matching sales records within the selected filters.
+     * Los productos se consideran no vendidos únicamente si no tienen
+     * registros de ventas que coincidan con los filtros seleccionados.
      * </p>
      *
      * <p>
-     * Default behavior:
+     * Comportamiento por defecto:
      * <ul>
-     *     <li>User → All Users</li>
-     *     <li>Date range → Current date</li>
-     *     <li>Page size → 20</li>
+     *     <li>Usuario → Todos los usuarios</li>
+     *     <li>Rango de fechas → Fecha actual</li>
+     *     <li>Tamaño de página → 20</li>
      * </ul>
      * </p>
      *
      * <p>
-     * If no matching products exist, an empty page is returned.
+     * Si no existen productos que coincidan, se devuelve una página vacía.
      * </p>
      *
-     * @param userId optional user filter
-     * @param startDate optional start date filter
-     * @param endDate optional end date filter
-     * @param page requested page number
-     * @param size requested page size
-     * @return paginated unsold products list
+     * @param userId filtro opcional por usuario
+     * @param startDate filtro opcional de fecha inicial
+     * @param endDate filtro opcional de fecha final
+     * @param page número de página solicitado
+     * @param size tamaño de página solicitado
+     * @return lista paginada de productos sin ventas
      */
     @GetMapping("/products/unsold")
     public ResponseEntity<PageResponseDTO<UnsoldProductDTO>>
@@ -652,73 +608,72 @@ public class StatisticsController {
     }
 
     /**
-     * Generates a downloadable PDF report containing
-     * sales statistics and product performance information.
+     * Genera un reporte PDF descargable que contiene
+     * estadísticas de ventas e información de rendimiento de productos.
      *
      * <p>
-     * This endpoint generates a PDF report using the
-     * same filters and business rules defined for
-     * the statistics module.
+     * Este endpoint genera un reporte PDF utilizando los mismos filtros
+     * y reglas de negocio definidas en el módulo de estadísticas.
      * </p>
      *
      * <p>
-     * The report may include the following sections:
+     * El reporte puede incluir las siguientes secciones:
      * <ul>
-     *     <li>Sales Information</li>
-     *     <li>Product Information</li>
+     *     <li>Información de ventas</li>
+     *     <li>Información de productos</li>
      * </ul>
      * </p>
      *
      * <p>
-     * Sales Information may include:
+     * La información de ventas puede incluir:
      * <ul>
-     *     <li>Total revenue</li>
-     *     <li>Total number of sales</li>
-     *     <li>Average ticket value</li>
-     *     <li>Peak revenue hour</li>
-     *     <li>Peak sales hour</li>
-     *     <li>Revenue over time table</li>
-     *     <li>Sales over time table</li>
+     *     <li>Ingresos totales</li>
+     *     <li>Número total de ventas</li>
+     *     <li>Valor promedio del ticket</li>
+     *     <li>Hora pico de ingresos</li>
+     *     <li>Hora pico de ventas</li>
+     *     <li>Tabla de ingresos en el tiempo</li>
+     *     <li>Tabla de ventas en el tiempo</li>
      * </ul>
      * </p>
      *
      * <p>
-     * Product Information may include:
+     * La información de productos puede incluir:
      * <ul>
-     *     <li>Top products by quantity sold</li>
-     *     <li>Top products by revenue generated</li>
-     *     <li>Detailed sold products ranking list</li>
-     *     <li>Detailed unsold products list</li>
+     *     <li>Top productos por cantidad vendida</li>
+     *     <li>Top productos por ingresos generados</li>
+     *     <li>Listado detallado de productos vendidos</li>
+     *     <li>Listado detallado de productos no vendidos</li>
      * </ul>
      * </p>
      *
      * <p>
-     * The generated report always includes:
+     * El reporte generado siempre incluye:
      * <ul>
-     *     <li>Report title</li>
-     *     <li>Report generation date and time</li>
-     *     <li>Selected user</li>
-     *     <li>Selected date range</li>
+     *     <li>Título del reporte</li>
+     *     <li>Fecha y hora de generación</li>
+     *     <li>Usuario seleccionado</li>
+     *     <li>Rango de fechas seleccionado</li>
      * </ul>
      * </p>
      *
      * <p>
-     * The user may configure:
+     * El usuario puede configurar:
      * <ul>
-     *     <li>Included report sections</li>
-     *     <li>Number of products displayed in detailed product lists</li>
-     *     <li>Product ranking metric</li>
-     *     <li>Product ranking order</li>
+     *     <li>Secciones incluidas en el reporte</li>
+     *     <li>Cantidad de productos mostrados en listados detallados</li>
+     *     <li>Métrica del ranking de productos</li>
+     *     <li>Orden del ranking de productos</li>
      * </ul>
      * </p>
      *
      * <p>
-     * If no statistical data matches the selected filters,
-     * the report is not generated.
+     * Si no existen datos estadísticos que coincidan con los filtros seleccionados,
+     * el reporte no se genera.
      * </p>
      *
-     * @param request PDF generation configuration
-     * @return generated PDF file
+     * @param request configuración para la generación del PDF
+     * @return archivo PDF generado
      */
     @PostMapping(
             value = "/report/pdf",
@@ -732,10 +687,10 @@ public class StatisticsController {
                 iStatisticsService.generatePdf(request);
 
         String fileName =
-                "sales-statistics-report-"
-                        + request.getStartDate()
-                        + "-to-"
-                        + request.getEndDate()
+                "reporte-estadisticas-ventas-"
+                        + request.getStartDate().format(DATE_FORMATTER)
+                        + "-a-"
+                        + request.getEndDate().format(DATE_FORMATTER)
                         + ".pdf";
 
         return ResponseEntity.ok()

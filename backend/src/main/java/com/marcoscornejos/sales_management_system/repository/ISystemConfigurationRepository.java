@@ -1,15 +1,16 @@
 /**
- * Repository interface for managing {@link SystemConfiguration} entities.
+ * Repositorio para la gestión de entidades {@link SystemConfiguration}.
  *
  * <p>
- * Extends {@link JpaRepository}, providing standard CRUD operations
- * such as save, delete, findById, and findAll without requiring
- * explicit implementation.
+ * Extiende {@link JpaRepository}, proporcionando operaciones CRUD estándar
+ * como guardar, eliminar, buscar por identificador y obtener todos los registros
+ * sin requerir una implementación explícita.
  * </p>
  *
  * <p>
- * This repository is responsible for data access related to global system configuration.
- * Custom query methods can be defined here when needed.
+ * Este repositorio es responsable del acceso a datos relacionado con la
+ * configuración global del sistema. Cuando sea necesario, aquí pueden
+ * definirse métodos de consulta personalizados.
  * </p>
  */
 

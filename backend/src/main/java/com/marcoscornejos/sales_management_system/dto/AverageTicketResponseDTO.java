@@ -8,8 +8,8 @@ import lombok.Setter;
 import java.math.BigDecimal;
 
 /**
- * DTO that represents the average ticket value
- * calculated based on the selected filters.
+ * DTO que representa el valor promedio del ticket
+ * calculado en base a los filtros seleccionados.
  */
 @Getter
 @Setter
@@ -18,11 +18,11 @@ import java.math.BigDecimal;
 public class AverageTicketResponseDTO {
 
     /**
-     * Average ticket value.
+     * Valor promedio del ticket.
      *
      * <p>
-     * Calculated as:
-     * total revenue / total number of sales.
+     * Se calcula como:
+     * ingresos totales / cantidad total de ventas.
      * </p>
      */
     private BigDecimal averageTicket;

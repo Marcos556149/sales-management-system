@@ -10,40 +10,40 @@ import lombok.Setter;
 import java.time.LocalDate;
 
 /**
- * Request used to generate a sales statistics PDF report.
+ * Solicitud utilizada para generar un reporte PDF de estadísticas de ventas.
  *
  * <p>
- * This request contains:
+ * Esta solicitud contiene:
  * <ul>
- *     <li>Global statistics filters</li>
- *     <li>Report section selection</li>
- *     <li>Product ranking configuration</li>
- *     <li>Detailed product list limits</li>
+ *     <li>Filtros globales de estadísticas</li>
+ *     <li>Selección de secciones del reporte</li>
+ *     <li>Configuración de ranking de productos</li>
+ *     <li>Límites de listas detalladas de productos</li>
  * </ul>
  * </p>
  *
  * <p>
- * The provided filters determine the dataset used to generate
- * the report. All included sections are calculated exclusively
- * from the sales and products matching these filters.
+ * Los filtros proporcionados determinan el conjunto de datos utilizado para generar
+ * el reporte. Todas las secciones incluidas se calculan exclusivamente a partir
+ * de las ventas y productos que coinciden con estos filtros.
  * </p>
  *
  * <p>
- * Default behavior:
+ * Comportamiento por defecto:
  * <ul>
- *     <li>User → All Users</li>
- *     <li>Date range → Current date</li>
- *     <li>Sales Information section → included</li>
- *     <li>Product Information section → included</li>
- *     <li>Ranking metric → Revenue Generated</li>
- *     <li>Ranking order → Most sold → least sold</li>
- *     <li>Sold products limit → 20</li>
- *     <li>Unsold products limit → 20</li>
+ *     <li>Usuario → Todos los usuarios</li>
+ *     <li>Rango de fechas → Fecha actual</li>
+ *     <li>Sección de información de ventas → incluida</li>
+ *     <li>Sección de información de productos → incluida</li>
+ *     <li>Métrica de ranking → Ingresos generados</li>
+ *     <li>Orden de ranking → Mayor a menor</li>
+ *     <li>Límite de productos vendidos → 20</li>
+ *     <li>Límite de productos no vendidos → 20</li>
  * </ul>
  * </p>
  *
  * <p>
- * At least one report section must be selected.
+ * Al menos una sección del reporte debe estar seleccionada.
  * </p>
  */
 @Getter
@@ -53,61 +53,61 @@ import java.time.LocalDate;
 public class StatisticsPdfRequestDTO {
 
     /**
-     * Optional user filter.
+     * Filtro opcional por usuario.
      *
      * <p>
-     * When null, statistics are generated using
-     * sales from all users.
+     * Cuando es null, las estadísticas se generan utilizando
+     * las ventas de todos los usuarios.
      * </p>
      */
     private Long userId;
 
     /**
-     * Optional start date filter.
+     * Filtro opcional de fecha de inicio.
      *
      * <p>
-     * Defines the beginning of the date range
-     * used to calculate report statistics.
+     * Define el inicio del rango de fechas
+     * utilizado para calcular las estadísticas del reporte.
      * </p>
      */
     private LocalDate startDate;
 
     /**
-     * Optional end date filter.
+     * Filtro opcional de fecha de fin.
      *
      * <p>
-     * Defines the end of the date range
-     * used to calculate report statistics.
+     * Define el final del rango de fechas
+     * utilizado para calcular las estadísticas del reporte.
      * </p>
      */
     private LocalDate endDate;
 
     /**
-     * Indicates whether the Sales Information section
-     * must be included in the generated report.
+     * Indica si la sección de información de ventas
+     * debe incluirse en el reporte generado.
      *
      * <p>
-     * Default value: true.
+     * Valor por defecto: true.
      * </p>
      */
     private Boolean includeSalesInformation;
 
     /**
-     * Indicates whether the Product Information section
-     * must be included in the generated report.
+     * Indica si la sección de información de productos
+     * debe incluirse en el reporte generado.
      *
      * <p>
-     * Default value: true.
+     * Valor por defecto: true.
      * </p>
      */
     private Boolean includeProductInformation;
 
     /**
-     * Metric used to rank sold products
-     * in the Product Ranking List.
+     * Métrica utilizada para ordenar productos vendidos
+     * en la lista de ranking de productos.
      *
      * <p>
-     * Available values:
+     * Valores disponibles:
      * <ul>
      *     <li>QUANTITY_SOLD</li>
      *     <li>REVENUE_GENERATED</li>
@@ -115,16 +115,16 @@ public class StatisticsPdfRequestDTO {
      * </p>
      *
      * <p>
-     * Default value: REVENUE_GENERATED.
+     * Valor por defecto: REVENUE_GENERATED.
      * </p>
      */
     private ProductRankingMetric metric;
 
     /**
-     * Ordering applied to the Product Ranking List.
+     * Orden aplicado a la lista de ranking de productos.
      *
      * <p>
-     * Available values:
+     * Valores disponibles:
      * <ul>
      *     <li>MOST_TO_LEAST</li>
      *     <li>LEAST_TO_MOST</li>
@@ -132,17 +132,17 @@ public class StatisticsPdfRequestDTO {
      * </p>
      *
      * <p>
-     * Default value: MOST_TO_LEAST.
+     * Valor por defecto: MOST_TO_LEAST.
      * </p>
      */
     private ProductQuantityOrderType order;
 
     /**
-     * Maximum number of products included
-     * in the sold products ranking list.
+     * Cantidad máxima de productos incluidos
+     * en la lista de productos vendidos.
      *
      * <p>
-     * Allowed values:
+     * Valores permitidos:
      * <ul>
      *     <li>10</li>
      *     <li>20</li>
@@ -152,17 +152,17 @@ public class StatisticsPdfRequestDTO {
      * </p>
      *
      * <p>
-     * Default value: 20.
+     * Valor por defecto: 20.
      * </p>
      */
     private Integer soldProductsLimit;
 
     /**
-     * Maximum number of products included
-     * in the unsold products list.
+     * Cantidad máxima de productos incluidos
+     * en la lista de productos no vendidos.
      *
      * <p>
-     * Allowed values:
+     * Valores permitidos:
      * <ul>
      *     <li>10</li>
      *     <li>20</li>
@@ -172,7 +172,7 @@ public class StatisticsPdfRequestDTO {
      * </p>
      *
      * <p>
-     * Default value: 20.
+     * Valor por defecto: 20.
      * </p>
      */
     private Integer unsoldProductsLimit;

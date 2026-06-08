@@ -6,11 +6,11 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- * DTO used to update the global system configuration.
+ * DTO utilizado para actualizar la configuración global del sistema.
  *
  * <p>
- * Contains the configuration values that can be modified by the user.
- * These values are shared across the entire system.
+ * Contiene los valores de configuración que pueden ser modificados por el usuario.
+ * Estos valores son compartidos en todo el sistema.
  * </p>
  */
 @Getter
@@ -18,26 +18,26 @@ import lombok.Setter;
 public class SystemConfigurationRequestDTO {
 
     /**
-     * Name of the business.
+     * Nombre del negocio.
      *
      * <p>
-     * Must not be blank and must not exceed 100 characters.
-     * This value is shared across all users.
+     * No puede estar vacío y no debe superar los 100 caracteres.
+     * Este valor es compartido por todos los usuarios.
      * </p>
      */
-    @NotBlank(message = "Business name is required")
-    @Size(max = 100, message = "Business name must not exceed 100 characters")
+    @NotBlank(message = "El nombre del negocio es obligatorio")
+    @Size(max = 100, message = "El nombre del negocio no debe superar los 100 caracteres")
     private String businessName;
 
     /**
-     * Address of the business.
+     * Dirección del negocio.
      *
      * <p>
-     * Must not be blank and must not exceed 200 characters.
-     * This value is shared across all users.
+     * No puede estar vacía y no debe superar los 200 caracteres.
+     * Este valor es compartido por todos los usuarios.
      * </p>
      */
-    @NotBlank(message = "Business address is required")
-    @Size(max = 200, message = "Business address must not exceed 200 characters")
+    @NotBlank(message = "La dirección del negocio es obligatoria")
+    @Size(max = 200, message = "La dirección del negocio no debe superar los 200 caracteres")
     private String businessAddress;
 }

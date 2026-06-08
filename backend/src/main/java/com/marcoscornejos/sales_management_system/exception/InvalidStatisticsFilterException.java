@@ -1,22 +1,22 @@
 package com.marcoscornejos.sales_management_system.exception;
 
 /**
- * Exception thrown when provided statistics filters are invalid.
+ * Excepción lanzada cuando los filtros de estadísticas proporcionados son inválidos.
  *
  * <p>
- * This includes invalid date ranges, incomplete filters,
- * or failed validations related to statistics queries.
+ * Esto incluye rangos de fechas inválidos, filtros incompletos
+ * o errores de validación relacionados con consultas de estadísticas.
  * </p>
  *
  * <p>
- * This exception uses the standardized error format:
+ * Esta excepción utiliza el formato de error estandarizado:
  * </p>
  *
  * <pre>
  * {
  *   "code": "INVALID_STATISTICS_FILTER",
- *   "message": "Human readable message",
- *   "field": "optionalFieldName"
+ *   "message": "Mensaje legible para el usuario",
+ *   "field": "nombreDelCampoOpcional"
  * }
  * </pre>
  */
@@ -27,19 +27,19 @@ public class InvalidStatisticsFilterException
             "INVALID_STATISTICS_FILTER";
 
     /**
-     * Creates a validation exception without a specific field.
+     * Crea una excepción de validación sin un campo específico.
      *
-     * @param message human-readable error message
+     * @param message mensaje de error legible para el usuario
      */
     public InvalidStatisticsFilterException(String message) {
         super(CODE, message, null);
     }
 
     /**
-     * Creates an exception for invalid statistics filters.
+     * Crea una excepción para filtros de estadísticas inválidos.
      *
-     * @param message human-readable error message
-     * @param field related field name (can be null)
+     * @param message mensaje de error legible para el usuario
+     * @param field nombre del campo relacionado (puede ser null)
      */
     public InvalidStatisticsFilterException(
             String message,

@@ -29,7 +29,7 @@ const CustomProductTooltip = ({ active, payload, isRevenue }) => {
         <div className="product-tooltip-divider"></div>
         <div className="product-tooltip-value-row">
           <span className={`product-tooltip-dot ${isRevenue ? 'revenue' : 'quantity'}`}></span>
-          <span className="product-tooltip-label">{isRevenue ? 'Revenue' : 'Units Sold'}</span>
+          <span className="product-tooltip-label">{isRevenue ? 'Ingresos' : 'Unidades Vendidas'}</span>
           <span className="product-tooltip-val">{formattedValue}</span>
         </div>
       </div>
@@ -61,13 +61,13 @@ const CustomYAxisTick = ({ x, y, payload }) => {
 };
 
 const TopProductsSection = ({ data, loading, startDate, endDate }) => {
-  
+
   // Format date range for headers
   const formattedRange = useMemo(() => {
     if (!startDate || !endDate) return '';
     const options = { year: 'numeric', month: 'short', day: 'numeric' };
-    const startStr = startDate.toLocaleDateString('en-US', options);
-    const endStr = endDate.toLocaleDateString('en-US', options);
+    const startStr = startDate.toLocaleDateString('es-AR', options);
+    const endStr = endDate.toLocaleDateString('es-AR', options);
     return `${startStr} – ${endStr}`;
   }, [startDate, endDate]);
 
@@ -104,7 +104,7 @@ const TopProductsSection = ({ data, loading, startDate, endDate }) => {
 
   return (
     <div className="top-products-grid">
-      
+
       {/* Chart 1: Quantity Sold */}
       <div className="top-products-card">
         <header className="chart-header">
@@ -113,8 +113,8 @@ const TopProductsSection = ({ data, loading, startDate, endDate }) => {
               <ShoppingBag size={20} />
             </div>
             <div>
-              <h2>Top Products by Quantity Sold</h2>
-              <p>{formattedRange || 'Ranking of products by units sold'}</p>
+              <h2>Productos Más Vendidos por Cantidad (hasta 10 productos)</h2>
+              <p>{formattedRange || 'Ranking de productos por unidades vendidas'}</p>
             </div>
           </div>
         </header>
@@ -129,34 +129,34 @@ const TopProductsSection = ({ data, loading, startDate, endDate }) => {
               >
                 <defs>
                   <linearGradient id="colorQuantity" x1="0" y1="0" x2="1" y2="0">
-                    <stop offset="5%" stopColor="#10b981" stopOpacity={0.95}/>
-                    <stop offset="95%" stopColor="#059669" stopOpacity={0.75}/>
+                    <stop offset="5%" stopColor="#10b981" stopOpacity={0.95} />
+                    <stop offset="95%" stopColor="#059669" stopOpacity={0.75} />
                   </linearGradient>
                 </defs>
                 <CartesianGrid strokeDasharray="4 4" vertical={true} horizontal={false} stroke="#f1f5f9" />
-                <XAxis 
-                  type="number" 
-                  axisLine={false} 
-                  tickLine={false} 
+                <XAxis
+                  type="number"
+                  axisLine={false}
+                  tickLine={false}
                   tickFormatter={formatXAxisQuantity}
                   tick={{ fill: '#94a3b8', fontSize: 11, fontWeight: 500 }}
                 />
-                <YAxis 
-                  type="category" 
-                  dataKey="productName" 
-                  axisLine={false} 
-                  tickLine={false} 
-                  width={110} 
+                <YAxis
+                  type="category"
+                  dataKey="productName"
+                  axisLine={false}
+                  tickLine={false}
+                  width={110}
                   tick={<CustomYAxisTick />}
                 />
-                <Tooltip 
-                  content={<CustomProductTooltip isRevenue={false} />} 
-                  cursor={{ fill: 'rgba(16, 185, 129, 0.04)' }} 
+                <Tooltip
+                  content={<CustomProductTooltip isRevenue={false} />}
+                  cursor={{ fill: 'rgba(16, 185, 129, 0.04)' }}
                 />
-                <Bar 
-                  dataKey="quantitySold" 
-                  fill="url(#colorQuantity)" 
-                  radius={[0, 6, 6, 0]} 
+                <Bar
+                  dataKey="quantitySold"
+                  fill="url(#colorQuantity)"
+                  radius={[0, 6, 6, 0]}
                   barSize={16}
                   animationDuration={1200}
                 />
@@ -168,8 +168,8 @@ const TopProductsSection = ({ data, loading, startDate, endDate }) => {
             <div className="empty-icon-wrapper quantity">
               <Package size={40} />
             </div>
-            <h3>No products found</h3>
-            <p>No product data available for the selected filters</p>
+            <h3>No se encontraron productos</h3>
+            <p>No hay datos de productos disponibles para los filtros seleccionados</p>
           </div>
         )}
       </div>
@@ -182,8 +182,8 @@ const TopProductsSection = ({ data, loading, startDate, endDate }) => {
               <DollarSign size={20} />
             </div>
             <div>
-              <h2>Top Products by Revenue Generated</h2>
-              <p>{formattedRange || 'Ranking of products by total revenue'}</p>
+              <h2>Productos con Mayores Ingresos (hasta 10 productos)</h2>
+              <p>{formattedRange || 'Ranking de productos por ingresos totales'}</p>
             </div>
           </div>
         </header>
@@ -198,34 +198,34 @@ const TopProductsSection = ({ data, loading, startDate, endDate }) => {
               >
                 <defs>
                   <linearGradient id="colorRevenue" x1="0" y1="0" x2="1" y2="0">
-                    <stop offset="5%" stopColor="#8b5cf6" stopOpacity={0.95}/>
-                    <stop offset="95%" stopColor="#7c3aed" stopOpacity={0.75}/>
+                    <stop offset="5%" stopColor="#8b5cf6" stopOpacity={0.95} />
+                    <stop offset="95%" stopColor="#7c3aed" stopOpacity={0.75} />
                   </linearGradient>
                 </defs>
                 <CartesianGrid strokeDasharray="4 4" vertical={true} horizontal={false} stroke="#f1f5f9" />
-                <XAxis 
-                  type="number" 
-                  axisLine={false} 
-                  tickLine={false} 
+                <XAxis
+                  type="number"
+                  axisLine={false}
+                  tickLine={false}
                   tickFormatter={formatXAxisRevenue}
                   tick={{ fill: '#94a3b8', fontSize: 11, fontWeight: 500 }}
                 />
-                <YAxis 
-                  type="category" 
-                  dataKey="productName" 
-                  axisLine={false} 
-                  tickLine={false} 
-                  width={110} 
+                <YAxis
+                  type="category"
+                  dataKey="productName"
+                  axisLine={false}
+                  tickLine={false}
+                  width={110}
                   tick={<CustomYAxisTick />}
                 />
-                <Tooltip 
-                  content={<CustomProductTooltip isRevenue={true} />} 
-                  cursor={{ fill: 'rgba(139, 92, 246, 0.04)' }} 
+                <Tooltip
+                  content={<CustomProductTooltip isRevenue={true} />}
+                  cursor={{ fill: 'rgba(139, 92, 246, 0.04)' }}
                 />
-                <Bar 
-                  dataKey="revenueGenerated" 
-                  fill="url(#colorRevenue)" 
-                  radius={[0, 6, 6, 0]} 
+                <Bar
+                  dataKey="revenueGenerated"
+                  fill="url(#colorRevenue)"
+                  radius={[0, 6, 6, 0]}
                   barSize={16}
                   animationDuration={1200}
                 />
@@ -237,8 +237,8 @@ const TopProductsSection = ({ data, loading, startDate, endDate }) => {
             <div className="empty-icon-wrapper revenue">
               <Package size={40} />
             </div>
-            <h3>No products found</h3>
-            <p>No product data available for the selected filters</p>
+            <h3>No se encontraron productos</h3>
+            <p>No hay datos de productos disponibles para los filtros seleccionados</p>
           </div>
         )}
       </div>

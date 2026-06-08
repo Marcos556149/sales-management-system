@@ -1,17 +1,17 @@
 package com.marcoscornejos.sales_management_system.exception;
 
 /**
- * Exception thrown when the system configuration cannot be found.
+ * Excepción lanzada cuando no se puede encontrar la configuración del sistema.
  *
  * <p>
- * This should never happen in a correctly initialized system,
- * since the configuration must exist as a single global record.
+ * Esto no debería ocurrir en un sistema correctamente inicializado,
+ * ya que la configuración debe existir como un único registro global.
  * </p>
  *
  * <pre>
  * {
  *   "code": "SYSTEM_CONFIGURATION_NOT_FOUND",
- *   "message": "Human readable message",
+ *   "message": "Mensaje legible para el usuario",
  *   "field": null
  * }
  * </pre>
@@ -21,9 +21,9 @@ public class SystemConfigurationNotFoundException extends SystemConfigurationExc
     private static final String CODE = "SYSTEM_CONFIGURATION_NOT_FOUND";
 
     /**
-     * Creates an exception when system configuration is not found.
+     * Crea una excepción cuando no se encuentra la configuración del sistema.
      *
-     * @param message human-readable error message
+     * @param message mensaje de error legible para el usuario
      */
     public SystemConfigurationNotFoundException(String message) {
         super(CODE, message, null);

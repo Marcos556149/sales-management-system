@@ -8,13 +8,13 @@ import lombok.Setter;
 import java.util.List;
 
 /**
- * Response DTO that contains available filter options
- * for product ranking statistics.
+ * DTO de respuesta que contiene las opciones de filtros disponibles
+ * para las estadísticas de ranking de productos.
  *
  * <p>
- * This DTO provides enum-based configuration data
- * used by the frontend to dynamically populate
- * ranking filter selectors.
+ * Este DTO proporciona datos de configuración basados en enums
+ * utilizados por el frontend para poblar dinámicamente
+ * los selectores de filtros de ranking.
  * </p>
  */
 @Getter
@@ -24,21 +24,21 @@ import java.util.List;
 public class ProductRankingFiltersResponseDTO {
 
     /**
-     * Available product ranking metrics.
+     * Opciones disponibles de métricas de ranking de productos.
      *
      * <p>
-     * Defines how products are ranked:
-     * by quantity sold or by revenue generated.
+     * Define cómo se ordenan los productos:
+     * por cantidad vendida o por ingresos generados.
      * </p>
      */
     private List<EnumDTO> metricOptions;
 
     /**
-     * Available ordering options for product ranking.
+     * Opciones disponibles de ordenamiento para el ranking de productos.
      *
      * <p>
-     * Defines whether products are sorted from:
-     * most to least sold, or least to most sold.
+     * Define si los productos se ordenan de:
+     * mayor a menor, o de menor a mayor.
      * </p>
      */
     private List<EnumDTO> orderOptions;

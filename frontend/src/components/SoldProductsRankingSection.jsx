@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { 
-  Package, 
-  TrendingUp, 
-  Loader2, 
-  DollarSign, 
+import {
+  Package,
+  TrendingUp,
+  Loader2,
+  DollarSign,
   ShoppingBag,
   ListOrdered,
   AlertCircle
@@ -15,7 +15,7 @@ import { useToast } from './ToastContext';
 
 const SoldProductsRankingSection = ({ userId, startDate, endDate }) => {
   const { addToast } = useToast();
-  
+
   // Dynamic filter options state
   const [filterOptions, setFilterOptions] = useState(null);
   const [loadingFilters, setLoadingFilters] = useState(true);
@@ -41,7 +41,7 @@ const SoldProductsRankingSection = ({ userId, startDate, endDate }) => {
         setFilterOptions(response.data);
       } catch (err) {
         console.error("Error fetching ranking filters:", err);
-        addToast("Could not load ranking filter options", "error");
+        addToast("No se pudieron cargar las opciones de filtro de ranking", "error");
       } finally {
         setLoadingFilters(false);
       }
@@ -70,7 +70,7 @@ const SoldProductsRankingSection = ({ userId, startDate, endDate }) => {
 
       const controller = new AbortController();
       abortControllerRef.current = controller;
-      
+
       setLoading(true);
       setError(null);
 
@@ -98,11 +98,11 @@ const SoldProductsRankingSection = ({ userId, startDate, endDate }) => {
         }
       } catch (err) {
         if (err.name === 'AbortError') return;
-        
+
         console.error("Error fetching sold products ranking:", err);
         if (controller === abortControllerRef.current) {
-          setError(err.message || "Failed to load sold products ranking");
-          addToast(err.message || "Error fetching sold products", "error");
+          setError(err.message || "No se pudo cargar el ranking de productos vendidos");
+          addToast(err.message || "Error al obtener los productos vendidos", "error");
         }
       } finally {
         if (controller === abortControllerRef.current) {
@@ -138,10 +138,10 @@ const SoldProductsRankingSection = ({ userId, startDate, endDate }) => {
         <table className="ranking-table skeleton">
           <thead>
             <tr>
-              <th>Product Code</th>
-              <th>Product Name</th>
-              <th>Quantity Sold</th>
-              <th>Revenue Generated</th>
+              <th>Código de producto</th>
+              <th>Nombre del producto</th>
+              <th>Cantidad vendida</th>
+              <th>Ingresos generados</th>
             </tr>
           </thead>
           <tbody>
@@ -169,23 +169,23 @@ const SoldProductsRankingSection = ({ userId, startDate, endDate }) => {
             <ListOrdered size={20} />
           </div>
           <div>
-            <h2>Sold Products Ranking</h2>
-            <p>Paginatable ranking list of all sold products based on selected metrics</p>
+            <h2>Ranking de productos vendidos</h2>
+            <p>Lista paginada de productos vendidos basada en los métricas seleccionadas</p>
           </div>
         </div>
 
         {/* Filters Grid */}
         <div className="ranking-filters">
           <div className="ranking-filter-item">
-            <label className="ranking-filter-label">Ranking Metric</label>
-            <select 
-              value={metric} 
-              onChange={handleMetricChange} 
+            <label className="ranking-filter-label">Métrica de ranking</label>
+            <select
+              value={metric}
+              onChange={handleMetricChange}
               className="ranking-select"
               disabled={loadingFilters || !filterOptions}
             >
               {loadingFilters ? (
-                <option>Loading metrics...</option>
+                <option>Cargando métricas...</option>
               ) : (
                 filterOptions?.metricOptions.map(opt => (
                   <option key={opt.code} value={opt.code}>{opt.label}</option>
@@ -195,15 +195,15 @@ const SoldProductsRankingSection = ({ userId, startDate, endDate }) => {
           </div>
 
           <div className="ranking-filter-item">
-            <label className="ranking-filter-label">Order</label>
-            <select 
-              value={order} 
-              onChange={handleOrderChange} 
+            <label className="ranking-filter-label">Orden</label>
+            <select
+              value={order}
+              onChange={handleOrderChange}
               className="ranking-select"
               disabled={loadingFilters || !filterOptions}
             >
               {loadingFilters ? (
-                <option>Loading order...</option>
+                <option>Cargando orden...</option>
               ) : (
                 filterOptions?.orderOptions.map(opt => (
                   <option key={opt.code} value={opt.code}>{opt.label}</option>
@@ -221,14 +221,14 @@ const SoldProductsRankingSection = ({ userId, startDate, endDate }) => {
         ) : error ? (
           <div className="ranking-error-state">
             <AlertCircle size={40} className="error-icon" />
-            <h3>Error Loading Data</h3>
+            <h3>Error al cargar los datos</h3>
             <p>{error}</p>
           </div>
         ) : !hasData ? (
           <div className="ranking-empty-state">
             <Package size={44} className="empty-icon" />
-            <h3>No products found</h3>
-            <p>No sold products found for the selected filters</p>
+            <h3>No se encontraron productos</h3>
+            <p>No se encontraron productos vendidos con los filtros seleccionados</p>
           </div>
         ) : (
           <>
@@ -236,10 +236,10 @@ const SoldProductsRankingSection = ({ userId, startDate, endDate }) => {
               <table className="ranking-table">
                 <thead>
                   <tr>
-                    <th>Product Code</th>
-                    <th>Product Name</th>
-                    <th>Quantity Sold</th>
-                    <th>Revenue Generated</th>
+                    <th>Código de producto</th>
+                    <th>Nombre del producto</th>
+                    <th>Cantidad vendida</th>
+                    <th>Ingresos generados</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -267,12 +267,12 @@ const SoldProductsRankingSection = ({ userId, startDate, endDate }) => {
 
             {/* Pagination Footer */}
             <div className="ranking-pagination-wrapper">
-              <Pagination 
+              <Pagination
                 currentPage={page}
                 totalPages={data.totalPages || 1}
                 totalElements={data.totalElements || 0}
                 onPageChange={setPage}
-                itemName="products"
+                itemName="productos"
                 showShortcuts={false}
               />
             </div>
