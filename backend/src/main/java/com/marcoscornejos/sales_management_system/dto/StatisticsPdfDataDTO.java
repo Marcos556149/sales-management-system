@@ -178,4 +178,19 @@ public class StatisticsPdfDataDTO {
      * en la subsección de ranking de productos vendidos.
      */
     private String soldProductsOrder;
+
+    /**
+     * Usuario que generó el reporte PDF.
+     *
+     * <p>
+     * Corresponde al usuario autenticado con rol de administrador
+     * que ejecutó la generación del reporte.
+     * </p>
+     *
+     * <p>
+     * Este valor se incluye únicamente con fines informativos dentro
+     * del documento PDF y no afecta los datos estadísticos del reporte.
+     * </p>
+     */
+    private String generatedBy;
 }

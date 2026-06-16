@@ -337,7 +337,7 @@ El sistema debe permitir al usuario registrar las ventas realizadas en el negoci
    - Fecha de venta
    - Hora de venta
    - Importe total
-   - Usuario que realizó la venta
+   - Usuario que realizó la venta (administrador autenticado en el sistema al momento de la transacción)
 19. El sistema almacena los detalles de venta asociados con los siguientes datos:
    - Identificador único del detalle de venta (generado automáticamente por el sistema)
    - Producto asociado
@@ -549,7 +549,7 @@ El sistema debe permitir generar un comprobante de compra para cada venta regist
 
 **2.a Venta no encontrada**
 2.a.1 El sistema detecta que la venta no existe.
-2.a.2 El sistema muestra el mensaje: "No se encontró la venta con ID '{saleId}'".
+2.a.2 El sistema muestra el mensaje: "No se encontró la venta con identificador '{saleId}'".
 
 **7.a Error al generar el comprobante**
 7.a.1 El sistema detecta un error durante la generación o impresión del comprobante.
@@ -663,7 +663,7 @@ El sistema debe permitir al usuario consultar la información detallada de una v
 
 **3.a Venta no encontrada**
 3.a.1 El sistema detecta que la venta no existe.
-3.a.2 El sistema muestra el mensaje: "No se encontró la venta con ID '{saleId}'".
+3.a.2 El sistema muestra el mensaje: "No se encontró la venta con identificador '{saleId}'".
 
 ### Reglas de Negocio
 - El sistema debe permitir consultar una venta específica mediante su identificador.
@@ -837,7 +837,7 @@ El sistema debe permitir al usuario cerrar sesión de la cuenta que está utiliz
 
 ### Flujo Principal
 1. El usuario hace clic en el botón "Cerrar sesión".
-2. El sistema muestra un mensaje de confirmación: "¿Está seguro de que desea cerrar sesión? Los datos no guardados se perderán."
+2. El sistema muestra un mensaje de confirmación: "¿Está seguro de que desea cerrar sesión? Los cambios no guardados se perderán."
 3. Si el usuario confirma, el sistema finaliza la sesión del usuario.
 4. El sistema redirige al usuario a la pantalla de inicio de sesión.
 
@@ -927,12 +927,13 @@ El sistema debe permitir a los administradores consultar la información detalla
 
 **3.a Usuario no encontrado**  
 3.a.1 El sistema detecta que el usuario seleccionado no existe.  
-3.a.2 El sistema muestra el mensaje: "No se encontró un usuario con el nombre de usuario '{username}'".
+3.a.2 El sistema muestra el mensaje: "Usuario no encontrado".
 
 ### Reglas de Negocio
 - Solo los usuarios con el rol Administrador pueden realizar esta acción.  
 - El sistema no debe mostrar la contraseña del usuario.  
 - El sistema debe mostrar únicamente información no sensible del usuario.
+- El sistema solo debe permitir consultar usuarios con rol "Operador".
 
 ---
 
@@ -955,6 +956,10 @@ El sistema debe permitir a los administradores modificar la información de los 
 
 ### Flujos Alternativos
 
+**3.a Usuario no encontrado**  
+3.a.1 El sistema detecta que el usuario seleccionado no existe.  
+3.a.2 El sistema muestra el mensaje: "Usuario no encontrado".
+
 **5.a Datos de entrada inválidos**  
 5.a.1 El sistema detecta datos inválidos o incompletos.  
 5.a.2 El sistema muestra un mensaje de error indicando los datos inválidos.
@@ -968,6 +973,7 @@ El sistema debe permitir a los administradores modificar la información de los 
 - El nombre de usuario debe mantenerse único dentro del sistema.  
 - El sistema no debe mostrar la contraseña actual del usuario.  
 - Si se proporciona una nueva contraseña, esta debe reemplazar a la contraseña existente.
+- Solo se pueden modificar usuarios con rol "Operador".
 
 ---
 
@@ -987,11 +993,18 @@ El sistema debe permitir a los administradores cambiar el estado de un usuario.
 5. El sistema actualiza el estado del usuario en la base de datos.  
 6. El sistema confirma que el estado del usuario ha sido actualizado correctamente.
 
+### Flujos Alternativos
+
+**3.a Usuario no encontrado**  
+3.a.1 El sistema detecta que el usuario seleccionado no existe.  
+3.a.2 El sistema muestra el mensaje: "Usuario no encontrado".
+
 ### Reglas de Negocio
 - Solo los usuarios con el rol Administrador pueden realizar esta acción.  
 - El sistema solo debe permitir los siguientes estados: "Activo", "Suspendido" y "Eliminado".  
 - Los usuarios con estado "Eliminado" no deben ser eliminados físicamente de la base de datos.  
 - Los usuarios con estado "Suspendido" o "Eliminado" no deben poder acceder al sistema.
+- Solo se pueden modificar usuarios con rol Operador.
 
 ---
 
@@ -1057,6 +1070,7 @@ El sistema debe permitir al usuario generar un reporte PDF descargable basado en
 El reporte debe incluir siempre:
 
 - Título del reporte
+- Usuario que genera el reporte (usuario administrador autenticado en el sistema al momento de la generación)
 - Fecha y hora de generación del reporte
 - Usuario seleccionado
 - Rango de fechas seleccionado

@@ -87,7 +87,7 @@ Para cada venta, se deberá almacenar la siguiente información:
 - Fecha de la venta
 - Hora de la venta
 - Importe total
-- Usuario que realizó la venta (debe ser un usuario activo al momento de la transacción)
+- Usuario que realizó la venta (administrador autenticado en el sistema al momento de la transacción)
 
 El sistema debe permitir:
 
@@ -319,9 +319,10 @@ El sistema debe permitir generar un reporte en formato PDF basado en los filtros
 El reporte deberá incluir siempre:
 
 - Título del reporte
+- Usuario que genera el reporte (usuario administrador autenticado en el sistema al momento de la generación)
+- Fecha y hora de generación del reporte
 - Usuario seleccionado
 - Rango de fechas seleccionado
-- Fecha y hora de generación del reporte
 
 El sistema debe permitir al usuario seleccionar qué secciones incluir en el reporte.
 

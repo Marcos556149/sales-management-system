@@ -47,6 +47,9 @@ const handleResponse = async (response) => {
   }
 
   if (!response.ok) {
+    if (response.status === 401) {
+      window.dispatchEvent(new CustomEvent('auth-error'));
+    }
     const errorMessage = normalizeError(responseData, response.status);
     const error = new Error(errorMessage);
     error.status = response.status;

@@ -9,10 +9,10 @@ const LoginForm = ({ onLoginSuccess }) => {
   // State to keep track of text field values
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  
+
   // State to handle global error messages (401, 500)
   const [globalError, setGlobalError] = useState('');
-  
+
   // State to handle field-specific errors (400 validation errors)
   const [fieldErrors, setFieldErrors] = useState({});
 
@@ -33,14 +33,14 @@ const LoginForm = ({ onLoginSuccess }) => {
     // Basic frontend-level check
     let hasFrontendError = false;
     let newFieldErrors = {};
-    
+
     if (!username) {
-      newFieldErrors.userName = 'Username is required';
+      newFieldErrors.userName = 'El nombre de usuario es obligatorio';
       hasFrontendError = true;
     }
-    
+
     if (!password) {
-      newFieldErrors.userPassword = 'Password is required';
+      newFieldErrors.userPassword = 'La contraseña es obligatoria';
       hasFrontendError = true;
     }
 
@@ -56,9 +56,9 @@ const LoginForm = ({ onLoginSuccess }) => {
       const response = await fetch('/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          userName: username, 
-          userPassword: password 
+        body: JSON.stringify({
+          userName: username,
+          userPassword: password
         }),
         signal: controller.signal
       });
@@ -71,7 +71,7 @@ const LoginForm = ({ onLoginSuccess }) => {
       try {
         data = text ? JSON.parse(text) : {};
       } catch (err) {
-        data = { error: 'Invalid response from server' };
+        data = { error: 'No se pudo procesar la respuesta del servidor' };
       }
 
       if (response.ok) { // HTTP Status 200-299
@@ -82,24 +82,24 @@ const LoginForm = ({ onLoginSuccess }) => {
       } else {
         // Handle non-200 responses based on our GlobalExceptionHandler
         const errorDetail = data?.error;
-        
+
         if (response.status === 401) {
           // All authentication errors (401) should be shown as global errors at the top
-          setGlobalError(errorDetail?.message || 'Invalid credentials');
+          setGlobalError(errorDetail?.message || 'Usuario o contraseña incorrectos');
         } else if (response.status === 400 && errorDetail?.field && ['userName', 'userPassword'].includes(errorDetail.field)) {
           // Form validation errors (400) should be shown on specific fields
           setFieldErrors({ [errorDetail.field]: errorDetail.message });
         } else {
           // Fallback for any other unexpected error
-          setGlobalError(errorDetail?.message || data?.message || 'An unexpected error occurred while connecting to the server.');
+          setGlobalError(errorDetail?.message || data?.message || 'Ocurrió un error inesperado al comunicarse con el servidor.');
         }
       }
     } catch (err) {
       if (err.name === 'AbortError') {
-        setGlobalError('Login request timed out. Please try again.');
+        setGlobalError('La solicitud de inicio de sesión excedió el tiempo de espera. Inténtelo nuevamente.');
       } else {
         console.error("Fetch error:", err);
-        setGlobalError('Network error. Make sure the Spring Boot backend server (port 8080) is running.');
+        setGlobalError('No fue posible conectarse con el servidor.');
       }
     }
   };
@@ -107,7 +107,7 @@ const LoginForm = ({ onLoginSuccess }) => {
   return (
     <div className="login-container">
       <div className="login-card">
-        <h2>System Login</h2>
+        <h2>Acceso al sistema</h2>
         <p className="login-subtitle">PrimeSale</p>
 
         {/* Status message container to reserve space and prevent layout jumping */}
@@ -117,11 +117,11 @@ const LoginForm = ({ onLoginSuccess }) => {
 
         <form onSubmit={handleLogin} className="login-form">
           <div className="form-group">
-            <label htmlFor="username">Username</label>
+            <label htmlFor="username">Nombre de usuario</label>
             <input
               type="text"
               id="username"
-              placeholder="Enter your username"
+              placeholder="nombre de usuario"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               className={fieldErrors.userName ? 'input-error' : ''}
@@ -132,11 +132,11 @@ const LoginForm = ({ onLoginSuccess }) => {
           </div>
 
           <div className="form-group">
-            <label htmlFor="password">Password</label>
+            <label htmlFor="password">Contraseña</label>
             <input
               type="password"
               id="password"
-              placeholder="Enter your password"
+              placeholder="contraseña"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className={fieldErrors.userPassword ? 'input-error' : ''}
@@ -147,7 +147,7 @@ const LoginForm = ({ onLoginSuccess }) => {
           </div>
 
           <button type="submit" className="login-button">
-            Login
+            Ingresar
           </button>
         </form>
       </div>

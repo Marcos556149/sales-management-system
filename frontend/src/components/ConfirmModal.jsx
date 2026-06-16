@@ -1,4 +1,5 @@
 import React from 'react';
+import { createPortal } from 'react-dom';
 import './ConfirmModal.css';
 
 const ConfirmModal = ({
@@ -44,7 +45,7 @@ const ConfirmModal = ({
 
   if (!isOpen) return null;
 
-  return (
+  return createPortal(
     <div className="confirm-modal-overlay">
       <div className="confirm-modal-content">
         <h3 className="confirm-modal-title">{title}</h3>
@@ -66,7 +67,8 @@ const ConfirmModal = ({
           </button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 };
 

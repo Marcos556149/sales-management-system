@@ -9,16 +9,19 @@ import com.marcoscornejos.sales_management_system.mapper.IPageResponseMapper;
 import com.marcoscornejos.sales_management_system.model.ProductQuantityOrderType;
 import com.marcoscornejos.sales_management_system.model.ProductRankingMetric;
 import com.marcoscornejos.sales_management_system.model.StatisticsGranularity;
+import com.marcoscornejos.sales_management_system.model.User;
 import com.marcoscornejos.sales_management_system.projection.SoldProductProjection;
 import com.marcoscornejos.sales_management_system.projection.TimeSeriesProjection;
 import com.marcoscornejos.sales_management_system.projection.UnsoldProductProjection;
 import com.marcoscornejos.sales_management_system.repository.IProductRepository;
 import com.marcoscornejos.sales_management_system.repository.ISaleRepository;
 import com.marcoscornejos.sales_management_system.repository.IUserRepository;
+import com.marcoscornejos.sales_management_system.security.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 
@@ -1392,43 +1395,41 @@ public class StatisticsService implements IStatisticsService{
     }
 
     /**
-     * Construye el modelo de datos completo requerido
-     * para generar el reporte PDF de estadísticas.
+     * Construye el modelo de datos completo requerido para generar el reporte PDF de estadísticas.
      *
      * <p>
-     * Este método recupera y prepara toda la información
-     * del reporte de acuerdo con los filtros seleccionados
-     * y la configuración especificada para el reporte.
+     * Este método prepara toda la información necesaria para la generación del reporte,
+     * aplicando los filtros seleccionados y respetando la configuración indicada en la solicitud.
      * </p>
      *
      * <p>
-     * Solo se cargan las secciones seleccionadas por el usuario.
-     * Las secciones no seleccionadas se omiten del objeto
-     * de datos resultante.
+     * Solo se incluyen en el modelo las secciones seleccionadas por el usuario.
+     * Las secciones no seleccionadas se omiten completamente del objeto resultante.
      * </p>
      *
      * <p>
      * Los datos generados pueden incluir:
      * <ul>
      *     <li>Metadatos del reporte</li>
-     *     <li>Información de los filtros seleccionados</li>
+     *     <li>Información del usuario que genera el reporte</li>
+     *     <li>Información del usuario seleccionado</li>
+     *     <li>Rango de fechas del reporte</li>
      *     <li>Estadísticas de ventas</li>
-     *     <li>Datos de ingresos y ventas a lo largo del tiempo</li>
+     *     <li>Series temporales de ingresos y ventas</li>
      *     <li>Estadísticas de productos</li>
-     *     <li>Listados detallados de productos</li>
-     *     <li>Etiquetas de configuración del ranking de productos</li>
+     *     <li>Listados detallados de productos vendidos y no vendidos</li>
+     *     <li>Configuración del ranking de productos</li>
      * </ul>
      * </p>
      *
      * <p>
-     * La información de ventas totales obtenida durante
-     * la validación de disponibilidad de datos se reutiliza
-     * para evitar una consulta adicional a la base de datos.
+     * La información de ventas totales obtenida previamente durante la validación
+     * de datos se reutiliza para evitar consultas adicionales a la base de datos.
      * </p>
      *
-     * @param request solicitud PDF normalizada
-     * @param totalSales información de ventas totales previamente validada
-     * @return datos preparados del reporte utilizados por el generador PDF
+     * @param request solicitud normalizada para la generación del PDF
+     * @param totalSales información de ventas totales previamente calculada
+     * @return modelo de datos completamente preparado para la generación del PDF
      */
     private StatisticsPdfDataDTO buildPdfData(
             StatisticsPdfRequestDTO request,
@@ -1448,6 +1449,22 @@ public class StatisticsService implements IStatisticsService{
         data.setGenerationDateTime(
                 LocalDateTime.now()
         );
+
+        Object principal = SecurityContextHolder.getContext()
+                .getAuthentication()
+                .getPrincipal();
+
+        if (!(principal instanceof CustomUserDetails userDetails)) {
+            throw new AuthException(
+                    "INVALID_SESSION",
+                    "Usuario no autenticado o sesión inválida",
+                    null
+            );
+        }
+
+        User adminUser = userDetails.getUser();
+
+        data.setGeneratedBy(adminUser.getUserName());
 
         data.setSelectedUser(
                 request.getUserId() == null
@@ -1765,23 +1782,27 @@ public class StatisticsService implements IStatisticsService{
      * Agrega la sección de encabezado del reporte al documento PDF.
      *
      * <p>
-     * El encabezado contiene los metadatos del reporte que
-     * siempre se incluyen en el documento generado:
-     * <ul>
-     *     <li>Título del reporte</li>
-     *     <li>Fecha y hora de generación del reporte</li>
-     * </ul>
+     * El encabezado contiene los metadatos principales que se muestran
+     * siempre en el documento generado, independientemente de las secciones seleccionadas.
      * </p>
      *
      * <p>
-     * Esta sección se renderiza al comienzo
-     * del reporte, antes de cualquier información
-     * de filtros o sección de estadísticas.
+     * Esta sección se renderiza al inicio del PDF y establece la identidad
+     * del reporte antes de mostrar cualquier información detallada o filtros aplicados.
+     * </p>
+     *
+     * <p>
+     * Incluye la siguiente información:
+     * <ul>
+     *     <li>Título del reporte</li>
+     *     <li>Usuario que generó el reporte</li>
+     *     <li>Fecha y hora de generación</li>
+     * </ul>
      * </p>
      *
      * @param document documento PDF de destino
-     * @param data datos preparados del reporte
-     * @throws DocumentException si el contenido no puede agregarse
+     * @param data datos previamente preparados del reporte
+     * @throws DocumentException si ocurre un error al escribir en el documento PDF
      */
     private void addReportHeader(
             Document document,
@@ -1810,6 +1831,20 @@ public class StatisticsService implements IStatisticsService{
 
         document.add(title);
 
+        document.add(Chunk.NEWLINE);
+
+        // 🆕 USUARIO QUE GENERA EL REPORTE
+        Paragraph generatedBy =
+                new Paragraph(
+                        "Generado por: " + data.getGeneratedBy(),
+                        metadataFont
+                );
+
+        generatedBy.setAlignment(Element.ALIGN_RIGHT);
+
+        document.add(generatedBy);
+
+        // espacio
         document.add(Chunk.NEWLINE);
 
         DateTimeFormatter formatter =

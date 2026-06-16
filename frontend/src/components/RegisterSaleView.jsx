@@ -383,7 +383,7 @@ const RegisterSaleView = () => {
           setProducts([]);
           setTotalPages(1);
         } else {
-          addToast("No se pudieron cargar los productos para el POS", "error");
+          addToast("No se pudieron cargar los productos", "error");
         }
       }
     } finally {

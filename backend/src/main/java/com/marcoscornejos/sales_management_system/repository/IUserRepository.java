@@ -16,9 +16,11 @@
 package com.marcoscornejos.sales_management_system.repository;
 
 import com.marcoscornejos.sales_management_system.model.User;
+import com.marcoscornejos.sales_management_system.model.UserRole;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -31,4 +33,18 @@ public interface IUserRepository extends JpaRepository<User, Long> {
      * @return un Optional que contiene el usuario si existe, o vacío en caso contrario
      */
     Optional<User> findByUserName(String userName);
+
+    /**
+     * Verifica si existe un usuario con el nombre de usuario indicado.
+     *
+     * @param userName nombre de usuario a verificar
+     * @return true si existe un usuario con ese nombre, false en caso contrario
+     */
+    boolean existsByUserName(String userName);
+
+    List<User> findByUserRole(UserRole userRole);
+
+    Optional<User> findByUserIdAndUserRole(Long userId, UserRole userRole);
+
+
 }

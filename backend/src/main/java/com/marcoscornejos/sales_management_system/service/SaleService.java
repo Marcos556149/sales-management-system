@@ -10,12 +10,14 @@ import com.marcoscornejos.sales_management_system.repository.IProductRepository;
 import com.marcoscornejos.sales_management_system.repository.ISaleRepository;
 import com.marcoscornejos.sales_management_system.repository.ISystemConfigurationRepository;
 import com.marcoscornejos.sales_management_system.repository.IUserRepository;
+import com.marcoscornejos.sales_management_system.security.CustomUserDetails;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.math.RoundingMode;
@@ -207,8 +209,13 @@ public class SaleService implements ISaleService {
          * </p>
          *
          * <p>
-         * Cada venta se asocia al usuario que realiza la operación y el importe total
-         * de la venta se calcula en función de los precios de los productos al momento de la venta.
+         * La venta se asocia automáticamente al usuario autenticado obtenido desde el
+         * contexto de seguridad de Spring Security.
+         * </p>
+         *
+         * <p>
+         * El importe total de la venta se calcula en función de los precios de los productos
+         * al momento de la transacción, garantizando consistencia histórica.
          * </p>
          *
          * <p>
@@ -225,7 +232,7 @@ public class SaleService implements ISaleService {
          * @param request solicitud de creación de venta que contiene productos y cantidades
          * @return identificador único de la venta creada
          *
-         * @throws UserNotFoundException si el usuario que realiza la venta no existe
+         * @throws UserNotFoundException si no existe un usuario autenticado válido en el contexto de seguridad
          * @throws ProductNotFoundException si algún producto no existe
          * @throws InvalidSaleDataException si un producto está inactivo, tiene una cantidad inválida
          *                                  o no dispone de stock suficiente
@@ -234,17 +241,13 @@ public class SaleService implements ISaleService {
         @Transactional
         public Long registerSale(SaleCreateRequestDTO request) {
 
-                // Usuario temporal por defecto hasta que se implemente Spring Security
-                User user = iUserRepository.findById(2L)
-                                .orElseThrow(() -> new UserNotFoundException("Usuario autenticado no encontrado"));
+                Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-                /*
-                 * // Implementación futura con usuario autenticado
-                 *
-                 * ...
-                 *
-                 * new UserNotFoundException("Usuario autenticado no encontrado")
-                 */
+                if (!(principal instanceof CustomUserDetails userDetails)) {
+                    throw new AuthException("INVALID_SESSION", "Usuario no autenticado o sesión inválida", null);
+                }
+
+                User user = userDetails.getUser();
 
                 // Consolidar códigos de producto repetidos en una única línea de detalle
                 Map<String, BigDecimal> groupedDetails = new LinkedHashMap<>();
@@ -304,12 +307,15 @@ public class SaleService implements ISaleService {
                                                 "productQuantity");
                         }
 
+
                         // La cantidad solicitada no debe superar el stock disponible
                         if (product.getProductStock().compareTo(quantity) < 0) {
                                 throw new InvalidSaleDataException(
                                                 "Stock insuficiente para el producto " + productLabel,
                                                 "productQuantity");
                         }
+
+
 
                         // Crear detalle de venta utilizando la instantánea actual del precio y la unidad de medida del producto
                         SaleDetail saleDetail = new SaleDetail();

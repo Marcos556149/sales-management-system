@@ -2,6 +2,7 @@ import React, { useRef, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useToast } from './ToastContext';
 import { productService } from '../services/productService';
+import { isAdmin as checkIsAdmin } from '../utils/authUtils';
 
 
 const BarcodeScanner = () => {
@@ -109,8 +110,12 @@ const BarcodeScanner = () => {
           // From Sales: just show error toast, don't navigate to register product
           addToast(err.message || 'Producto no encontrado en el sistema', 'error');
         } else {
-          // From Products: navigate to create
-          navigate(`/dashboard/products/new?productCode=${code}`);
+          // From Products: navigate to create ONLY if admin
+          if (checkIsAdmin()) {
+            navigate(`/dashboard/products/new?productCode=${code}`);
+          } else {
+            addToast(err.message || `No se encontró el producto con código '${code}'`, 'error');
+          }
         }
       } else {
         // Network or other error

@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.orm.jpa.JpaSystemException;
+import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
@@ -626,5 +627,31 @@ public class GlobalExceptionHandler {
         response.put("error", errorBody);
 
         return ResponseEntity.badRequest().body(response);
+    }
+
+    /**
+     * Maneja los intentos de acceso a recursos para los cuales el usuario
+     * autenticado no posee los permisos necesarios.
+     *
+     * <p>Retorna una respuesta HTTP 403 (Forbidden) con un cuerpo de error
+     * estandarizado para informar que el acceso fue denegado por falta
+     * de autorización.
+     *
+     * @param ex excepción lanzada cuando un usuario intenta acceder a un
+     *           recurso sin los permisos requeridos
+     * @return respuesta HTTP 403 con el detalle del error
+     */
+    @ExceptionHandler(AuthorizationDeniedException.class)
+    public ResponseEntity<?> handleAuthorizationDenied(AuthorizationDeniedException ex) {
+
+        Map<String, Object> error = new HashMap<>();
+        error.put("code", "ACCESS_DENIED");
+        error.put("message", "No tenés permisos para acceder a este recurso");
+        error.put("field", null);
+
+        Map<String, Object> body = new HashMap<>();
+        body.put("error", error);
+
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(body);
     }
 }

@@ -8,6 +8,7 @@ import { useProductsContext } from './ProductsContext';
 import { productService } from '../services/productService';
 import { TEXTS } from '../constants/texts';
 import { useKeyboardShortcuts } from '../hooks/useKeyboardShortcuts';
+import { isAdmin as checkIsAdmin } from '../utils/authUtils';
 import './ProductsView.css';
 
 const ProductsView = () => {
@@ -34,6 +35,9 @@ const ProductsView = () => {
   } = useProductsContext();
 
   const [filtersLoading, setFiltersLoading] = useState(statusOptions.length === 0);
+
+  // Role validation using robust utility
+  const isAdmin = checkIsAdmin();
 
   // --- Data State ---
   const [loading, setLoading] = useState(!isCached);
@@ -210,7 +214,11 @@ const ProductsView = () => {
       const abortController = new AbortController();
       abortControllerRef.current = abortController;
 
-      const timeoutId = setTimeout(() => abortController.abort(), 10000);
+      let isTimeout = false;
+      const timeoutId = setTimeout(() => {
+        isTimeout = true;
+        abortController.abort();
+      }, 10000);
 
       setLoading(true);
       setError(null);
@@ -249,10 +257,12 @@ const ProductsView = () => {
         }
       } catch (err) {
         clearTimeout(timeoutId);
-        if (err.name === 'AbortError') {
-          if (abortControllerRef.current === abortController) {
-            setError('La solicitud de productos excedió el tiempo de espera');
-            addToast("La solicitud de productos excedió el tiempo de espera", "error");
+        if (err.name === 'AbortError' || err.name === 'CanceledError') {
+          if (isTimeout) {
+            if (abortControllerRef.current === abortController) {
+              setError('La solicitud de productos excedió el tiempo de espera');
+              addToast("La solicitud de productos excedió el tiempo de espera", "error");
+            }
           } else {
             console.log('La solicitud previa fue cancelada');
           }
@@ -393,37 +403,42 @@ const ProductsView = () => {
   const hasActiveFilters = appliedSearch.trim().length > 0 || statusFilter !== 'ALL' || sortOrder !== 'ASCENDING';
 
   // Register contextual shortcuts
-  useKeyboardShortcuts(React.useMemo(() => ({
-    'alt+n': () => navigate('/dashboard/products/new'),
-    'ctrl+shift+k': () => handleManualRefresh(),
-    '/': () => searchInputRef.current?.focus(),
-    'arrowright': () => {
-      if (pageFrontend < totalPages) {
-        setPageFrontend(prev => prev + 1);
+  useKeyboardShortcuts(React.useMemo(() => {
+    const shortcuts = {
+      'ctrl+shift+k': () => handleManualRefresh(),
+      '/': () => searchInputRef.current?.focus(),
+      'arrowright': () => {
+        if (pageFrontend < totalPages) {
+          setPageFrontend(prev => prev + 1);
+        }
+      },
+      'arrowleft': () => {
+        if (pageFrontend > 1) {
+          setPageFrontend(prev => prev - 1);
+        }
+      },
+      'arrowdown': () => {
+        if (!isModalOpen && !isActivateModalOpen && products.length > 0) {
+          setFocusedIndex(prev => Math.min(prev + 1, products.length - 1));
+        }
+      },
+      'arrowup': () => {
+        if (!isModalOpen && !isActivateModalOpen && products.length > 0) {
+          setFocusedIndex(prev => Math.max(prev - 1, 0));
+        }
+      },
+      'enter': () => {
+        if (document.activeElement && document.activeElement.tagName === 'BUTTON') return;
+        if (!isModalOpen && !isActivateModalOpen && focusedIndex >= 0 && focusedIndex < products.length) {
+          handleRowClick(products[focusedIndex].productCode);
+        }
       }
-    },
-    'arrowleft': () => {
-      if (pageFrontend > 1) {
-        setPageFrontend(prev => prev - 1);
-      }
-    },
-    'arrowdown': () => {
-      if (!isModalOpen && !isActivateModalOpen && products.length > 0) {
-        setFocusedIndex(prev => Math.min(prev + 1, products.length - 1));
-      }
-    },
-    'arrowup': () => {
-      if (!isModalOpen && !isActivateModalOpen && products.length > 0) {
-        setFocusedIndex(prev => Math.max(prev - 1, 0));
-      }
-    },
-    'enter': () => {
-      if (document.activeElement && document.activeElement.tagName === 'BUTTON') return;
-      if (!isModalOpen && !isActivateModalOpen && focusedIndex >= 0 && focusedIndex < products.length) {
-        handleRowClick(products[focusedIndex].productCode);
-      }
+    };
+    if (isAdmin) {
+      shortcuts['alt+n'] = () => navigate('/dashboard/products/new');
     }
-  }), [navigate, handleManualRefresh, pageFrontend, totalPages, setPageFrontend, isModalOpen, isActivateModalOpen, products, focusedIndex]));
+    return shortcuts;
+  }, [navigate, handleManualRefresh, pageFrontend, totalPages, setPageFrontend, isModalOpen, isActivateModalOpen, products, focusedIndex, isAdmin]));
 
   return (
     <div className="view-container">
@@ -548,14 +563,16 @@ const ProductsView = () => {
             <span>{loading ? 'Actualizando...' : 'Actualizar'}</span>
             <span className="btn-shortcut">Ctrl+Shift+K</span>
           </button>
-          <button
-            className="btn-primary"
-            onClick={() => navigate('/dashboard/products/new')}
-          >
-            <Plus size={18} />
-            <span>Nuevo Producto</span>
-            <span className="btn-shortcut" style={{ backgroundColor: 'rgba(255, 255, 255, 0.2)', color: 'white', borderColor: 'rgba(255, 255, 255, 0.3)' }}>Alt+N</span>
-          </button>
+          {isAdmin && (
+            <button
+              className="btn-primary"
+              onClick={() => navigate('/dashboard/products/new')}
+            >
+              <Plus size={18} />
+              <span>Nuevo Producto</span>
+              <span className="btn-shortcut" style={{ backgroundColor: 'rgba(255, 255, 255, 0.2)', color: 'white', borderColor: 'rgba(255, 255, 255, 0.3)' }}>Alt+N</span>
+            </button>
+          )}
         </div>
       </div>
 
@@ -586,7 +603,7 @@ const ProductsView = () => {
                   <th>Precio</th>
                   <th>Stock</th>
                   <th>Estado</th>
-                  <th className="text-right">Acciones</th>
+                  {isAdmin && <th className="text-right">Acciones</th>}
                 </tr>
               </thead>
               <tbody>
@@ -627,43 +644,45 @@ const ProductsView = () => {
                         {product.productStatus?.label || 'Desconocido'}
                       </span>
                     </td>
-                    <td className="actions-cell text-right" onClick={(e) => e.stopPropagation()}>
-                      <button
-                        className="action-btn edit-btn"
-                        title="Editar producto"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleEditClick(product.productCode);
-                        }}
-                      >
-                        <Edit2 size={16} />
-                      </button>
-                      {product.productStatus?.code === 'ACTIVE' ? (
+                    {isAdmin && (
+                      <td className="actions-cell text-right" onClick={(e) => e.stopPropagation()}>
                         <button
-                          className="action-btn deactivate-btn"
-                          title="Desactivar producto"
-                          disabled={actionLoading}
+                          className="action-btn edit-btn"
+                          title="Editar producto"
                           onClick={(e) => {
                             e.stopPropagation();
-                            handleDeactivateProduct(product.productCode);
+                            handleEditClick(product.productCode);
                           }}
                         >
-                          <Ban size={16} />
+                          <Edit2 size={16} />
                         </button>
-                      ) : (
-                        <button
-                          className="action-btn activate-btn"
-                          title="Reactivar producto"
-                          disabled={actionLoading}
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleActivateProduct(product.productCode);
-                          }}
-                        >
-                          <CheckCircle2 size={16} />
-                        </button>
-                      )}
-                    </td>
+                        {product.productStatus?.code === 'ACTIVE' ? (
+                          <button
+                            className="action-btn deactivate-btn"
+                            title="Desactivar producto"
+                            disabled={actionLoading}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleDeactivateProduct(product.productCode);
+                            }}
+                          >
+                            <Ban size={16} />
+                          </button>
+                        ) : (
+                          <button
+                            className="action-btn activate-btn"
+                            title="Reactivar producto"
+                            disabled={actionLoading}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleActivateProduct(product.productCode);
+                            }}
+                          >
+                            <CheckCircle2 size={16} />
+                          </button>
+                        )}
+                      </td>
+                    )}
                   </tr>
                 ))}
               </tbody>

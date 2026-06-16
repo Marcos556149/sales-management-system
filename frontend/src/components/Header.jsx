@@ -2,11 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { Settings, LogOut } from 'lucide-react';
 import BarcodeScanner from './BarcodeScanner';
 import SystemConfigurationModal from './SystemConfigurationModal';
+import { isAdmin as checkIsAdmin } from '../utils/authUtils';
 import './Header.css';
 
 const Header = ({ userName = "Admin User" }) => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [isConfigOpen, setIsConfigOpen] = useState(false);
+  const isAdmin = checkIsAdmin();
 
   useEffect(() => {
     const timer = setInterval(() => setCurrentDate(new Date()), 1000);
@@ -31,13 +33,15 @@ const Header = ({ userName = "Admin User" }) => {
         <BarcodeScanner />
 
         <div className="header-actions">
-          <button
-            className="icon-button settings-button"
-            aria-label="Configuración"
-            onClick={() => setIsConfigOpen(true)}
-          >
-            <Settings size={22} />
-          </button>
+          {isAdmin && (
+            <button
+              className="icon-button settings-button"
+              aria-label="Configuración"
+              onClick={() => setIsConfigOpen(true)}
+            >
+              <Settings size={22} />
+            </button>
+          )}
           {/* Placeholder for future logout */}
           <button className="icon-button logout-button" aria-label="Cerrar sesión" style={{ display: 'none' }}>
             <LogOut size={22} />
@@ -45,10 +49,12 @@ const Header = ({ userName = "Admin User" }) => {
         </div>
       </header>
 
-      <SystemConfigurationModal
-        isOpen={isConfigOpen}
-        onClose={() => setIsConfigOpen(false)}
-      />
+      {isAdmin && (
+        <SystemConfigurationModal
+          isOpen={isConfigOpen}
+          onClose={() => setIsConfigOpen(false)}
+        />
+      )}
     </>
   );
 };

@@ -6,6 +6,7 @@ import ConfirmModal from './ConfirmModal';
 import { useToast } from './ToastContext';
 import { productService } from '../services/productService';
 import { TEXTS } from '../constants/texts';
+import { isAdmin as checkIsAdmin } from '../utils/authUtils';
 import './ProductDetailView.css';
 
 // Custom hook to handle data fetching isolated from the component logic
@@ -74,18 +75,26 @@ const ProductDetailView = () => {
   const [isActivateModalOpen, setIsActivateModalOpen] = useState(false);
   const { addToast } = useToast();
 
+  // Role validation using robust utility
+  const isAdmin = checkIsAdmin();
+
   // Register contextual shortcuts
-  useKeyboardShortcuts(React.useMemo(() => ({
-    'ctrl+b': () => handleBack(),
-    'e': () => handleEdit(),
-    'a': () => {
-      if (product?.productStatus?.code === 'ACTIVE') {
-        handleDeactivate();
-      } else {
-        handleActivate();
-      }
+  useKeyboardShortcuts(React.useMemo(() => {
+    const shortcuts = {
+      'ctrl+b': () => handleBack()
+    };
+    if (isAdmin) {
+      shortcuts['e'] = () => handleEdit();
+      shortcuts['a'] = () => {
+        if (product?.productStatus?.code === 'ACTIVE') {
+          handleDeactivate();
+        } else {
+          handleActivate();
+        }
+      };
     }
-  }), [navigate, product, actionLoading]));
+    return shortcuts;
+  }, [navigate, product, actionLoading, isAdmin]));
 
   const handleBack = () => {
     navigate('/dashboard/products');
@@ -204,36 +213,40 @@ const ProductDetailView = () => {
         </button>
 
         <div className="detail-actions">
-          <button
-            className="btn-outline-primary whitespace-nowrap"
-            disabled={actionLoading}
-            onClick={handleEdit}
-          >
-            <Edit2 size={16} />
-            <span>Editar</span>
-            <span className="btn-shortcut">E</span>
-          </button>
+          {isAdmin && (
+            <>
+              <button
+                className="btn-outline-primary whitespace-nowrap"
+                disabled={actionLoading}
+                onClick={handleEdit}
+              >
+                <Edit2 size={16} />
+                <span>Editar</span>
+                <span className="btn-shortcut">E</span>
+              </button>
 
-          {product.productStatus?.code === 'ACTIVE' ? (
-            <button
-              className="btn-outline-danger whitespace-nowrap"
-              disabled={actionLoading}
-              onClick={handleDeactivate}
-            >
-              <Ban size={16} />
-              <span>Desactivar</span>
-              <span className="btn-shortcut">A</span>
-            </button>
-          ) : (
-            <button
-              className="btn-outline-success whitespace-nowrap"
-              disabled={actionLoading}
-              onClick={handleActivate}
-            >
-              <CheckCircle2 size={16} />
-              <span>Reactivar</span>
-              <span className="btn-shortcut">A</span>
-            </button>
+              {product.productStatus?.code === 'ACTIVE' ? (
+                <button
+                  className="btn-outline-danger whitespace-nowrap"
+                  disabled={actionLoading}
+                  onClick={handleDeactivate}
+                >
+                  <Ban size={16} />
+                  <span>Desactivar</span>
+                  <span className="btn-shortcut">A</span>
+                </button>
+              ) : (
+                <button
+                  className="btn-outline-success whitespace-nowrap"
+                  disabled={actionLoading}
+                  onClick={handleActivate}
+                >
+                  <CheckCircle2 size={16} />
+                  <span>Reactivar</span>
+                  <span className="btn-shortcut">A</span>
+                </button>
+              )}
+            </>
           )}
         </div>
       </div>

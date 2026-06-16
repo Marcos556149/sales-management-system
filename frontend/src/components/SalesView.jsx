@@ -386,7 +386,11 @@ const SalesView = () => {
       const abortController = new AbortController();
       abortControllerRef.current = abortController;
 
-      const timeoutId = setTimeout(() => abortController.abort(), 10000);
+      let isTimeout = false;
+      const timeoutId = setTimeout(() => {
+        isTimeout = true;
+        abortController.abort();
+      }, 10000);
 
       setLoading(true);
       setError(null);
@@ -430,12 +434,14 @@ const SalesView = () => {
         }
       } catch (err) {
         clearTimeout(timeoutId);
-        if (err.name === 'AbortError') {
-          if (abortControllerRef.current === abortController) {
-            setError('La solicitud tardó demasiado. Por favor, recarga la página.');
-            addToast("La solicitud de ventas tardó demasiado", "error");
+        if (err.name === 'AbortError' || err.name === 'CanceledError') {
+          if (isTimeout) {
+            if (abortControllerRef.current === abortController) {
+              setError('La solicitud tardó demasiado. Por favor, recarga la página.');
+              addToast("La solicitud de ventas tardó demasiado", "error");
+            }
           } else {
-            console.log('Previous request cancelled');
+            console.log('Previous request cancelled explicitly');
           }
         } else if (abortControllerRef.current === abortController) {
           console.error("Error cargando ventas:", err);

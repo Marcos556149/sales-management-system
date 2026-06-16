@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -50,6 +51,7 @@ public class SaleController {
          * @return respuesta paginada que contiene las ventas y los metadatos de paginación
          */
         @GetMapping
+        @PreAuthorize("hasAnyRole('ADMIN', 'OPERATOR')")
         public ResponseEntity<PageResponseDTO<SaleListResponseDTO>> getSales(
                         @RequestParam(required = false) Long searchSaleId,
 
@@ -83,6 +85,7 @@ public class SaleController {
          * @return los detalles de la venta como DTO de respuesta
          */
         @GetMapping("/{saleId}")
+        @PreAuthorize("hasAnyRole('ADMIN', 'OPERATOR')")
         public ResponseEntity<SaleWithDetailsResponseDTO> getSaleById(
                         @PathVariable Long saleId) {
 
@@ -103,6 +106,7 @@ public class SaleController {
          * @return ResponseEntity que contiene un SaleFiltersResponseDTO
          */
         @GetMapping("/filters")
+        @PreAuthorize("hasAnyRole('ADMIN', 'OPERATOR')")
         public ResponseEntity<SaleFiltersResponseDTO> getFilters() {
 
                 SaleFiltersResponseDTO response = iSaleService.getFilters();
@@ -129,6 +133,7 @@ public class SaleController {
          * @return una respuesta de éxito estandarizada que contiene el ID de la venta creada
          */
         @PostMapping
+        @PreAuthorize("hasAnyRole('ADMIN', 'OPERATOR')")
         public ResponseEntity<SuccessResponseDTO<Long>> registerSale(
                 @RequestBody @Valid SaleCreateRequestDTO request) {
 
@@ -157,6 +162,7 @@ public class SaleController {
          * @return el ticket de venta formateado como texto plano
          */
         @GetMapping("/{saleId}/ticket")
+        @PreAuthorize("hasAnyRole('ADMIN', 'OPERATOR')")
         public ResponseEntity<String> generateSaleTicket(
                         @PathVariable Long saleId) {
 

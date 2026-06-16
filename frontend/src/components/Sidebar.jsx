@@ -1,13 +1,32 @@
 import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
-import { Package, ShoppingCart, BarChart3, Users, Menu, X } from 'lucide-react';
+import { Package, ShoppingCart, BarChart3, Users, Menu, X, LogOut } from 'lucide-react';
+import ConfirmModal from './ConfirmModal';
+import { isAdmin as checkIsAdmin } from '../utils/authUtils';
 import './Sidebar.css';
 
-const Sidebar = () => {
+const Sidebar = ({ onLogout }) => {
   const [isMobileOpen, setIsMobileOpen] = useState(false);
+  const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const isAdmin = checkIsAdmin();
 
   const toggleMobileMenu = () => {
     setIsMobileOpen(!isMobileOpen);
+  };
+
+  const handleLogoutClick = () => {
+    setIsLogoutModalOpen(true);
+  };
+
+  const handleConfirmLogout = async () => {
+    setIsLoggingOut(true);
+    try {
+      await onLogout();
+    } finally {
+      setIsLoggingOut(false);
+      setIsLogoutModalOpen(false);
+    }
   };
 
   return (
@@ -45,17 +64,19 @@ const Sidebar = () => {
             </NavLink>
           </li>
 
-          <li className="nav-item">
-            <NavLink
-              to="/dashboard/statistics"
-              className={({ isActive }) => `nav-button ${isActive ? 'active-link' : ''}`}
-              onClick={() => setIsMobileOpen(false)}
-            >
-              <BarChart3 className="nav-icon" size={20} />
-              <span>Estadísticas</span>
-              <span className="nav-shortcut">Ctrl+Shift+A</span>
-            </NavLink>
-          </li>
+          {isAdmin && (
+            <li className="nav-item">
+              <NavLink
+                to="/dashboard/statistics"
+                className={({ isActive }) => `nav-button ${isActive ? 'active-link' : ''}`}
+                onClick={() => setIsMobileOpen(false)}
+              >
+                <BarChart3 className="nav-icon" size={20} />
+                <span>Estadísticas</span>
+                <span className="nav-shortcut">Ctrl+Shift+A</span>
+              </NavLink>
+            </li>
+          )}
 
           {/* Admin only placeholder */}
           <li className="nav-item user-section-placeholder">
@@ -68,8 +89,22 @@ const Sidebar = () => {
       </nav>
 
       <div className="sidebar-footer">
-        <p className="system-version">v1.0.0 Alpha</p>
+        <button className="nav-button logout-button" onClick={handleLogoutClick} title="Cerrar sesión" style={{ width: '100%', justifyContent: 'flex-start' }}>
+          <LogOut className="nav-icon" size={20} />
+          <span>Cerrar Sesión</span>
+        </button>
       </div>
+
+      <ConfirmModal
+        isOpen={isLogoutModalOpen}
+        title="Cerrar Sesión"
+        message="¿Está seguro de que desea cerrar sesión? Los cambios no guardados se perderán."
+        onConfirm={handleConfirmLogout}
+        onCancel={() => setIsLogoutModalOpen(false)}
+        isConfirming={isLoggingOut}
+        confirmText="Confirmar"
+        confirmButtonTheme="danger"
+      />
     </aside>
   );
 };

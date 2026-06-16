@@ -8,6 +8,7 @@ import {
   Navigate,
   useOutletContext
 } from 'react-router-dom';
+import { getUserData, hasRole } from './utils/authUtils';
 
 import App, { LoginPage } from './App';
 import { ToastProvider } from './components/ToastContext';
@@ -33,7 +34,26 @@ const ProtectedElement = ({ children }) => {
   if (!isAuthenticated) return <Navigate to="/login" replace />;
   
   // If it's a layout like DashboardLayout, we need to pass props
-  return React.cloneElement(children, { onLogout: handleLogout, user: userData });
+  return React.isValidElement(children) 
+    ? React.cloneElement(children, { onLogout: handleLogout, user: userData }) 
+    : children;
+};
+
+/**
+ * Role Check Wrapper
+ * Does not depend on useOutletContext, making it safe for nested routes.
+ */
+const RequireRole = ({ children, allowedRoles }) => {
+  const userData = getUserData();
+  
+  if (allowedRoles && userData) {
+    const hasAccess = allowedRoles.some(role => hasRole(userData, role));
+    if (!hasAccess) {
+      return <Navigate to="/dashboard/products" replace />;
+    }
+  }
+  
+  return children;
 };
 
 /**
@@ -57,9 +77,9 @@ const router = createBrowserRouter(
         
         <Route path="products" element={<ProductsLayout />}>
           <Route index element={<ProductsView />} />
-          <Route path="new" element={<ProductCreateView />} />
+          <Route path="new" element={<RequireRole allowedRoles={['ADMIN']}><ProductCreateView /></RequireRole>} />
           <Route path=":id" element={<ProductDetailView />} />
-          <Route path="edit/:id" element={<ProductEditView />} />
+          <Route path="edit/:id" element={<RequireRole allowedRoles={['ADMIN']}><ProductEditView /></RequireRole>} />
         </Route>
         
         <Route path="sales" element={<SalesLayout />}>
@@ -68,7 +88,7 @@ const router = createBrowserRouter(
           <Route path=":id" element={<SaleDetailView />} />
         </Route>
         
-        <Route path="statistics" element={<StatisticsView />} />
+        <Route path="statistics" element={<RequireRole allowedRoles={['ADMIN']}><StatisticsView /></RequireRole>} />
       </Route>
       
       <Route path="*" element={<Navigate to="/login" replace />} />

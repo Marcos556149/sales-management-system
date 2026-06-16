@@ -11,7 +11,7 @@ const DashboardLayout = ({ onLogout, user }) => {
   return (
     <div className="dashboard-layout">
       {/* Sidebar now handles its own navigation via react-router */}
-      <Sidebar />
+      <Sidebar onLogout={onLogout} />
 
       <div className="main-content">
         <Header userName={userName} />

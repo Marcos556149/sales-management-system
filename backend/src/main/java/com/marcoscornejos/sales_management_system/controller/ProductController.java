@@ -9,6 +9,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -47,6 +48,7 @@ public class ProductController {
      * @return respuesta paginada que contiene los productos y los metadatos de paginación
      */
     @GetMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'OPERATOR')")
     public ResponseEntity<PageResponseDTO<ProductListResponseDTO>> getProducts(
             @RequestParam(required = false) String searchCodeOrName,
             @RequestParam(defaultValue = "ALL") ProductStatus statusFilter,
@@ -84,6 +86,7 @@ public class ProductController {
      * @return respuesta paginada que contiene los productos disponibles para la venta
      */
     @GetMapping("/sales")
+    @PreAuthorize("hasAnyRole('ADMIN', 'OPERATOR')")
     public ResponseEntity<PageResponseDTO<ProductSaleListResponseDTO>> getProductsForSale(
             @RequestParam(required = false) String searchCodeOrName,
             @RequestParam(defaultValue = "ASCENDING") SortOrder nameSort,
@@ -114,6 +117,7 @@ public class ProductController {
      * @return ProductFiltersResponseDTO que contiene las opciones de filtrado y ordenamiento
      */
     @GetMapping("/filters")
+    @PreAuthorize("hasAnyRole('ADMIN', 'OPERATOR')")
     public ResponseEntity<ProductFiltersResponseDTO> getFilters() {
 
         ProductFiltersResponseDTO response = iProductService.getFilters();
@@ -140,6 +144,7 @@ public class ProductController {
      * @return detalles del producto como DTO de respuesta
      */
     @GetMapping("/{productCode}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'OPERATOR')")
     public ResponseEntity<ProductDetailResponseDTO> getProductByCode(
             @PathVariable String productCode
     ) {
@@ -168,6 +173,7 @@ public class ProductController {
      * @return respuesta de éxito estandarizada que contiene los detalles actualizados del producto
      */
     @PatchMapping("/{productCode}/deactivate")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<SuccessResponseDTO<ProductDetailResponseDTO>> deactivateProduct(
             @PathVariable String productCode
     ) {
@@ -196,6 +202,7 @@ public class ProductController {
      * @return respuesta de éxito estandarizada que contiene los detalles actualizados del producto
      */
     @PatchMapping("/{productCode}/activate")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<SuccessResponseDTO<ProductDetailResponseDTO>> activateProduct(
             @PathVariable String productCode
     ) {
@@ -228,6 +235,7 @@ public class ProductController {
      * @return respuesta de éxito estandarizada con el producto creado
      */
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<SuccessResponseDTO<ProductDetailResponseDTO>> registerProduct(
             @RequestBody @Valid ProductCreateRequestDTO request
     ) {
@@ -254,6 +262,7 @@ public class ProductController {
      * @return metadatos de productos
      */
     @GetMapping("/metadata")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ProductMetadataResponseDTO> getProductMetadata() {
 
         ProductMetadataResponseDTO response=iProductService.getProductMetadata();
@@ -274,6 +283,7 @@ public class ProductController {
      * @return respuesta de éxito estandarizada que confirma la actualización
      */
     @PutMapping("/{productCode}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<SuccessResponseDTO<ProductDetailResponseDTO>> updateProduct(
             @PathVariable String productCode,
             @RequestBody @Valid ProductUpdateRequestDTO request
