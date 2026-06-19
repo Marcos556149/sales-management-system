@@ -47,7 +47,8 @@ const handleResponse = async (response) => {
   }
 
   if (!response.ok) {
-    if (response.status === 401) {
+    // Do not trigger global logout for authentication endpoint itself
+    if (response.status === 401 && !response.url.includes('/api/auth/login')) {
       window.dispatchEvent(new CustomEvent('auth-error'));
     }
     const errorMessage = normalizeError(responseData, response.status);

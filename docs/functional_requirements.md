@@ -946,11 +946,9 @@ El sistema debe permitir a los administradores modificar la información de los 
 1. El administrador accede a la sección de gestión de usuarios.  
 2. El administrador selecciona un usuario para modificar.  
 3. El sistema muestra los datos actuales del usuario, excluyendo la contraseña.  
-4. El administrador modifica los campos deseados:
-   - Nombre de usuario (opcional)  
-   - Nueva contraseña (opcional)  
+4. El administrador ingresa o mantiene el nombre de usuario actual y, opcionalmente, una nueva contraseña.
 5. El sistema valida los datos actualizados.  
-6. El sistema verifica que el nuevo nombre de usuario (si fue modificado) sea único.  
+6. El sistema verifica que el nombre de usuario sea único dentro del sistema.
 7. El sistema actualiza la información del usuario en la base de datos.  
 8. El sistema confirma que el usuario ha sido actualizado correctamente.
 
@@ -974,6 +972,7 @@ El sistema debe permitir a los administradores modificar la información de los 
 - El sistema no debe mostrar la contraseña actual del usuario.  
 - Si se proporciona una nueva contraseña, esta debe reemplazar a la contraseña existente.
 - Solo se pueden modificar usuarios con rol "Operador".
+- El nombre de usuario es obligatorio.
 
 ---
 
@@ -998,6 +997,10 @@ El sistema debe permitir a los administradores cambiar el estado de un usuario.
 **3.a Usuario no encontrado**  
 3.a.1 El sistema detecta que el usuario seleccionado no existe.  
 3.a.2 El sistema muestra el mensaje: "Usuario no encontrado".
+
+**5.a Estado igual al actual**
+5.a.1 El sistema detecta que el usuario ya tiene el estado seleccionado.
+5.a.2 El sistema muestra el mensaje: "El usuario ya tiene el estado 'userStatus'".
 
 ### Reglas de Negocio
 - Solo los usuarios con el rol Administrador pueden realizar esta acción.  

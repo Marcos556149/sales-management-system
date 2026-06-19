@@ -267,3 +267,31 @@
   opacity: 0.8;
   background-color: rgba(0, 0, 0, 0.08);
 }
+
+.btn-outline-warning {
+  background-color: transparent;
+  border: 1px solid;
+  border-radius: 8px;
+  padding: 10px 16px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 0.95rem;
+}
+
+.btn-outline-warning {
+  color: #d97706;
+  border-color: #d97706;
+}
+
+.btn-outline-warning:hover {
+  background-color: rgba(217, 119, 6, 0.05);
+}
+
+.btn-outline-warning:hover .btn-shortcut {
+  opacity: 0.8;
+  background-color: rgba(0, 0, 0, 0.08);
+}

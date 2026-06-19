@@ -75,9 +75,10 @@ const LoginForm = ({ onLoginSuccess }) => {
       }
 
       if (response.ok) { // HTTP Status 200-299
-        setUserData(data); // Expecting userName, userRole
+        const user = data && data.isWrapped ? data.data : data;
+        setUserData(user);
         if (onLoginSuccess) {
-          onLoginSuccess(data); // Immediately redirect using parent handler
+          onLoginSuccess(user);
         }
       } else {
         // Handle non-200 responses based on our GlobalExceptionHandler

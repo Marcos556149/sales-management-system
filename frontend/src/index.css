@@ -267,9 +267,9 @@ body.modal-open-blocking .dashboard-layout {
   visibility: hidden;
   opacity: 0;
   position: absolute;
-  bottom: 100%;
+  top: 100%;
   left: 50%;
-  transform: translateX(-50%) translateY(-8px);
+  transform: translateX(-50%) translateY(8px);
   width: max-content;
   max-width: 220px;
   background-color: #1f2937;
@@ -290,17 +290,17 @@ body.modal-open-blocking .dashboard-layout {
 .tooltip-text::after {
   content: "";
   position: absolute;
-  top: 100%;
+  bottom: 100%;
   left: 50%;
   margin-left: -5px;
   border-width: 5px;
   border-style: solid;
-  border-color: #1f2937 transparent transparent transparent;
+  border-color: transparent transparent #1f2937 transparent;
 }
 
 .tooltip-container:hover .tooltip-text,
 .tooltip-container:focus .tooltip-text {
   visibility: visible;
   opacity: 1;
-  transform: translateX(-50%) translateY(-4px);
+  transform: translateX(-50%) translateY(4px);
 }

@@ -1,6 +1,7 @@
 package com.marcoscornejos.sales_management_system.service;
 
 import com.marcoscornejos.sales_management_system.dto.*;
+import com.marcoscornejos.sales_management_system.exception.InvalidUserDataException;
 import com.marcoscornejos.sales_management_system.exception.UserAlreadyExistsException;
 import com.marcoscornejos.sales_management_system.exception.UserNotFoundException;
 import com.marcoscornejos.sales_management_system.mapper.IUserRequestMapper;
@@ -129,8 +130,9 @@ public class UserService implements IUserService{
     /**
      * Actualiza los datos de un usuario existente.
      *
-     * <p>Permite modificar nombre de usuario y contraseña de forma parcial.
-     * Valida unicidad del username y encripta la nueva contraseña si se envía.</p>
+     * <p>Actualiza el nombre de usuario y opcionalmente la contraseña.
+     * Valida la unicidad del nombre de usuario y encripta la nueva contraseña
+     * cuando es proporcionada.</p>
      *
      * @param id identificador del usuario
      * @param request datos a actualizar
@@ -150,10 +152,8 @@ public class UserService implements IUserService{
             throw new UserNotFoundException("Usuario no encontrado");
         }
 
-        // Validar username único si cambia
-        if (request.getUserName() != null &&
-                !request.getUserName().isBlank() &&
-                !request.getUserName().equals(user.getUserName())) {
+        // Validar nombre de usuario único si cambia
+        if (!request.getUserName().equals(user.getUserName())) {
 
             boolean exists = iUserRepository.existsByUserName(request.getUserName());
 
@@ -166,7 +166,7 @@ public class UserService implements IUserService{
             user.setUserName(request.getUserName());
         }
 
-        // Actualizar password si viene
+        // Actualizar contraseña si se envía una nueva
         if (request.getUserPassword() != null && !request.getUserPassword().isBlank()) {
             user.setUserPassword(passwordEncoder.encode(request.getUserPassword()));
         }
@@ -199,6 +199,13 @@ public class UserService implements IUserService{
         // Regla de negocio: solo operadores
         if (user.getUserRole() != UserRole.OPERATOR) {
             throw new UserNotFoundException("Usuario no encontrado");
+        }
+
+        // Evitar updates innecesarios
+        if (user.getUserStatus() == request.getUserStatus()) {
+            throw new InvalidUserDataException(
+                    String.format("El usuario ya tiene el estado '%s'", request.getUserStatus().getDisplayName())
+            );
         }
 
         user.setUserStatus(request.getUserStatus());

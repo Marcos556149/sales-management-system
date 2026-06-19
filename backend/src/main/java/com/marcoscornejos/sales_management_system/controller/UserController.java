@@ -89,21 +89,36 @@ public class UserController {
     /**
      * Modifica el estado de un usuario.
      *
-     * <p>Permite activar, suspender u otro cambio de estado definido
-     * por las reglas de negocio del sistema.
+     * <p>
+     * Permite cambiar el estado de un usuario (por ejemplo: activar, suspender
+     * u otros estados definidos por las reglas de negocio del sistema).
+     * </p>
+     *
+     * <p>
+     * Esta operación devuelve una respuesta estándar de éxito que incluye
+     * el código de operación, un mensaje descriptivo y la información
+     * actualizada del usuario.
+     * </p>
      *
      * @param userId identificador del usuario cuyo estado será modificado
      * @param request nuevo estado a asignar
-     * @return información actualizada del usuario
+     * @return respuesta de éxito estandarizada que contiene los datos actualizados del usuario
      */
     @PatchMapping("/{userId}/status")
-    public ResponseEntity<UserResponseDTO> changeUserStatus(
+    public ResponseEntity<SuccessResponseDTO<UserResponseDTO>> changeUserStatus(
             @PathVariable Long userId,
             @Valid @RequestBody ChangeUserStatusRequestDTO request
     ) {
-        return ResponseEntity.ok(
-                iUserService.changeUserStatus(userId, request)
+
+        UserResponseDTO updatedUser = iUserService.changeUserStatus(userId, request);
+
+        SuccessResponseDTO<UserResponseDTO> response = new SuccessResponseDTO<>(
+                "USER_STATUS_UPDATED",
+                "Estado de usuario actualizado correctamente",
+                updatedUser
         );
+
+        return ResponseEntity.ok(response);
     }
 
     /**

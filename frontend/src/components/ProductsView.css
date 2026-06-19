@@ -31,19 +31,20 @@
   .toolbar-left {
     width: 100%;
   }
-  
+
   .search-bar {
     width: 100%;
   }
-  
+
   .filter-group {
     width: 100%;
     flex-wrap: wrap;
     justify-content: flex-start;
   }
-  
+
   .filter-item {
-    flex: 0 0 auto; /* Prevent stretching */
+    flex: 0 0 auto;
+    /* Prevent stretching */
     width: fit-content;
   }
 }
@@ -53,7 +54,7 @@
     flex-direction: column;
     align-items: stretch;
   }
-  
+
   .toolbar-right {
     justify-content: flex-start;
   }
@@ -74,7 +75,8 @@
 
 .search-bar input {
   width: 100%;
-  padding: 10px 80px 10px 40px; /* Increased right padding for hint and clear btn */
+  padding: 10px 80px 10px 40px;
+  /* Increased right padding for hint and clear btn */
   border-radius: 8px;
   border: 1px solid var(--border-color);
   font-size: 0.95rem;
@@ -156,7 +158,8 @@
 }
 
 .data-table th {
-  background-color: rgba(244, 246, 248, 0.5); /* subtle header bg */
+  background-color: rgba(244, 246, 248, 0.5);
+  /* subtle header bg */
   padding: 16px;
   font-weight: 600;
   color: var(--text-secondary);
@@ -228,6 +231,18 @@
   color: var(--error-text);
 }
 
+/* SUSPENDED (amarillo) */
+.status-badge.suspended {
+  background-color: #fef9c3;
+  color: #ca8a04;
+}
+
+/* DELETED (rojo) */
+.status-badge.deleted {
+  background-color: #fee2e2;
+  color: #dc2626;
+}
+
 .text-right {
   text-align: right;
 }
@@ -258,6 +273,12 @@
 
 .action-btn:hover {
   background-color: var(--bg-color);
+}
+
+/* Red hover for status button */
+.action-btn.status-btn:hover {
+  background-color: rgba(239, 68, 68, 0.08);
+  color: var(--danger-color);
 }
 
 .edit-btn:hover {
@@ -350,11 +371,13 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  pointer-events: none; /* Let clicks pass to absolute children if needed */
+  pointer-events: none;
+  /* Let clicks pass to absolute children if needed */
 }
 
 .search-actions button {
-  pointer-events: auto; /* Re-enable for the button */
+  pointer-events: auto;
+  /* Re-enable for the button */
 }
 
 .search-hint {
@@ -370,10 +393,10 @@
   font-size: 0.75rem;
   font-weight: 600;
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-  box-shadow: 0 1px 1px rgba(0,0,0,0.05);
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
 }
 
-.search-bar input:focus + .search-actions .search-hint {
+.search-bar input:focus+.search-actions .search-hint {
   border-color: var(--primary-color);
   color: var(--primary-color);
   background-color: rgba(37, 99, 235, 0.05);
@@ -425,6 +448,7 @@
   from {
     transform: rotate(0deg);
   }
+
   to {
     transform: rotate(360deg);
   }

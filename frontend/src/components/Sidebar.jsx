@@ -11,14 +11,8 @@ const Sidebar = ({ onLogout }) => {
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const isAdmin = checkIsAdmin();
 
-  const toggleMobileMenu = () => {
-    setIsMobileOpen(!isMobileOpen);
-  };
-
-  const handleLogoutClick = () => {
-    setIsLogoutModalOpen(true);
-  };
-
+  const toggleMobileMenu = () => setIsMobileOpen(!isMobileOpen);
+  const handleLogoutClick = () => setIsLogoutModalOpen(true);
   const handleConfirmLogout = async () => {
     setIsLoggingOut(true);
     try {
@@ -38,7 +32,7 @@ const Sidebar = ({ onLogout }) => {
         </button>
       </div>
 
-      <nav className={`sidebar-nav ${isMobileOpen ? 'mobile-open' : ''}`}>
+      <nav className={`sidebar-nav ${isMobileOpen ? 'mobile-open' : ''}`}> 
         <ul className="nav-list">
           <li className="nav-item">
             <NavLink
@@ -51,7 +45,6 @@ const Sidebar = ({ onLogout }) => {
               <span className="nav-shortcut">Ctrl+Shift+P</span>
             </NavLink>
           </li>
-
           <li className="nav-item">
             <NavLink
               to="/dashboard/sales"
@@ -63,7 +56,6 @@ const Sidebar = ({ onLogout }) => {
               <span className="nav-shortcut">Ctrl+Shift+V</span>
             </NavLink>
           </li>
-
           {isAdmin && (
             <li className="nav-item">
               <NavLink
@@ -77,23 +69,29 @@ const Sidebar = ({ onLogout }) => {
               </NavLink>
             </li>
           )}
-
-          {/* Admin only placeholder */}
-          <li className="nav-item user-section-placeholder">
-            <button className="nav-button disabled" title="Solo administradores - Próximamente">
-              <Users className="nav-icon" size={20} />
-              <span>Usuarios</span>
-            </button>
-          </li>
+          {isAdmin && (
+            <li className="nav-item">
+              <NavLink
+                to="/dashboard/users"
+                className={({ isActive }) => `nav-button ${isActive ? 'active-link' : ''}`}
+                onClick={() => setIsMobileOpen(false)}
+              >
+                <Users className="nav-icon" size={20} />
+                <span>Usuarios</span>
+                <span className="nav-shortcut">Ctrl+Shift+H</span>
+              </NavLink>
+            </li>
+          )}
         </ul>
-      </nav>
-
-      <div className="sidebar-footer">
-        <button className="nav-button logout-button" onClick={handleLogoutClick} title="Cerrar sesión" style={{ width: '100%', justifyContent: 'flex-start' }}>
+        <button
+          className="nav-button logout-button"
+          onClick={handleLogoutClick}
+          title="Cerrar sesión"
+        >
           <LogOut className="nav-icon" size={20} />
           <span>Cerrar Sesión</span>
         </button>
-      </div>
+      </nav>
 
       <ConfirmModal
         isOpen={isLogoutModalOpen}

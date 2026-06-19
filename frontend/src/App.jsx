@@ -32,6 +32,14 @@ function App() {
   const navigate = useNavigate();
 
   const handleLogout = React.useCallback(async () => {
+    // If we are already on the login page, no need to perform logout actions again.
+    if (window.location.pathname === '/login') {
+      return;
+    }
+    // If the user is already logged out, avoid clearing state again.
+    if (!isAuthenticated) {
+      return;
+    }
     try {
       await apiClient.post('/api/auth/logout');
     } catch (err) {
@@ -43,7 +51,7 @@ function App() {
       localStorage.removeItem('userData');
       navigate('/login', { replace: true });
     }
-  }, [navigate]);
+  }, [navigate, isAuthenticated]);
 
   React.useEffect(() => {
     // Si la sesión del backend expira (401), se dispara este evento
@@ -72,6 +80,10 @@ function App() {
     if (checkIsAdmin()) {
       shortcuts['ctrl+shift+a'] = () => {
         navigate('/dashboard/statistics');
+      };
+
+      shortcuts['ctrl+shift+h'] = () => {
+        navigate('/dashboard/users');
       };
     }
     return shortcuts;

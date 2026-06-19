@@ -385,11 +385,13 @@ public class SaleService implements ISaleService {
 
                 ticket.append(" \n");
 
-                // Nombre del negocio (ajustado a varias líneas, alineado a la izquierda)
+                // Nombre del negocio
                 for (String line : wrapText(config.getBusinessName(), 32)) {
-                        ticket.append(line).append("\n");
+                        ticket.append(center(line)).append("\n");
                 }
 
+                ticket.append("--------------------------------\n");
+                ticket.append(center("DOCUMENTO NO FISCAL")).append("\n");
                 ticket.append("--------------------------------\n");
 
                 // Dirección del negocio (ajustada a varias líneas, alineada a la izquierda)
@@ -460,6 +462,15 @@ public class SaleService implements ISaleService {
                         "TOTAL: $%s\n",
                         sale.getTotalAmount().toPlainString()
                 ));
+
+                ticket.append(" \n");
+
+                for (String line : wrapText(
+                        "Este comprobante no constituye una factura ni posee validez fiscal.",
+                        32
+                )) {
+                        ticket.append(center(line)).append("\n");
+                }
 
                 ticket.append(" \n");
                 ticket.append(center("¡Gracias por su compra!")).append("\n");

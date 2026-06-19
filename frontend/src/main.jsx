@@ -1,10 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { 
-  createBrowserRouter, 
-  RouterProvider, 
-  createRoutesFromElements, 
-  Route, 
+import {
+  createBrowserRouter,
+  RouterProvider,
+  createRoutesFromElements,
+  Route,
   Navigate,
   useOutletContext
 } from 'react-router-dom';
@@ -23,6 +23,11 @@ import SaleDetailView from './components/SaleDetailView';
 import { SalesLayout } from './components/SalesContext';
 import RegisterSaleView from './components/RegisterSaleView';
 import StatisticsView from './components/StatisticsView';
+import UsersView from './components/UsersView';
+import UserCreateView from './components/UserCreateView';
+import UserDetailView from './components/UserDetailView';
+import UserEditView from './components/UserEditView';
+import { UsersLayout } from './components/UsersContext';
 import './index.css';
 
 /**
@@ -32,10 +37,10 @@ import './index.css';
 const ProtectedElement = ({ children }) => {
   const { isAuthenticated, handleLogout, userData } = useOutletContext();
   if (!isAuthenticated) return <Navigate to="/login" replace />;
-  
+
   // If it's a layout like DashboardLayout, we need to pass props
-  return React.isValidElement(children) 
-    ? React.cloneElement(children, { onLogout: handleLogout, user: userData }) 
+  return React.isValidElement(children)
+    ? React.cloneElement(children, { onLogout: handleLogout, user: userData })
     : children;
 };
 
@@ -45,14 +50,14 @@ const ProtectedElement = ({ children }) => {
  */
 const RequireRole = ({ children, allowedRoles }) => {
   const userData = getUserData();
-  
+
   if (allowedRoles && userData) {
     const hasAccess = allowedRoles.some(role => hasRole(userData, role));
     if (!hasAccess) {
       return <Navigate to="/dashboard/products" replace />;
     }
   }
-  
+
   return children;
 };
 
@@ -69,28 +74,68 @@ const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<App />}>
       <Route index element={<Navigate to="/login" replace />} />
-      
+
       <Route path="login" element={<LoginElement />} />
-      
+
       <Route path="dashboard" element={<ProtectedElement><DashboardLayout /></ProtectedElement>}>
         <Route index element={<Navigate to="/dashboard/products" replace />} />
-        
+
         <Route path="products" element={<ProductsLayout />}>
           <Route index element={<ProductsView />} />
           <Route path="new" element={<RequireRole allowedRoles={['ADMIN']}><ProductCreateView /></RequireRole>} />
           <Route path=":id" element={<ProductDetailView />} />
           <Route path="edit/:id" element={<RequireRole allowedRoles={['ADMIN']}><ProductEditView /></RequireRole>} />
         </Route>
-        
+
+        <Route path="users" element={<UsersLayout />}>
+          <Route
+            index
+            element={
+              <RequireRole allowedRoles={['ADMIN']}>
+                <UsersView />
+              </RequireRole>
+            }
+          />
+
+
+          <Route
+            path="new"
+            element={
+              <RequireRole allowedRoles={['ADMIN']}>
+                <UserCreateView />
+              </RequireRole>
+            }
+          />
+
+
+          <Route
+            path=":id"
+            element={
+              <RequireRole allowedRoles={['ADMIN']}>
+                <UserDetailView />
+              </RequireRole>
+            }
+          />
+
+          <Route
+            path="edit/:id"
+            element={
+              <RequireRole allowedRoles={['ADMIN']}>
+                <UserEditView />
+              </RequireRole>
+            }
+          />
+        </Route>
+
         <Route path="sales" element={<SalesLayout />}>
           <Route index element={<SalesView />} />
           <Route path="new" element={<RegisterSaleView />} />
           <Route path=":id" element={<SaleDetailView />} />
         </Route>
-        
+
         <Route path="statistics" element={<RequireRole allowedRoles={['ADMIN']}><StatisticsView /></RequireRole>} />
       </Route>
-      
+
       <Route path="*" element={<Navigate to="/login" replace />} />
     </Route>
   )
