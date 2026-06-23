@@ -22,6 +22,8 @@ import org.springframework.stereotype.Service;
 
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -330,6 +332,12 @@ public class SaleService implements ISaleService {
 
                 // Crear entidad de venta y asociar usuario
                 Sale sale = new Sale();
+
+                // Configurar zona horaria
+                ZoneId zone = ZoneId.of("America/Argentina/Buenos_Aires");
+
+                sale.setSaleDate(LocalDate.now(zone));
+                sale.setSaleTime(LocalTime.now(zone));
                 sale.setUser(user);
 
                 // Sincronizar la relación bidireccional entre Sale y SaleDetail
@@ -375,7 +383,7 @@ public class SaleService implements ISaleService {
                         ));
 
                 // 3. Fecha y hora actuales
-                LocalDateTime now = LocalDateTime.now();
+                LocalDateTime now = LocalDateTime.now(ZoneId.of("America/Argentina/Buenos_Aires"));
 
                 DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
                 DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss");

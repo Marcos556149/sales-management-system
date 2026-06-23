@@ -142,6 +142,17 @@ Para cada venta registrada, el sistema deberá ser capaz de generar un comproban
 
 El comprobante deberá representar una constancia de la venta realizada.
 
+Consideraciones de implementación:
+
+- El sistema genera el comprobante en formato de ticket de impresión térmica (texto plano), optimizado para dispositivos de impresión de ancho fijo.
+
+- Con el objetivo de simular el comportamiento de sistemas reales de punto de venta, el comprobante incluye información adicional de carácter informativo, la cual no forma parte de los datos transaccionales de la venta:
+
+- Indicación explícita de que el comprobante es un DOCUMENTO NO FISCAL
+Mensaje aclaratorio indicando que el comprobante no constituye una factura válida ni posee validez fiscal
+
+- Estas aclaraciones no modifican la estructura funcional del comprobante ni sus datos obligatorios, sino que cumplen un rol informativo y de transparencia para el usuario final, alineándose con el comportamiento habitual de sistemas comerciales que no implementan facturación electrónica.
+
 ## 8. Usuarios
 
 El sistema debe contar con dos tipos de acceso (roles) predefinidos:

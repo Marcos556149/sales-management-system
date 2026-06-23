@@ -31,6 +31,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
@@ -1447,7 +1448,7 @@ public class StatisticsService implements IStatisticsService{
         );
 
         data.setGenerationDateTime(
-                LocalDateTime.now()
+                LocalDateTime.now(ZoneId.of("America/Argentina/Buenos_Aires"))
         );
 
         Object principal = SecurityContextHolder.getContext()

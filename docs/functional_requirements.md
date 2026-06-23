@@ -543,7 +543,9 @@ El sistema debe permitir generar un comprobante de compra para cada venta regist
      - Precio al momento de la venta
      - Subtotal de cada producto
    - Importe total de la venta
-7. El sistema genera e imprime el comprobante de venta utilizando la impresora configurada.
+   - Indicación informativa de que el comprobante es un DOCUMENTO NO FISCAL
+   - Mensaje aclaratorio indicando que el comprobante no constituye una factura válida ni posee validez fiscal
+7. El sistema genera el comprobante en formato de ticket de impresión térmica (texto plano) utilizando la impresora configurada.
 
 ### Flujos Alternativos
 
@@ -564,6 +566,8 @@ El sistema debe permitir generar un comprobante de compra para cada venta regist
 - El comprobante debe incluir todos los productos asociados a la venta.
 - El comprobante constituye evidencia de la transacción realizada.
 - Cada comprobante debe incluir un identificador único que permita rastrear y auditar la venta.
+- El comprobante es de carácter informativo y no fiscal, no constituyendo una factura ni documento con validez tributaria.
+- El formato del comprobante es un ticket de impresión térmica (texto plano) optimizado para impresión en dispositivos de ancho fijo.
 
 ---
 

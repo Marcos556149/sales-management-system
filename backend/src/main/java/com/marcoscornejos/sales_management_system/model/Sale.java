@@ -43,7 +43,7 @@ public class Sale {
      * <p>Por defecto se asigna la fecha actual del sistema cuando la entidad es creada.</p>
      */
     @Column(name = "sale_date")
-    private LocalDate saleDate=LocalDate.now();
+    private LocalDate saleDate;
 
     /**
      * Hora en la que se realizó la venta.
@@ -51,7 +51,7 @@ public class Sale {
      * <p>Por defecto se asigna la hora actual del sistema cuando la entidad es creada.</p>
      */
     @Column(name = "sale_time")
-    private LocalTime saleTime=LocalTime.now();
+    private LocalTime saleTime;
 
     /** Importe monetario total de la venta. */
     @Column(name = "total_amount")
